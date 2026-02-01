@@ -45,10 +45,9 @@ class JsonMfPlayerRepository(
                 plugin.logger.severe("Please investigate the file: $fileName")
                 // Create a backup of the corrupted file
                 try {
-                    val backupFile = java.io.File(plugin.dataFolder, "medieval_factions_data/$fileName.corrupted.backup")
-                    backupFile.parentFile?.mkdirs()
+                    val backupFile = java.io.File(storageManager.getStorageDirectory(), "$fileName.corrupted.backup")
                     backupFile.writeText(json)
-                    plugin.logger.warning("Corrupted file backed up to: $fileName.corrupted.backup")
+                    plugin.logger.warning("Corrupted file backed up to: ${backupFile.absolutePath}")
                 } catch (backupError: Exception) {
                     plugin.logger.severe("Failed to create backup: ${backupError.message}")
                 }

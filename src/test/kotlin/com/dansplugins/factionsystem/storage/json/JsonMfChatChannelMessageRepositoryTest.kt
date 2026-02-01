@@ -1,270 +1,268 @@
 package com.dansplugins.factionsystem.storage.json
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.chat.ChatChannelMessage
-import com.dansplugins.factionsystem.chat.ChatChannelMessageId
+import com.dansplugins.factionsystem.chat.MfChatChannelMessage
+import com.dansplugins.factionsystem.chat.MfFactionChatChannel
 import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.player.MfPlayerId
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
 import java.nio.file.Path
 import java.time.Instant
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import java.util.UUID
+import java.util.logging.Logger
 
 class JsonMfChatChannelMessageRepositoryTest {
 
-    private lateinit var plugin: MedievalFactions
-    private lateinit var repository: JsonMfChatChannelMessageRepository
-    
     @TempDir
     lateinit var tempDir: Path
 
+    private lateinit var plugin: MedievalFactions
+    private lateinit var storageManager: JsonStorageManager
+    private lateinit var repository: JsonMfChatChannelMessageRepository
+
     @BeforeEach
     fun setup() {
-        plugin = mock(MedievalFactions::class.java)
-        `when`(plugin.dataFolder).thenReturn(tempDir.toFile())
-        val config = mock(org.bukkit.configuration.file.FileConfiguration::class.java)
-        `when`(plugin.config).thenReturn(config)
-        `when`(config.getString("storage.json.path")).thenReturn(tempDir.toString())
-        
-        repository = JsonMfChatChannelMessageRepository(plugin)
+        plugin = mockk<MedievalFactions>(relaxed = true)
+        every { plugin.logger } returns Logger.getLogger("TestLogger")
+        every { plugin.dataFolder } returns tempDir.toFile()
+        storageManager = JsonStorageManager(plugin, tempDir.toString())
+        repository = JsonMfChatChannelMessageRepository(plugin, storageManager)
     }
 
     @AfterEach
     fun cleanup() {
-        tempDir.toFile().listFiles()?.forEach { it.deleteRecursively() }
+        tempDir.toFile().deleteRecursively()
     }
 
     @Test
-    fun testInsert_NewMessage() {
-        // prepare
-        val messageId = ChatChannelMessageId.generate()
-        val factionId = MfFactionId.generate()
-        val playerId = MfPlayerId("test-player")
-        val message = ChatChannelMessage(messageId, 1, factionId, playerId, "Hello world!", Instant.now())
+    fun `test insert and retrieve chat message`() {
+        val factionId = MfFactionId(UUID.randomUUID())
+        val playerId = MfPlayerId(UUID.randomUUID())
+        val message = MfChatChannelMessage(
+            Instant.now(),
+            playerId,
+            factionId,
+            MfFactionChatChannel.FACTION,
+            "Test message"
+        )
 
-        // execute
         repository.insert(message)
-        val result = repository.getMessage(messageId)
+        val messages = repository.getChatChannelMessages(factionId)
 
-        // verify
-        assertNotNull(result)
-        assertEquals(messageId, result.id)
-        assertEquals("Hello world!", result.message)
-        assertEquals(playerId, result.playerId)
-        assertEquals(factionId, result.factionId)
+        assertEquals(1, messages.size)
+        assertEquals("Test message", messages[0].message)
+        assertEquals(playerId, messages[0].playerId)
     }
 
     @Test
-    fun testGetAllMessages_Empty() {
-        // execute
-        val result = repository.getAllMessages()
-
-        // verify
-        assertNotNull(result)
-        assertEquals(0, result.size)
+    fun `test getChatChannelMessages returns empty list for unknown faction`() {
+        val factionId = MfFactionId(UUID.randomUUID())
+        val messages = repository.getChatChannelMessages(factionId)
+        assertTrue(messages.isEmpty())
     }
 
     @Test
-    fun testGetAllMessages_MultipleFactions() {
-        // prepare
-        val faction1 = MfFactionId.generate()
-        val faction2 = MfFactionId.generate()
-        val playerId = MfPlayerId("player-1")
-        
-        val message1 = ChatChannelMessage(ChatChannelMessageId.generate(), 1, faction1, playerId, "Message 1", Instant.now())
-        val message2 = ChatChannelMessage(ChatChannelMessageId.generate(), 1, faction2, playerId, "Message 2", Instant.now())
-        val message3 = ChatChannelMessage(ChatChannelMessageId.generate(), 1, faction1, playerId, "Message 3", Instant.now())
+    fun `test insert multiple messages for same faction`() {
+        val factionId = MfFactionId(UUID.randomUUID())
+        val playerId = MfPlayerId(UUID.randomUUID())
 
-        repository.insert(message1)
-        repository.insert(message2)
-        repository.insert(message3)
-
-        // execute
-        val result = repository.getAllMessages()
-
-        // verify
-        assertEquals(3, result.size)
-    }
-
-    @Test
-    fun testMessageLimit_EnforcesMaxPerFaction() {
-        // prepare
-        val factionId = MfFactionId.generate()
-        val playerId = MfPlayerId("player-1")
-        
-        // Insert 1100 messages (should keep only last 1000)
-        for (i in 1..1100) {
-            val message = ChatChannelMessage(
-                ChatChannelMessageId.generate(),
-                1,
-                factionId,
+        for (i in 1..5) {
+            val message = MfChatChannelMessage(
+                Instant.now(),
                 playerId,
-                "Message $i",
-                Instant.now().plusMillis(i.toLong())
+                factionId,
+                MfFactionChatChannel.FACTION,
+                "Message $i"
             )
             repository.insert(message)
         }
 
-        // execute
-        val allMessages = repository.getAllMessages()
-        val factionMessages = allMessages.filter { it.factionId == factionId }
-
-        // verify - should have exactly 1000 messages
-        assertEquals(1000, factionMessages.size)
-        
-        // verify - should have the most recent messages (101-1100)
-        val messageTexts = factionMessages.map { it.message }.toSet()
-        assertTrue(messageTexts.contains("Message 1100"))
-        assertTrue(messageTexts.contains("Message 101"))
-        assertTrue(!messageTexts.contains("Message 1")) // oldest should be removed
-        assertTrue(!messageTexts.contains("Message 100")) // oldest should be removed
+        val messages = repository.getChatChannelMessages(factionId)
+        assertEquals(5, messages.size)
     }
 
     @Test
-    fun testMessageLimit_DifferentFactions() {
-        // prepare
-        val faction1 = MfFactionId.generate()
-        val faction2 = MfFactionId.generate()
-        val playerId = MfPlayerId("player-1")
-        
+    fun `test message limit enforcement - keeps only 1000 messages per faction`() {
+        val factionId = MfFactionId(UUID.randomUUID())
+        val playerId = MfPlayerId(UUID.randomUUID())
+
+        // Insert 1050 messages
+        for (i in 1..1050) {
+            val message = MfChatChannelMessage(
+                Instant.now().plusMillis(i.toLong()),
+                playerId,
+                factionId,
+                MfFactionChatChannel.FACTION,
+                "Message $i"
+            )
+            repository.insert(message)
+        }
+
+        val messages = repository.getChatChannelMessages(factionId)
+
+        // Should only keep the most recent 1000 messages
+        assertEquals(1000, messages.size)
+
+        // The oldest messages (1-50) should be gone
+        assertFalse(messages.any { it.message == "Message 1" })
+        assertFalse(messages.any { it.message == "Message 50" })
+
+        // The newest messages should be present
+        assertTrue(messages.any { it.message == "Message 1050" })
+        assertTrue(messages.any { it.message == "Message 1000" })
+    }
+
+    @Test
+    fun `test multiple factions have independent message limits`() {
+        val faction1 = MfFactionId(UUID.randomUUID())
+        val faction2 = MfFactionId(UUID.randomUUID())
+        val playerId = MfPlayerId(UUID.randomUUID())
+
         // Insert 600 messages for faction1
         for (i in 1..600) {
-            val message = ChatChannelMessage(
-                ChatChannelMessageId.generate(),
-                1,
-                faction1,
-                playerId,
-                "Faction1 Message $i",
-                Instant.now().plusMillis(i.toLong())
+            repository.insert(
+                MfChatChannelMessage(
+                    Instant.now(),
+                    playerId,
+                    faction1,
+                    MfFactionChatChannel.FACTION,
+                    "Faction1 Message $i"
+                )
             )
-            repository.insert(message)
-        }
-        
-        // Insert 600 messages for faction2
-        for (i in 1..600) {
-            val message = ChatChannelMessage(
-                ChatChannelMessageId.generate(),
-                1,
-                faction2,
-                playerId,
-                "Faction2 Message $i",
-                Instant.now().plusMillis(i.toLong())
-            )
-            repository.insert(message)
         }
 
-        // execute
-        val allMessages = repository.getAllMessages()
-        val faction1Messages = allMessages.filter { it.factionId == faction1 }
-        val faction2Messages = allMessages.filter { it.factionId == faction2 }
+        // Insert 400 messages for faction2
+        for (i in 1..400) {
+            repository.insert(
+                MfChatChannelMessage(
+                    Instant.now(),
+                    playerId,
+                    faction2,
+                    MfFactionChatChannel.FACTION,
+                    "Faction2 Message $i"
+                )
+            )
+        }
 
-        // verify - each faction should have 600 messages (under the 1000 limit)
+        val faction1Messages = repository.getChatChannelMessages(faction1)
+        val faction2Messages = repository.getChatChannelMessages(faction2)
+
         assertEquals(600, faction1Messages.size)
-        assertEquals(600, faction2Messages.size)
-        assertEquals(1200, allMessages.size)
+        assertEquals(400, faction2Messages.size)
     }
 
     @Test
-    fun testDelete_ExistingMessage() {
-        // prepare
-        val messageId = ChatChannelMessageId.generate()
-        val factionId = MfFactionId.generate()
-        val playerId = MfPlayerId("player-1")
-        val message = ChatChannelMessage(messageId, 1, factionId, playerId, "Test message", Instant.now())
-        repository.insert(message)
+    fun `test getChatChannelMessageCount returns correct count`() {
+        val factionId = MfFactionId(UUID.randomUUID())
+        val playerId = MfPlayerId(UUID.randomUUID())
 
-        // execute
-        repository.delete(messageId)
-        val result = repository.getMessage(messageId)
+        for (i in 1..10) {
+            repository.insert(
+                MfChatChannelMessage(
+                    Instant.now(),
+                    playerId,
+                    factionId,
+                    MfFactionChatChannel.FACTION,
+                    "Message $i"
+                )
+            )
+        }
 
-        // verify
-        assertEquals(null, result)
+        val count = repository.getChatChannelMessageCount(factionId)
+        assertEquals(10, count)
     }
 
     @Test
-    fun testMessagesWithSpecialCharacters() {
-        // prepare
-        val messageId = ChatChannelMessageId.generate()
-        val factionId = MfFactionId.generate()
-        val playerId = MfPlayerId("player-1")
-        val specialText = "Special chars: @#$% 你好 🎉 \"quotes\" 'apostrophes' <html>"
-        val message = ChatChannelMessage(messageId, 1, factionId, playerId, specialText, Instant.now())
+    fun `test getChatChannelMessages with limit and offset`() {
+        val factionId = MfFactionId(UUID.randomUUID())
+        val playerId = MfPlayerId(UUID.randomUUID())
 
-        // execute
-        repository.insert(message)
-        val result = repository.getMessage(messageId)
+        // Insert 20 messages
+        for (i in 1..20) {
+            repository.insert(
+                MfChatChannelMessage(
+                    Instant.now().plusMillis(i.toLong()),
+                    playerId,
+                    factionId,
+                    MfFactionChatChannel.FACTION,
+                    "Message $i"
+                )
+            )
+        }
 
-        // verify
-        assertNotNull(result)
-        assertEquals(specialText, result.message)
+        // Get messages with limit and offset
+        val messages = repository.getChatChannelMessages(factionId, limit = 5, offset = 5)
+
+        assertEquals(5, messages.size)
     }
 
     @Test
-    fun testMessagesOrderedByTimestamp() {
-        // prepare
-        val factionId = MfFactionId.generate()
-        val playerId = MfPlayerId("player-1")
-        val now = Instant.now()
-        
-        val message1 = ChatChannelMessage(ChatChannelMessageId.generate(), 1, factionId, playerId, "First", now.minusSeconds(10))
-        val message2 = ChatChannelMessage(ChatChannelMessageId.generate(), 1, factionId, playerId, "Second", now.minusSeconds(5))
-        val message3 = ChatChannelMessage(ChatChannelMessageId.generate(), 1, factionId, playerId, "Third", now)
+    fun `test messages with special characters`() {
+        val factionId = MfFactionId(UUID.randomUUID())
+        val playerId = MfPlayerId(UUID.randomUUID())
+        val specialMessage = "Hello™ 世界 😀 \"quoted\" 'text' <html>"
 
-        // Insert in random order
-        repository.insert(message2)
-        repository.insert(message1)
-        repository.insert(message3)
+        repository.insert(
+            MfChatChannelMessage(
+                Instant.now(),
+                playerId,
+                factionId,
+                MfFactionChatChannel.FACTION,
+                specialMessage
+            )
+        )
 
-        // execute
-        val allMessages = repository.getAllMessages()
-        val factionMessages = allMessages.filter { it.factionId == factionId }
-            .sortedBy { it.timestamp }
-
-        // verify - messages should be retrievable and sortable by timestamp
-        assertEquals("First", factionMessages[0].message)
-        assertEquals("Second", factionMessages[1].message)
-        assertEquals("Third", factionMessages[2].message)
+        val messages = repository.getChatChannelMessages(factionId)
+        assertEquals(1, messages.size)
+        assertEquals(specialMessage, messages[0].message)
     }
 
     @Test
-    fun testEmptyMessage() {
-        // prepare
-        val messageId = ChatChannelMessageId.generate()
-        val factionId = MfFactionId.generate()
-        val playerId = MfPlayerId("player-1")
-        val message = ChatChannelMessage(messageId, 1, factionId, playerId, "", Instant.now())
+    fun `test empty message string`() {
+        val factionId = MfFactionId(UUID.randomUUID())
+        val playerId = MfPlayerId(UUID.randomUUID())
 
-        // execute
-        repository.insert(message)
-        val result = repository.getMessage(messageId)
+        repository.insert(
+            MfChatChannelMessage(
+                Instant.now(),
+                playerId,
+                factionId,
+                MfFactionChatChannel.FACTION,
+                ""
+            )
+        )
 
-        // verify
-        assertNotNull(result)
-        assertEquals("", result.message)
+        val messages = repository.getChatChannelMessages(factionId)
+        assertEquals(1, messages.size)
+        assertEquals("", messages[0].message)
     }
 
     @Test
-    fun testVeryLongMessage() {
-        // prepare
-        val messageId = ChatChannelMessageId.generate()
-        val factionId = MfFactionId.generate()
-        val playerId = MfPlayerId("player-1")
-        val longMessage = "A".repeat(10000)
-        val message = ChatChannelMessage(messageId, 1, factionId, playerId, longMessage, Instant.now())
+    fun `test very long message`() {
+        val factionId = MfFactionId(UUID.randomUUID())
+        val playerId = MfPlayerId(UUID.randomUUID())
+        val longMessage = "x".repeat(10000)
 
-        // execute
-        repository.insert(message)
-        val result = repository.getMessage(messageId)
+        repository.insert(
+            MfChatChannelMessage(
+                Instant.now(),
+                playerId,
+                factionId,
+                MfFactionChatChannel.FACTION,
+                longMessage
+            )
+        )
 
-        // verify
-        assertNotNull(result)
-        assertEquals(10000, result.message.length)
+        val messages = repository.getChatChannelMessages(factionId)
+        assertEquals(1, messages.size)
+        assertEquals(10000, messages[0].message.length)
     }
 }
