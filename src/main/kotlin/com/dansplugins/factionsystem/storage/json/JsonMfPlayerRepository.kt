@@ -127,7 +127,7 @@ class JsonMfPlayerRepository(
                 // Replicate the power decrease formula from JooqMfPlayerRepository
                 // This uses powerAtLogout to calculate the correct power decay over time
                 val currentPower = kotlin.math.min(player.power, kotlin.math.min(player.powerAtLogout, maxPower))
-                
+
                 // Determine the current time by running the inverse formula
                 val powerRange = player.powerAtLogout - minPower
                 val normalizedPower = if (powerRange > 0) {
@@ -135,21 +135,21 @@ class JsonMfPlayerRepository(
                 } else {
                     0.0
                 }
-                
+
                 val currentTime = if (normalizedPower >= 0) {
                     (-(normalizedPower - 1)).pow(0.25) * hoursToReachMin
                 } else {
                     0.0
                 }
-                
+
                 // Add the time increment
                 val newTime = currentTime + timeIncrementHours
-                
+
                 // Run the formula normally on the new time to determine the new power value
                 val timeNormalized = newTime / hoursToReachMin
                 val newNormalizedPower = -(timeNormalized.pow(4)) + 1
                 val newPower = (newNormalizedPower * powerRange) + minPower
-                
+
                 val clampedPower = kotlin.math.max(minPower, kotlin.math.min(maxPower, newPower))
                 data.players[index] = player.copy(
                     power = clampedPower,

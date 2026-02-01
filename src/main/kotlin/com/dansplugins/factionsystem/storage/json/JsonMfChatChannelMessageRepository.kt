@@ -13,7 +13,7 @@ class JsonMfChatChannelMessageRepository(
 
     private val fileName = "chat_messages.json"
     private val gson: Gson = Gson()
-    
+
     // Maximum number of messages to keep per faction to prevent unbounded growth
     private val maxMessagesPerFaction = 1000
 
@@ -42,7 +42,7 @@ class JsonMfChatChannelMessageRepository(
     override fun insert(message: MfChatChannelMessage) {
         val data = loadData()
         data.messages.add(message)
-        
+
         // Limit messages per faction to prevent unbounded growth
         val factionId = message.factionId
         val factionMessages = data.messages.filter { it.factionId == factionId }
@@ -51,7 +51,7 @@ class JsonMfChatChannelMessageRepository(
             val toRemove = factionMessages.sortedBy { it.timestamp }.take(factionMessages.size - maxMessagesPerFaction)
             data.messages.removeAll(toRemove.toSet())
         }
-        
+
         saveData(data)
     }
 

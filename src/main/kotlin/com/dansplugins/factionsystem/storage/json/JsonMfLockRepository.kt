@@ -46,7 +46,7 @@ class JsonMfLockRepository(
 
     override fun getLockedBlock(worldId: UUID, x: Int, y: Int, z: Int): MfLockedBlock? {
         val data = loadData()
-        return data.locks.find { it.position.worldId == worldId && it.position.x == x && it.position.y == y && it.position.z == z }
+        return data.locks.find { it.block.worldId == worldId && it.block.x == x && it.block.y == y && it.block.z == z }
     }
 
     override fun getLockedBlocks(): List<MfLockedBlock> {
@@ -77,7 +77,7 @@ class JsonMfLockRepository(
 
     override fun delete(block: MfBlockPosition) {
         val data = loadData()
-        data.locks.removeIf { it.position.worldId == block.worldId && it.position.x == block.x && it.position.y == block.y && it.position.z == block.z }
+        data.locks.removeIf { it.block.worldId == block.worldId && it.block.x == block.x && it.block.y == block.y && it.block.z == block.z }
         saveData(data)
     }
 }

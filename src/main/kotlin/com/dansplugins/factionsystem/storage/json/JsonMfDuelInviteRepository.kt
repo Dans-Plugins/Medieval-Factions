@@ -38,7 +38,7 @@ class JsonMfDuelInviteRepository(
 
     override fun getInvite(inviter: MfPlayerId, invitee: MfPlayerId): MfDuelInvite? {
         val data = loadData()
-        return data.invites.find { it.inviter == inviter && it.invitee == invitee }
+        return data.invites.find { it.inviterId == inviter && it.inviteeId == invitee }
     }
 
     override fun getInvites(): List<MfDuelInvite> {
@@ -48,7 +48,7 @@ class JsonMfDuelInviteRepository(
 
     override fun upsert(invite: MfDuelInvite): MfDuelInvite {
         val data = loadData()
-        data.invites.removeIf { it.inviter == invite.inviter && it.invitee == invite.invitee }
+        data.invites.removeIf { it.inviterId == invite.inviterId && it.inviteeId == invite.inviteeId }
         data.invites.add(invite)
         saveData(data)
         return invite
@@ -56,7 +56,7 @@ class JsonMfDuelInviteRepository(
 
     override fun deleteInvite(inviter: MfPlayerId, invitee: MfPlayerId) {
         val data = loadData()
-        data.invites.removeIf { it.inviter == inviter && it.invitee == invitee }
+        data.invites.removeIf { it.inviterId == inviter && it.inviteeId == invitee }
         saveData(data)
     }
 }

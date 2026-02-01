@@ -45,7 +45,7 @@ class JsonMfLawRepository(
 
     override fun getLaw(factionId: MfFactionId, index: Int?): MfLaw? {
         val data = loadData()
-        val factionLaws = data.laws.filter { it.factionId == factionId }.sortedBy { it.index }
+        val factionLaws = data.laws.filter { it.factionId == factionId }.sortedBy { it.number }
         return if (index != null) {
             factionLaws.getOrNull(index)
         } else {
@@ -55,7 +55,7 @@ class JsonMfLawRepository(
 
     override fun getLaws(factionId: MfFactionId): List<MfLaw> {
         val data = loadData()
-        return data.laws.filter { it.factionId == factionId }.sortedBy { it.index }
+        return data.laws.filter { it.factionId == factionId }.sortedBy { it.number }
     }
 
     override fun upsert(law: MfLaw): MfLaw {
@@ -93,7 +93,7 @@ class JsonMfLawRepository(
         val data = loadData()
         val existingIndex = data.laws.indexOfFirst { it.id == law.id }
         if (existingIndex >= 0) {
-            val updated = law.copy(index = number, version = law.version + 1)
+            val updated = law.copy(number = number, version = law.version + 1)
             data.laws[existingIndex] = updated
             saveData(data)
         }
