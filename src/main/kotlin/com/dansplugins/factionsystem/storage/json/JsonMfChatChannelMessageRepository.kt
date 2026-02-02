@@ -5,6 +5,8 @@ import com.dansplugins.factionsystem.chat.MfChatChannelMessage
 import com.dansplugins.factionsystem.chat.MfChatChannelMessageRepository
 import com.dansplugins.factionsystem.faction.MfFactionId
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import java.time.Instant
 
 class JsonMfChatChannelMessageRepository(
     private val plugin: MedievalFactions,
@@ -12,7 +14,10 @@ class JsonMfChatChannelMessageRepository(
 ) : MfChatChannelMessageRepository {
 
     private val fileName = "chat_messages.json"
-    private val gson: Gson = Gson()
+    private val gson: Gson = GsonBuilder()
+        .setPrettyPrinting()
+        .registerTypeAdapter(Instant::class.java, InstantTypeAdapter())
+        .create()
 
     // Maximum number of messages to keep per faction to prevent unbounded growth
     private val maxMessagesPerFaction = 1000
