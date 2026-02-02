@@ -3,8 +3,6 @@ package com.dansplugins.factionsystem.storage.json
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
-import io.mockk.every
-import io.mockk.mockk
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -13,6 +11,8 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 import java.nio.file.Path
 import java.util.UUID
 import java.util.logging.Logger
@@ -28,9 +28,9 @@ class JsonMfPlayerRepositoryTest {
 
     @BeforeEach
     fun setup() {
-        plugin = mockk<MedievalFactions>(relaxed = true)
-        every { plugin.logger } returns Logger.getLogger("TestLogger")
-        every { plugin.dataFolder } returns tempDir.toFile()
+        plugin = mock(MedievalFactions::class.java)
+        `when`(plugin.logger).thenReturn(Logger.getLogger("TestLogger"))
+        `when`(plugin.dataFolder).thenReturn(tempDir.toFile())
         storageManager = JsonStorageManager(plugin, tempDir.toString())
         repository = JsonMfPlayerRepository(plugin, storageManager)
     }
@@ -42,7 +42,7 @@ class JsonMfPlayerRepositoryTest {
 
     @Test
     fun `test upsert creates new player`() {
-        val playerId = MfPlayerId(UUID.randomUUID())
+        val playerId = MfPlayerId(UUID.randomUUID().toString())
         val player = MfPlayer(playerId, 0, "TestPlayer", 10.0, 10.0, false, null)
 
         val result = repository.upsert(player)
@@ -55,7 +55,7 @@ class JsonMfPlayerRepositoryTest {
 
     @Test
     fun `test upsert updates existing player`() {
-        val playerId = MfPlayerId(UUID.randomUUID())
+        val playerId = MfPlayerId(UUID.randomUUID().toString())
         val player1 = MfPlayer(playerId, 0, "TestPlayer", 10.0, 10.0, false, null)
 
         repository.upsert(player1)
@@ -70,7 +70,7 @@ class JsonMfPlayerRepositoryTest {
 
     @Test
     fun `test getPlayer returns existing player`() {
-        val playerId = MfPlayerId(UUID.randomUUID())
+        val playerId = MfPlayerId(UUID.randomUUID().toString())
         val player = MfPlayer(playerId, 0, "TestPlayer", 10.0, 10.0, false, null)
 
         repository.upsert(player)
@@ -83,15 +83,15 @@ class JsonMfPlayerRepositoryTest {
 
     @Test
     fun `test getPlayer returns null for non-existent player`() {
-        val playerId = MfPlayerId(UUID.randomUUID())
+        val playerId = MfPlayerId(UUID.randomUUID().toString())
         val result = repository.getPlayer(playerId)
         assertNull(result)
     }
 
     @Test
     fun `test getPlayers returns all players`() {
-        val player1 = MfPlayer(MfPlayerId(UUID.randomUUID()), 0, "Player1", 10.0, 10.0, false, null)
-        val player2 = MfPlayer(MfPlayerId(UUID.randomUUID()), 0, "Player2", 15.0, 15.0, false, null)
+        val player1 = MfPlayer(MfPlayerId(UUID.randomUUID().toString()), 0, "Player1", 10.0, 10.0, false, null)
+        val player2 = MfPlayer(MfPlayerId(UUID.randomUUID().toString()), 0, "Player2", 15.0, 15.0, false, null)
 
         repository.upsert(player1)
         repository.upsert(player2)
@@ -111,7 +111,7 @@ class JsonMfPlayerRepositoryTest {
 
     @Test
     fun `test upsert with zero power`() {
-        val playerId = MfPlayerId(UUID.randomUUID())
+        val playerId = MfPlayerId(UUID.randomUUID().toString())
         val player = MfPlayer(playerId, 0, "TestPlayer", 0.0, 0.0, false, null)
 
         val result = repository.upsert(player)
@@ -122,7 +122,7 @@ class JsonMfPlayerRepositoryTest {
 
     @Test
     fun `test upsert with high power values`() {
-        val playerId = MfPlayerId(UUID.randomUUID())
+        val playerId = MfPlayerId(UUID.randomUUID().toString())
         val player = MfPlayer(playerId, 0, "TestPlayer", 1000.0, 1000.0, false, null)
 
         val result = repository.upsert(player)
@@ -132,7 +132,7 @@ class JsonMfPlayerRepositoryTest {
 
     @Test
     fun `test upsert with bypass enabled`() {
-        val playerId = MfPlayerId(UUID.randomUUID())
+        val playerId = MfPlayerId(UUID.randomUUID().toString())
         val player = MfPlayer(playerId, 0, "TestPlayer", 10.0, 10.0, true, null)
 
         val result = repository.upsert(player)
@@ -142,7 +142,7 @@ class JsonMfPlayerRepositoryTest {
 
     @Test
     fun `test multiple concurrent upserts`() {
-        val playerId = MfPlayerId(UUID.randomUUID())
+        val playerId = MfPlayerId(UUID.randomUUID().toString())
         val threads = (1..10).map { index ->
             Thread {
                 val player = MfPlayer(playerId, 0, "Player$index", index * 10.0, index * 10.0, false, null)

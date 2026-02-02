@@ -1,8 +1,6 @@
 package com.dansplugins.factionsystem.storage.json
 
 import com.dansplugins.factionsystem.MedievalFactions
-import io.mockk.every
-import io.mockk.mockk
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -12,6 +10,8 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 import java.io.File
 import java.nio.file.Path
 import java.util.logging.Logger
@@ -28,8 +28,8 @@ class JsonStorageManagerTest {
 
     @BeforeEach
     fun setup() {
-        plugin = mockk<MedievalFactions>(relaxed = true)
-        every { plugin.logger } returns Logger.getLogger("TestLogger")
+        plugin = mock(MedievalFactions::class.java)
+        `when`(plugin.logger).thenReturn(Logger.getLogger("TestLogger"))
         storageManager = JsonStorageManager(plugin, tempDir.toString())
     }
 
