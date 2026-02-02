@@ -466,6 +466,22 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Description:** Forcefully adds a player to a faction (admin command).  
 **Usage:** `/f addmember FactionName PlayerName`
 
+### `/faction migrate [type]` or `/f migrate [type]`
+**Permission:** `mf.migrate` (default: op)  
+**Description:** Migrates data between storage backends (database ↔ JSON).  
+**Usage:** 
+- `/f migrate toJson` - Migrate from database to JSON storage
+- `/f migrate toDatabase` - Migrate from JSON to database storage
+
+**Notes:** 
+- **Always backup your data before migrating!**
+- Migration runs asynchronously and may take several minutes for large datasets
+- After successful migration, you must:
+  1. Stop the server
+  2. Update `storage.type` in config.yml to match the new backend
+  3. Restart the server
+- See [Migration Guide](docs/MIGRATION_GUIDE.md) for detailed instructions
+
 ---
 
 ## Permission Groups
@@ -481,6 +497,7 @@ The `mf.admin` permission grants access to all admin commands including:
 - `mf.power.set` - Set player power
 - `mf.admin.create` - Create leaderless factions
 - `mf.admin.setleader` - Set faction leaders
+- `mf.migrate` - Migrate between storage backends
 
 ## Notes
 

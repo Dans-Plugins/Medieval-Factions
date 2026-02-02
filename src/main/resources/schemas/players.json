@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MfPlayers",
+  "description": "Schema for Medieval Factions players data",
+  "type": "object",
+  "properties": {
+    "players": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/player"
+      }
+    }
+  },
+  "required": ["players"],
+  "definitions": {
+    "player": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique player identifier (UUID)"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Version for optimistic locking"
+        },
+        "name": {
+          "type": ["string", "null"],
+          "description": "Player name"
+        },
+        "power": {
+          "type": "number",
+          "description": "Current player power"
+        },
+        "powerAtLogout": {
+          "type": "number",
+          "description": "Player power at last logout"
+        },
+        "isBypassEnabled": {
+          "type": "boolean",
+          "description": "Whether bypass mode is enabled"
+        },
+        "chatChannel": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": ["FACTION", "VASSALS", "ALLIES"]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Current chat channel"
+        }
+      },
+      "required": ["id", "version", "power", "powerAtLogout", "isBypassEnabled"],
+      "additionalProperties": false
+    }
+  }
+}
