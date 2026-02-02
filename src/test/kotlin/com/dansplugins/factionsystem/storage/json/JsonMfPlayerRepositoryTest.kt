@@ -161,7 +161,7 @@ class JsonMfPlayerRepositoryTest {
 
     @Test
     fun `test player with special characters in name`() {
-        val playerId = MfPlayerId(UUID.randomUUID())
+        val playerId = MfPlayerId(UUID.randomUUID().toString())
         val player = MfPlayer(playerId, 0, "Player™_😀_Special", 10.0, 10.0, false, null)
 
         val result = repository.upsert(player)
