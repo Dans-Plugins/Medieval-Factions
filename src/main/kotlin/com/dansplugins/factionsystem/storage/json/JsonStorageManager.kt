@@ -3,6 +3,9 @@ package com.dansplugins.factionsystem.storage.json
 import com.dansplugins.factionsystem.MedievalFactions
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.TypeAdapter
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonWriter
 import org.everit.json.schema.Schema
 import org.everit.json.schema.ValidationException
 import org.everit.json.schema.loader.SchemaLoader
@@ -10,6 +13,7 @@ import org.json.JSONObject
 import org.json.JSONTokener
 import java.io.File
 import java.io.FileWriter
+import java.time.Instant
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
@@ -23,6 +27,7 @@ class JsonStorageManager(
 ) {
     private val gson: Gson = GsonBuilder()
         .setPrettyPrinting()
+        .registerTypeAdapter(Instant::class.java, InstantTypeAdapter())
         .create()
 
     private val storageDir: File = File(storagePath).apply {
@@ -207,5 +212,23 @@ class JsonStorageManager(
 
         val schemaJson = JSONObject(JSONTokener(schemaStream))
         return SchemaLoader.load(schemaJson)
+    }
+}
+
+/**
+ * Custom TypeAdapter for java.time.Instant to handle JSON serialization/deserialization
+ */
+class InstantTypeAdapter : TypeAdapter<Instant>() {
+    override fun write(out: JsonWriter, value: Instant?) {
+        if (value == null) {
+            out.nullValue()
+        } else {
+            out.value(value.toString())
+        }
+    }
+
+    override fun read(`in`: JsonReader): Instant? {
+        val value = `in`.nextString()
+        return if (value == null || value == "null") null else Instant.parse(value)
     }
 }
