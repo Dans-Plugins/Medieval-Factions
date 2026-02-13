@@ -81,7 +81,7 @@ Most SQL clients support H2 via JDBC. In your SQL client:
 
 ## Querying in a Docker Container
 
-When running the Minecraft server in a Docker container (using the provided `compose.yml`), the database file is inside the container but accessible through the volume mount.
+When running the Minecraft server in a Docker container (using the provided `compose.yml` or a project like [open-mc-server-infrastructure](https://github.com/dmccoystephenson/open-mc-server-infrastructure)), the database file is inside the container but accessible through the volume mount.
 
 ### Option 1: Query from the Host via the Volume Mount
 
