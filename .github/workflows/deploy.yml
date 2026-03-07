@@ -47,6 +47,13 @@ jobs:
           distribution: zulu
           java-version: '17'
 
+      - name: Clone and install Ponder to Maven local
+        run: |
+          git clone --depth 1 --branch 2.0.0 https://github.com/Dans-Plugins/Ponder.git /tmp/Ponder
+          cd /tmp/Ponder
+          chmod +x gradlew
+          ./gradlew publishToMavenLocal
+
       - name: Build plugin JAR
         run: ./gradlew shadowJar
 
