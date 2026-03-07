@@ -1,0 +1,116 @@
+# Workflow to automatically build the Medieval-Factions plugin JAR and deploy it
+# to a running omcsi (open-mc-server-infrastructure) instance.
+#
+# ─── Setup ───────────────────────────────────────────────────────────────────
+# Required GitHub repository secrets:
+#   OMCSI_DEPLOY_URL   – Base URL of your omcsi instance,
+#                        e.g. https://mc.example.com:8092
+#   OMCSI_DEPLOY_TOKEN – The value set as DEPLOY_AUTH_TOKEN in your omcsi .env
+#
+# Required GitHub repository variables:
+#   PLUGIN_JAR_NAME    – Filename of the plugin JAR on the server,
+#                        e.g. MedievalFactions.jar  (the file that will be replaced)
+#
+# Optional GitHub repository variables:
+#   DEPLOY_BRANCH      – Branch that triggers a deployment (default: main)
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: Deploy Plugin to omcsi
+
+# Trigger on pushes (branch-gated via the job condition) and on manual runs
+# via the "Run workflow" button in the Actions tab.
+# Note: ${{ vars.* }} expressions are NOT evaluated inside the `on:` event
+# filter – only inside job steps and conditions.
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy Plugin
+    # Run on manual dispatch (any branch) or when the pushed branch matches
+    # DEPLOY_BRANCH (default: main).
+    if: ${{ github.event_name == 'workflow_dispatch' || github.ref_name == (vars.DEPLOY_BRANCH || 'main') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Build plugin JAR
+        run: ./gradlew build
+
+      - name: Locate built JAR
+        id: locate-jar
+        run: |
+          # Use find to reliably locate the shadow JAR, excluding any
+          # *-sources / *-javadoc JARs.
+          JAR_FILE=$(find build/libs -maxdepth 1 -name '*.jar' \
+            ! -name '*-sources.jar' \
+            ! -name '*-javadoc.jar' \
+            -print -quit)
+          if [ -z "${JAR_FILE}" ]; then
+            echo "❌ No JAR found in build/libs/"
+            exit 1
+          fi
+          echo "jar_file=${JAR_FILE}" >> "$GITHUB_OUTPUT"
+          echo "✅ Found JAR: ${JAR_FILE}"
+
+      - name: Deploy plugin to omcsi
+        env:
+          DEPLOY_TOKEN: ${{ secrets.OMCSI_DEPLOY_TOKEN }}
+          DEPLOY_URL: ${{ secrets.OMCSI_DEPLOY_URL }}
+          JAR_FILE: ${{ steps.locate-jar.outputs.jar_file }}
+        run: |
+          PLUGIN_JAR_NAME="${{ vars.PLUGIN_JAR_NAME }}"
+          if [ -z "${PLUGIN_JAR_NAME}" ]; then
+            echo "❌ PLUGIN_JAR_NAME variable is not set"
+            exit 1
+          fi
+          if [ -z "${DEPLOY_URL}" ]; then
+            echo "❌ OMCSI_DEPLOY_URL secret is not set"
+            exit 1
+          fi
+          if [ -z "${DEPLOY_TOKEN}" ]; then
+            echo "❌ OMCSI_DEPLOY_TOKEN secret is not set"
+            exit 1
+          fi
+
+          RESPONSE_BODY=$(mktemp)
+          trap 'rm -f "${RESPONSE_BODY}"' EXIT
+          HTTP_STATUS=$(curl --silent --write-out "%{http_code}" \
+            --output "${RESPONSE_BODY}" \
+            --request POST \
+            --header "Authorization: Bearer ${DEPLOY_TOKEN}" \
+            --form "pluginName=${PLUGIN_JAR_NAME}" \
+            --form "file=@${JAR_FILE}" \
+            --form "branch=${{ github.ref_name }}" \
+            --form "repoUrl=${{ github.server_url }}/${{ github.repository }}" \
+            "${DEPLOY_URL}/api/plugins/deploy") || {
+            echo "❌ curl failed – network error or invalid URL"
+            exit 1
+          }
+
+          if [ "${HTTP_STATUS}" -eq 200 ]; then
+            echo "✅ Plugin deployed successfully (HTTP ${HTTP_STATUS})"
+          elif [ "${HTTP_STATUS}" -eq 401 ]; then
+            echo "❌ Authentication failed – check OMCSI_DEPLOY_TOKEN (HTTP ${HTTP_STATUS})"
+            echo "Response body:"; cat "${RESPONSE_BODY}"
+            exit 1
+          elif [ "${HTTP_STATUS}" -eq 400 ]; then
+            echo "❌ Bad request – check PLUGIN_JAR_NAME and the uploaded JAR (HTTP ${HTTP_STATUS})"
+            echo "Response body:"; cat "${RESPONSE_BODY}"
+            exit 1
+          else
+            echo "❌ Deployment failed (HTTP ${HTTP_STATUS})"
+            echo "Response body:"; cat "${RESPONSE_BODY}"
+            exit 1
+          fi
