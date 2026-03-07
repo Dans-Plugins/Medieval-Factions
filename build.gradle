@@ -20,6 +20,7 @@ if (propertiesFile.exists()) {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven { url 'https://hub.spigotmc.org/nexus/content/repositories/public/' }
     maven { url 'https://oss.sonatype.org/content/groups/public/' }
