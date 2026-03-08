@@ -26,10 +26,15 @@ repositories {
     maven { url 'https://oss.sonatype.org/content/groups/public/' }
     maven { url 'https://repo.mikeprimm.com/' }
     maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
-    maven { url 'https://jitpack.io' }
     maven { url 'https://repo.maven.apache.org/maven2/' }
     maven { url 'https://repo.rpkit.com/repository/maven-public/' }
     maven { url 'https://repo.dansplugins.com/repository/maven-public/' }
+    maven {
+        url 'https://jitpack.io'
+        content {
+            includeGroupByRegex 'com\\.github\\..*'
+        }
+    }
 }
 
 configurations {
