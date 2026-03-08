@@ -54,8 +54,21 @@ jobs:
           chmod +x gradlew
           ./gradlew publishToMavenLocal
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
       - name: Build plugin JAR
-        run: ./gradlew shadowJar
+        run: |
+          attempts=0
+          until ./gradlew shadowJar; do
+            attempts=$((attempts + 1))
+            if [ "$attempts" -ge 3 ]; then
+              echo "❌ Build failed after $attempts attempts"
+              exit 1
+            fi
+            echo "⚠️ Build attempt $attempts failed – retrying in 30s..."
+            sleep 30
+          done
 
       - name: Locate built JAR
         id: locate-jar
