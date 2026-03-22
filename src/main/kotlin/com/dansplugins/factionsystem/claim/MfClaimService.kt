@@ -95,6 +95,28 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
         return relationshipService.getFactionsAtWarWith(playerFaction.id).contains(claimFactionId)
     }
 
+    /**
+     * Checks if a specific block action is allowed in enemy territory during wartime,
+     * based on a configurable list of allowed block types.
+     *
+     * @param playerId The ID of the player attempting the action
+     * @param claim The claimed chunk where the player is attempting the action
+     * @param blockTypeName The name of the block's Material type
+     * @param configPath The config path containing the list of allowed block type names
+     * @return true if the action should be allowed, false otherwise
+     */
+    fun isWartimeBlockActionAllowed(playerId: MfPlayerId, claim: MfClaimedChunk, blockTypeName: String, configPath: String): Boolean {
+        val allowedBlocks = plugin.config.getStringList(configPath)
+        if (!allowedBlocks.contains(blockTypeName)) return false
+
+        val factionService = plugin.services.factionService
+        val playerFaction = factionService.getFaction(playerId) ?: return false
+        val claimFactionId = claim.factionId
+
+        val relationshipService = plugin.services.factionRelationshipService
+        return relationshipService.getFactionsAtWarWith(playerFaction.id).contains(claimFactionId)
+    }
+
     // Checks whether a set of chunks has at least one chunk that is adjacent to an existing claim. Works across multiple worlds.
     fun isClaimAdjacent(id: MfFactionId, vararg chunks: MfChunkPosition): Boolean {
         return chunks.any { chunk ->

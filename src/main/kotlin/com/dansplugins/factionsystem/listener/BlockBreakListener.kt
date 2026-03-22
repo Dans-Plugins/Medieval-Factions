@@ -58,6 +58,8 @@ class BlockBreakListener(private val plugin: MedievalFactions) : Listener {
         if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
             if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
                 event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
+            } else if (claimService.isWartimeBlockActionAllowed(mfPlayer.id, claim, event.block.type.name, "war.items.breakable")) {
+                // Allow wartime block break for blocks in the breakable list
             } else {
                 event.isCancelled = true
                 event.player.sendMessage("$RED${plugin.language["CannotBreakBlockInFactionTerritory", claimFaction.name]}")

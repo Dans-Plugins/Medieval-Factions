@@ -368,6 +368,79 @@ class PlayerInteractListenerTest {
     }
 
     @Test
+    fun onPlayerInteract_WartimeInteractableBlock_ShouldAllowInteraction() {
+        // Arrange
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
+
+        val blockData = mock(org.bukkit.block.data.BlockData::class.java)
+        `when`(block.blockData).thenReturn(blockData)
+
+        val mfPlayer = mock(MfPlayer::class.java)
+        val playerId = MfPlayerId(player.uniqueId.toString())
+        val claim = mock(MfClaimedChunk::class.java)
+
+        `when`(event.clickedBlock).thenReturn(block)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(mfPlayer.id).thenReturn(playerId)
+        `when`(mfPlayer.isBypassEnabled).thenReturn(false)
+        `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
+        `when`(claim.factionId).thenReturn(claimFactionId)
+        `when`(factionService.getFaction(claimFactionId)).thenReturn(mock(MfFaction::class.java))
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
+
+        `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, false)).thenReturn(false)
+        `when`(claimService.isWartimeBlockActionAllowed(playerId, claim, block.type.name, "war.items.interactable")).thenReturn(true)
+
+        `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
+
+        // Act
+        uut.onPlayerInteract(event)
+
+        // Assert - event should NOT be cancelled because block is in interactable list during war
+        verifyEventNotCancelled()
+    }
+
+    @Test
+    fun onPlayerInteract_WartimeNonInteractableBlock_ShouldBlockInteraction() {
+        // Arrange
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
+
+        val blockData = mock(org.bukkit.block.data.BlockData::class.java)
+        `when`(block.blockData).thenReturn(blockData)
+
+        val mfPlayer = mock(MfPlayer::class.java)
+        val playerId = MfPlayerId(player.uniqueId.toString())
+        val claim = mock(MfClaimedChunk::class.java)
+
+        `when`(event.clickedBlock).thenReturn(block)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(mfPlayer.id).thenReturn(playerId)
+        `when`(mfPlayer.isBypassEnabled).thenReturn(false)
+        `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
+        `when`(claim.factionId).thenReturn(claimFactionId)
+        `when`(factionService.getFaction(claimFactionId)).thenReturn(mock(MfFaction::class.java))
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
+
+        `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, false)).thenReturn(false)
+        `when`(claimService.isWartimeBlockActionAllowed(playerId, claim, block.type.name, "war.items.interactable")).thenReturn(false)
+
+        `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
+
+        // Act
+        uut.onPlayerInteract(event)
+
+        // Assert - event should be cancelled because block is NOT in interactable list
+        verifyEventCancelled()
+        verifyPlayerNotified()
+    }
+
+    @Test
     fun onPlayerInteract_BlockInWilderness_WildernessPreventInteractionSetToTrue_ShouldCancelAndInformPlayer() {
         // Arrange
         val block = fixture.block

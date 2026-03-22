@@ -262,5 +262,10 @@ gates:
     - *beds
     - *signs
     - *buttons
+war:
+  items:
+    placeable: []
+    breakable: []
+    interactable: []
 dev:
   enableDevCommands: false

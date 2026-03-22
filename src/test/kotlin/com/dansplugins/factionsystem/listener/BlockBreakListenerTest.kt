@@ -154,6 +154,7 @@ class BlockBreakListenerTest {
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
 
         `when`(claimService.isInteractionAllowed(mfPlayer.id, claim)).thenReturn(false)
+        `when`(claimService.isWartimeBlockActionAllowed(mfPlayer.id, claim, block.type.name, "war.items.breakable")).thenReturn(false)
 
         // Act
         uut.onBlockBreak(event)
@@ -161,6 +162,33 @@ class BlockBreakListenerTest {
         // Assert
         verify(event).isCancelled = true
         verify(player).sendMessage("${ChatColor.RED}Cannot break block in faction territory")
+    }
+
+    @Test
+    fun onBlockBreak_Claimed_InteractionNotAllowed_WartimeBreakableAllowed_ShouldNotCancel() {
+        // Arrange
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
+
+        val claim = mock(com.dansplugins.factionsystem.claim.MfClaimedChunk::class.java)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
+
+        val faction = mock(com.dansplugins.factionsystem.faction.MfFaction::class.java)
+        `when`(factionService.getFaction(claim.factionId)).thenReturn(faction)
+        `when`(faction.name).thenReturn("test")
+
+        val mfPlayer = mock(com.dansplugins.factionsystem.player.MfPlayer::class.java)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+
+        `when`(claimService.isInteractionAllowed(mfPlayer.id, claim)).thenReturn(false)
+        `when`(claimService.isWartimeBlockActionAllowed(mfPlayer.id, claim, block.type.name, "war.items.breakable")).thenReturn(true)
+
+        // Act
+        uut.onBlockBreak(event)
+
+        // Assert
+        verify(event, never()).isCancelled = true
     }
 
     // Helper functions

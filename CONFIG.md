@@ -14,6 +14,7 @@ This document provides detailed information about all configuration options avai
 - [Duels](#duels)
 - [Dynmap Integration](#dynmap-integration)
 - [Gates](#gates)
+- [War Settings](#war-settings)
 - [Developer Options](#developer-options)
 
 ## General Settings
@@ -514,6 +515,30 @@ Gates are structures that can be toggled open and closed by faction members.
 **Description:** List of block types that cannot be used in gates (typically gravity-affected or fragile blocks).  
 **Examples:** `SAND`, `GRAVEL`, `TORCH`, `LADDER`, etc.
 
+## War Settings
+
+These settings provide granular control over which blocks can be placed, broken, or interacted with in enemy faction territory during wartime.
+
+### `war.items.placeable`
+**Type:** List of Strings (Material names)  
+**Default:** `[]` (empty list)  
+**Description:** List of block types that can be placed in enemy faction territory during war. Block type names must match Bukkit Material names (e.g., `SCAFFOLDING`, `LADDER`).  
+**Note:** This works alongside `factions.laddersPlaceableInEnemyFactionTerritory`, which specifically controls ladder placement.  
+**Example:** `[SCAFFOLDING, LADDER, COBBLESTONE]`
+
+### `war.items.breakable`
+**Type:** List of Strings (Material names)  
+**Default:** `[]` (empty list)  
+**Description:** List of block types that can be broken in enemy faction territory during war. Block type names must match Bukkit Material names.  
+**Note:** This provides more granular control compared to `pvp.enableWartimeBlockDestruction`, which allows breaking ALL blocks.  
+**Example:** `[SCAFFOLDING, LADDER]`
+
+### `war.items.interactable`
+**Type:** List of Strings (Material names)  
+**Default:** `[]` (empty list)  
+**Description:** List of block types that can be interacted with in enemy faction territory during war (e.g., opening doors, pressing buttons, using fence gates).  
+**Example:** `[OAK_DOOR, SPRUCE_DOOR, OAK_FENCE_GATE, STONE_BUTTON, OAK_BUTTON, LEVER]`
+
 ## Developer Options
 
 ### `dev.enableDevCommands`
@@ -570,4 +595,9 @@ factions.vassalPowerContributionMultiplier: 0.75
 pvp.warRequiredForPlayersOfDifferentFactions: true
 factions.allowNeutrality: true
 duels.duration: PT5M
+war:
+  items:
+    placeable: [LADDER, SCAFFOLDING]
+    breakable: [LADDER, SCAFFOLDING]
+    interactable: [OAK_DOOR, SPRUCE_DOOR, BIRCH_DOOR, JUNGLE_DOOR, ACACIA_DOOR, DARK_OAK_DOOR, OAK_FENCE_GATE, SPRUCE_FENCE_GATE, BIRCH_FENCE_GATE, JUNGLE_FENCE_GATE, ACACIA_FENCE_GATE, DARK_OAK_FENCE_GATE, STONE_BUTTON, OAK_BUTTON]
 ```
