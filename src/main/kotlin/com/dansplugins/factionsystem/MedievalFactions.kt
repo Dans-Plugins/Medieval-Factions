@@ -1,5 +1,6 @@
 package com.dansplugins.factionsystem
 
+import com.dansplugins.factionsystem.approval.MfApprovalRequestService
 import com.dansplugins.factionsystem.chat.JooqMfChatChannelMessageRepository
 import com.dansplugins.factionsystem.chat.MfChatChannelMessageRepository
 import com.dansplugins.factionsystem.chat.MfChatService
@@ -216,6 +217,7 @@ class MedievalFactions : JavaPlugin() {
         val duelService = MfDuelService(this, duelRepository, duelInviteRepository)
         val potionService = MfPotionService(this)
         val teleportService = MfTeleportService(this)
+        val approvalRequestService = MfApprovalRequestService()
 
         services = Services(
             playerService,
@@ -231,7 +233,8 @@ class MedievalFactions : JavaPlugin() {
             duelService,
             potionService,
             teleportService,
-            mapService
+            mapService,
+            approvalRequestService
         )
         setupRpkLockService()
 
