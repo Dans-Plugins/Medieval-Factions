@@ -86,13 +86,7 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
     fun isWartimeLadderPlacementAllowed(playerId: MfPlayerId, claim: MfClaimedChunk, isLadder: Boolean): Boolean {
         if (!isLadder) return false
         if (!plugin.config.getBoolean("factions.laddersPlaceableInEnemyFactionTerritory")) return false
-
-        val factionService = plugin.services.factionService
-        val playerFaction = factionService.getFaction(playerId) ?: return false
-        val claimFactionId = claim.factionId
-
-        val relationshipService = plugin.services.factionRelationshipService
-        return relationshipService.getFactionsAtWarWith(playerFaction.id).contains(claimFactionId)
+        return isAtWarWith(playerId, claim.factionId)
     }
 
     /**
@@ -108,11 +102,12 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
     fun isWartimeBlockActionAllowed(playerId: MfPlayerId, claim: MfClaimedChunk, blockTypeName: String, configPath: String): Boolean {
         val allowedBlocks = plugin.config.getStringList(configPath)
         if (!allowedBlocks.contains(blockTypeName)) return false
+        return isAtWarWith(playerId, claim.factionId)
+    }
 
+    private fun isAtWarWith(playerId: MfPlayerId, claimFactionId: MfFactionId): Boolean {
         val factionService = plugin.services.factionService
         val playerFaction = factionService.getFaction(playerId) ?: return false
-        val claimFactionId = claim.factionId
-
         val relationshipService = plugin.services.factionRelationshipService
         return relationshipService.getFactionsAtWarWith(playerFaction.id).contains(claimFactionId)
     }

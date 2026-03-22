@@ -60,7 +60,7 @@ class BlockPlaceListener(private val plugin: MedievalFactions) : Listener {
                 event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
             } else if (playerFaction != null && relationshipService.getFactionsAtWarWith(playerFaction.id).contains(claimFaction.id)) {
                 val isLadderAllowed = event.block.type == Material.LADDER && plugin.config.getBoolean("factions.laddersPlaceableInEnemyFactionTerritory")
-                val isInPlaceableList = plugin.config.getStringList("war.items.placeable").contains(event.block.type.name)
+                val isInPlaceableList = claimService.isWartimeBlockActionAllowed(mfPlayer.id, claim, event.block.type.name, "war.items.placeable")
                 if (!isLadderAllowed && !isInPlaceableList) {
                     event.isCancelled = true
                     event.player.sendMessage("$RED${plugin.language["CannotPlaceBlockInFactionTerritory", claimFaction.name]}")
