@@ -22,6 +22,7 @@ import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.block.data.BlockData
 import org.bukkit.block.data.type.Door
+import org.bukkit.block.data.type.Gate
 import org.bukkit.block.data.type.TrapDoor
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
@@ -93,6 +94,21 @@ class PlayerInteractListenerTest {
         uut.onPlayerInteract(fixture.event)
 
         // Assert - event should NOT be cancelled because trapdoors are allowed
+        verifyEventNotCancelled()
+    }
+
+    @Test
+    fun onPlayerInteract_FenceGateWithNonMembersCanInteractWithDoorsEnabled_ShouldAllowInteraction() {
+        // Arrange
+        mockBlockData<Gate>()
+        setupConfigForDoorInteraction(enabled = true)
+        setupPlayerMocks(fixture.player)
+        setupClaimAndFaction(fixture.block)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - event should NOT be cancelled because fence gates are allowed
         verifyEventNotCancelled()
     }
 

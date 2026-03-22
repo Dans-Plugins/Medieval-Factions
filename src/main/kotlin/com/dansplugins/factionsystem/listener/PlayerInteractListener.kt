@@ -30,6 +30,7 @@ import org.bukkit.block.DoubleChest
 import org.bukkit.block.data.Bisected
 import org.bukkit.block.data.Bisected.Half.BOTTOM
 import org.bukkit.block.data.type.Door
+import org.bukkit.block.data.type.Gate
 import org.bukkit.block.data.type.TrapDoor
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -154,9 +155,9 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             }
         }
 
-        // Handle door/trapdoor special case
+        // Handle door/trapdoor/fence gate special case
         if (plugin.config.getBoolean("factions.nonMembersCanInteractWithDoors")) {
-            if (clickedBlock.blockData is Door || clickedBlock.blockData is TrapDoor) {
+            if (clickedBlock.blockData is Door || clickedBlock.blockData is TrapDoor || clickedBlock.blockData is Gate) {
                 return
             }
         }

@@ -218,7 +218,7 @@ Controls player vs player combat mechanics.
 ### `factions.nonMembersCanInteractWithDoors`
 **Type:** Boolean  
 **Default:** `false`  
-**Description:** When `true`, non-faction members can open/close doors in faction territory.
+**Description:** When `true`, non-faction members can open/close doors, trapdoors, and fence gates in faction territory.
 
 ### `factions.maxClaimRadius`
 **Type:** Integer  
