@@ -43,7 +43,7 @@ class MfDpcApiService(private val plugin: MedievalFactions) {
             obj.addProperty("memberCount", faction.members.size)
             obj.addProperty("description", faction.description)
             if (shareServerIp) {
-                obj.addProperty("serverIp", plugin.server.ip.ifEmpty { plugin.server.motd })
+                obj.addProperty("serverIp", plugin.server.ip.ifEmpty { plugin.server.port.toString() })
             }
             if (discordLink.isNotEmpty()) {
                 obj.addProperty("discordLink", discordLink)

@@ -13,6 +13,13 @@ class PlayerJoinListener(private val plugin: MedievalFactions) : Listener {
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
+        if (event.player.isOp &&
+            !plugin.config.getBoolean("dpc-api.enabled") &&
+            plugin.config.getBoolean("dpc-api.login-reminder")
+        ) {
+            event.player.sendMessage("$YELLOW${plugin.language["DpcLoginReminder"]}")
+        }
+
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
@@ -47,13 +54,6 @@ class PlayerJoinListener(private val plugin: MedievalFactions) : Listener {
                         }
                         if (plugin.config.getBoolean("factions.actionBarTerritoryIndicator")) {
                             event.player.spigot().sendMessage(ACTION_BAR, *TextComponent.fromLegacyText(title))
-                        }
-
-                        if (event.player.isOp &&
-                            !plugin.config.getBoolean("dpc-api.enabled") &&
-                            plugin.config.getBoolean("dpc-api.login-reminder")
-                        ) {
-                            event.player.sendMessage("$YELLOW${plugin.language["DpcLoginReminder"]}")
                         }
                     }
                 )
