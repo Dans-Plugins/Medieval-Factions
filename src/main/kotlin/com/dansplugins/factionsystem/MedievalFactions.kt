@@ -19,6 +19,7 @@ import com.dansplugins.factionsystem.duel.MfDuelId
 import com.dansplugins.factionsystem.duel.MfDuelInviteRepository
 import com.dansplugins.factionsystem.duel.MfDuelRepository
 import com.dansplugins.factionsystem.duel.MfDuelService
+import com.dansplugins.factionsystem.dpc.MfDpcApiService
 import com.dansplugins.factionsystem.faction.JooqMfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionService
@@ -292,6 +293,26 @@ class MedievalFactions : JavaPlugin() {
                 config.getBoolean("factions.allowNeutrality").toString()
             }
         )
+        metrics.addCustomChart(
+            SimplePie("dpc_api_opt_in") {
+                config.getBoolean("dpc-api.enabled").toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("dpc_api_login_reminder") {
+                config.getBoolean("dpc-api.login-reminder").toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("dpc_api_share_server_ip") {
+                config.getBoolean("dpc-api.share-server-ip").toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("dpc_api_discord_link_set") {
+                (config.getString("dpc-api.discord-link")?.isNotEmpty() == true).toString()
+            }
+        )
 
         if (config.getBoolean("migrateMf4")) {
             migrator.migrate()
@@ -471,6 +492,9 @@ class MedievalFactions : JavaPlugin() {
                 }
             }, 5L, 20L)
         }
+
+        val dpcApiService = MfDpcApiService(this)
+        server.scheduler.runTaskTimerAsynchronously(this, Runnable { dpcApiService.syncFactions() }, 12000L, 12000L)
     }
 
     internal fun onPowerCycle(

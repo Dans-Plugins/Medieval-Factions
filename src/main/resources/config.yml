@@ -262,5 +262,12 @@ gates:
     - *beds
     - *signs
     - *buttons
+dpc-api:
+  enabled: false
+  url: "https://dansplugins.com"
+  key: ""
+  login-reminder: true
+  share-server-ip: false
+  discord-link: ""
 dev:
   enableDevCommands: false

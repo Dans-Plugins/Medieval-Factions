@@ -524,6 +524,44 @@ Gates are structures that can be toggled open and closed by faction members.
 
 ---
 
+## DPC Community API
+
+Settings for the DPC (Dans Plugins Community) API integration.
+When enabled, the plugin periodically shares faction data with the DPC community website ([dansplugins.com](https://dansplugins.com)), allowing players and server owners to browse factions across the community.
+This integration is **strictly opt-in**.
+
+### `dpc-api.enabled`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** Whether this server is opted in to sharing faction data with the DPC community. When `true`, the plugin will periodically push faction data to the DPC API.
+
+### `dpc-api.url`
+**Type:** String  
+**Default:** `"https://dansplugins.com"`  
+**Description:** The base URL of the DPC API.
+
+### `dpc-api.key`
+**Type:** String  
+**Default:** `""`  
+**Description:** The API key issued by DPC for authentication. Required for faction data to be submitted successfully.
+
+### `dpc-api.login-reminder`
+**Type:** Boolean  
+**Default:** `true`  
+**Description:** Whether to show a chat reminder to operators on login when the DPC API is not yet enabled. Set to `false` to suppress the reminder.
+
+### `dpc-api.share-server-ip`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** Whether to include the server IP address in the faction data sent to DPC. Enabling this allows your server to be advertised on the DPC website alongside your factions.
+
+### `dpc-api.discord-link`
+**Type:** String  
+**Default:** `""`  
+**Description:** An optional Discord invite link to display on the DPC website alongside your faction data. Leave empty to omit.
+
+---
+
 ## Configuration Best Practices
 
 1. **Backup First:** Always backup your config before making changes.
