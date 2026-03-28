@@ -2,13 +2,11 @@ package com.dansplugins.factionsystem.command.faction.dpc
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.TestUtils
-import com.dansplugins.factionsystem.dpc.MfDpcApiService
 import com.dansplugins.factionsystem.lang.Language
 import com.dansplugins.factionsystem.service.Services
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.Server
 import org.bukkit.configuration.file.FileConfiguration
-import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitScheduler
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -17,7 +15,6 @@ import org.junit.jupiter.api.TestInstance
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
-import java.util.UUID
 import java.util.logging.Logger
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -28,7 +25,6 @@ class MfFactionDpcCommandTest {
     private lateinit var plugin: MedievalFactions
     private lateinit var language: Language
     private lateinit var config: FileConfiguration
-    private lateinit var dpcApiService: MfDpcApiService
     private lateinit var uut: MfFactionDpcCommand
 
     @BeforeEach
@@ -40,7 +36,6 @@ class MfFactionDpcCommandTest {
         mockLogger()
         mockConfig()
         mockServices()
-        mockDpcApiService()
         uut = MfFactionDpcCommand(plugin)
     }
 
@@ -216,188 +211,11 @@ class MfFactionDpcCommandTest {
         verify(sender).sendMessage("${ChatColor.RED}Usage message")
     }
 
-    @Test
-    fun testOnCommand_registerRequiresPlayer() {
-        val sender = fixture.sender
-        val command = fixture.command
-        `when`(sender.hasPermission("mf.dpc")).thenReturn(true)
-        `when`(language["CommandFactionDpcPlayerOnly"]).thenReturn("Player only")
-
-        val result = uut.onCommand(sender, command, "label", arrayOf("register", "user", "pass"))
-
-        assertTrue(result)
-        verify(sender).sendMessage("${ChatColor.RED}Player only")
-    }
-
-    @Test
-    fun testOnCommand_loginRequiresPlayer() {
-        val sender = fixture.sender
-        val command = fixture.command
-        `when`(sender.hasPermission("mf.dpc")).thenReturn(true)
-        `when`(language["CommandFactionDpcPlayerOnly"]).thenReturn("Player only")
-
-        val result = uut.onCommand(sender, command, "label", arrayOf("login", "user", "pass"))
-
-        assertTrue(result)
-        verify(sender).sendMessage("${ChatColor.RED}Player only")
-    }
-
-    @Test
-    fun testOnCommand_registerMissingArgs() {
-        val player = mock(Player::class.java)
-        val command = fixture.command
-        `when`(player.hasPermission("mf.dpc")).thenReturn(true)
-        `when`(language["CommandFactionDpcRegisterUsage"]).thenReturn("Register usage")
-
-        val result = uut.onCommand(player, command, "label", arrayOf("register"))
-
-        assertTrue(result)
-        verify(player).sendMessage("${ChatColor.RED}Register usage")
-    }
-
-    @Test
-    fun testOnCommand_loginMissingArgs() {
-        val player = mock(Player::class.java)
-        val command = fixture.command
-        `when`(player.hasPermission("mf.dpc")).thenReturn(true)
-        `when`(language["CommandFactionDpcLoginUsage"]).thenReturn("Login usage")
-
-        val result = uut.onCommand(player, command, "label", arrayOf("login"))
-
-        assertTrue(result)
-        verify(player).sendMessage("${ChatColor.RED}Login usage")
-    }
-
-    @Test
-    fun testOnCommand_profileRequiresPlayer() {
-        val sender = fixture.sender
-        val command = fixture.command
-        `when`(sender.hasPermission("mf.dpc")).thenReturn(true)
-        `when`(language["CommandFactionDpcPlayerOnly"]).thenReturn("Player only")
-
-        val result = uut.onCommand(sender, command, "label", arrayOf("profile"))
-
-        assertTrue(result)
-        verify(sender).sendMessage("${ChatColor.RED}Player only")
-    }
-
-    @Test
-    fun testOnCommand_generateKeyRequiresPlayer() {
-        val sender = fixture.sender
-        val command = fixture.command
-        `when`(sender.hasPermission("mf.dpc")).thenReturn(true)
-        `when`(language["CommandFactionDpcPlayerOnly"]).thenReturn("Player only")
-
-        val result = uut.onCommand(sender, command, "label", arrayOf("generatekey", "myserver"))
-
-        assertTrue(result)
-        verify(sender).sendMessage("${ChatColor.RED}Player only")
-    }
-
-    @Test
-    fun testOnCommand_generateKeyMissingArgs() {
-        val player = mock(Player::class.java)
-        val command = fixture.command
-        `when`(player.hasPermission("mf.dpc")).thenReturn(true)
-        `when`(language["CommandFactionDpcGenerateKeyUsage"]).thenReturn("Generatekey usage")
-
-        val result = uut.onCommand(player, command, "label", arrayOf("generatekey"))
-
-        assertTrue(result)
-        verify(player).sendMessage("${ChatColor.RED}Generatekey usage")
-    }
-
-    @Test
-    fun testOnCommand_deleteKeyRequiresPlayer() {
-        val sender = fixture.sender
-        val command = fixture.command
-        `when`(sender.hasPermission("mf.dpc")).thenReturn(true)
-        `when`(language["CommandFactionDpcPlayerOnly"]).thenReturn("Player only")
-
-        val result = uut.onCommand(sender, command, "label", arrayOf("deletekey", "some-id"))
-
-        assertTrue(result)
-        verify(sender).sendMessage("${ChatColor.RED}Player only")
-    }
-
-    @Test
-    fun testOnCommand_deleteKeyMissingArgs() {
-        val player = mock(Player::class.java)
-        val command = fixture.command
-        `when`(player.hasPermission("mf.dpc")).thenReturn(true)
-        `when`(language["CommandFactionDpcDeleteKeyUsage"]).thenReturn("Deletekey usage")
-
-        val result = uut.onCommand(player, command, "label", arrayOf("deletekey"))
-
-        assertTrue(result)
-        verify(player).sendMessage("${ChatColor.RED}Deletekey usage")
-    }
-
-    @Test
-    fun testOnCommand_registerSendsPending() {
-        val player = mock(Player::class.java)
-        val command = fixture.command
-        `when`(player.hasPermission("mf.dpc")).thenReturn(true)
-        `when`(player.uniqueId).thenReturn(UUID.randomUUID())
-        `when`(language["CommandFactionDpcRegisterPending"]).thenReturn("Registering...")
-
-        val result = uut.onCommand(player, command, "label", arrayOf("register", "testuser", "testpass"))
-
-        assertTrue(result)
-        verify(player).sendMessage("${ChatColor.GRAY}Registering...")
-    }
-
-    @Test
-    fun testOnCommand_loginSendsPending() {
-        val player = mock(Player::class.java)
-        val command = fixture.command
-        `when`(player.hasPermission("mf.dpc")).thenReturn(true)
-        `when`(player.uniqueId).thenReturn(UUID.randomUUID())
-        `when`(language["CommandFactionDpcLoginPending"]).thenReturn("Logging in...")
-
-        val result = uut.onCommand(player, command, "label", arrayOf("login", "testuser", "testpass"))
-
-        assertTrue(result)
-        verify(player).sendMessage("${ChatColor.GRAY}Logging in...")
-    }
-
-    @Test
-    fun testTabComplete_includesNewSubcommands() {
-        val sender = fixture.sender
-        val command = fixture.command
-        `when`(sender.hasPermission("mf.dpc")).thenReturn(true)
-
-        val result = uut.onTabComplete(sender, command, "label", arrayOf(""))
-
-        assertTrue(result.contains("register"))
-        assertTrue(result.contains("login"))
-        assertTrue(result.contains("profile"))
-        assertTrue(result.contains("generatekey"))
-        assertTrue(result.contains("deletekey"))
-    }
-
-    @Test
-    fun testTabComplete_filtersSubcommands() {
-        val sender = fixture.sender
-        val command = fixture.command
-        `when`(sender.hasPermission("mf.dpc")).thenReturn(true)
-
-        val result = uut.onTabComplete(sender, command, "label", arrayOf("reg"))
-
-        assertTrue(result.contains("register"))
-        assertTrue(!result.contains("login"))
-    }
-
     // Helper functions
 
     private fun mockServices() {
         val services = mock(Services::class.java)
         `when`(plugin.services).thenReturn(services)
-    }
-
-    private fun mockDpcApiService() {
-        dpcApiService = mock(MfDpcApiService::class.java)
-        `when`(plugin.dpcApiService).thenReturn(dpcApiService)
     }
 
     private fun mockLanguageSystem() {

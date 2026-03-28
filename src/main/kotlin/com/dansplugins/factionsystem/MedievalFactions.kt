@@ -122,7 +122,6 @@ class MedievalFactions : JavaPlugin() {
     lateinit var factionPermissions: MfFactionPermissions
     lateinit var services: Services
     lateinit var language: Language
-    lateinit var dpcApiService: MfDpcApiService
 
     override fun onEnable() {
         val migrator = MfLegacyDataMigrator(this)
@@ -494,7 +493,7 @@ class MedievalFactions : JavaPlugin() {
             }, 5L, 20L)
         }
 
-        dpcApiService = MfDpcApiService(this)
+        val dpcApiService = MfDpcApiService(this)
         // 12000 ticks = 10 minutes (20 ticks/sec * 60 sec * 10 min)
         server.scheduler.runTaskTimerAsynchronously(this, Runnable { dpcApiService.syncFactions() }, 12000L, 12000L)
     }

@@ -543,7 +543,7 @@ This integration is **strictly opt-in**.
 ### `dpc-api.key`
 **Type:** String  
 **Default:** `""`  
-**Description:** The API key used to authenticate with the DPC API. You can obtain a key in two ways: (1) run `/mf dpc register` and `/mf dpc generatekey` in-game, or (2) visit [dansplugins.com](https://dansplugins.com), create an account, and generate a key from your account page. Required for faction data to be submitted successfully.
+**Description:** The API key used to authenticate with the DPC API. To obtain a key, visit [dansplugins.com](https://dansplugins.com), create an account or sign in, then generate a key from your account page. Required for faction data to be submitted successfully.
 
 ### `dpc-api.server-id`
 **Type:** String  
@@ -559,6 +559,11 @@ This integration is **strictly opt-in**.
 **Type:** Boolean  
 **Default:** `false`  
 **Description:** Whether to include the server IP address in the faction data sent to DPC. Enabling this allows your server to be advertised on the DPC website alongside your factions.
+
+### `dpc-api.server-address`
+**Type:** String  
+**Default:** `""`  
+**Description:** An explicit server address to include in the DPC API payload when `share-server-ip` is `true` (e.g. `"play.myserver.com:25565"`). If blank, the plugin auto-detects from the server binding (ip:port). Set this when your server is behind a proxy or when the bound IP doesn't match your public address.
 
 ### `dpc-api.discord-link`
 **Type:** String  
