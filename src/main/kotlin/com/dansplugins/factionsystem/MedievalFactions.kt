@@ -116,6 +116,7 @@ import kotlin.math.roundToInt
 class MedievalFactions : JavaPlugin() {
 
     private lateinit var dataSource: DataSource
+    private var apiServer: com.dansplugins.factionsystem.api.MfApiServer? = null
 
     lateinit var flags: MfFlags
     lateinit var factionPermissions: MfFactionPermissions
@@ -471,6 +472,15 @@ class MedievalFactions : JavaPlugin() {
                 }
             }, 5L, 20L)
         }
+        
+        // Start REST API server
+        apiServer = com.dansplugins.factionsystem.api.MfApiServer(this)
+        apiServer?.start()
+    }
+    
+    override fun onDisable() {
+        // Stop REST API server
+        apiServer?.stop()
     }
 
     internal fun onPowerCycle(

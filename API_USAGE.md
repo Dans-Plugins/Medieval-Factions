@@ -1,0 +1,848 @@
+# Medieval Factions REST API Usage Guide
+
+## Overview
+
+The Medieval Factions REST API provides programmatic access to faction, player, and relationship data. This allows other plugins and external applications to integrate with Medieval Factions seamlessly.
+
+## Configuration
+
+The API can be configured in the `config.yml` file:
+
+```yaml
+api:
+  enabled: true         # Set to false to disable the API
+  host: 127.0.0.1      # Bind address - use 127.0.0.1 (localhost) for local access only, or 0.0.0.0 for external access
+  port: 8080           # Port the API server listens on (1-65535)
+```
+
+**Security Considerations:**
+- By default, the API binds to `127.0.0.1` (localhost only) for security
+- To allow external access, change `host` to `0.0.0.0`, but ensure proper firewall rules are in place
+- The API does not require authentication - access control must be managed at the network level
+
+## Base URL
+
+By default, the API is available at:
+```
+http://localhost:8080/api
+```
+
+## Authentication and Security
+
+The API currently does not include built-in authentication. **Security is managed through network-level controls:**
+
+**Default Security (Recommended):**
+- API binds to `127.0.0.1` (localhost only)
+- Only accessible from the same machine running the server
+- Suitable for local plugins and scripts
+
+**External Access (Advanced):**
+If you need external access, you must implement additional security measures:
+- Configure `api.host: 0.0.0.0` in config.yml
+- Use a reverse proxy (nginx, Apache) with authentication
+- Implement firewall rules to restrict access to trusted IPs
+- Use HTTPS/TLS for encrypted communication
+- Consider API keys or token-based authentication at the reverse proxy level
+
+## Endpoints
+
+### Health Check
+
+Check if the API is running and get the plugin version.
+
+**GET** `/api/health`
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "version": "5.7.0-alpha-1"
+}
+```
+
+---
+
+### Factions
+
+#### Get All Factions
+
+Retrieve a list of all factions.
+
+**GET** `/api/factions`
+
+**Response:**
+```json
+[
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "The Kingdom",
+    "description": "A mighty kingdom",
+    "prefix": "TK",
+    "power": 150.0,
+    "maxPower": 200.0,
+    "memberCount": 5,
+    "home": {
+      "world": "world",
+      "x": 100.5,
+      "y": 64.0,
+      "z": -200.3
+    }
+  }
+]
+```
+
+#### Get Faction by ID
+
+Retrieve a specific faction by its UUID.
+
+**GET** `/api/factions/{id}`
+
+**Parameters:**
+- `id` (path): Faction UUID
+
+**Response (200 OK):**
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "The Kingdom",
+  "description": "A mighty kingdom",
+  "prefix": "TK",
+  "power": 150.0,
+  "maxPower": 200.0,
+  "memberCount": 5,
+  "home": {
+    "world": "world",
+    "x": 100.5,
+    "y": 64.0,
+    "z": -200.3
+  }
+}
+```
+
+**Response (404 Not Found):**
+```json
+{
+  "error": "NOT_FOUND",
+  "message": "Faction not found"
+}
+```
+
+**Response (400 Bad Request):**
+```json
+{
+  "error": "INVALID_ID",
+  "message": "Invalid faction ID format"
+}
+```
+
+#### Get Faction by Name
+
+Retrieve a specific faction by its name.
+
+**GET** `/api/factions/name/{name}`
+
+**Parameters:**
+- `name` (path): Faction name
+
+**Response:** Same as Get Faction by ID
+
+---
+
+### Players
+
+#### Get All Players
+
+Retrieve a list of all players.
+
+**GET** `/api/players`
+
+**Response:**
+```json
+[
+  {
+    "id": "660e8400-e29b-41d4-a716-446655440001",
+    "name": "PlayerName",
+    "power": 15.0,
+    "factionId": "550e8400-e29b-41d4-a716-446655440000"
+  }
+]
+```
+
+#### Get Player by ID
+
+Retrieve a specific player by their UUID.
+
+**GET** `/api/players/{id}`
+
+**Parameters:**
+- `id` (path): Player UUID
+
+**Response (200 OK):**
+```json
+{
+  "id": "660e8400-e29b-41d4-a716-446655440001",
+  "name": "PlayerName",
+  "power": 15.0,
+  "factionId": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+**Response (404 Not Found):**
+```json
+{
+  "error": "NOT_FOUND",
+  "message": "Player not found"
+}
+```
+
+---
+
+### Relationships
+
+#### Get All Relationships
+
+Retrieve all faction relationships.
+
+**GET** `/api/relationships`
+
+**Response:**
+```json
+[
+  {
+    "factionId": "550e8400-e29b-41d4-a716-446655440000",
+    "targetFactionId": "770e8400-e29b-41d4-a716-446655440002",
+    "type": "ALLY"
+  },
+  {
+    "factionId": "550e8400-e29b-41d4-a716-446655440000",
+    "targetFactionId": "880e8400-e29b-41d4-a716-446655440003",
+    "type": "AT_WAR"
+  }
+]
+```
+
+**Relationship Types:**
+- `ALLY` - Allied factions
+- `AT_WAR` - Factions at war
+- `LIEGE` - Liege faction relationship
+- `VASSAL` - Vassal faction relationship
+
+#### Get Relationships for a Faction
+
+Retrieve all relationships for a specific faction.
+
+**GET** `/api/relationships/faction/{id}`
+
+**Parameters:**
+- `id` (path): Faction UUID
+
+**Response:** Same as Get All Relationships (filtered by faction)
+
+---
+
+### Claims
+
+#### Get All Claims
+
+Retrieve all claimed chunks across all factions.
+
+**GET** `/api/claims`
+
+**Response:**
+```json
+[
+  {
+    "worldId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "x": 10,
+    "z": 20,
+    "factionId": "550e8400-e29b-41d4-a716-446655440000"
+  },
+  {
+    "worldId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "x": 11,
+    "z": 20,
+    "factionId": "550e8400-e29b-41d4-a716-446655440000"
+  }
+]
+```
+
+#### Get Claims for a Faction
+
+Retrieve all claimed chunks for a specific faction.
+
+**GET** `/api/claims/faction/{id}`
+
+**Parameters:**
+- `id` (path): Faction UUID
+
+**Response:**
+```json
+[
+  {
+    "worldId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "x": 10,
+    "z": 20,
+    "factionId": "550e8400-e29b-41d4-a716-446655440000"
+  }
+]
+```
+
+**Response (400 Bad Request):**
+```json
+{
+  "error": "INVALID_ID",
+  "message": "Invalid faction ID format"
+}
+```
+
+---
+
+### OpenAPI Specification
+
+Get the OpenAPI specification for the API.
+
+**GET** `/api/openapi`
+
+**Response:** Returns the OpenAPI 3.0 specification in YAML format.
+
+#### Using the OpenAPI Specification to Generate Client Libraries
+
+The Medieval Factions API provides a complete OpenAPI 3.0 specification that can be used to automatically generate client libraries for your application in virtually any programming language. This saves development time and ensures type-safe API calls.
+
+**Step 1: Retrieve the OpenAPI Specification**
+
+You can get the OpenAPI spec in two ways:
+
+1. **From the running API:**
+   ```bash
+   curl http://localhost:8080/api/openapi > medieval-factions-api.yaml
+   ```
+
+2. **From the source code:**
+   The spec is located at `src/main/resources/openapi.yaml` in the Medieval Factions repository.
+
+**Step 2: Generate Client Code**
+
+Use the [OpenAPI Generator](https://openapi-generator.tech/) to create client libraries. Here are examples for popular languages:
+
+**Java Client:**
+```bash
+# Install OpenAPI Generator (requires Java 8+)
+npm install @openapitools/openapi-generator-cli -g
+
+# Generate Java client
+openapi-generator-cli generate \
+  -i medieval-factions-api.yaml \
+  -g java \
+  -o ./medieval-factions-client-java \
+  --additional-properties=invokerPackage=com.example.mfclient,apiPackage=com.example.mfclient.api,modelPackage=com.example.mfclient.model
+```
+
+**JavaScript/TypeScript Client:**
+```bash
+# Generate TypeScript client for Node.js
+openapi-generator-cli generate \
+  -i medieval-factions-api.yaml \
+  -g typescript-node \
+  -o ./medieval-factions-client-ts
+
+# Or for browser/React
+openapi-generator-cli generate \
+  -i medieval-factions-api.yaml \
+  -g typescript-fetch \
+  -o ./medieval-factions-client-ts
+```
+
+**Python Client:**
+```bash
+# Generate Python client
+openapi-generator-cli generate \
+  -i medieval-factions-api.yaml \
+  -g python \
+  -o ./medieval-factions-client-python \
+  --additional-properties=packageName=medieval_factions_client
+```
+
+**Other Languages:**
+OpenAPI Generator supports 50+ languages and frameworks including:
+- C# / .NET
+- Go
+- Rust
+- Ruby
+- PHP
+- Kotlin
+- Swift
+- And many more
+
+See the [full list of supported languages](https://openapi-generator.tech/docs/generators).
+
+**Step 3: Use the Generated Client**
+
+After generation, you can use the client in your application:
+
+**Java Example:**
+```java
+import com.example.mfclient.ApiClient;
+import com.example.mfclient.api.DefaultApi;
+import com.example.mfclient.model.FactionDto;
+
+public class MedievalFactionsIntegration {
+    public static void main(String[] args) {
+        ApiClient client = new ApiClient();
+        client.setBasePath("http://localhost:8080");
+        
+        DefaultApi api = new DefaultApi(client);
+        
+        try {
+            // Get all factions with type safety
+            List<FactionDto> factions = api.apiFactionsGet();
+            
+            for (FactionDto faction : factions) {
+                System.out.println("Faction: " + faction.getName());
+                System.out.println("Power: " + faction.getPower() + "/" + faction.getMaxPower());
+            }
+        } catch (ApiException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+    }
+}
+```
+
+**TypeScript Example:**
+```typescript
+import { DefaultApi, Configuration } from './medieval-factions-client-ts';
+
+const config = new Configuration({
+  basePath: 'http://localhost:8080'
+});
+
+const api = new DefaultApi(config);
+
+async function getAllFactions() {
+  try {
+    const factions = await api.apiFactionsGet();
+    
+    factions.forEach(faction => {
+      console.log(`Faction: ${faction.name}`);
+      console.log(`Power: ${faction.power}/${faction.maxPower}`);
+    });
+  } catch (error) {
+    console.error('Error fetching factions:', error);
+  }
+}
+
+getAllFactions();
+```
+
+**Python Example:**
+```python
+from medieval_factions_client import ApiClient, DefaultApi, Configuration
+from medieval_factions_client.rest import ApiException
+
+# Create API client
+configuration = Configuration()
+configuration.host = "http://localhost:8080"
+api_client = ApiClient(configuration)
+api = DefaultApi(api_client)
+
+try:
+    # Get all factions with type safety
+    factions = api.api_factions_get()
+    
+    for faction in factions:
+        print(f"Faction: {faction.name}")
+        print(f"Power: {faction.power}/{faction.max_power}")
+        
+except ApiException as e:
+    print(f"Error: {e}")
+```
+
+**Benefits of Using Generated Clients:**
+
+1. **Type Safety**: Generated clients include strongly-typed models matching the API exactly
+2. **Auto-completion**: IDEs can provide intelligent code completion for all API methods
+3. **Documentation**: Generated code includes inline documentation from the OpenAPI spec
+4. **Error Handling**: Built-in error handling and validation
+5. **Consistency**: Same API interface across different languages
+6. **Maintenance**: Regenerate clients when the API changes to stay in sync
+
+**Alternative: OpenAPI Tools**
+
+You can also use other OpenAPI-compatible tools:
+
+- **Swagger UI**: Interactive API documentation and testing interface
+  ```bash
+  # Run Swagger UI with the spec
+  docker run -p 8081:8080 -e SWAGGER_JSON=/openapi.yaml -v $(pwd):/openapi swaggerapi/swagger-ui
+  ```
+
+- **Postman**: Import the OpenAPI spec directly into Postman for API testing
+
+- **Insomnia**: Another popular API client that supports OpenAPI specs
+
+- **Stoplight Studio**: Visual OpenAPI editor and documentation tool
+
+---
+
+## Example Use Cases
+
+### Use Case 1: Faction Information Display
+
+A web dashboard plugin that displays faction information on a website.
+
+```javascript
+// Example using JavaScript/Node.js
+const axios = require('axios');
+
+async function getFactionInfo(factionName) {
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/api/factions/name/${factionName}`
+    );
+    
+    const faction = response.data;
+    console.log(`Faction: ${faction.name}`);
+    console.log(`Power: ${faction.power}/${faction.maxPower}`);
+    console.log(`Members: ${faction.memberCount}`);
+    
+    return faction;
+  } catch (error) {
+    if (error.response?.status === 404) {
+      console.log('Faction not found');
+    }
+  }
+}
+
+getFactionInfo('The Kingdom');
+```
+
+### Use Case 2: Power Monitoring Plugin
+
+A monitoring plugin that tracks faction power levels and sends alerts.
+
+```java
+// Example using Java/Bukkit plugin
+import com.google.gson.Gson;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.URI;
+
+public class PowerMonitor {
+    private static final String API_URL = "http://localhost:8080/api";
+    private static final HttpClient client = HttpClient.newHttpClient();
+    private static final Gson gson = new Gson();
+    
+    public static class Faction {
+        public String id;
+        public String name;
+        public double power;
+        public double maxPower;
+    }
+    
+    public void checkLowPowerFactions() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(API_URL + "/factions"))
+            .GET()
+            .build();
+            
+        HttpResponse<String> response = client.send(
+            request, 
+            HttpResponse.BodyHandlers.ofString()
+        );
+        
+        Faction[] factions = gson.fromJson(response.body(), Faction[].class);
+        
+        for (Faction faction : factions) {
+            double powerPercentage = (faction.power / faction.maxPower) * 100;
+            
+            if (powerPercentage < 25) {
+                // Send alert - faction has low power
+                System.out.println(
+                    "WARNING: " + faction.name + 
+                    " has low power (" + powerPercentage + "%)"
+                );
+            }
+        }
+    }
+}
+```
+
+### Use Case 3: War Status Checker
+
+A plugin that checks if two factions are at war.
+
+```python
+# Example using Python
+import requests
+
+def are_factions_at_war(faction1_id, faction2_id):
+    """Check if two factions are at war"""
+    try:
+        response = requests.get(
+            f'http://localhost:8080/api/relationships/faction/{faction1_id}'
+        )
+        response.raise_for_status()
+        
+        relationships = response.json()
+        
+        for rel in relationships:
+            if rel['targetFactionId'] == faction2_id and rel['type'] == 'AT_WAR':
+                return True
+                
+        return False
+        
+    except requests.exceptions.RequestException as e:
+        print(f"Error checking war status: {e}")
+        return False
+
+# Usage
+if are_factions_at_war('550e8400-e29b-41d4-a716-446655440000', 
+                        '880e8400-e29b-41d4-a716-446655440003'):
+    print("Factions are at war!")
+```
+
+### Use Case 4: Player Faction Lookup
+
+A Discord bot that looks up which faction a player belongs to.
+
+```python
+# Example Discord bot command
+import discord
+import requests
+from discord.ext import commands
+
+bot = commands.Bot(command_prefix='!')
+
+@bot.command()
+async def faction(ctx, player_name: str):
+    """Look up a player's faction"""
+    try:
+        # Get all players and find by name
+        response = requests.get('http://localhost:8080/api/players')
+        players = response.json()
+        
+        player = next((p for p in players if p['name'] == player_name), None)
+        
+        if not player:
+            await ctx.send(f"Player {player_name} not found")
+            return
+            
+        if player['factionId']:
+            # Get faction info
+            faction_response = requests.get(
+                f'http://localhost:8080/api/factions/{player["factionId"]}'
+            )
+            faction = faction_response.json()
+            
+            embed = discord.Embed(
+                title=f"{player_name}'s Faction",
+                color=discord.Color.blue()
+            )
+            embed.add_field(name="Faction", value=faction['name'])
+            embed.add_field(name="Power", value=f"{player['power']:.1f}")
+            embed.add_field(
+                name="Faction Power", 
+                value=f"{faction['power']:.1f}/{faction['maxPower']:.1f}"
+            )
+            
+            await ctx.send(embed=embed)
+        else:
+            await ctx.send(f"{player_name} is not in a faction")
+            
+    except Exception as e:
+        await ctx.send(f"Error: {e}")
+```
+
+### Use Case 5: Dynmap/Bluemap Integration
+
+A bridge plugin that displays faction claims on Dynmap or Bluemap.
+
+```java
+// Example using Java plugin
+import com.google.gson.Gson;
+import org.bukkit.Bukkit;
+import org.dynmap.DynmapAPI;
+import org.dynmap.markers.AreaMarker;
+import org.dynmap.markers.MarkerAPI;
+import org.dynmap.markers.MarkerSet;
+
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.URI;
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class FactionClaimRenderer {
+    private static final String API_URL = "http://localhost:8080/api";
+    private static final HttpClient client = HttpClient.newHttpClient();
+    private static final Gson gson = new Gson();
+    private final DynmapAPI dynmap;
+    private final MarkerSet markerSet;
+    
+    public static class Claim {
+        public String worldId;
+        public int x;
+        public int z;
+        public String factionId;
+    }
+    
+    public static class Faction {
+        public String id;
+        public String name;
+        public String prefix;
+    }
+    
+    public FactionClaimRenderer(DynmapAPI dynmap) {
+        this.dynmap = dynmap;
+        MarkerAPI markerAPI = dynmap.getMarkerAPI();
+        this.markerSet = markerAPI.createMarkerSet(
+            "medievalfactions.claims", 
+            "Faction Claims", 
+            null, 
+            false
+        );
+    }
+    
+    public void renderAllClaims() throws Exception {
+        // Get all claims
+        HttpRequest claimsRequest = HttpRequest.newBuilder()
+            .uri(URI.create(API_URL + "/claims"))
+            .GET()
+            .build();
+        HttpResponse<String> claimsResponse = client.send(
+            claimsRequest, 
+            HttpResponse.BodyHandlers.ofString()
+        );
+        Claim[] claims = gson.fromJson(claimsResponse.body(), Claim[].class);
+        
+        // Get all factions
+        HttpRequest factionsRequest = HttpRequest.newBuilder()
+            .uri(URI.create(API_URL + "/factions"))
+            .GET()
+            .build();
+        HttpResponse<String> factionsResponse = client.send(
+            factionsRequest, 
+            HttpResponse.BodyHandlers.ofString()
+        );
+        Faction[] factions = gson.fromJson(factionsResponse.body(), Faction[].class);
+        
+        // Create a map of faction ID to faction
+        Map<String, Faction> factionMap = Arrays.stream(factions)
+            .collect(Collectors.toMap(f -> f.id, f -> f));
+        
+        // Group claims by faction
+        Map<String, List<Claim>> claimsByFaction = Arrays.stream(claims)
+            .collect(Collectors.groupingBy(c -> c.factionId));
+        
+        // Clear existing markers
+        markerSet.getMarkers().forEach(marker -> marker.deleteMarker());
+        
+        // Render each faction's claims
+        for (Map.Entry<String, List<Claim>> entry : claimsByFaction.entrySet()) {
+            String factionId = entry.getKey();
+            List<Claim> factionClaims = entry.getValue();
+            Faction faction = factionMap.get(factionId);
+            
+            if (faction == null) continue;
+            
+            // Group contiguous chunks into regions
+            for (Claim claim : factionClaims) {
+                String worldName = getWorldNameFromUUID(claim.worldId);
+                if (worldName == null) continue;
+                
+                // Calculate chunk coordinates in blocks
+                double[] x = new double[] {
+                    claim.x * 16, (claim.x + 1) * 16
+                };
+                double[] z = new double[] {
+                    claim.z * 16, (claim.z + 1) * 16
+                };
+                
+                // Create area marker for this chunk
+                String markerId = "claim_" + claim.worldId + "_" + claim.x + "_" + claim.z;
+                AreaMarker marker = markerSet.createAreaMarker(
+                    markerId,
+                    faction.name + " Territory",
+                    false,
+                    worldName,
+                    x,
+                    z,
+                    false
+                );
+                
+                // Set marker style based on faction
+                if (marker != null) {
+                    marker.setLineStyle(2, 1.0, 0x00FF00);
+                    marker.setFillStyle(0.3, 0x00FF00);
+                    marker.setDescription(
+                        "<b>" + faction.name + "</b><br/>" +
+                        "Chunk: " + claim.x + ", " + claim.z
+                    );
+                }
+            }
+        }
+    }
+    
+    private String getWorldNameFromUUID(String worldUUID) {
+        try {
+            UUID uuid = UUID.fromString(worldUUID);
+            return Bukkit.getWorld(uuid) != null ? Bukkit.getWorld(uuid).getName() : null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+}
+```
+
+## Best Practices
+
+1. **Error Handling**: Always implement proper error handling for API requests. The API may be unavailable or return error responses.
+
+2. **Caching**: Consider caching frequently accessed data to reduce load on the API and improve performance.
+
+3. **Rate Limiting**: If making frequent requests, implement rate limiting to avoid overwhelming the server.
+
+4. **Security**: 
+   - **Default Configuration**: The API binds to `127.0.0.1` (localhost) by default for security. This is suitable for local plugins and scripts.
+   - **External Access**: Only enable external access (`api.host: 0.0.0.0`) if absolutely necessary, and implement additional security:
+     - Use a reverse proxy (nginx, Apache) with authentication
+     - Implement firewall rules to restrict access to trusted IPs only
+     - Use HTTPS/TLS for encrypted communication
+     - Consider API keys or token-based authentication at the reverse proxy level
+   - **Network Isolation**: Ensure the API port is not exposed to untrusted networks
+
+5. **Version Compatibility**: Check the plugin version via the `/api/health` endpoint to ensure compatibility with your integration.
+
+6. **Performance**: Be aware that some endpoints (like `/api/players`) may perform multiple database queries. Consider caching results when making frequent requests.
+
+## Troubleshooting
+
+### API Not Responding
+
+- Check if the API is enabled in `config.yml`
+- Verify the correct port is being used
+- Check server logs for errors
+- Ensure the port is within valid range (1-65535)
+
+### Connection Refused
+
+- Ensure the Minecraft server is running
+- Check if `api.host` is set correctly:
+  - `127.0.0.1` for local access only
+  - `0.0.0.0` for external access (ensure firewall allows it)
+- Verify firewall settings allow connections on the API port
+- Check if another application is using the same port
+
+### Data Not Updating
+
+- The API provides real-time data from the plugin
+- If data seems stale, verify the plugin is functioning correctly
+- Check for any errors in the server console
+
+## Further Support
+
+For issues or questions:
+- GitHub Issues: https://github.com/Dans-Plugins/Medieval-Factions/issues
+- Discord: https://discord.gg/xXtuAQ2
