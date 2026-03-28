@@ -1,12 +1,16 @@
 package com.dansplugins.factionsystem.command.faction.dpc
 
 import com.dansplugins.factionsystem.MedievalFactions
+import org.bukkit.ChatColor.GOLD
+import org.bukkit.ChatColor.GRAY
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
+import org.bukkit.ChatColor.YELLOW
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
+import org.bukkit.entity.Player
 
 class MfFactionDpcCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
@@ -25,6 +29,11 @@ class MfFactionDpcCommand(private val plugin: MedievalFactions) : CommandExecuto
             "reminder" -> handleReminder(sender, args)
             "shareip" -> handleShareIp(sender, args)
             "discord" -> handleDiscord(sender, args)
+            "register" -> handleRegister(sender, args)
+            "login" -> handleLogin(sender, args)
+            "profile" -> handleProfile(sender)
+            "generatekey" -> handleGenerateKey(sender, args)
+            "deletekey" -> handleDeleteKey(sender, args)
             else -> sender.sendMessage("$RED${plugin.language["CommandFactionDpcUsage"]}")
         }
         return true
@@ -102,6 +111,169 @@ class MfFactionDpcCommand(private val plugin: MedievalFactions) : CommandExecuto
         }
     }
 
+    private fun handleRegister(sender: CommandSender, args: Array<out String>) {
+        if (sender !is Player) {
+            sender.sendMessage("$RED${plugin.language["CommandFactionDpcPlayerOnly"]}")
+            return
+        }
+        if (args.size < 3) {
+            sender.sendMessage("$RED${plugin.language["CommandFactionDpcRegisterUsage"]}")
+            return
+        }
+        val username = args[1]
+        val password = args[2]
+        sender.sendMessage("$GRAY${plugin.language["CommandFactionDpcRegisterPending"]}")
+        plugin.dpcApiService.register(
+            sender.uniqueId,
+            username,
+            password,
+            onSuccess = { returnedUsername ->
+                plugin.server.scheduler.runTask(plugin, Runnable {
+                    sender.sendMessage("$GREEN${plugin.language["CommandFactionDpcRegisterSuccess", returnedUsername]}")
+                })
+            },
+            onFailure = { error ->
+                plugin.server.scheduler.runTask(plugin, Runnable {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionDpcRegisterFail", error]}")
+                })
+            }
+        )
+    }
+
+    private fun handleLogin(sender: CommandSender, args: Array<out String>) {
+        if (sender !is Player) {
+            sender.sendMessage("$RED${plugin.language["CommandFactionDpcPlayerOnly"]}")
+            return
+        }
+        if (args.size < 3) {
+            sender.sendMessage("$RED${plugin.language["CommandFactionDpcLoginUsage"]}")
+            return
+        }
+        val username = args[1]
+        val password = args[2]
+        sender.sendMessage("$GRAY${plugin.language["CommandFactionDpcLoginPending"]}")
+        plugin.dpcApiService.login(
+            sender.uniqueId,
+            username,
+            password,
+            onSuccess = { returnedUsername ->
+                plugin.server.scheduler.runTask(plugin, Runnable {
+                    sender.sendMessage("$GREEN${plugin.language["CommandFactionDpcLoginSuccess", returnedUsername]}")
+                })
+            },
+            onFailure = { error ->
+                plugin.server.scheduler.runTask(plugin, Runnable {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionDpcLoginFail", error]}")
+                })
+            }
+        )
+    }
+
+    private fun handleProfile(sender: CommandSender) {
+        if (sender !is Player) {
+            sender.sendMessage("$RED${plugin.language["CommandFactionDpcPlayerOnly"]}")
+            return
+        }
+        sender.sendMessage("$GRAY${plugin.language["CommandFactionDpcProfilePending"]}")
+        plugin.dpcApiService.getProfile(
+            sender.uniqueId,
+            onSuccess = { json ->
+                plugin.server.scheduler.runTask(plugin, Runnable {
+                    val username = json.get("username")?.asString ?: "Unknown"
+                    sender.sendMessage("$GOLD${plugin.language["CommandFactionDpcProfileHeader"]}")
+                    sender.sendMessage("$YELLOW${plugin.language["CommandFactionDpcProfileUsername", username]}")
+                    val apiKeys = json.getAsJsonArray("apiKeys")
+                    if (apiKeys == null || apiKeys.size() == 0) {
+                        sender.sendMessage("$GRAY${plugin.language["CommandFactionDpcProfileNoKeys"]}")
+                    } else {
+                        sender.sendMessage("$YELLOW${plugin.language["CommandFactionDpcProfileKeysHeader", apiKeys.size().toString()]}")
+                        for (keyElement in apiKeys) {
+                            val keyObj = keyElement.asJsonObject
+                            val keyId = keyObj.get("id")?.asString ?: "?"
+                            val serverName = keyObj.get("serverName")?.asString ?: "?"
+                            sender.sendMessage("$GRAY  - $serverName ($keyId)")
+                        }
+                    }
+                })
+            },
+            onFailure = { error ->
+                plugin.server.scheduler.runTask(plugin, Runnable {
+                    if (error == "NotLoggedIn" || error == "SessionExpired") {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionDpcNotLoggedIn"]}")
+                    } else {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionDpcProfileFail", error]}")
+                    }
+                })
+            }
+        )
+    }
+
+    private fun handleGenerateKey(sender: CommandSender, args: Array<out String>) {
+        if (sender !is Player) {
+            sender.sendMessage("$RED${plugin.language["CommandFactionDpcPlayerOnly"]}")
+            return
+        }
+        if (args.size < 2) {
+            sender.sendMessage("$RED${plugin.language["CommandFactionDpcGenerateKeyUsage"]}")
+            return
+        }
+        val serverName = args.drop(1).joinToString(" ")
+        sender.sendMessage("$GRAY${plugin.language["CommandFactionDpcGenerateKeyPending"]}")
+        plugin.dpcApiService.createApiKey(
+            sender.uniqueId,
+            serverName,
+            onSuccess = { apiKey ->
+                plugin.server.scheduler.runTask(plugin, Runnable {
+                    sender.sendMessage("$GREEN${plugin.language["CommandFactionDpcGenerateKeySuccess"]}")
+                    sender.sendMessage("$YELLOW${plugin.language["CommandFactionDpcGenerateKeyValue", apiKey]}")
+                    sender.sendMessage("$RED${plugin.language["CommandFactionDpcGenerateKeyWarning"]}")
+                })
+            },
+            onFailure = { error ->
+                plugin.server.scheduler.runTask(plugin, Runnable {
+                    if (error == "NotLoggedIn" || error == "SessionExpired") {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionDpcNotLoggedIn"]}")
+                    } else {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionDpcGenerateKeyFail", error]}")
+                    }
+                })
+            }
+        )
+    }
+
+    private fun handleDeleteKey(sender: CommandSender, args: Array<out String>) {
+        if (sender !is Player) {
+            sender.sendMessage("$RED${plugin.language["CommandFactionDpcPlayerOnly"]}")
+            return
+        }
+        if (args.size < 2) {
+            sender.sendMessage("$RED${plugin.language["CommandFactionDpcDeleteKeyUsage"]}")
+            return
+        }
+        val keyId = args[1]
+        sender.sendMessage("$GRAY${plugin.language["CommandFactionDpcDeleteKeyPending"]}")
+        plugin.dpcApiService.deleteApiKey(
+            sender.uniqueId,
+            keyId,
+            onSuccess = {
+                plugin.server.scheduler.runTask(plugin, Runnable {
+                    sender.sendMessage("$GREEN${plugin.language["CommandFactionDpcDeleteKeySuccess"]}")
+                })
+            },
+            onFailure = { error ->
+                plugin.server.scheduler.runTask(plugin, Runnable {
+                    if (error == "NotLoggedIn" || error == "SessionExpired") {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionDpcNotLoggedIn"]}")
+                    } else if (error == "NotFound") {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionDpcDeleteKeyNotFound"]}")
+                    } else {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionDpcDeleteKeyFail", error]}")
+                    }
+                })
+            }
+        )
+    }
+
     override fun onTabComplete(
         sender: CommandSender,
         command: Command,
@@ -111,7 +283,10 @@ class MfFactionDpcCommand(private val plugin: MedievalFactions) : CommandExecuto
         if (!sender.hasPermission("mf.dpc")) return emptyList()
         return when {
             args.size <= 1 -> {
-                val subcommands = listOf("optin", "optout", "reminder", "shareip", "discord")
+                val subcommands = listOf(
+                    "optin", "optout", "reminder", "shareip", "discord",
+                    "register", "login", "profile", "generatekey", "deletekey"
+                )
                 if (args.isEmpty()) subcommands else subcommands.filter { it.startsWith(args[0].lowercase()) }
             }
             args.size == 2 -> when (args[0].lowercase()) {

@@ -503,6 +503,30 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Permission:** `mf.dpc` (default: op)  
 **Description:** Clears the Discord invite link from DPC API data.
 
+### `/faction dpc register [username] [password]` or `/mf dpc register [username] [password]`
+**Permission:** `mf.dpc` (default: op)  
+**Description:** Registers a new account on the DPC website (dansplugins.com) directly from in-game. Returns a session token on success. Must be run as a player, not from console.  
+**Usage:** `/mf dpc register myname mypassword`
+
+### `/faction dpc login [username] [password]` or `/mf dpc login [username] [password]`
+**Permission:** `mf.dpc` (default: op)  
+**Description:** Logs in to an existing DPC account from in-game. Stores a session token for subsequent account operations. Must be run as a player, not from console.  
+**Usage:** `/mf dpc login myname mypassword`
+
+### `/faction dpc profile` or `/mf dpc profile`
+**Permission:** `mf.dpc` (default: op)  
+**Description:** Displays the current DPC account profile including username and linked API keys. Requires prior login via `/mf dpc login`.
+
+### `/faction dpc generatekey [serverName]` or `/mf dpc generatekey [serverName]`
+**Permission:** `mf.dpc` (default: op)  
+**Description:** Generates a new API key linked to the logged-in DPC account. The raw key is shown once and cannot be retrieved again. Copy it to `dpc-api.key` in `config.yml`. Requires prior login via `/mf dpc login`.  
+**Usage:** `/mf dpc generatekey My Survival Server`
+
+### `/faction dpc deletekey [keyId]` or `/mf dpc deletekey [keyId]`
+**Permission:** `mf.dpc` (default: op)  
+**Description:** Deletes an API key by its UUID. Use `/mf dpc profile` to see key IDs. Requires prior login via `/mf dpc login`.  
+**Usage:** `/mf dpc deletekey 550e8400-e29b-41d4-a716-446655440000`
+
 ---
 
 ## Permission Groups

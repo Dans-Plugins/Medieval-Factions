@@ -543,7 +543,7 @@ This integration is **strictly opt-in**.
 ### `dpc-api.key`
 **Type:** String  
 **Default:** `""`  
-**Description:** The API key used to authenticate with the DPC API. To obtain a key, visit [dansplugins.com](https://dansplugins.com), create an account or sign in, then generate an API key from your account page. Required for faction data to be submitted successfully.
+**Description:** The API key used to authenticate with the DPC API. You can obtain a key in two ways: (1) run `/mf dpc register` and `/mf dpc generatekey` in-game, or (2) visit [dansplugins.com](https://dansplugins.com), create an account, and generate a key from your account page. Required for faction data to be submitted successfully.
 
 ### `dpc-api.server-id`
 **Type:** String  
