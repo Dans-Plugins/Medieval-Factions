@@ -33,13 +33,17 @@ class MfDpcApiService(private val plugin: MedievalFactions) {
 
         val shareServerIp = plugin.config.getBoolean("dpc-api.share-server-ip")
         val discordLink = plugin.config.getString("dpc-api.discord-link") ?: ""
-        val serverName = plugin.server.name
+        val serverId = plugin.config.getString("dpc-api.server-id")?.takeIf { it.isNotBlank() }
+        if (serverId == null) {
+            plugin.logger.warning("DPC server ID is not configured. Set dpc-api.server-id in config.yml. Skipping faction sync.")
+            return
+        }
 
         val jsonArray = JsonArray()
         for (faction in factions) {
             val obj = JsonObject()
             obj.addProperty("name", faction.name)
-            obj.addProperty("serverId", serverName)
+            obj.addProperty("serverId", serverId)
             obj.addProperty("memberCount", faction.members.size)
             obj.addProperty("description", faction.description)
             if (shareServerIp) {

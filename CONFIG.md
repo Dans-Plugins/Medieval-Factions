@@ -543,7 +543,12 @@ This integration is **strictly opt-in**.
 ### `dpc-api.key`
 **Type:** String  
 **Default:** `""`  
-**Description:** The API key issued by DPC for authentication. Required for faction data to be submitted successfully.
+**Description:** The API key used to authenticate with the DPC API. To obtain a key, visit [dansplugins.com](https://dansplugins.com), create an account or sign in, then generate an API key from your account page. Required for faction data to be submitted successfully.
+
+### `dpc-api.server-id`
+**Type:** String  
+**Default:** `""`  
+**Description:** A unique name for this server (e.g. `"my-survival-server"`). Used to identify your server in the DPC registry. Must be set before faction data can be synced.
 
 ### `dpc-api.login-reminder`
 **Type:** Boolean  

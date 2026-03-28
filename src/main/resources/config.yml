@@ -265,7 +265,8 @@ gates:
 dpc-api:
   enabled: false
   url: "https://dansplugins.com"
-  key: ""
+  key: ""                      # API key from https://dansplugins.com — register or sign in, then generate a key from your account page
+  server-id: ""                # unique name for this server (e.g. "my-survival-server"); used to identify your server in the DPC registry
   login-reminder: true
   share-server-ip: false
   discord-link: ""
