@@ -13,13 +13,13 @@ import com.dansplugins.factionsystem.command.gate.MfGateCommand
 import com.dansplugins.factionsystem.command.lock.MfLockCommand
 import com.dansplugins.factionsystem.command.power.MfPowerCommand
 import com.dansplugins.factionsystem.command.unlock.MfUnlockCommand
+import com.dansplugins.factionsystem.dpc.MfDpcApiService
 import com.dansplugins.factionsystem.duel.JooqMfDuelInviteRepository
 import com.dansplugins.factionsystem.duel.JooqMfDuelRepository
 import com.dansplugins.factionsystem.duel.MfDuelId
 import com.dansplugins.factionsystem.duel.MfDuelInviteRepository
 import com.dansplugins.factionsystem.duel.MfDuelRepository
 import com.dansplugins.factionsystem.duel.MfDuelService
-import com.dansplugins.factionsystem.dpc.MfDpcApiService
 import com.dansplugins.factionsystem.faction.JooqMfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionRepository
 import com.dansplugins.factionsystem.faction.MfFactionService
