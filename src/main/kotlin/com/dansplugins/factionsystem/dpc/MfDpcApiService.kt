@@ -23,7 +23,25 @@ class MfDpcApiService(
     fun syncFactions() {
         if (!plugin.config.getBoolean("dpc-api.enabled")) return
 
-        val apiUrl = plugin.config.getString("dpc-api.url") ?: return
+        val rawApiUrl = plugin.config.getString("dpc-api.url")?.trim()
+        if (rawApiUrl.isNullOrBlank()) {
+            plugin.logger.warning("DPC API URL is not configured. Set dpc-api.url in config.yml. Skipping faction sync.")
+            return
+        }
+
+        val apiUri = try {
+            URI(rawApiUrl)
+        } catch (e: Exception) {
+            plugin.logger.log(Level.WARNING, "DPC API URL is invalid: '$rawApiUrl'. Skipping faction sync.", e)
+            return
+        }
+
+        if (!apiUri.isAbsolute || apiUri.host.isNullOrBlank()) {
+            plugin.logger.warning("DPC API URL must be absolute and include a host. Current value: '$rawApiUrl'. Skipping faction sync.")
+            return
+        }
+
+        val apiUrl = apiUri.toString()
         val apiKey = plugin.config.getString("dpc-api.key") ?: return
         if (apiKey.isEmpty()) {
             plugin.logger.warning("DPC API key is not configured. Skipping faction sync.")
@@ -41,6 +59,24 @@ class MfDpcApiService(
             return
         }
 
+        val serverIp: String? = if (shareServerIp) {
+            val serverAddress = plugin.config.getString("dpc-api.server-address")?.takeIf { it.isNotBlank() }
+            if (serverAddress != null) {
+                serverAddress
+            } else {
+                val ip = plugin.server.ip
+                val port = plugin.server.port
+                if (ip.isNotEmpty()) {
+                    if (port != 25565) "$ip:$port" else ip
+                } else {
+                    plugin.logger.warning("Server IP is empty and dpc-api.server-address is not configured. Omitting serverIp from sync payload.")
+                    null
+                }
+            }
+        } else {
+            null
+        }
+
         val jsonArray = JsonArray()
         for (faction in factions) {
             val obj = JsonObject()
@@ -48,19 +84,8 @@ class MfDpcApiService(
             obj.addProperty("serverId", serverId)
             obj.addProperty("memberCount", faction.members.size)
             obj.addProperty("description", faction.description)
-            if (shareServerIp) {
-                val serverAddress = plugin.config.getString("dpc-api.server-address")?.takeIf { it.isNotBlank() }
-                if (serverAddress != null) {
-                    obj.addProperty("serverIp", serverAddress)
-                } else {
-                    val ip = plugin.server.ip
-                    val port = plugin.server.port
-                    if (ip.isNotEmpty()) {
-                        obj.addProperty("serverIp", if (port != 25565) "$ip:$port" else ip)
-                    } else {
-                        plugin.logger.warning("Server IP is empty and dpc-api.server-address is not configured. Omitting serverIp from sync payload.")
-                    }
-                }
+            if (serverIp != null) {
+                obj.addProperty("serverIp", serverIp)
             }
             if (discordLink.isNotEmpty()) {
                 obj.addProperty("discordLink", discordLink)
