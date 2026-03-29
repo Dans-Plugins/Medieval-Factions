@@ -43,11 +43,16 @@ class MfDpcApiService(
         }
 
         val apiUrl = apiUri.toString()
-        val apiKey = plugin.config.getString("dpc-api.key") ?: return
-        if (apiKey.isEmpty()) {
+        val rawApiKey = plugin.config.getString("dpc-api.key")
+        if (rawApiKey == null) {
+            plugin.logger.warning("DPC API key is missing from config.yml (dpc-api.key). Skipping faction sync.")
+            return
+        }
+        if (rawApiKey.isEmpty()) {
             plugin.logger.warning("DPC API key is not configured. Skipping faction sync.")
             return
         }
+        val apiKey = rawApiKey
 
         val factionService = plugin.services.factionService
         val factions = factionService.factions

@@ -26,6 +26,7 @@ import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Flow
+import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -157,7 +158,7 @@ class MfDpcApiServiceTest {
     @Suppress("UNCHECKED_CAST")
     fun testSyncFactions_skippedWhenServerIdBlank() {
         `when`(config.getBoolean("dpc-api.enabled")).thenReturn(true)
-        `when`(config.getString("dpc-api.url")).thenReturn("https://api.dansplugins.com")
+        `when`(config.getString("dpc-api.url")).thenReturn("https://dansplugins.com")
         `when`(config.getString("dpc-api.key")).thenReturn("test-key")
         `when`(config.getString("dpc-api.server-id")).thenReturn("")
 
@@ -183,7 +184,7 @@ class MfDpcApiServiceTest {
         serverId: String = "my-server"
     ) {
         `when`(config.getBoolean("dpc-api.enabled")).thenReturn(true)
-        `when`(config.getString("dpc-api.url")).thenReturn("https://api.dansplugins.com")
+        `when`(config.getString("dpc-api.url")).thenReturn("https://dansplugins.com")
         `when`(config.getString("dpc-api.key")).thenReturn("test-api-key")
         `when`(config.getString("dpc-api.server-id")).thenReturn(serverId)
         `when`(config.getBoolean("dpc-api.share-server-ip")).thenReturn(shareServerIp)
@@ -247,6 +248,6 @@ class MfDpcApiServiceTest {
                 future.complete(body.toString())
             }
         })
-        return future.get()
+        return future.get(5, TimeUnit.SECONDS)
     }
 }
