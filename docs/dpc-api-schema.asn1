@@ -1,0 +1,19 @@
+-- DPC API — Faction Sync payload schema
+-- POST /api/v1/factions
+-- Content-Type: application/json
+-- Authorization: X-API-Key header
+
+DpcFactionSync DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+  FactionList ::= SEQUENCE (SIZE(0..1000)) OF Faction
+
+  Faction ::= SEQUENCE {
+    name         UTF8String (SIZE(1..64)),
+    serverId     UTF8String (SIZE(1..64)),
+    memberCount  INTEGER (0..MAX),
+    description  UTF8String (SIZE(0..512))   OPTIONAL,
+    serverIp     UTF8String (SIZE(0..253))   OPTIONAL,
+    discordLink  UTF8String (SIZE(0..512))   OPTIONAL
+  }
+
+END

@@ -1,5 +1,21 @@
-# Copilot Instructions
+# Medieval Factions — Copilot Instructions
 
+## Stack
+Kotlin · Bukkit/Paper API · Gradle (Shadow JAR) · Java 17 toolchain
+
+## Build
+`./gradlew shadowJar`. CI builds Ponder from source (`Dans-Plugins/Ponder` tag `2.0.0`)
+via `publishToMavenLocal` before the main build.
+
+## DPC API integration (`dpc/MfDpcApiService`)
+- Schema: `docs/dpc-api-schema.asn1`
+- Field limits: `name` 64 · `serverId` 64 · `description` 512 · `serverIp` 253 · `discordLink` 512
+- Truncate every field before adding to JSON; use the `truncate()` helper.
+- `discordLink` must start with `https://discord.gg/` or `https://discord.com/`.
+- `memberCount` must be a non-negative integer (`maxOf(0, …)`).
+- `HttpClient` is injected for testability — tests mock it, no real network calls.
+
+## Conventions
 This repository follows the DPC (Dans Plugins Community) conventions defined at
 https://github.com/Dans-Plugins/dpc-conventions. Read those conventions before
 making any changes.

@@ -53,22 +53,34 @@ class MfDpcApiService(
         val factions = factionService.factions
 
         val shareServerIp = plugin.config.getBoolean("dpc-api.share-server-ip")
-        val discordLink = plugin.config.getString("dpc-api.discord-link") ?: ""
+        val rawDiscordLink = plugin.config.getString("dpc-api.discord-link") ?: ""
         val serverId = plugin.config.getString("dpc-api.server-id")?.takeIf { it.isNotBlank() }
         if (serverId == null) {
             plugin.logger.warning("DPC server ID is not configured. Set dpc-api.server-id in config.yml. Skipping faction sync.")
             return
         }
 
+        val discordLink: String? = if (rawDiscordLink.isNotEmpty()) {
+            if (isValidDiscordLink(rawDiscordLink)) {
+                truncate(rawDiscordLink, MAX_DISCORD_LINK)
+            } else {
+                plugin.logger.warning("Invalid discord link format: '$rawDiscordLink'. Must start with https://discord.gg/ or https://discord.com/. Omitting discordLink from sync payload.")
+                null
+            }
+        } else {
+            null
+        }
+
         val serverIp: String? = if (shareServerIp) {
             val serverAddress = plugin.config.getString("dpc-api.server-address")?.takeIf { it.isNotBlank() }
             if (serverAddress != null) {
-                serverAddress
+                truncate(serverAddress, MAX_SERVER_IP)
             } else {
                 val ip = plugin.server.ip
                 val port = plugin.server.port
                 if (ip.isNotEmpty()) {
-                    if (port != 25565) "$ip:$port" else ip
+                    val addr = if (port != 25565) "$ip:$port" else ip
+                    truncate(addr, MAX_SERVER_IP)
                 } else {
                     plugin.logger.warning("Server IP is empty and dpc-api.server-address is not configured. Omitting serverIp from sync payload.")
                     null
@@ -81,14 +93,14 @@ class MfDpcApiService(
         val jsonArray = JsonArray()
         for (faction in factions) {
             val obj = JsonObject()
-            obj.addProperty("name", faction.name)
-            obj.addProperty("serverId", serverId)
-            obj.addProperty("memberCount", faction.members.size)
-            obj.addProperty("description", faction.description)
+            obj.addProperty("name", truncate(faction.name, MAX_NAME))
+            obj.addProperty("serverId", truncate(serverId, MAX_SERVER_ID))
+            obj.addProperty("memberCount", maxOf(0, faction.members.size))
+            obj.addProperty("description", truncate(faction.description, MAX_DESCRIPTION))
             if (serverIp != null) {
                 obj.addProperty("serverIp", serverIp)
             }
-            if (discordLink.isNotEmpty()) {
+            if (discordLink != null) {
                 obj.addProperty("discordLink", discordLink)
             }
             jsonArray.add(obj)
@@ -122,4 +134,17 @@ class MfDpcApiService(
             plugin.logger.log(Level.WARNING, "Failed to send faction data to DPC API.", e)
         }
     }
+
+    companion object {
+        const val MAX_NAME = 64
+        const val MAX_SERVER_ID = 64
+        const val MAX_DESCRIPTION = 512
+        const val MAX_SERVER_IP = 253
+        const val MAX_DISCORD_LINK = 512
+    }
+
+    private fun truncate(value: String?, max: Int): String? = value?.take(max)
+
+    private fun isValidDiscordLink(link: String): Boolean =
+        link.startsWith("https://discord.gg/") || link.startsWith("https://discord.com/")
 }
