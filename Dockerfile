@@ -1,8 +1,12 @@
 FROM ubuntu
 
-# Install dependencies
+# Install dependencies: JDK 17 for Gradle compilation toolchain, JDK 21 for MC 1.21 server runtime and BuildTools
 RUN apt update
-RUN DEBIAN_FRONTEND=noninteractive apt install -y wget git openjdk-21-jdk openjdk-21-jre
+RUN DEBIAN_FRONTEND=noninteractive apt install -y wget git openjdk-17-jdk openjdk-21-jdk openjdk-21-jre
+
+# Set JDK 21 as default for BuildTools and server runtime; Gradle auto-detects JDK 17 via toolchain
+ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
 # Build Ponder dependency and publish to Maven local
 WORKDIR /tmp/ponder-build
