@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import java.net.URI
+import java.net.URISyntaxException
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
@@ -31,13 +32,13 @@ class MfDpcApiService(
 
         val apiUri = try {
             URI(rawApiUrl)
-        } catch (e: Exception) {
+        } catch (e: URISyntaxException) {
             plugin.logger.log(Level.WARNING, "DPC API URL is invalid: '$rawApiUrl'. Skipping faction sync.", e)
             return
         }
 
-        if (!apiUri.isAbsolute || apiUri.host.isNullOrBlank()) {
-            plugin.logger.warning("DPC API URL must be absolute and include a host. Current value: '$rawApiUrl'. Skipping faction sync.")
+        if (!apiUri.isAbsolute || apiUri.host.isNullOrBlank() || apiUri.scheme !in listOf("http", "https")) {
+            plugin.logger.warning("DPC API URL must be an absolute HTTP(S) URL with a host. Current value: '$rawApiUrl'. Skipping faction sync.")
             return
         }
 
