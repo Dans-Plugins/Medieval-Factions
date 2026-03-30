@@ -94,10 +94,10 @@ class MfDpcApiService(
 
         val payloads = factions.map { faction ->
             DpcFactionPayload(
-                name = truncate(faction.name, MAX_NAME),
-                serverId = truncate(serverId, MAX_SERVER_ID),
+                name = faction.name.take(MAX_NAME),
+                serverId = serverId.take(MAX_SERVER_ID),
                 memberCount = maxOf(0, faction.members.size),
-                description = truncate(faction.description, MAX_DESCRIPTION),
+                description = faction.description.take(MAX_DESCRIPTION),
                 serverIp = serverIp,
                 discordLink = discordLink
             )

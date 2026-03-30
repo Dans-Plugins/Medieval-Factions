@@ -5,10 +5,10 @@ package com.dansplugins.factionsystem.dpc
  * Null fields are omitted from serialization by Gson's default behavior.
  */
 data class DpcFactionPayload(
-    val name: String?,
-    val serverId: String?,
+    val name: String,
+    val serverId: String,
     val memberCount: Int,
-    val description: String?,
+    val description: String,
     val serverIp: String? = null,
     val discordLink: String? = null
 )

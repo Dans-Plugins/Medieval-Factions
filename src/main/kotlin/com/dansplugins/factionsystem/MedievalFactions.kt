@@ -494,8 +494,8 @@ class MedievalFactions : JavaPlugin() {
         }
 
         val dpcApiService = MfDpcApiService(this)
-        val syncIntervalMinutes = config.getLong("dpc-api.sync-interval-minutes").coerceAtLeast(1)
-        val syncIntervalTicks = syncIntervalMinutes * 20L * 60L
+        val syncIntervalMinutes = config.getInt("dpc-api.sync-interval-minutes", 10).coerceAtLeast(1)
+        val syncIntervalTicks = syncIntervalMinutes.toLong() * 20L * 60L
         server.scheduler.runTaskTimerAsynchronously(this, Runnable { dpcApiService.syncFactions() }, syncIntervalTicks, syncIntervalTicks)
     }
 
