@@ -1,11 +1,11 @@
 FROM ubuntu
 
-# Install dependencies: JDK 17 for Gradle compilation toolchain, JDK 21 for MC 1.21 server runtime and BuildTools
+# Install dependencies: JDK 17 for Gradle builds, JDK 21 for MC 1.21 server runtime and BuildTools
 RUN apt update
 RUN DEBIAN_FRONTEND=noninteractive apt install -y wget git openjdk-17-jdk openjdk-21-jdk openjdk-21-jre
 
-# Set JDK 21 as default for BuildTools and server runtime; Gradle auto-detects JDK 17 via toolchain
-ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+# Use JDK 17 for Gradle builds (both Ponder and MF use Gradle 7.x which doesn't support JDK 21)
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
 # Build Ponder dependency and publish to Maven local
@@ -21,11 +21,15 @@ COPY . .
 RUN chmod +x gradlew
 RUN ./gradlew clean shadowJar
 
+# Switch to JDK 21 for BuildTools and MC 1.21 server runtime
+ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+
 # Build server
 WORKDIR /testmcserver-build
 RUN wget -O BuildTools.jar https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
 RUN git config --global --unset core.autocrlf || :
-RUN java -jar BuildTools.jar --rev 1.21.11
+RUN java -jar BuildTools.jar --rev 1.21.1
 
 # Copy plugin jar from build output
 RUN mkdir -p /testmcserver-build/MedievalFactions/build && cp -r /tmp/mf-build/build/libs /testmcserver-build/MedievalFactions/build/libs

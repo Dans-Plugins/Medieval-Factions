@@ -13,8 +13,9 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
@@ -29,7 +30,6 @@ import java.util.concurrent.Flow
 import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MfDpcApiServiceTest {
 
     private lateinit var plugin: MedievalFactions
@@ -37,6 +37,9 @@ class MfDpcApiServiceTest {
     private lateinit var httpClient: HttpClient
     private lateinit var logger: Logger
     private lateinit var uut: MfDpcApiService
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T> anyNonNull(): T = ArgumentMatchers.any<T>() as T
 
     @BeforeEach
     fun setUp() {
@@ -155,7 +158,6 @@ class MfDpcApiServiceTest {
     }
 
     @Test
-    @Suppress("UNCHECKED_CAST")
     fun testSyncFactions_skippedWhenServerIdBlank() {
         `when`(config.getBoolean("dpc-api.enabled")).thenReturn(true)
         `when`(config.getString("dpc-api.url")).thenReturn("https://dansplugins.com")
@@ -171,8 +173,8 @@ class MfDpcApiServiceTest {
         uut.syncFactions()
 
         verify(httpClient, never()).sendAsync(
-            org.mockito.ArgumentMatchers.any(HttpRequest::class.java),
-            org.mockito.ArgumentMatchers.any(HttpResponse.BodyHandler::class.java) as HttpResponse.BodyHandler<String>
+            anyNonNull<HttpRequest>(),
+            anyNonNull<HttpResponse.BodyHandler<String>>()
         )
     }
 
@@ -215,20 +217,17 @@ class MfDpcApiServiceTest {
         `when`(response.statusCode()).thenReturn(statusCode)
         `when`(response.body()).thenReturn("{}")
         val future = CompletableFuture.completedFuture(response)
-        `when`(
-            httpClient.sendAsync(
-                org.mockito.ArgumentMatchers.any(HttpRequest::class.java),
-                org.mockito.ArgumentMatchers.any(HttpResponse.BodyHandler::class.java) as HttpResponse.BodyHandler<String>
-            )
-        ).thenReturn(future)
+        doReturn(future).`when`(httpClient).sendAsync(
+            anyNonNull<HttpRequest>(),
+            anyNonNull<HttpResponse.BodyHandler<String>>()
+        )
     }
 
-    @Suppress("UNCHECKED_CAST")
     private fun captureRequestBody(): String {
         val captor = ArgumentCaptor.forClass(HttpRequest::class.java)
         verify(httpClient).sendAsync(
             captor.capture(),
-            org.mockito.ArgumentMatchers.any(HttpResponse.BodyHandler::class.java) as HttpResponse.BodyHandler<String>
+            anyNonNull<HttpResponse.BodyHandler<String>>()
         )
         val request = captor.value
         val bodyPublisher = request.bodyPublisher().orElseThrow()
