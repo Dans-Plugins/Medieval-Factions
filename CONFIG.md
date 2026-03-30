@@ -538,7 +538,7 @@ This integration is **strictly opt-in**.
 ### `dpc-api.url`
 **Type:** String  
 **Default:** `"https://dansplugins.com"`  
-**Description:** The base URL of the DPC API.
+**Description:** The base URL of the DPC API. Include a port if the API runs on a non-standard port (e.g. `"https://dansplugins.com:8080"`).
 
 ### `dpc-api.key`
 **Type:** String  
@@ -569,6 +569,11 @@ This integration is **strictly opt-in**.
 **Type:** String  
 **Default:** `""`  
 **Description:** An optional Discord invite link to display on the DPC website alongside your faction data. Leave empty to omit.
+
+### `dpc-api.sync-interval-minutes`
+**Type:** Integer  
+**Default:** `10`  
+**Description:** How often (in minutes) the plugin syncs faction data to the DPC API. Minimum value is 1 minute. Lower values mean more frequent updates but increase network traffic.
 
 ---
 

@@ -2,8 +2,6 @@ package com.dansplugins.factionsystem.dpc
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.google.gson.Gson
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import java.net.URI
 import java.net.URISyntaxException
 import java.net.http.HttpClient
@@ -94,23 +92,18 @@ class MfDpcApiService(
             null
         }
 
-        val jsonArray = JsonArray()
-        for (faction in factions) {
-            val obj = JsonObject()
-            obj.addProperty("name", truncate(faction.name, MAX_NAME))
-            obj.addProperty("serverId", truncate(serverId, MAX_SERVER_ID))
-            obj.addProperty("memberCount", maxOf(0, faction.members.size))
-            obj.addProperty("description", truncate(faction.description, MAX_DESCRIPTION))
-            if (serverIp != null) {
-                obj.addProperty("serverIp", serverIp)
-            }
-            if (discordLink != null) {
-                obj.addProperty("discordLink", discordLink)
-            }
-            jsonArray.add(obj)
+        val payloads = factions.map { faction ->
+            DpcFactionPayload(
+                name = truncate(faction.name, MAX_NAME),
+                serverId = truncate(serverId, MAX_SERVER_ID),
+                memberCount = maxOf(0, faction.members.size),
+                description = truncate(faction.description, MAX_DESCRIPTION),
+                serverIp = serverIp,
+                discordLink = discordLink
+            )
         }
 
-        val body = gson.toJson(jsonArray)
+        val body = gson.toJson(payloads)
         val url = apiUrl.trimEnd('/') + "/api/v1/factions"
 
         try {

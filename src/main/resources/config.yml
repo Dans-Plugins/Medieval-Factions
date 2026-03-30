@@ -264,12 +264,13 @@ gates:
     - *buttons
 dpc-api:
   enabled: false
-  url: "https://dansplugins.com"
+  url: "https://dansplugins.com"  # base URL of the DPC API; include port if needed (e.g. "https://dansplugins.com:8080")
   key: ""                      # API key from https://dansplugins.com — register or sign in, then generate a key from your account page
   server-id: ""                # unique name for this server (e.g. "my-survival-server"); used to identify your server in the DPC registry
   login-reminder: true
   share-server-ip: false
   server-address: ""           # explicit server address (e.g. "play.myserver.com:25565"); used when share-server-ip is true. If blank, auto-detects from server binding.
   discord-link: ""
+  sync-interval-minutes: 10   # how often to sync faction data to the DPC API (in minutes, minimum 1)
 dev:
   enableDevCommands: false
