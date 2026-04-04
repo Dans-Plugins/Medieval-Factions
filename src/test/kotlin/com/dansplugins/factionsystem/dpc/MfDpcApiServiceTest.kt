@@ -178,6 +178,38 @@ class MfDpcApiServiceTest {
         )
     }
 
+    @Test
+    fun testSyncFactions_nonDefaultPortIncludedInServerIp() {
+        setupEnabledConfig()
+        val server = plugin.server
+        `when`(server.ip).thenReturn("10.0.0.1")
+        `when`(server.port).thenReturn(25570)
+        setupFactions(listOf(createMockFaction("TestFaction", "desc", 1)))
+        setupHttpResponse(200)
+
+        uut.syncFactions()
+
+        val json = captureRequestBody()
+        val arr = JsonParser.parseString(json).asJsonArray
+        val obj = arr[0].asJsonObject
+        assertEquals("10.0.0.1:25570", obj.get("serverIp").asString)
+    }
+
+    @Test
+    fun testSyncFactions_configuredServerAddressOverridesBinding() {
+        setupEnabledConfig()
+        `when`(config.getString("dpc-api.server-address")).thenReturn("play.example.com:25565")
+        setupFactions(listOf(createMockFaction("TestFaction", "desc", 1)))
+        setupHttpResponse(200)
+
+        uut.syncFactions()
+
+        val json = captureRequestBody()
+        val arr = JsonParser.parseString(json).asJsonArray
+        val obj = arr[0].asJsonObject
+        assertEquals("play.example.com:25565", obj.get("serverIp").asString)
+    }
+
     // --- helpers ---
 
     private fun setupEnabledConfig(
