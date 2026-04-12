@@ -102,10 +102,11 @@ class MfFactionAllyCommand(private val plugin: MedievalFactions) : CommandExecut
                     plugin.server.scheduler.runTask(
                         plugin,
                         Runnable {
+                            val allyActionLabel = plugin.language["ApprovalRequestTypeAlly"]
                             plugin.server.onlinePlayers
                                 .filter { it.hasPermission("mf.approve") }
                                 .forEach { moderator ->
-                                    moderator.sendMessage("${ChatColor.YELLOW}${plugin.language["ApprovalRequestNotification", faction.name, "ally", target.name, request.id.value]}")
+                                    moderator.sendMessage("${ChatColor.YELLOW}${plugin.language["ApprovalRequestNotification", faction.name, allyActionLabel, target.name, request.id.value]}")
                                     if (reason != null) {
                                         moderator.sendMessage("${ChatColor.GRAY}${plugin.language["ApprovalRequestReason", reason]}")
                                     }

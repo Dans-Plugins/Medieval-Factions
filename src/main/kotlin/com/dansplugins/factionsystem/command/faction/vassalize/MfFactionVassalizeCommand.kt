@@ -110,13 +110,14 @@ class MfFactionVassalizeCommand(private val plugin: MedievalFactions) : CommandE
                         )
                     )
                     sender.sendMessage("$GREEN${plugin.language["CommandFactionVassalizePendingApproval", target.name]}")
+                    val vassalizeActionLabel = plugin.language["ApprovalRequestTypeVassalize"]
                     plugin.server.scheduler.runTask(
                         plugin,
                         Runnable {
                             plugin.server.onlinePlayers
                                 .filter { it.hasPermission("mf.approve") }
                                 .forEach { moderator ->
-                                    moderator.sendMessage("${ChatColor.YELLOW}${plugin.language["ApprovalRequestNotification", faction.name, "vassalize", target.name, request.id.value]}")
+                                    moderator.sendMessage("${ChatColor.YELLOW}${plugin.language["ApprovalRequestNotification", faction.name, vassalizeActionLabel, target.name, request.id.value]}")
                                     if (reason != null) {
                                         moderator.sendMessage("${ChatColor.GRAY}${plugin.language["ApprovalRequestReason", reason]}")
                                     }

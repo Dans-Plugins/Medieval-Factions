@@ -107,10 +107,11 @@ class MfFactionDeclareWarCommand(private val plugin: MedievalFactions) : Command
                     plugin.server.scheduler.runTask(
                         plugin,
                         Runnable {
+                            val warActionLabel = plugin.language["ApprovalRequestTypeWar"]
                             plugin.server.onlinePlayers
                                 .filter { it.hasPermission("mf.approve") }
                                 .forEach { moderator ->
-                                    moderator.sendMessage("${ChatColor.YELLOW}${plugin.language["ApprovalRequestNotification", faction.name, "war", target.name, request.id.value]}")
+                                    moderator.sendMessage("${ChatColor.YELLOW}${plugin.language["ApprovalRequestNotification", faction.name, warActionLabel, target.name, request.id.value]}")
                                     if (reason != null) {
                                         moderator.sendMessage("${ChatColor.GRAY}${plugin.language["ApprovalRequestReason", reason]}")
                                     }

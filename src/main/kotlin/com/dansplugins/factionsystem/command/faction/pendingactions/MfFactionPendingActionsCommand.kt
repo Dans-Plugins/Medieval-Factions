@@ -22,23 +22,33 @@ class MfFactionPendingActionsCommand(private val plugin: MedievalFactions) : Com
             Runnable {
                 val approvalService = plugin.services.approvalRequestService
                 val requests = approvalService.getAllRequests()
+                val messages = mutableListOf<String>()
                 if (requests.isEmpty()) {
-                    sender.sendMessage("$GRAY${plugin.language["CommandFactionPendingActionsNone"]}")
-                    return@Runnable
+                    messages.add("$GRAY${plugin.language["CommandFactionPendingActionsNone"]}")
+                } else {
+                    val factionService = plugin.services.factionService
+                    messages.add("$AQUA${plugin.language["CommandFactionPendingActionsHeader"]}")
+                    for (request in requests) {
+                        val faction = factionService.getFaction(request.factionId)
+                        val target = factionService.getFaction(request.targetId)
+                        val factionName = faction?.name ?: plugin.language["UnknownFaction"]
+                        val targetName = target?.name ?: plugin.language["UnknownFaction"]
+                        val requestTypeLocalized = plugin.language["ApprovalRequestType${request.type.name.lowercase().replaceFirstChar { it.uppercase() }}"]
+                        val reasonText = if (request.reason != null) " - ${request.reason}" else ""
+                        messages.add(
+                            "$YELLOW${plugin.language["CommandFactionPendingActionsEntry", request.id.value, requestTypeLocalized, factionName, targetName]}$GRAY$reasonText"
+                        )
+                    }
+                    messages.add("$GRAY${plugin.language["CommandFactionPendingActionsFooter"]}")
                 }
-                val factionService = plugin.services.factionService
-                sender.sendMessage("$AQUA${plugin.language["CommandFactionPendingActionsHeader"]}")
-                for (request in requests) {
-                    val faction = factionService.getFaction(request.factionId)
-                    val target = factionService.getFaction(request.targetId)
-                    val factionName = faction?.name ?: "Unknown"
-                    val targetName = target?.name ?: "Unknown"
-                    val reasonText = if (request.reason != null) " - ${request.reason}" else ""
-                    sender.sendMessage(
-                        "$YELLOW${plugin.language["CommandFactionPendingActionsEntry", request.id.value, request.type.name.lowercase(), factionName, targetName]}$GRAY$reasonText"
-                    )
-                }
-                sender.sendMessage("$GRAY${plugin.language["CommandFactionPendingActionsFooter"]}")
+                plugin.server.scheduler.runTask(
+                    plugin,
+                    Runnable {
+                        for (message in messages) {
+                            sender.sendMessage(message)
+                        }
+                    }
+                )
             }
         )
         return true

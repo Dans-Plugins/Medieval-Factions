@@ -33,16 +33,17 @@ class MfFactionDenyCommand(private val plugin: MedievalFactions) : CommandExecut
                 val factionService = plugin.services.factionService
                 val faction = factionService.getFaction(request.factionId)
                 val target = factionService.getFaction(request.targetId)
-                val factionName = faction?.name ?: "Unknown"
-                val targetName = target?.name ?: "Unknown"
+                val factionName = faction?.name ?: plugin.language["UnknownFaction"]
+                val targetName = target?.name ?: plugin.language["UnknownFaction"]
+                val requestTypeLocalized = plugin.language["ApprovalRequestType${request.type.name.lowercase().replaceFirstChar { it.uppercase() }}"]
                 approvalService.removeRequest(requestId)
-                sender.sendMessage("$GREEN${plugin.language["CommandFactionDenySuccess", factionName, targetName, request.type.name.lowercase()]}")
+                sender.sendMessage("$GREEN${plugin.language["CommandFactionDenySuccess", factionName, targetName, requestTypeLocalized]}")
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
                         faction?.sendMessage(
                             plugin.language["FactionApprovalDeniedNotificationTitle"],
-                            plugin.language["FactionApprovalDeniedNotificationBody", request.type.name.lowercase(), targetName]
+                            plugin.language["FactionApprovalDeniedNotificationBody", requestTypeLocalized, targetName]
                         )
                     }
                 )

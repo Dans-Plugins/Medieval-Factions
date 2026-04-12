@@ -109,13 +109,14 @@ class MfFactionApproveCommand(private val plugin: MedievalFactions) : CommandExe
                             plugin.server.scheduler.runTask(
                                 plugin,
                                 Runnable {
+                                    val requesterName = request.requesterId.toBukkitPlayer().name ?: plugin.language["UnknownPlayer"]
                                     faction.sendMessage(
-                                        plugin.language["FactionAllyRequestSentNotificationTitle", request.requesterId.toBukkitPlayer().name ?: "Unknown", target.name],
-                                        plugin.language["FactionAllyRequestSentNotificationBody", request.requesterId.toBukkitPlayer().name ?: "Unknown", target.name]
+                                        plugin.language["FactionAllyRequestSentNotificationTitle", requesterName, target.name],
+                                        plugin.language["FactionAllyRequestSentNotificationBody", requesterName, target.name]
                                     )
                                     target.sendMessage(
-                                        plugin.language["FactionAllyRequestReceivedNotificationTitle", request.requesterId.toBukkitPlayer().name ?: "Unknown", faction.name],
-                                        plugin.language["FactionAllyRequestReceivedNotificationBody", request.requesterId.toBukkitPlayer().name ?: "Unknown", faction.name]
+                                        plugin.language["FactionAllyRequestReceivedNotificationTitle", requesterName, faction.name],
+                                        plugin.language["FactionAllyRequestReceivedNotificationBody", requesterName, faction.name]
                                     )
                                 }
                             )

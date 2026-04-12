@@ -8,8 +8,20 @@ class MfApprovalRequestService {
     private val pendingRequests = ConcurrentHashMap<MfApprovalRequestId, MfApprovalRequest>()
 
     fun addRequest(request: MfApprovalRequest): MfApprovalRequest {
-        pendingRequests[request.id] = request
-        return request
+        synchronized(this) {
+            val existing = pendingRequests.values.firstOrNull {
+                it.factionId == request.factionId &&
+                    it.targetId == request.targetId &&
+                    it.type == request.type
+            }
+
+            if (existing != null) {
+                return existing
+            }
+
+            pendingRequests[request.id] = request
+            return request
+        }
     }
 
     fun getRequest(id: MfApprovalRequestId): MfApprovalRequest? = pendingRequests[id]

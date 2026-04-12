@@ -142,6 +142,33 @@ class MfApprovalRequestServiceTest {
         assertNull(result.reason)
     }
 
+    @Test
+    fun testAddDuplicateRequestReturnExisting() {
+        val factionId = testUtils.createFactionId()
+        val targetId = testUtils.createFactionId()
+        val request1 = MfApprovalRequest(
+            factionId = factionId,
+            targetId = targetId,
+            type = MfApprovalRequestType.WAR,
+            requesterId = testUtils.createPlayerId(),
+            reason = "First request"
+        )
+        val request2 = MfApprovalRequest(
+            factionId = factionId,
+            targetId = targetId,
+            type = MfApprovalRequestType.WAR,
+            requesterId = testUtils.createPlayerId(),
+            reason = "Second request"
+        )
+
+        val result1 = service.addRequest(request1)
+        val result2 = service.addRequest(request2)
+
+        assertEquals(result1.id, result2.id)
+        assertEquals("First request", result2.reason)
+        assertEquals(1, service.getAllRequests().size)
+    }
+
     private fun createTestRequest(type: MfApprovalRequestType): MfApprovalRequest {
         return MfApprovalRequest(
             factionId = testUtils.createFactionId(),
