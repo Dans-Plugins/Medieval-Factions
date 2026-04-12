@@ -160,7 +160,7 @@ class MfDpcApiServiceTest {
     @Test
     fun testSyncFactions_skippedWhenServerIdBlank() {
         `when`(config.getBoolean("dpc-api.enabled")).thenReturn(true)
-        `when`(config.getString("dpc-api.url")).thenReturn("https://dansplugins.com")
+        `when`(config.getString("dpc-api.url")).thenReturn("https://dansplugins.com/api/v1/factions")
         `when`(config.getString("dpc-api.key")).thenReturn("test-key")
         `when`(config.getString("dpc-api.server-id")).thenReturn("")
 
@@ -218,7 +218,7 @@ class MfDpcApiServiceTest {
         serverId: String = "my-server"
     ) {
         `when`(config.getBoolean("dpc-api.enabled")).thenReturn(true)
-        `when`(config.getString("dpc-api.url")).thenReturn("https://dansplugins.com")
+        `when`(config.getString("dpc-api.url")).thenReturn("https://dansplugins.com/api/v1/factions")
         `when`(config.getString("dpc-api.key")).thenReturn("test-api-key")
         `when`(config.getString("dpc-api.server-id")).thenReturn(serverId)
         `when`(config.getBoolean("dpc-api.share-server-ip")).thenReturn(shareServerIp)
@@ -265,18 +265,27 @@ class MfDpcApiServiceTest {
         val bodyPublisher = request.bodyPublisher().orElseThrow()
         val future = CompletableFuture<String>()
         bodyPublisher.subscribe(object : Flow.Subscriber<ByteBuffer> {
-            private val body = StringBuilder()
+            private val chunks = mutableListOf<ByteArray>()
             override fun onSubscribe(subscription: Flow.Subscription) {
                 subscription.request(Long.MAX_VALUE)
             }
             override fun onNext(item: ByteBuffer) {
-                body.append(StandardCharsets.UTF_8.decode(item))
+                val bytes = ByteArray(item.remaining())
+                item.get(bytes)
+                chunks.add(bytes)
             }
             override fun onError(throwable: Throwable) {
                 future.completeExceptionally(throwable)
             }
             override fun onComplete() {
-                future.complete(body.toString())
+                val totalSize = chunks.sumOf { it.size }
+                val combined = ByteArray(totalSize)
+                var offset = 0
+                for (chunk in chunks) {
+                    chunk.copyInto(combined, offset)
+                    offset += chunk.size
+                }
+                future.complete(String(combined, StandardCharsets.UTF_8))
             }
         })
         return future.get(5, TimeUnit.SECONDS)
