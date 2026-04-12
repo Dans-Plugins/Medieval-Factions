@@ -33,7 +33,7 @@ class MfFactionPendingActionsCommand(private val plugin: MedievalFactions) : Com
                         val target = factionService.getFaction(request.targetId)
                         val factionName = faction?.name ?: plugin.language["UnknownFaction"]
                         val targetName = target?.name ?: plugin.language["UnknownFaction"]
-                        val requestTypeLocalized = plugin.language["ApprovalRequestType${request.type.name.lowercase().replaceFirstChar { it.uppercase() }}"]
+                        val requestTypeLocalized = plugin.language[request.type.languageKey]
                         val reasonText = if (request.reason != null) " - ${request.reason}" else ""
                         messages.add(
                             "$YELLOW${plugin.language["CommandFactionPendingActionsEntry", request.id.value, requestTypeLocalized, factionName, targetName]}$GRAY$reasonText"
