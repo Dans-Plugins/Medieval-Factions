@@ -1,44 +1,43 @@
 package com.dansplugins.factionsystem.command
 
-fun Array<out String>.dropFirst() = drop(1).toTypedArray()
+fun Array<out String>.dropFirst() = if (isEmpty()) emptyArray() else copyOfRange(1, size)
 
-fun Array<out String>.unquote(): Array<out String> {
+fun Array<out String>.unquote(): Array<String> {
     val unquoted = mutableListOf<String>()
-    var openQuotes = 0
+    val quotedParts = mutableListOf<String>()
+    var insideQuotes = false
+
     for (arg in this) {
-        var strippedArg = arg
-        if (strippedArg.startsWith("\"")) {
-            if (openQuotes == 0) {
-                unquoted.add("")
-                strippedArg = strippedArg.drop(1)
-            }
-            var i = 0
-            while (i < arg.length && arg[i] == '\"') {
-                openQuotes++
-                i++
-            }
-        }
-        var closedQuotes = 0
-        if (strippedArg.endsWith("\"")) {
-            var i = arg.lastIndex
-            while (i >= 0 && arg[i] == '\"') {
-                closedQuotes++
-                i--
-            }
-            if (closedQuotes >= openQuotes) {
-                strippedArg = strippedArg.dropLast(1)
-            }
-        }
-        if (openQuotes > 0) {
-            if (unquoted[unquoted.lastIndex].isEmpty()) {
-                unquoted[unquoted.lastIndex] = strippedArg
+        if (!insideQuotes) {
+            if (arg.startsWith("\"")) {
+                quotedParts.clear()
+                quotedParts.add(arg)
+                insideQuotes = true
+
+                if (arg.length > 1 && arg.endsWith("\"")) {
+                    val combined = quotedParts.joinToString(" ")
+                    unquoted.add(combined.drop(1).dropLast(1))
+                    quotedParts.clear()
+                    insideQuotes = false
+                }
             } else {
-                unquoted[unquoted.lastIndex] = "${unquoted[unquoted.lastIndex]} $strippedArg"
+                unquoted.add(arg)
             }
         } else {
-            unquoted.add(strippedArg)
+            quotedParts.add(arg)
+
+            if (arg.endsWith("\"")) {
+                val combined = quotedParts.joinToString(" ")
+                unquoted.add(combined.drop(1).dropLast(1))
+                quotedParts.clear()
+                insideQuotes = false
+            }
         }
-        openQuotes -= closedQuotes
     }
+
+    if (insideQuotes) {
+        unquoted.add(quotedParts.joinToString(" "))
+    }
+
     return unquoted.toTypedArray()
 }
