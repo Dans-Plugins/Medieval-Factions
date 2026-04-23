@@ -13,15 +13,17 @@ fun Array<out String>.unquote(): Array<out String> {
                 strippedArg = strippedArg.drop(1)
             }
             var i = 0
-            while (arg[i++] == '\"') {
+            while (i < arg.length && arg[i] == '\"') {
                 openQuotes++
+                i++
             }
         }
         var closedQuotes = 0
         if (strippedArg.endsWith("\"")) {
             var i = arg.lastIndex
-            while (arg[i--] == '\"') {
+            while (i >= 0 && arg[i] == '\"') {
                 closedQuotes++
+                i--
             }
             if (closedQuotes >= openQuotes) {
                 strippedArg = strippedArg.dropLast(1)
