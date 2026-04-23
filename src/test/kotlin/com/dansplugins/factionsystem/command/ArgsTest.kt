@@ -67,6 +67,12 @@ class ArgsTest {
     }
 
     @Test
+    fun `unquote handles standalone opening quote without leading space`() {
+        // " My Faction"  (standalone opening quote) -> My Faction
+        assertArrayEquals(arrayOf("My Faction"), arrayOf("\"", "My", "Faction\"").unquote())
+    }
+
+    @Test
     fun `unquote handles multiple quoted segments`() {
         // "foo bar" "baz qux" -> foo bar, baz qux
         assertArrayEquals(
