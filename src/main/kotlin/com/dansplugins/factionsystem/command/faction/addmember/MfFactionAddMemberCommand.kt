@@ -11,7 +11,7 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
-import preponderous.ponder.command.dropFirst
+import com.dansplugins.factionsystem.command.dropFirst
 import java.util.logging.Level
 import java.util.logging.Level.SEVERE
 

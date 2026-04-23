@@ -11,7 +11,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
-import preponderous.ponder.command.dropFirst
+import com.dansplugins.factionsystem.command.dropFirst
 import java.util.logging.Level.SEVERE
 
 class MfFactionAdminSetLeaderCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {

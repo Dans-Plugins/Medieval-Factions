@@ -22,7 +22,7 @@ import org.bukkit.conversations.ConversationFactory
 import org.bukkit.conversations.Prompt
 import org.bukkit.conversations.ValidatingPrompt
 import org.bukkit.entity.Player
-import preponderous.ponder.command.unquote
+import com.dansplugins.factionsystem.command.unquote
 import java.util.logging.Level.SEVERE
 
 class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
