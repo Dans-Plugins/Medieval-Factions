@@ -36,7 +36,7 @@ fun Array<out String>.unquote(): Array<String> {
     }
 
     if (insideQuotes) {
-        unquoted.add(quotedParts.joinToString(" "))
+        unquoted.add(quotedParts.joinToString(" ").drop(1))
     }
 
     return unquoted.toTypedArray()
