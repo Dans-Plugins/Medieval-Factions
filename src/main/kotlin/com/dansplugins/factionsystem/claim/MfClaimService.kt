@@ -133,8 +133,8 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
         isWartimeBlockActionAllowed(playerId, claim, material, "factions.wartimeInteractableBlocks")
 
     private fun isWartimeBlockActionAllowed(playerId: MfPlayerId, claim: MfClaimedChunk, material: Material, configKey: String): Boolean {
-        val blocks = plugin.config.getStringList(configKey)
-        if (blocks.none { it.equals(material.name, ignoreCase = true) }) return false
+        val blocks = plugin.config.getStringList(configKey).mapTo(HashSet()) { it.uppercase() }
+        if (material.name !in blocks) return false
         val factionService = plugin.services.factionService
         val playerFaction = factionService.getFaction(playerId) ?: return false
         val relationshipService = plugin.services.factionRelationshipService

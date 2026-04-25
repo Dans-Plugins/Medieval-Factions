@@ -169,11 +169,13 @@ class BlockBreakListenerTest {
         val block = fixture.block
         val event = fixture.event
 
+        val claimFactionId = com.dansplugins.factionsystem.faction.MfFactionId("claim-faction-id")
         val claim = mock(com.dansplugins.factionsystem.claim.MfClaimedChunk::class.java)
+        `when`(claim.factionId).thenReturn(claimFactionId)
         `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
 
         val faction = mock(com.dansplugins.factionsystem.faction.MfFaction::class.java)
-        `when`(factionService.getFaction(claim.factionId)).thenReturn(faction)
+        `when`(factionService.getFaction(claimFactionId)).thenReturn(faction)
 
         val mfPlayer = mock(com.dansplugins.factionsystem.player.MfPlayer::class.java)
         `when`(playerService.getPlayer(fixture.player)).thenReturn(mfPlayer)
