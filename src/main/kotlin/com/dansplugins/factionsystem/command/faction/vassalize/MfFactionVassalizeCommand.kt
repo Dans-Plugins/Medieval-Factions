@@ -1,12 +1,15 @@
 package com.dansplugins.factionsystem.command.faction.vassalize
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.approval.MfApprovalRequest
+import com.dansplugins.factionsystem.approval.MfApprovalRequestType
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationship
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.LIEGE
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.VASSAL
 import dev.forkhandles.result4k.onFailure
+import org.bukkit.ChatColor
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
@@ -52,7 +55,11 @@ class MfFactionVassalizeCommand(private val plugin: MedievalFactions) : CommandE
                     sender.sendMessage("$RED${plugin.language["CommandFactionVassalizeNoFactionPermission"]}")
                     return@Runnable
                 }
-                val target = factionService.getFaction(args.joinToString(" "))
+                val requiresApproval = plugin.config.getBoolean("factions.vassalizeDeclarationRequiresApproval")
+                val dashDashIndex = if (requiresApproval) args.indexOfFirst { it == "--" } else -1
+                val factionName = if (dashDashIndex >= 0) args.take(dashDashIndex).joinToString(" ") else args.joinToString(" ")
+                val reason = if (dashDashIndex >= 0 && dashDashIndex + 1 < args.size) args.drop(dashDashIndex + 1).joinToString(" ") else null
+                val target = factionService.getFaction(factionName)
                 if (target == null) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionVassalizeInvalidTarget"]}")
                     return@Runnable
@@ -85,6 +92,38 @@ class MfFactionVassalizeCommand(private val plugin: MedievalFactions) : CommandE
                 }
                 if (relationships.any { it.type == VASSAL }) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionVassalizeAlreadyRequestedVassalization"]}")
+                    return@Runnable
+                }
+                if (requiresApproval) {
+                    val approvalService = plugin.services.approvalRequestService
+                    if (approvalService.hasPendingRequest(faction.id, target.id, MfApprovalRequestType.VASSALIZE)) {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionVassalizeAlreadyPending"]}")
+                        return@Runnable
+                    }
+                    val request = approvalService.addRequest(
+                        MfApprovalRequest(
+                            factionId = faction.id,
+                            targetId = target.id,
+                            type = MfApprovalRequestType.VASSALIZE,
+                            requesterId = mfPlayer.id,
+                            reason = reason
+                        )
+                    )
+                    sender.sendMessage("$GREEN${plugin.language["CommandFactionVassalizePendingApproval", target.name]}")
+                    val vassalizeActionLabel = plugin.language["ApprovalRequestTypeVassalize"]
+                    plugin.server.scheduler.runTask(
+                        plugin,
+                        Runnable {
+                            plugin.server.onlinePlayers
+                                .filter { it.hasPermission("mf.approve") }
+                                .forEach { moderator ->
+                                    moderator.sendMessage("${ChatColor.YELLOW}${plugin.language["ApprovalRequestNotification", faction.name, vassalizeActionLabel, target.name, request.id.value]}")
+                                    if (reason != null) {
+                                        moderator.sendMessage("${ChatColor.GRAY}${plugin.language["ApprovalRequestReason", reason]}")
+                                    }
+                                }
+                        }
+                    )
                     return@Runnable
                 }
                 factionRelationshipService.save(

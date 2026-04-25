@@ -71,8 +71,11 @@ commands:
       /f relationship add [faction1] [faction2] (relationship type) - Adds a relationship between two factions
       /f relationship remove [faction1] [faction2] [relationship type] - Removes a relationship between two factions
       /f relationship view [faction1] [faction2] - Views the relationship between two factions
+      /f approve [id] - Approves a pending faction action
+      /f deny [id] - Denies a pending faction action
+      /f pendingactions - Lists all pending faction actions awaiting approval
     aliases: [medievalfactions, mf, f, fraktion]
-    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|checkclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence|kick|map|sethome|home|flag|bypass|chat|set|bonuspower|relationship]
+    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|checkclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declareindependence|grantindependence|kick|map|sethome|home|flag|bypass|chat|set|bonuspower|relationship|approve|deny|pendingactions]
   lock:
     description: Enables or disables lock mode. To cancel lock mode, use /lock cancel.
     aliases: [verschlieBen, verschliessen, verrouiller]
@@ -387,6 +390,9 @@ permissions:
     - mf.force.unclaim
     - mf.force.flag
     - mf.force.addmember
+  mf.approve:
+    description: Allows approving and denying pending faction actions (war declarations, alliances, vassalizations)
+    default: op
   mf.admin.create:
     description: Allows creating leaderless factions
     default: op
@@ -405,3 +411,4 @@ permissions:
     - mf.power.set
     - mf.admin.create
     - mf.admin.setleader
+    - mf.approve
