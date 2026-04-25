@@ -29,7 +29,6 @@ repositories {
     maven { url 'https://jitpack.io' }
     maven { url 'https://repo.maven.apache.org/maven2/' }
     maven { url 'https://repo.rpkit.com/repository/maven-public/' }
-    maven { url 'https://repo.dansplugins.com/repository/maven-public/' }
 }
 
 configurations {
@@ -56,8 +55,6 @@ dependencies {
     implementation 'com.rpkit:rpk-player-lib-bukkit:2.3.2:all'
     implementation 'com.rpkit:rpk-notification-lib-bukkit:2.3.2:all'
     implementation 'com.rpkit:rpk-lock-lib-bukkit:2.3.2:all'
-    implementation 'com.dansplugins:ponder-bukkit:2.0.0'
-    implementation 'com.dansplugins:ponder-commands:2.0.0'
     jooqGenerator 'org.jooq:jooq-meta-extensions:3.17.4'
 
     // Use the Kotlin JUnit 5 integration.
@@ -153,8 +150,6 @@ shadowJar {
         include(dependency('com.h2database:h2'))
         include(dependency('com.zaxxer:HikariCP'))
         include(dependency('com.google.code.gson:gson'))
-        include(dependency('com.dansplugins:ponder-bukkit'))
-        include(dependency('com.dansplugins:ponder-commands'))
     }
 
     relocate 'com.google', 'com.dansplugins.factionsystem.shadow.com.google'
@@ -173,7 +168,6 @@ shadowJar {
     relocate 'org.jetbrains', 'com.dansplugins.factionsystem.shadow.org.jetbrains'
     relocate 'org.jooq', 'com.dansplugins.factionsystem.shadow.org.jooq'
     relocate 'org.reactivestreams', 'com.dansplugins.factionsystem.shadow.org.reactivestreams'
-    relocate 'preponderous.ponder', 'com.dansplugins.factionsystem.shadow.preponderous.ponder'
 }
 
 artifacts {
