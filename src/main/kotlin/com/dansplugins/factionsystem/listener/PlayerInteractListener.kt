@@ -38,6 +38,7 @@ import org.bukkit.event.block.Action.PHYSICAL
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot.HAND
 import java.util.logging.Level.SEVERE
+import org.bukkit.block.data.type.Gate as FenceGateData
 
 class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
 
@@ -154,9 +155,9 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             }
         }
 
-        // Handle door/trapdoor special case
+        // Handle door/trapdoor/fence-gate special case
         if (plugin.config.getBoolean("factions.nonMembersCanInteractWithDoors")) {
-            if (clickedBlock.blockData is Door || clickedBlock.blockData is TrapDoor) {
+            if (blockData is Door || blockData is TrapDoor || blockData is FenceGateData) {
                 return
             }
         }

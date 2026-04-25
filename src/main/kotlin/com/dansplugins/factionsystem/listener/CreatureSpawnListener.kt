@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
+import org.bukkit.entity.Monster
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.CreatureSpawnEvent
@@ -10,6 +11,10 @@ class CreatureSpawnListener(private val plugin: MedievalFactions) : Listener {
     @EventHandler
     fun onCreatureSpawn(event: CreatureSpawnEvent) {
         if (plugin.config.getBoolean("factions.mobsSpawnInFactionTerritory")) {
+            return
+        }
+
+        if (event.entity !is Monster) {
             return
         }
 

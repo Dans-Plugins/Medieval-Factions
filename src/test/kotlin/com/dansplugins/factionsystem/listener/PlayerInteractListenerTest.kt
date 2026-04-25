@@ -39,6 +39,7 @@ import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import java.util.*
+import org.bukkit.block.data.type.Gate as FenceGateData
 
 class PlayerInteractListenerTest {
     private val testUtils = TestUtils()
@@ -94,6 +95,40 @@ class PlayerInteractListenerTest {
 
         // Assert - event should NOT be cancelled because trapdoors are allowed
         verifyEventNotCancelled()
+    }
+
+    @Test
+    fun onPlayerInteract_FenceGateWithNonMembersCanInteractWithDoorsEnabled_ShouldAllowInteraction() {
+        // Arrange
+        mockBlockData<FenceGateData>()
+        setupConfigForDoorInteraction(enabled = true)
+        setupPlayerMocks(fixture.player)
+        setupClaimAndFaction(fixture.block)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - event should NOT be cancelled because fence gates are allowed
+        verifyEventNotCancelled()
+    }
+
+    @Test
+    fun onPlayerInteract_FenceGateWithNonMembersCanInteractWithDoorsDisabled_ShouldBlockInteraction() {
+        // Arrange
+        mockBlockData<FenceGateData>()
+        setupConfigForDoorInteraction(enabled = false)
+        val (_, playerId) = setupPlayerMocks(fixture.player, bypassEnabled = false)
+        val (claim, _) = setupClaimAndFaction(fixture.block)
+
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
+        `when`(fixture.player.hasPermission("mf.bypass")).thenReturn(false)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - event should be cancelled because fence gates are NOT allowed and interaction is not allowed
+        verifyEventCancelled()
+        verifyPlayerNotified()
     }
 
     @Test

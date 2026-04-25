@@ -105,7 +105,6 @@ import org.flywaydb.core.Flyway
 import org.jooq.SQLDialect
 import org.jooq.conf.Settings
 import org.jooq.impl.DSL
-import preponderous.ponder.minecraft.bukkit.plugin.registerListeners
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalTime
@@ -316,7 +315,7 @@ class MedievalFactions : JavaPlugin() {
             }
         }
 
-        registerListeners(
+        listOf(
             AreaEffectCloudApplyListener(this),
             AsyncPlayerChatListener(this),
             AsyncPlayerPreLoginListener(this),
@@ -343,7 +342,7 @@ class MedievalFactions : JavaPlugin() {
             PlayerQuitListener(this),
             PlayerTeleportListener(this),
             PotionSplashListener(this)
-        )
+        ).forEach { server.pluginManager.registerEvents(it, this) }
 
         getCommand("faction")?.setExecutor(MfFactionCommand(this))
         getCommand("lock")?.setExecutor(MfLockCommand(this))
