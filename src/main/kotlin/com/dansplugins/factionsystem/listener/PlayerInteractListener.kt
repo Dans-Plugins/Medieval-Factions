@@ -30,7 +30,6 @@ import org.bukkit.block.DoubleChest
 import org.bukkit.block.data.Bisected
 import org.bukkit.block.data.Bisected.Half.BOTTOM
 import org.bukkit.block.data.type.Door
-import org.bukkit.block.data.type.Gate as FenceGateData
 import org.bukkit.block.data.type.TrapDoor
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -39,6 +38,7 @@ import org.bukkit.event.block.Action.PHYSICAL
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot.HAND
 import java.util.logging.Level.SEVERE
+import org.bukkit.block.data.type.Gate as FenceGateData
 
 class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
 

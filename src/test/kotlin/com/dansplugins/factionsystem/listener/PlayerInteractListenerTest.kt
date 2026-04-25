@@ -22,7 +22,6 @@ import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
 import org.bukkit.block.data.BlockData
 import org.bukkit.block.data.type.Door
-import org.bukkit.block.data.type.Gate as FenceGateData
 import org.bukkit.block.data.type.TrapDoor
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
@@ -40,6 +39,7 @@ import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import java.util.*
+import org.bukkit.block.data.type.Gate as FenceGateData
 
 class PlayerInteractListenerTest {
     private val testUtils = TestUtils()
