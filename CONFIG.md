@@ -197,6 +197,43 @@ Controls player vs player combat mechanics.
 **Default:** `true`  
 **Description:** When `true`, allows placing ladders in enemy faction territory (useful for sieges).
 
+### `factions.wartimePlaceableBlocks`
+**Type:** List of Strings  
+**Default:** `[]` (empty)  
+**Description:** List of block types (by Material name) that become placeable in enemy faction territory during war. Blocks listed here can be placed by an attacker whose faction is at war with the territory owner.  
+**Example:**
+```yaml
+factions:
+  wartimePlaceableBlocks:
+    - SCAFFOLDING
+    - TORCH
+```
+
+### `factions.wartimeBreakableBlocks`
+**Type:** List of Strings  
+**Default:** `[]` (empty)  
+**Description:** List of block types (by Material name) that become breakable in enemy faction territory during war. Blocks listed here can be broken by an attacker whose faction is at war with the territory owner.  
+**Example:**
+```yaml
+factions:
+  wartimeBreakableBlocks:
+    - SCAFFOLDING
+```
+
+### `factions.wartimeInteractableBlocks`
+**Type:** List of Strings  
+**Default:** `[]` (empty)  
+**Description:** List of block types (by Material name) that become interactable in enemy faction territory during war. Blocks listed here can be interacted with (e.g., opened, pressed) by an attacker whose faction is at war with the territory owner.  
+**Example:**
+```yaml
+factions:
+  wartimeInteractableBlocks:
+    - OAK_DOOR
+    - IRON_DOOR
+    - OAK_FENCE_GATE
+    - STONE_BUTTON
+```
+
 ### `factions.maxNameLength`
 **Type:** Integer  
 **Default:** `20`  

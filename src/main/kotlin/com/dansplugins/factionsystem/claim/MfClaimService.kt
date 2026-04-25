@@ -18,6 +18,7 @@ import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ChatMessageType.ACTION_BAR
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Chunk
+import org.bukkit.Material
 import org.bukkit.World
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -93,6 +94,60 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
 
         val relationshipService = plugin.services.factionRelationshipService
         return relationshipService.getFactionsAtWarWith(playerFaction.id).contains(claimFactionId)
+    }
+
+    /**
+     * Checks if placing a block of the given material is allowed in enemy territory during wartime
+     * because it appears in the `factions.wartimePlaceableBlocks` config list.
+     *
+     * @param playerId The ID of the player attempting to place the block
+     * @param claim The claimed chunk where the player is attempting the action
+     * @param material The material of the block being placed
+     * @return true if placement should be allowed, false otherwise
+     */
+    fun isWartimePlaceableBlock(playerId: MfPlayerId, claim: MfClaimedChunk, material: Material): Boolean {
+        val placeableBlocks = plugin.config.getStringList("factions.wartimePlaceableBlocks")
+        if (placeableBlocks.none { it.equals(material.name, ignoreCase = true) }) return false
+        val factionService = plugin.services.factionService
+        val playerFaction = factionService.getFaction(playerId) ?: return false
+        val relationshipService = plugin.services.factionRelationshipService
+        return relationshipService.getFactionsAtWarWith(playerFaction.id).contains(claim.factionId)
+    }
+
+    /**
+     * Checks if breaking a block of the given material is allowed in enemy territory during wartime
+     * because it appears in the `factions.wartimeBreakableBlocks` config list.
+     *
+     * @param playerId The ID of the player attempting to break the block
+     * @param claim The claimed chunk where the player is attempting the action
+     * @param material The material of the block being broken
+     * @return true if breaking should be allowed, false otherwise
+     */
+    fun isWartimeBreakableBlock(playerId: MfPlayerId, claim: MfClaimedChunk, material: Material): Boolean {
+        val breakableBlocks = plugin.config.getStringList("factions.wartimeBreakableBlocks")
+        if (breakableBlocks.none { it.equals(material.name, ignoreCase = true) }) return false
+        val factionService = plugin.services.factionService
+        val playerFaction = factionService.getFaction(playerId) ?: return false
+        val relationshipService = plugin.services.factionRelationshipService
+        return relationshipService.getFactionsAtWarWith(playerFaction.id).contains(claim.factionId)
+    }
+
+    /**
+     * Checks if interacting with a block of the given material is allowed in enemy territory during wartime
+     * because it appears in the `factions.wartimeInteractableBlocks` config list.
+     *
+     * @param playerId The ID of the player attempting to interact with the block
+     * @param claim The claimed chunk where the player is attempting the action
+     * @param material The material of the block being interacted with
+     * @return true if interaction should be allowed, false otherwise
+     */
+    fun isWartimeInteractableBlock(playerId: MfPlayerId, claim: MfClaimedChunk, material: Material): Boolean {
+        val interactableBlocks = plugin.config.getStringList("factions.wartimeInteractableBlocks")
+        if (interactableBlocks.none { it.equals(material.name, ignoreCase = true) }) return false
+        val factionService = plugin.services.factionService
+        val playerFaction = factionService.getFaction(playerId) ?: return false
+        val relationshipService = plugin.services.factionRelationshipService
+        return relationshipService.getFactionsAtWarWith(playerFaction.id).contains(claim.factionId)
     }
 
     // Checks whether a set of chunks has at least one chunk that is adjacent to an existing claim. Works across multiple worlds.

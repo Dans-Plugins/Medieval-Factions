@@ -368,6 +368,29 @@ class PlayerInteractListenerTest {
     }
 
     @Test
+    fun onPlayerInteract_WartimeInteractableBlock_ShouldAllowInteraction() {
+        // Arrange
+        setupWartimeLadderTest(
+            ladderItem = false,
+            isWartimeLadderPlacementAllowed = false,
+            configEnabled = false,
+            atWarWithClaimFaction = true
+        )
+
+        val block = fixture.block
+        val playerId = MfPlayerId(fixture.player.uniqueId.toString())
+        val claim = claimService.getClaim(block.chunk)!!
+
+        `when`(claimService.isWartimeInteractableBlock(playerId, claim, block.type)).thenReturn(true)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - event should NOT be cancelled because block is in wartime interactable list
+        verifyEventNotCancelled()
+    }
+
+    @Test
     fun onPlayerInteract_BlockInWilderness_WildernessPreventInteractionSetToTrue_ShouldCancelAndInformPlayer() {
         // Arrange
         val block = fixture.block

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+- `factions.wartimePlaceableBlocks`: configurable list of block types that attackers can place in enemy territory during war.
+- `factions.wartimeBreakableBlocks`: configurable list of block types that attackers can break in enemy territory during war.
+- `factions.wartimeInteractableBlocks`: configurable list of block types that attackers can interact with in enemy territory during war.
+
 ## [5.7.2] – 2026-01-03
 
 ### Fixed

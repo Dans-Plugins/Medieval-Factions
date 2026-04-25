@@ -201,6 +201,10 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                     // Allow ladder placement in enemy territory during wartime
                     return
                 }
+                if (claimService.isWartimeInteractableBlock(mfPlayer.id, claim, clickedBlock.type)) {
+                    // Block is in the wartime interactable list; allow the interaction
+                    return
+                }
                 event.isCancelled = true
                 event.player.sendMessage("$RED${plugin.language["CannotInteractWithBlockInFactionTerritory", claimFaction.name]}")
             }
