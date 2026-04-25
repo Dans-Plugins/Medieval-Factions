@@ -12,6 +12,14 @@ The development of the fifth major version of MF was led by [alyphen](https://gi
 1) You can download the plugin from [this page](https://www.spigotmc.org/resources/medieval-factions-sovereign-nation-simulator.79941/updates).
 2) Once downloaded, place the jar in the plugins folder of your server files.
 3) Restart your server.
+4) (Optional) Configure your preferred storage backend in `config.yml` (database or JSON).
+
+### Storage Options
+Medieval Factions supports two data storage backends:
+- **Database Storage** (default) - Uses H2, MySQL, MariaDB, or PostgreSQL
+- **JSON Storage** - Stores data in JSON files for simpler setups
+
+See [Configuration Guide](CONFIG.md#storage-configuration) for details on choosing and configuring your storage backend.
 
 ### Dynmap Integration
 Dynmap has been integrated with this plugin. In order to be able to view claimed land on a dynamic map, download and install the plugin [here](https://www.spigotmc.org/resources/dynmap.274/).
