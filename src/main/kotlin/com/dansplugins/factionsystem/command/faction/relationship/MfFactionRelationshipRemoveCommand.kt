@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.relationship
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.command.unquote
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType
@@ -11,7 +12,6 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
-import preponderous.ponder.command.unquote
 import java.util.logging.Level.SEVERE
 
 class MfFactionRelationshipRemoveCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
