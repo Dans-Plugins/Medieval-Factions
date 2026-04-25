@@ -105,14 +105,8 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
      * @param material The material of the block being placed
      * @return true if placement should be allowed, false otherwise
      */
-    fun isWartimePlaceableBlock(playerId: MfPlayerId, claim: MfClaimedChunk, material: Material): Boolean {
-        val placeableBlocks = plugin.config.getStringList("factions.wartimePlaceableBlocks")
-        if (placeableBlocks.none { it.equals(material.name, ignoreCase = true) }) return false
-        val factionService = plugin.services.factionService
-        val playerFaction = factionService.getFaction(playerId) ?: return false
-        val relationshipService = plugin.services.factionRelationshipService
-        return relationshipService.getFactionsAtWarWith(playerFaction.id).contains(claim.factionId)
-    }
+    fun isWartimePlaceableBlock(playerId: MfPlayerId, claim: MfClaimedChunk, material: Material): Boolean =
+        isWartimeBlockActionAllowed(playerId, claim, material, "factions.wartimePlaceableBlocks")
 
     /**
      * Checks if breaking a block of the given material is allowed in enemy territory during wartime
@@ -123,14 +117,8 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
      * @param material The material of the block being broken
      * @return true if breaking should be allowed, false otherwise
      */
-    fun isWartimeBreakableBlock(playerId: MfPlayerId, claim: MfClaimedChunk, material: Material): Boolean {
-        val breakableBlocks = plugin.config.getStringList("factions.wartimeBreakableBlocks")
-        if (breakableBlocks.none { it.equals(material.name, ignoreCase = true) }) return false
-        val factionService = plugin.services.factionService
-        val playerFaction = factionService.getFaction(playerId) ?: return false
-        val relationshipService = plugin.services.factionRelationshipService
-        return relationshipService.getFactionsAtWarWith(playerFaction.id).contains(claim.factionId)
-    }
+    fun isWartimeBreakableBlock(playerId: MfPlayerId, claim: MfClaimedChunk, material: Material): Boolean =
+        isWartimeBlockActionAllowed(playerId, claim, material, "factions.wartimeBreakableBlocks")
 
     /**
      * Checks if interacting with a block of the given material is allowed in enemy territory during wartime
@@ -141,9 +129,12 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
      * @param material The material of the block being interacted with
      * @return true if interaction should be allowed, false otherwise
      */
-    fun isWartimeInteractableBlock(playerId: MfPlayerId, claim: MfClaimedChunk, material: Material): Boolean {
-        val interactableBlocks = plugin.config.getStringList("factions.wartimeInteractableBlocks")
-        if (interactableBlocks.none { it.equals(material.name, ignoreCase = true) }) return false
+    fun isWartimeInteractableBlock(playerId: MfPlayerId, claim: MfClaimedChunk, material: Material): Boolean =
+        isWartimeBlockActionAllowed(playerId, claim, material, "factions.wartimeInteractableBlocks")
+
+    private fun isWartimeBlockActionAllowed(playerId: MfPlayerId, claim: MfClaimedChunk, material: Material, configKey: String): Boolean {
+        val blocks = plugin.config.getStringList(configKey)
+        if (blocks.none { it.equals(material.name, ignoreCase = true) }) return false
         val factionService = plugin.services.factionService
         val playerFaction = factionService.getFaction(playerId) ?: return false
         val relationshipService = plugin.services.factionRelationshipService
