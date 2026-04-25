@@ -11,7 +11,7 @@ DpcFactionSync DEFINITIONS AUTOMATIC TAGS ::= BEGIN
     name         UTF8String (SIZE(1..64)),
     serverId     UTF8String (SIZE(1..64)),
     memberCount  INTEGER (0..MAX),
-    description  UTF8String (SIZE(0..512))   OPTIONAL,
+    description  UTF8String (SIZE(0..512)),
     serverIp     UTF8String (SIZE(0..253))   OPTIONAL,
     discordLink  UTF8String (SIZE(0..512))   OPTIONAL
   }

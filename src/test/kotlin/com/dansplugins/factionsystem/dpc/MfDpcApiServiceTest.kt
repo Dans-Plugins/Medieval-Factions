@@ -160,7 +160,7 @@ class MfDpcApiServiceTest {
     @Test
     fun testSyncFactions_skippedWhenServerIdBlank() {
         `when`(config.getBoolean("dpc-api.enabled")).thenReturn(true)
-        `when`(config.getString("dpc-api.url")).thenReturn("https://dansplugins.com")
+        `when`(config.getString("dpc-api.url")).thenReturn("https://dansplugins.com/api/v1/factions")
         `when`(config.getString("dpc-api.key")).thenReturn("test-key")
         `when`(config.getString("dpc-api.server-id")).thenReturn("")
 
@@ -178,6 +178,38 @@ class MfDpcApiServiceTest {
         )
     }
 
+    @Test
+    fun testSyncFactions_nonDefaultPortIncludedInServerIp() {
+        setupEnabledConfig()
+        val server = plugin.server
+        `when`(server.ip).thenReturn("10.0.0.1")
+        `when`(server.port).thenReturn(25570)
+        setupFactions(listOf(createMockFaction("TestFaction", "desc", 1)))
+        setupHttpResponse(200)
+
+        uut.syncFactions()
+
+        val json = captureRequestBody()
+        val arr = JsonParser.parseString(json).asJsonArray
+        val obj = arr[0].asJsonObject
+        assertEquals("10.0.0.1:25570", obj.get("serverIp").asString)
+    }
+
+    @Test
+    fun testSyncFactions_configuredServerAddressOverridesBinding() {
+        setupEnabledConfig()
+        `when`(config.getString("dpc-api.server-address")).thenReturn("play.example.com:25565")
+        setupFactions(listOf(createMockFaction("TestFaction", "desc", 1)))
+        setupHttpResponse(200)
+
+        uut.syncFactions()
+
+        val json = captureRequestBody()
+        val arr = JsonParser.parseString(json).asJsonArray
+        val obj = arr[0].asJsonObject
+        assertEquals("play.example.com:25565", obj.get("serverIp").asString)
+    }
+
     // --- helpers ---
 
     private fun setupEnabledConfig(
@@ -186,7 +218,7 @@ class MfDpcApiServiceTest {
         serverId: String = "my-server"
     ) {
         `when`(config.getBoolean("dpc-api.enabled")).thenReturn(true)
-        `when`(config.getString("dpc-api.url")).thenReturn("https://dansplugins.com")
+        `when`(config.getString("dpc-api.url")).thenReturn("https://dansplugins.com/api/v1/factions")
         `when`(config.getString("dpc-api.key")).thenReturn("test-api-key")
         `when`(config.getString("dpc-api.server-id")).thenReturn(serverId)
         `when`(config.getBoolean("dpc-api.share-server-ip")).thenReturn(shareServerIp)
@@ -233,18 +265,27 @@ class MfDpcApiServiceTest {
         val bodyPublisher = request.bodyPublisher().orElseThrow()
         val future = CompletableFuture<String>()
         bodyPublisher.subscribe(object : Flow.Subscriber<ByteBuffer> {
-            private val body = StringBuilder()
+            private val chunks = mutableListOf<ByteArray>()
             override fun onSubscribe(subscription: Flow.Subscription) {
                 subscription.request(Long.MAX_VALUE)
             }
             override fun onNext(item: ByteBuffer) {
-                body.append(StandardCharsets.UTF_8.decode(item))
+                val bytes = ByteArray(item.remaining())
+                item.get(bytes)
+                chunks.add(bytes)
             }
             override fun onError(throwable: Throwable) {
                 future.completeExceptionally(throwable)
             }
             override fun onComplete() {
-                future.complete(body.toString())
+                val totalSize = chunks.sumOf { it.size }
+                val combined = ByteArray(totalSize)
+                var offset = 0
+                for (chunk in chunks) {
+                    chunk.copyInto(combined, offset)
+                    offset += chunk.size
+                }
+                future.complete(String(combined, StandardCharsets.UTF_8))
             }
         })
         return future.get(5, TimeUnit.SECONDS)

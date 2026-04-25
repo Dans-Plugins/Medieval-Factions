@@ -18,6 +18,7 @@ class MfDpcApiService(
 ) {
 
     private val gson = Gson()
+    private var emptyServerIpWarningLogged = false
 
     fun syncFactions() {
         if (!plugin.config.getBoolean("dpc-api.enabled")) return
@@ -40,7 +41,6 @@ class MfDpcApiService(
             return
         }
 
-        val apiUrl = apiUri.toString()
         val apiKey = plugin.config.getString("dpc-api.key")
         if (apiKey == null) {
             plugin.logger.warning("DPC API key is missing from config.yml (dpc-api.key). Skipping faction sync.")
@@ -84,7 +84,10 @@ class MfDpcApiService(
                     val addr = if (port != 25565) "$ip:$port" else ip
                     truncate(addr, MAX_SERVER_IP)
                 } else {
-                    plugin.logger.warning("Server IP is empty and dpc-api.server-address is not configured. Omitting serverIp from sync payload.")
+                    if (!emptyServerIpWarningLogged) {
+                        plugin.logger.warning("Server IP is empty and dpc-api.server-address is not configured. Set dpc-api.server-address in config.yml to share your server address. Omitting serverIp from sync payload.")
+                        emptyServerIpWarningLogged = true
+                    }
                     null
                 }
             }
@@ -104,11 +107,10 @@ class MfDpcApiService(
         }
 
         val body = gson.toJson(payloads)
-        val url = apiUrl.trimEnd('/') + "/api/v1/factions"
 
         try {
             val request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
+                .uri(apiUri)
                 .header("Content-Type", "application/json")
                 .header("X-API-Key", apiKey)
                 .timeout(Duration.ofSeconds(30))

@@ -537,8 +537,8 @@ This integration is **strictly opt-in**.
 
 ### `dpc-api.url`
 **Type:** String  
-**Default:** `"https://dansplugins.com"`  
-**Description:** The base URL of the DPC API. Include a port if the API runs on a non-standard port (e.g. `"https://dansplugins.com:8080"`).
+**Default:** `"https://dansplugins.com/api/v1/factions"`  
+**Description:** The full endpoint URL of the DPC API. Include a port if the API runs on a non-standard port (e.g. `"https://dansplugins.com:8080/api/v1/factions"`).
 
 ### `dpc-api.key`
 **Type:** String  
