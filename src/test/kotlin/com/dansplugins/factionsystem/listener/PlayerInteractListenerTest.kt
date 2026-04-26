@@ -630,6 +630,275 @@ class PlayerInteractListenerTest {
         verifyPlayerNotified()
     }
 
+    // --- Wartime list edge-case tests ---
+
+    @Test
+    fun onPlayerInteract_AtWar_ChestInWartimeInteractableBlocks_ShouldAllowInteraction() {
+        // Operator explicitly added CHEST to wartimeInteractableBlocks — interaction must be permitted.
+        // Arrange
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
+
+        val chestMaterial = mock(Material::class.java)
+        `when`(chestMaterial.isSolid).thenReturn(true)
+        `when`(chestMaterial.isInteractable).thenReturn(true)
+        `when`(block.type).thenReturn(chestMaterial)
+        `when`(block.blockData).thenReturn(mock(org.bukkit.block.data.BlockData::class.java))
+
+        val mfPlayer = mock(MfPlayer::class.java)
+        val playerId = MfPlayerId(player.uniqueId.toString())
+        val playerFaction = mock(MfFaction::class.java)
+        val claim = mock(MfClaimedChunk::class.java)
+        val claimFaction = mock(MfFaction::class.java)
+
+        `when`(event.clickedBlock).thenReturn(block)
+        `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
+        `when`(event.hasItem()).thenReturn(false)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(mfPlayer.id).thenReturn(playerId)
+        `when`(mfPlayer.isBypassEnabled).thenReturn(false)
+        `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
+        `when`(claim.factionId).thenReturn(claimFactionId)
+        `when`(factionService.getFaction(claimFactionId)).thenReturn(claimFaction)
+        `when`(claimFaction.name).thenReturn("Enemy Faction")
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
+        `when`(factionService.getFaction(playerId)).thenReturn(playerFaction)
+        `when`(playerFaction.id).thenReturn(playerFactionId)
+        `when`(relationshipService.getFactionsAtWarWith(playerFactionId)).thenReturn(listOf(claimFactionId))
+        `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
+        `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, false)).thenReturn(false)
+        // CHEST is in wartimeInteractableBlocks → must be allowed
+        `when`(claimService.isWartimeInteractableBlock(playerId, claim, chestMaterial)).thenReturn(true)
+
+        // Act
+        uut.onPlayerInteract(event)
+
+        // Assert — interaction must be permitted because operator allowed this block type
+        verifyEventNotCancelled()
+    }
+
+    @Test
+    fun onPlayerInteract_AtWar_ChestInWartimePlaceableBlocksOnly_ShouldBlockInteraction() {
+        // CHEST is only in wartimePlaceableBlocks, not in wartimeInteractableBlocks.
+        // The two lists are fully independent — placeable must never unlock interaction.
+        // Arrange
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
+
+        val chestMaterial = mock(Material::class.java)
+        `when`(chestMaterial.isSolid).thenReturn(true)
+        `when`(chestMaterial.isInteractable).thenReturn(true)
+        `when`(block.type).thenReturn(chestMaterial)
+        `when`(block.blockData).thenReturn(mock(org.bukkit.block.data.BlockData::class.java))
+
+        val mfPlayer = mock(MfPlayer::class.java)
+        val playerId = MfPlayerId(player.uniqueId.toString())
+        val playerFaction = mock(MfFaction::class.java)
+        val claim = mock(MfClaimedChunk::class.java)
+        val claimFaction = mock(MfFaction::class.java)
+        val item = mock(ItemStack::class.java)
+
+        `when`(event.clickedBlock).thenReturn(block)
+        `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
+        `when`(event.item).thenReturn(item)
+        `when`(item.type).thenReturn(Material.CHEST)
+        `when`(event.hasItem()).thenReturn(true)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(mfPlayer.id).thenReturn(playerId)
+        `when`(mfPlayer.isBypassEnabled).thenReturn(false)
+        `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
+        `when`(claim.factionId).thenReturn(claimFactionId)
+        `when`(factionService.getFaction(claimFactionId)).thenReturn(claimFaction)
+        `when`(claimFaction.name).thenReturn("Enemy Faction")
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
+        `when`(factionService.getFaction(playerId)).thenReturn(playerFaction)
+        `when`(playerFaction.id).thenReturn(playerFactionId)
+        `when`(relationshipService.getFactionsAtWarWith(playerFactionId)).thenReturn(listOf(claimFactionId))
+        `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
+        `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, false)).thenReturn(false)
+        // NOT in interactable list
+        `when`(claimService.isWartimeInteractableBlock(playerId, claim, chestMaterial)).thenReturn(false)
+        // IS in placeable list — but clicked block is interactable so this must not apply
+        `when`(claimService.isWartimePlaceableBlock(playerId, claim, Material.CHEST)).thenReturn(true)
+
+        // Act
+        uut.onPlayerInteract(event)
+
+        // Assert — interaction must be blocked; placeable list must not affect interactive blocks
+        verifyEventCancelled()
+        verifyPlayerNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_AtWar_LeverInWartimeInteractableBlocks_ShouldAllowInteraction() {
+        // Operator explicitly added LEVER to wartimeInteractableBlocks to allow siege redstone.
+        // Arrange
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
+
+        val leverMaterial = mock(Material::class.java)
+        `when`(leverMaterial.isSolid).thenReturn(true)
+        `when`(leverMaterial.isInteractable).thenReturn(true)
+        `when`(block.type).thenReturn(leverMaterial)
+        `when`(block.blockData).thenReturn(mock(org.bukkit.block.data.BlockData::class.java))
+
+        val mfPlayer = mock(MfPlayer::class.java)
+        val playerId = MfPlayerId(player.uniqueId.toString())
+        val playerFaction = mock(MfFaction::class.java)
+        val claim = mock(MfClaimedChunk::class.java)
+        val claimFaction = mock(MfFaction::class.java)
+
+        `when`(event.clickedBlock).thenReturn(block)
+        `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
+        `when`(event.hasItem()).thenReturn(false)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(mfPlayer.id).thenReturn(playerId)
+        `when`(mfPlayer.isBypassEnabled).thenReturn(false)
+        `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
+        `when`(claim.factionId).thenReturn(claimFactionId)
+        `when`(factionService.getFaction(claimFactionId)).thenReturn(claimFaction)
+        `when`(claimFaction.name).thenReturn("Enemy Faction")
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
+        `when`(factionService.getFaction(playerId)).thenReturn(playerFaction)
+        `when`(playerFaction.id).thenReturn(playerFactionId)
+        `when`(relationshipService.getFactionsAtWarWith(playerFactionId)).thenReturn(listOf(claimFactionId))
+        `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
+        `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, false)).thenReturn(false)
+        // LEVER is in wartimeInteractableBlocks → must be allowed
+        `when`(claimService.isWartimeInteractableBlock(playerId, claim, leverMaterial)).thenReturn(true)
+
+        // Act
+        uut.onPlayerInteract(event)
+
+        // Assert — lever interaction must be permitted because it is in the interactable list
+        verifyEventNotCancelled()
+    }
+
+    @Test
+    fun onPlayerInteract_AtWar_NoWartimeListsConfigured_ShouldBlockInteraction() {
+        // Default configuration: all wartime lists empty. No interaction should be permitted.
+        // Arrange
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
+
+        val interactableMaterial = mock(Material::class.java)
+        `when`(interactableMaterial.isSolid).thenReturn(true)
+        `when`(interactableMaterial.isInteractable).thenReturn(true)
+        `when`(block.type).thenReturn(interactableMaterial)
+        `when`(block.blockData).thenReturn(mock(org.bukkit.block.data.BlockData::class.java))
+
+        val mfPlayer = mock(MfPlayer::class.java)
+        val playerId = MfPlayerId(player.uniqueId.toString())
+        val playerFaction = mock(MfFaction::class.java)
+        val claim = mock(MfClaimedChunk::class.java)
+        val claimFaction = mock(MfFaction::class.java)
+
+        `when`(event.clickedBlock).thenReturn(block)
+        `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
+        `when`(event.hasItem()).thenReturn(false)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(mfPlayer.id).thenReturn(playerId)
+        `when`(mfPlayer.isBypassEnabled).thenReturn(false)
+        `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
+        `when`(claim.factionId).thenReturn(claimFactionId)
+        `when`(factionService.getFaction(claimFactionId)).thenReturn(claimFaction)
+        `when`(claimFaction.name).thenReturn("Enemy Faction")
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
+        `when`(factionService.getFaction(playerId)).thenReturn(playerFaction)
+        `when`(playerFaction.id).thenReturn(playerFactionId)
+        `when`(relationshipService.getFactionsAtWarWith(playerFactionId)).thenReturn(listOf(claimFactionId))
+        `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
+        `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, false)).thenReturn(false)
+        // All wartime lists return false (empty config)
+        `when`(claimService.isWartimeInteractableBlock(playerId, claim, interactableMaterial)).thenReturn(false)
+
+        // Act
+        uut.onPlayerInteract(event)
+
+        // Assert — baseline: empty wartime lists must never permit interaction
+        verifyEventCancelled()
+        verifyPlayerNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_NotAtWar_ChestInWartimeInteractableBlocks_AlliesCanInteractFalse_ShouldBlockInteraction() {
+        // Wartime lists must only apply when factions are actually at war. A non-war player
+        // must not benefit from wartime permissions (e.g. allied territory with alliesCanInteractWithLand=false).
+        // Arrange
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
+
+        val chestMaterial = mock(Material::class.java)
+        `when`(chestMaterial.isSolid).thenReturn(true)
+        `when`(chestMaterial.isInteractable).thenReturn(true)
+        `when`(block.type).thenReturn(chestMaterial)
+        `when`(block.blockData).thenReturn(mock(org.bukkit.block.data.BlockData::class.java))
+
+        val mfPlayer = mock(MfPlayer::class.java)
+        val playerId = MfPlayerId(player.uniqueId.toString())
+        val playerFaction = mock(MfFaction::class.java)
+        val claim = mock(MfClaimedChunk::class.java)
+        val claimFaction = mock(MfFaction::class.java)
+
+        `when`(event.clickedBlock).thenReturn(block)
+        `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
+        `when`(event.hasItem()).thenReturn(false)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(mfPlayer.id).thenReturn(playerId)
+        `when`(mfPlayer.isBypassEnabled).thenReturn(false)
+        `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
+        `when`(claim.factionId).thenReturn(claimFactionId)
+        `when`(factionService.getFaction(claimFactionId)).thenReturn(claimFaction)
+        `when`(claimFaction.name).thenReturn("Ally Faction")
+        // isInteractionAllowed=false models alliesCanInteractWithLand=false
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
+        `when`(factionService.getFaction(playerId)).thenReturn(playerFaction)
+        `when`(playerFaction.id).thenReturn(playerFactionId)
+        // Not at war — wartime checks must not apply
+        `when`(relationshipService.getFactionsAtWarWith(playerFactionId)).thenReturn(emptyList())
+        `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
+        `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, false)).thenReturn(false)
+        // Even though CHEST appears in wartimeInteractableBlocks, it must not help a non-war player
+        `when`(claimService.isWartimeInteractableBlock(playerId, claim, chestMaterial)).thenReturn(false)
+
+        // Act
+        uut.onPlayerInteract(event)
+
+        // Assert — non-war player must be blocked regardless of wartime list contents
+        verifyEventCancelled()
+        verifyPlayerNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_BypassModeEnabled_AllWartimeListsEmpty_ShouldAllowInteraction() {
+        // Bypass mode must override all wartime restrictions. A player with bypass enabled and
+        // the mf.bypass permission can interact with any block in enemy territory.
+        // Arrange
+        mockBlockData<Door>()
+        setupConfigForDoorInteraction(enabled = false)
+        val (_, playerId) = setupPlayerMocks(fixture.player, bypassEnabled = true)
+        val (claim, _) = setupClaimAndFaction(fixture.block)
+
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
+        `when`(fixture.player.hasPermission("mf.bypass")).thenReturn(true)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert — bypass mode must allow interaction regardless of wartime list configuration
+        verifyEventNotCancelled()
+    }
+
     @Test
     fun onPlayerInteract_BlockInWilderness_WildernessPreventInteractionSetToTrue_ShouldCancelAndInformPlayer() {
         // Arrange
