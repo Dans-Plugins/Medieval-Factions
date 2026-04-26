@@ -485,6 +485,152 @@ class PlayerInteractListenerTest {
     }
 
     @Test
+    fun onPlayerInteract_WartimePlaceableItemHeld_ClickingInteractableBlock_ShouldBlockInteraction() {
+        // Regression test: holding an item in wartimePlaceableBlocks must NOT bypass interaction
+        // protection for interactive blocks such as chests and levers.
+        // Arrange
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
+
+        // Clicked block is interactable (chest, lever, etc.)
+        val interactableMaterial = mock(Material::class.java)
+        `when`(interactableMaterial.isSolid).thenReturn(true)
+        `when`(interactableMaterial.isInteractable).thenReturn(true)
+        `when`(block.type).thenReturn(interactableMaterial)
+
+        val blockData = mock(org.bukkit.block.data.BlockData::class.java)
+        `when`(block.blockData).thenReturn(blockData)
+
+        val mfPlayer = mock(MfPlayer::class.java)
+        val playerId = MfPlayerId(player.uniqueId.toString())
+        val playerFaction = mock(MfFaction::class.java)
+        val claim = mock(MfClaimedChunk::class.java)
+        val claimFaction = mock(MfFaction::class.java)
+        val item = mock(ItemStack::class.java)
+
+        `when`(event.clickedBlock).thenReturn(block)
+        `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
+        `when`(event.item).thenReturn(item)
+        `when`(item.type).thenReturn(Material.SCAFFOLDING)
+        `when`(event.hasItem()).thenReturn(true)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(mfPlayer.id).thenReturn(playerId)
+        `when`(mfPlayer.isBypassEnabled).thenReturn(false)
+        `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
+        `when`(claim.factionId).thenReturn(claimFactionId)
+        `when`(factionService.getFaction(claimFactionId)).thenReturn(claimFaction)
+        `when`(claimFaction.name).thenReturn("Enemy Faction")
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
+        `when`(factionService.getFaction(playerId)).thenReturn(playerFaction)
+        `when`(playerFaction.id).thenReturn(playerFactionId)
+        `when`(relationshipService.getFactionsAtWarWith(playerFactionId)).thenReturn(listOf(claimFactionId))
+        `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
+
+        // isPlacingLadder is false because block is interactable
+        `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, false)).thenReturn(false)
+        `when`(claimService.isWartimeInteractableBlock(playerId, claim, interactableMaterial)).thenReturn(false)
+        // SCAFFOLDING is in wartimePlaceableBlocks — must NOT bypass interaction with the chest
+        `when`(claimService.isWartimePlaceableBlock(playerId, claim, Material.SCAFFOLDING)).thenReturn(true)
+
+        // Act
+        uut.onPlayerInteract(event)
+
+        // Assert — interaction must be blocked; a placeable item in hand must not unlock interactive blocks
+        verifyEventCancelled()
+        verifyPlayerNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_WartimePlaceableItemHeld_PlacingOnNonInteractableBlock_ShouldAllow() {
+        // Placement on a solid, non-interactive surface must still be allowed when the item is
+        // in wartimePlaceableBlocks — this is the intended use-case.
+        // Arrange
+        setupWartimeLadderTest(
+            ladderItem = false,
+            isWartimeLadderPlacementAllowed = false,
+            configEnabled = false,
+            atWarWithClaimFaction = true
+        )
+
+        val event = fixture.event
+        val item = mock(ItemStack::class.java)
+        `when`(item.type).thenReturn(Material.SCAFFOLDING)
+        `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
+        `when`(event.hasItem()).thenReturn(true)
+        `when`(event.item).thenReturn(item)
+
+        val block = fixture.block
+        val playerId = MfPlayerId(fixture.player.uniqueId.toString())
+        val claim = claimService.getClaim(block.chunk)!!
+
+        `when`(claimService.isWartimeInteractableBlock(playerId, claim, block.type)).thenReturn(false)
+        `when`(claimService.isWartimePlaceableBlock(playerId, claim, Material.SCAFFOLDING)).thenReturn(true)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert — placement against a non-interactable surface must be allowed
+        verifyEventNotCancelled()
+    }
+
+    @Test
+    fun onPlayerInteract_NonListedItemHeld_ClickingInteractableBlock_ShouldBlockInteraction() {
+        // A held item that does NOT appear in any wartime list must not change whether the player
+        // can interact with blocks in enemy territory.
+        // Arrange
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
+
+        val interactableMaterial = mock(Material::class.java)
+        `when`(interactableMaterial.isSolid).thenReturn(true)
+        `when`(interactableMaterial.isInteractable).thenReturn(true)
+        `when`(block.type).thenReturn(interactableMaterial)
+
+        val blockData = mock(org.bukkit.block.data.BlockData::class.java)
+        `when`(block.blockData).thenReturn(blockData)
+
+        val mfPlayer = mock(MfPlayer::class.java)
+        val playerId = MfPlayerId(player.uniqueId.toString())
+        val playerFaction = mock(MfFaction::class.java)
+        val claim = mock(MfClaimedChunk::class.java)
+        val claimFaction = mock(MfFaction::class.java)
+        val item = mock(ItemStack::class.java)
+
+        `when`(event.clickedBlock).thenReturn(block)
+        `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
+        `when`(event.item).thenReturn(item)
+        `when`(item.type).thenReturn(Material.DIRT) // not in any wartime list
+        `when`(event.hasItem()).thenReturn(true)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(mfPlayer.id).thenReturn(playerId)
+        `when`(mfPlayer.isBypassEnabled).thenReturn(false)
+        `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
+        `when`(claim.factionId).thenReturn(claimFactionId)
+        `when`(factionService.getFaction(claimFactionId)).thenReturn(claimFaction)
+        `when`(claimFaction.name).thenReturn("Enemy Faction")
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
+        `when`(factionService.getFaction(playerId)).thenReturn(playerFaction)
+        `when`(playerFaction.id).thenReturn(playerFactionId)
+        `when`(relationshipService.getFactionsAtWarWith(playerFactionId)).thenReturn(listOf(claimFactionId))
+        `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
+
+        `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, false)).thenReturn(false)
+        `when`(claimService.isWartimeInteractableBlock(playerId, claim, interactableMaterial)).thenReturn(false)
+        `when`(claimService.isWartimePlaceableBlock(playerId, claim, Material.DIRT)).thenReturn(false)
+
+        // Act
+        uut.onPlayerInteract(event)
+
+        // Assert — non-listed item must not grant any interaction bypass
+        verifyEventCancelled()
+        verifyPlayerNotified()
+    }
+
+    @Test
     fun onPlayerInteract_BlockInWilderness_WildernessPreventInteractionSetToTrue_ShouldCancelAndInformPlayer() {
         // Arrange
         val block = fixture.block
