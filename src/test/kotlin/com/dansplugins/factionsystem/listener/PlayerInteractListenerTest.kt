@@ -391,6 +391,65 @@ class PlayerInteractListenerTest {
     }
 
     @Test
+    fun onPlayerInteract_WartimeBreakableBlock_LeftClick_ShouldAllow() {
+        // Arrange
+        setupWartimeLadderTest(
+            ladderItem = false,
+            isWartimeLadderPlacementAllowed = false,
+            configEnabled = false,
+            atWarWithClaimFaction = true
+        )
+
+        val event = fixture.event
+        `when`(event.action).thenReturn(Action.LEFT_CLICK_BLOCK)
+        `when`(event.hasItem()).thenReturn(false)
+
+        val block = fixture.block
+        val playerId = MfPlayerId(fixture.player.uniqueId.toString())
+        val claim = claimService.getClaim(block.chunk)!!
+
+        `when`(claimService.isWartimeInteractableBlock(playerId, claim, block.type)).thenReturn(false)
+        `when`(claimService.isWartimeBreakableBlock(playerId, claim, block.type)).thenReturn(true)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - event should NOT be cancelled because block is in wartime breakable list
+        verifyEventNotCancelled()
+    }
+
+    @Test
+    fun onPlayerInteract_WartimePlaceableBlock_RightClick_ShouldAllow() {
+        // Arrange
+        setupWartimeLadderTest(
+            ladderItem = false,
+            isWartimeLadderPlacementAllowed = false,
+            configEnabled = false,
+            atWarWithClaimFaction = true
+        )
+
+        val event = fixture.event
+        val item = mock(ItemStack::class.java)
+        `when`(item.type).thenReturn(Material.SCAFFOLDING)
+        `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
+        `when`(event.hasItem()).thenReturn(true)
+        `when`(event.item).thenReturn(item)
+
+        val block = fixture.block
+        val playerId = MfPlayerId(fixture.player.uniqueId.toString())
+        val claim = claimService.getClaim(block.chunk)!!
+
+        `when`(claimService.isWartimeInteractableBlock(playerId, claim, block.type)).thenReturn(false)
+        `when`(claimService.isWartimePlaceableBlock(playerId, claim, Material.SCAFFOLDING)).thenReturn(true)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - event should NOT be cancelled because item in hand is in wartime placeable list
+        verifyEventNotCancelled()
+    }
+
+    @Test
     fun onPlayerInteract_BlockInWilderness_WildernessPreventInteractionSetToTrue_ShouldCancelAndInformPlayer() {
         // Arrange
         val block = fixture.block
