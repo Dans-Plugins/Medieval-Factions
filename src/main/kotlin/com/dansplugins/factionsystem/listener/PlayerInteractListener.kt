@@ -212,7 +212,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                     // Block is in the wartime breakable list; allow the left-click so BlockBreakEvent can fire
                     return
                 }
-                if (event.action == org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK && event.hasItem()) {
+                if (event.action == org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK && event.hasItem() && !clickedBlock.type.isInteractable) {
                     val itemType = event.item?.type
                     if (itemType != null && claimService.isWartimePlaceableBlock(mfPlayer.id, claim, itemType)) {
                         // Item in hand is in the wartime placeable list; allow the right-click so BlockPlaceEvent can fire
