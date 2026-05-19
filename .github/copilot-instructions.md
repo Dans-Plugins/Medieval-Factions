@@ -16,6 +16,23 @@ via `publishToMavenLocal` before the main build.
 - `HttpClient` is injected for testability — tests mock it, no real network calls.
 - `description` is OPTIONAL in the schema; the server-side API accepts null.
 
+## Contract Tests (Pact)
+
+Consumer-driven contract tests live in `MfDpcApiPactConsumerTest` (this repo) and
+`DpcApiPactProviderTest` (dansplugins-dot-com). They cover the
+`POST /api/v1/factions` wire format at the HTTP level without a real Minecraft server.
+
+- **Consumer** (`src/test/kotlin/…/dpc/MfDpcApiPactConsumerTest.kt`): uses
+  `au.com.dius.pact.consumer:junit5:4.6.7`. Builds a `DpcFactionPayload` list with Gson
+  and sends it to a Pact mock server. Generates pact files to `pacts/` (configured via
+  `pact.rootDir` in `build.gradle`).
+- **Committed pact file**: `pacts/medieval-factions-dpc-api.json` — committed to both
+  repos so the provider can verify without running the consumer test first.
+- **Provider** (`DpcApiPactProviderTest` in dansplugins-dot-com): reads the committed pact
+  file, starts Spring Boot on a random port (H2 in-memory, `@ActiveProfiles("test")`),
+  `@MockBean ApiKeyService` accepting `"test-api-key"`, and verifies each interaction via
+  `PactVerificationInvocationContextProvider`.
+
 ## Integration Testing Path Forward
 The unit tests mock `HttpClient` and verify the JSON payload shape. For end-to-end
 confidence, the next step is OMCSI-based integration tests (see
