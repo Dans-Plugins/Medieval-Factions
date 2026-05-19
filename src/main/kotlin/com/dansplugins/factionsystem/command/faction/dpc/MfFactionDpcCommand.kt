@@ -95,6 +95,10 @@ class MfFactionDpcCommand(private val plugin: MedievalFactions) : CommandExecuto
             }
             else -> {
                 val link = args[1]
+                if (!link.startsWith("https://discord.gg/") && !link.startsWith("https://discord.com/")) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionDpcDiscordInvalidLink"]}")
+                    return
+                }
                 plugin.config.set("dpc-api.discord-link", link)
                 plugin.saveConfig()
                 sender.sendMessage("$GREEN${plugin.language["CommandFactionDpcDiscordSetSuccess", link]}")

@@ -11,9 +11,26 @@ via `publishToMavenLocal` before the main build.
 - Schema: `docs/dpc-api-schema.asn1`
 - Field limits: `name` 64 · `serverId` 64 · `description` 512 · `serverIp` 253 · `discordLink` 512
 - Truncate every field before adding to JSON; use the `truncate()` helper.
-- `discordLink` must start with `https://discord.gg/` or `https://discord.com/`.
+- `discordLink` must start with `https://discord.gg/` or `https://discord.com/`; validate at command time **and** in the service before including in the payload.
 - `memberCount` must be a non-negative integer (`maxOf(0, …)`).
 - `HttpClient` is injected for testability — tests mock it, no real network calls.
+- `description` is OPTIONAL in the schema; the server-side API accepts null.
+
+## Integration Testing Path Forward
+The unit tests mock `HttpClient` and verify the JSON payload shape. For end-to-end
+confidence, the next step is OMCSI-based integration tests (see
+`.github/workflows/integration.yml` in `Dans-Plugin-Manager` for the pattern):
+
+1. Build the MF shadow JAR.
+2. Spin up a real Minecraft server via OMCSI.
+3. Start a local mock DPC API (e.g. WireMock or a TestContainers-backed instance of
+   `dpc-api` from the `dansplugins-dot-com` repo).
+4. Set `dpc-api.enabled=true`, `dpc-api.key=<test-key>`, `dpc-api.server-id=ci-server`
+   via RCON or config injection.
+5. Wait one sync interval and assert the mock received a well-formed POST.
+
+Until OMCSI tests exist, keep the mock-`HttpClient` tests comprehensive for all edge
+cases (truncation, omitted fields, validation failures, skip-when-misconfigured).
 
 ## Conventions
 This repository follows the DPC (Dans Plugins Community) conventions defined at

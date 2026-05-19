@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import java.util.logging.Logger
@@ -183,6 +184,36 @@ class MfFactionDpcCommandTest {
         verify(config).set("dpc-api.discord-link", "")
         verify(plugin).saveConfig()
         verify(sender).sendMessage("${ChatColor.GREEN}Discord cleared")
+    }
+
+    @Test
+    fun testOnCommand_discordInvalidLinkRejected() {
+        val sender = fixture.sender
+        val command = fixture.command
+        `when`(sender.hasPermission("mf.dpc")).thenReturn(true)
+        `when`(language["CommandFactionDpcDiscordInvalidLink"]).thenReturn("Invalid link")
+
+        val result = uut.onCommand(sender, command, "label", arrayOf("discord", "https://example.com/not-discord"))
+
+        assertTrue(result)
+        verify(config, never()).set(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any())
+        verify(plugin, never()).saveConfig()
+        verify(sender).sendMessage("${ChatColor.RED}Invalid link")
+    }
+
+    @Test
+    fun testOnCommand_discordComLinkAccepted() {
+        val sender = fixture.sender
+        val command = fixture.command
+        `when`(sender.hasPermission("mf.dpc")).thenReturn(true)
+        `when`(language["CommandFactionDpcDiscordSetSuccess", "https://discord.com/invite/test"]).thenReturn("Discord set")
+
+        val result = uut.onCommand(sender, command, "label", arrayOf("discord", "https://discord.com/invite/test"))
+
+        assertTrue(result)
+        verify(config).set("dpc-api.discord-link", "https://discord.com/invite/test")
+        verify(plugin).saveConfig()
+        verify(sender).sendMessage("${ChatColor.GREEN}Discord set")
     }
 
     @Test

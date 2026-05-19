@@ -10,8 +10,8 @@ DpcFactionSync DEFINITIONS AUTOMATIC TAGS ::= BEGIN
   Faction ::= SEQUENCE {
     name         UTF8String (SIZE(1..64)),
     serverId     UTF8String (SIZE(1..64)),
-    memberCount  INTEGER (0..MAX),
-    description  UTF8String (SIZE(0..512)),
+    memberCount  INTEGER (0..100000),
+    description  UTF8String (SIZE(0..512))   OPTIONAL,
     serverIp     UTF8String (SIZE(0..253))   OPTIONAL,
     discordLink  UTF8String (SIZE(0..512))   OPTIONAL
   }

@@ -494,9 +494,9 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Permission:** `mf.dpc` (default: op)  
 **Description:** Disables sharing the server IP with the DPC API.
 
-### `/faction dpc discord [link]` or `/mf dpc discord [link]`
+### `/faction dpc discord <link>` or `/mf dpc discord <link>`
 **Permission:** `mf.dpc` (default: op)  
-**Description:** Sets the Discord invite link to share on the DPC website alongside faction data.  
+**Description:** Sets the Discord invite link to share on the DPC website alongside faction data. The link must start with `https://discord.gg/` or `https://discord.com/`; other formats are rejected.  
 **Usage:** `/mf dpc discord https://discord.gg/yourserver`
 
 ### `/faction dpc discord clear` or `/mf dpc discord clear`
