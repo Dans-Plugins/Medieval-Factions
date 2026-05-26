@@ -20,6 +20,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Build Ponder dependency
+        run: |
+          git clone https://github.com/Dans-Plugins/Ponder.git /tmp/Ponder
+          cd /tmp/Ponder
+          git checkout 2.0.0
+          chmod +x gradlew
+          ./gradlew publishToMavenLocal
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
