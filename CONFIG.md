@@ -568,7 +568,7 @@ This integration is **strictly opt-in**.
 ### `dpc-api.discord-link`
 **Type:** String  
 **Default:** `""`  
-**Description:** An optional Discord invite link to display on the DPC website alongside your faction data. Leave empty to omit.
+**Description:** An optional Discord invite link to display on the DPC website alongside your faction data. Leave empty to omit. The link must start with `https://discord.gg/` or `https://discord.com/`; other formats are rejected at command time (and silently omitted from the sync payload if set directly in config.yml). Use `/mf dpc discord <link>` or `/mf dpc discord clear` to manage this value at runtime.
 
 ### `dpc-api.sync-interval-minutes`
 **Type:** Integer  
