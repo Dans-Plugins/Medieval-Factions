@@ -495,7 +495,15 @@ class MedievalFactions : JavaPlugin() {
         val dpcApiService = MfDpcApiService(this)
         val syncIntervalMinutes = config.getInt("dpc-api.sync-interval-minutes", 10).coerceAtLeast(1)
         val syncIntervalTicks = syncIntervalMinutes.toLong() * 20L * 60L
-        server.scheduler.runTaskTimerAsynchronously(this, Runnable { dpcApiService.syncFactions() }, syncIntervalTicks, syncIntervalTicks)
+        // Run on the main thread so the snapshot-collection phase can safely touch
+        // Bukkit-managed faction state. The HTTP send inside syncFactions() is
+        // dispatched via HttpClient.sendAsync and does not block the main thread.
+        server.scheduler.runTaskTimer(
+            this,
+            Runnable { dpcApiService.syncFactions() },
+            syncIntervalTicks,
+            syncIntervalTicks
+        )
     }
 
     internal fun onPowerCycle(

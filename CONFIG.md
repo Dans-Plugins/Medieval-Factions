@@ -548,7 +548,7 @@ This integration is **strictly opt-in**.
 ### `dpc-api.server-id`
 **Type:** String  
 **Default:** `""`  
-**Description:** A unique name for this server (e.g. `"my-survival-server"`). Used to identify your server in the DPC registry. Must be set before faction data can be synced.
+**Description:** A unique identifier for this server (e.g. `"my-survival-server"`). Used to identify your server in the DPC registry. Must be set before faction data can be synced. Allowed characters are letters, digits, dot, underscore, colon, and hyphen (`[A-Za-z0-9._:-]`); whitespace and other punctuation are rejected to prevent accidental near-duplicate registry partitions. Once you have started syncing under a given `server-id`, treat it as permanent — changing it strands all factions previously registered under the old id (they remain visible until manually removed).
 
 ### `dpc-api.login-reminder`
 **Type:** Boolean  

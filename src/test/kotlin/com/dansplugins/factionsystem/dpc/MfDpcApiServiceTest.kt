@@ -210,6 +210,53 @@ class MfDpcApiServiceTest {
         assertEquals("play.example.com:25565", obj.get("serverIp").asString)
     }
 
+    @Test
+    fun testSyncFactions_skippedWhenServerIdHasInvalidChars() {
+        // Whitespace and other punctuation are intentionally rejected client-side
+        // so a malformed server-id can't reach the registry and partition it under
+        // a near-duplicate of a real id.
+        setupEnabledConfig(serverId = "my server!")
+        setupFactions(listOf(createMockFaction("TestFaction", "desc", 1)))
+
+        uut.syncFactions()
+
+        verify(httpClient, never()).sendAsync(
+            anyNonNull<HttpRequest>(),
+            anyNonNull<HttpResponse.BodyHandler<String>>()
+        )
+    }
+
+    @Test
+    fun testSyncFactions_acceptsServerIdWithAllowedSpecialChars() {
+        setupEnabledConfig(serverId = "my.server_1:25565-prod")
+        setupFactions(listOf(createMockFaction("TestFaction", "desc", 1)))
+        setupHttpResponse(200)
+
+        uut.syncFactions()
+
+        val json = captureRequestBody()
+        val arr = JsonParser.parseString(json).asJsonArray
+        assertEquals("my.server_1:25565-prod", arr[0].asJsonObject.get("serverId").asString)
+    }
+
+    @Test
+    fun testSyncFactions_warnsOncePerEnableOnPlainHttpUrl() {
+        setupEnabledConfig()
+        `when`(config.getString("dpc-api.url")).thenReturn("http://insecure.example.com/api/v1/factions")
+        setupFactions(listOf(createMockFaction("TestFaction", "desc", 1)))
+        setupHttpResponse(200)
+
+        uut.syncFactions()
+        uut.syncFactions()
+
+        // The plain-http warning should appear exactly once across multiple syncs;
+        // the sync itself proceeds so operators are not locked out of using a self-
+        // hosted dev API on http.
+        verify(logger, org.mockito.Mockito.times(1)).warning(
+            org.mockito.ArgumentMatchers.contains("plain http://")
+        )
+    }
+
     // --- helpers ---
 
     private fun setupEnabledConfig(

@@ -2,14 +2,24 @@
 -- POST /api/v1/factions
 -- Content-Type: application/json
 -- X-API-Key: <api-key>
+--
+-- Constraints below match the Bean Validation rules on the provider side
+-- (com.dansplugins.api.dto.FactionRequest in dansplugins-dot-com). Notably:
+--   * `serverId` is the partition key. The provider also restricts the
+--     character set to [A-Za-z0-9._:-] to prevent near-duplicate partitions
+--     produced by accidental whitespace or control characters in operator
+--     config. ASN.1 cannot conveniently express character-set restrictions
+--     for a UTF8String, so the human-readable note is the source of truth.
+--   * A single sync request may contain at most 10000 faction entries
+--     (FactionList SIZE constraint below).
 
 DpcFactionSync DEFINITIONS AUTOMATIC TAGS ::= BEGIN
 
-  FactionList ::= SEQUENCE OF Faction
+  FactionList ::= SEQUENCE (SIZE(0..10000)) OF Faction
 
   Faction ::= SEQUENCE {
     name         UTF8String (SIZE(1..64)),
-    serverId     UTF8String (SIZE(1..64)),
+    serverId     UTF8String (SIZE(1..64)),   -- restricted charset, see header
     memberCount  INTEGER (0..100000),
     description  UTF8String (SIZE(0..512))   OPTIONAL,
     serverIp     UTF8String (SIZE(0..253))   OPTIONAL,
