@@ -8,13 +8,19 @@ Kotlin · Bukkit/Paper API · Gradle (Shadow JAR) · Java 17 toolchain
 via `publishToMavenLocal` before the main build.
 
 ## DPC API integration (`dpc/MfDpcApiService`)
-- Schema: `docs/dpc-api-schema.asn1`
-- Field limits: `name` 64 · `serverId` 64 · `description` 512 · `serverIp` 253 · `discordLink` 512
+- Wire contract source of truth: the dpc-api OpenAPI spec, exposed by the
+  provider at `GET /v3/api-docs` (JSON) and `GET /swagger-ui.html`. It is
+  auto-generated from `FactionRequest`'s Bean Validation annotations in
+  `Dans-Plugins/dansplugins-dot-com` (`dpc-api/src/main/java/com/dansplugins/api/dto/FactionRequest.java`),
+  so it never drifts from the actual server-side validation.
+- Field limits (mirror the provider's `@Size` rules): `name` 64 · `serverId` 64 · `description` 512 · `serverIp` 253 · `discordLink` 512.
+- `serverId` must match `[A-Za-z0-9._:-]+` — validated client-side in `MfDpcApiService` before sending.
 - Truncate every field before adding to JSON; use the `truncate()` helper.
 - `discordLink` must start with `https://discord.gg/` or `https://discord.com/`; validate at command time **and** in the service before including in the payload.
 - `memberCount` must be a non-negative integer (`maxOf(0, …)`).
 - `HttpClient` is injected for testability — tests mock it, no real network calls.
-- `description` is OPTIONAL in the schema; the server-side API accepts null.
+- `description`, `serverIp`, and `discordLink` are optional; the server-side API accepts null.
+- Collect the faction snapshot on the Bukkit main thread, then dispatch HTTP off-thread via `HttpClient.sendAsync`. The scheduler uses `runTaskTimer`, not `runTaskTimerAsynchronously`.
 
 ## Contract Tests (Pact)
 
