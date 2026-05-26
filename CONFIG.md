@@ -612,6 +612,28 @@ This integration is **strictly opt-in**.
 **Default:** `10`  
 **Description:** How often (in minutes) the plugin syncs faction data to the DPC API. Minimum value is 1 minute. Lower values mean more frequent updates but increase network traffic.
 
+### DPC API troubleshooting
+
+If a sync returns a non-2xx status, the plugin logs a `WARNING` with the
+status code and a truncated response body to your server log. Common cases:
+
+- **`401 Unauthorized`** — `dpc-api.key` is missing or wrong. Re-generate the
+  key from your DPC account page (`https://dansplugins.com/account`).
+- **`400 Bad Request`** — usually means `dpc-api.server-id` contains
+  disallowed characters. Allowed characters are letters, digits, dot,
+  underscore, colon, and hyphen.
+- **`429` / `5xx`** — transient server-side issue; the next sync will retry.
+  Failed requests never crash the plugin.
+
+The DPC API server keeps a `last_synced_at` timestamp per faction and applies
+several safety guards before marking missing-from-batch factions as
+disbanded. If you see fewer disbands on the registry than expected (e.g. you
+disbanded one of two factions and the other still appears active for a
+cycle), that's the ratio guard at work — it's intentional and self-corrects
+within one or two sync cycles. See the
+[dpc-api README](https://github.com/Dans-Plugins/dansplugins-dot-com/blob/main/dpc-api/README.md#sync-safety-guards)
+for the full server-side semantics.
+
 ---
 
 ## Configuration Best Practices
