@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+- DPC community API integration: opt-in sync of faction data to `https://dansplugins.com` via `POST /api/v1/factions`. Enabled with `/mf dpc optin` and configured under the `dpc-api.*` section of `config.yml`. Requires an API key from the DPC website.
+- `/mf dpc` subcommand (permission `mf.dpc`, default `op`) with `optin`, `optout`, `reminder on|off`, `shareip on|off`, `discord <link>|clear` actions.
+- bStats charts for DPC opt-in rate, login-reminder usage, server-IP sharing, and Discord-link presence.
+
+### Fixed
+- Faction snapshot for the DPC sync is now collected on the Bukkit main thread before being dispatched off-thread via `HttpClient.sendAsync`. Off-thread access to `factionService.factions` could otherwise produce inconsistent reads or `ConcurrentModificationException` under load.
+
+## 5.8.0 - 2026-04-25
+
+### Added
+- `factions.wartimePlaceableBlocks`: configurable list of block types that attackers can place in enemy territory during war.
+- `factions.wartimeBreakableBlocks`: configurable list of block types that attackers can break in enemy territory during war.
+- `factions.wartimeInteractableBlocks`: configurable list of block types that attackers can interact with in enemy territory during war.
+
 ## [5.7.2] – 2026-01-03
 
 ### Fixed

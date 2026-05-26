@@ -38,6 +38,7 @@ import org.bukkit.event.block.Action.PHYSICAL
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot.HAND
 import java.util.logging.Level.SEVERE
+import org.bukkit.block.data.type.Gate as FenceGateData
 
 class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
 
@@ -154,9 +155,9 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             }
         }
 
-        // Handle door/trapdoor special case
+        // Handle door/trapdoor/fence-gate special case
         if (plugin.config.getBoolean("factions.nonMembersCanInteractWithDoors")) {
-            if (clickedBlock.blockData is Door || clickedBlock.blockData is TrapDoor) {
+            if (blockData is Door || blockData is TrapDoor || blockData is FenceGateData) {
                 return
             }
         }
@@ -200,6 +201,23 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 ) {
                     // Allow ladder placement in enemy territory during wartime
                     return
+                }
+                if (claimService.isWartimeInteractableBlock(mfPlayer.id, claim, clickedBlock.type)) {
+                    // Block is in the wartime interactable list; allow the interaction
+                    return
+                }
+                if (event.action == org.bukkit.event.block.Action.LEFT_CLICK_BLOCK &&
+                    claimService.isWartimeBreakableBlock(mfPlayer.id, claim, clickedBlock.type)
+                ) {
+                    // Block is in the wartime breakable list; allow the left-click so BlockBreakEvent can fire
+                    return
+                }
+                if (event.action == org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK && event.hasItem() && !clickedBlock.type.isInteractable) {
+                    val itemType = event.item?.type
+                    if (itemType != null && claimService.isWartimePlaceableBlock(mfPlayer.id, claim, itemType)) {
+                        // Item in hand is in the wartime placeable list; allow the right-click so BlockPlaceEvent can fire
+                        return
+                    }
                 }
                 event.isCancelled = true
                 event.player.sendMessage("$RED${plugin.language["CannotInteractWithBlockInFactionTerritory", claimFaction.name]}")
