@@ -28,14 +28,18 @@ class MfDpcApiPactConsumerTest {
             .method("POST")
             .path("/api/v1/factions")
             .headers(mapOf("Content-Type" to "application/json", "X-API-Key" to "test-api-key"))
-            .body(gson.toJson(listOf(
-                DpcFactionPayload(
-                    name = "Test Faction",
-                    serverId = "test-server",
-                    memberCount = 5,
-                    description = "A test faction"
+            .body(
+                gson.toJson(
+                    listOf(
+                        DpcFactionPayload(
+                            name = "Test Faction",
+                            serverId = "test-server",
+                            memberCount = 5,
+                            description = "A test faction"
+                        )
+                    )
                 )
-            )))
+            )
             .willRespondWith()
             .status(200)
             .toPact()
@@ -49,16 +53,20 @@ class MfDpcApiPactConsumerTest {
             .method("POST")
             .path("/api/v1/factions")
             .headers(mapOf("Content-Type" to "application/json", "X-API-Key" to "test-api-key"))
-            .body(gson.toJson(listOf(
-                DpcFactionPayload(
-                    name = "Full Faction",
-                    serverId = "test-server",
-                    memberCount = 10,
-                    description = "A faction with all optional fields",
-                    serverIp = "play.example.com",
-                    discordLink = "https://discord.gg/example"
+            .body(
+                gson.toJson(
+                    listOf(
+                        DpcFactionPayload(
+                            name = "Full Faction",
+                            serverId = "test-server",
+                            memberCount = 10,
+                            description = "A faction with all optional fields",
+                            serverIp = "play.example.com",
+                            discordLink = "https://discord.gg/example"
+                        )
+                    )
                 )
-            )))
+            )
             .willRespondWith()
             .status(200)
             .toPact()
@@ -67,29 +75,35 @@ class MfDpcApiPactConsumerTest {
     @Test
     @PactTestFor(pactMethod = "factionSyncRequiredFields")
     fun testFactionSyncRequiredFields(mockServer: MockServer) {
-        sendSync(mockServer, listOf(
-            DpcFactionPayload(
-                name = "Test Faction",
-                serverId = "test-server",
-                memberCount = 5,
-                description = "A test faction"
+        sendSync(
+            mockServer,
+            listOf(
+                DpcFactionPayload(
+                    name = "Test Faction",
+                    serverId = "test-server",
+                    memberCount = 5,
+                    description = "A test faction"
+                )
             )
-        ))
+        )
     }
 
     @Test
     @PactTestFor(pactMethod = "factionSyncAllFields")
     fun testFactionSyncAllFields(mockServer: MockServer) {
-        sendSync(mockServer, listOf(
-            DpcFactionPayload(
-                name = "Full Faction",
-                serverId = "test-server",
-                memberCount = 10,
-                description = "A faction with all optional fields",
-                serverIp = "play.example.com",
-                discordLink = "https://discord.gg/example"
+        sendSync(
+            mockServer,
+            listOf(
+                DpcFactionPayload(
+                    name = "Full Faction",
+                    serverId = "test-server",
+                    memberCount = 10,
+                    description = "A faction with all optional fields",
+                    serverIp = "play.example.com",
+                    discordLink = "https://discord.gg/example"
+                )
             )
-        ))
+        )
     }
 
     private fun sendSync(mockServer: MockServer, payloads: List<DpcFactionPayload>) {
