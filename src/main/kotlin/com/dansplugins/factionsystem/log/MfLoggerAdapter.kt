@@ -19,8 +19,15 @@ class MfLoggerAdapter(name: String) : MarkerIgnoringBase(), LocationAwareLogger 
     }
 
     private val logger: Logger
-        get() = Bukkit.getPluginManager().getPlugin("MedievalFactions")?.logger
-            ?: Bukkit.getLogger()
+        get() {
+            // This adapter is registered as a global SLF4J provider, so it can be
+            // invoked before the Bukkit server is available (during early startup
+            // or in unit tests). Fall back to a plain JUL logger in that case
+            // rather than dereferencing a null server.
+            val server = Bukkit.getServer() ?: return Logger.getLogger("MedievalFactions")
+            return server.pluginManager.getPlugin("MedievalFactions")?.logger
+                ?: server.logger
+        }
 
     /**
      * Is this logger instance enabled for the FINEST level?
