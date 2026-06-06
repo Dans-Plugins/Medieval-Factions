@@ -397,6 +397,9 @@ permissions:
   mf.admin.setleader:
     description: Allows setting a player as the leader of a faction
     default: op
+  mf.dpc:
+    description: Allows managing DPC community API integration settings
+    default: op
   mf.admin:
     description: Admin permission
     default: op

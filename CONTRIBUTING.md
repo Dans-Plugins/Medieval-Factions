@@ -18,8 +18,14 @@ Thank you for being interested in contributing to the project! It wouldn't be wh
 - Clone your fork of the repository to your local machine using `git clone https://www.github.com/<your-username>/Medieval-Factions.git`
 - Open the project in your preferred text editor or IDE.
 - Try compiling the plugin using the following command:
+
+  Linux:
   ```bash
-  gradlew build
+  ./gradlew build
+  ```
+  Windows:
+  ```bat
+  .\gradlew.bat build
   ```
   If you encounter any errors, please create an issue for it.
 
@@ -46,7 +52,17 @@ Work items are organized into milestones, which represent a specific version of 
 The plugin supports multiple languages. Code changes that require changes to the language files should include the changes to the language files as well. If you are adding a new language, you will need to create a new language file. The language files are located in the `src/main/resources/lang` directory.
 
 ## Testing
-At this time, there are no unit tests due to a difficulty mocking Spigot. However, you can test your changes by running the plugin on a Spigot server.
+Run the unit tests with:
+
+Linux:
+```bash
+./gradlew clean test
+```
+
+Windows:
+```bat
+.\gradlew.bat clean test
+```
 
 ### Running a Spigot server with Docker
 If you don't have Docker installed, you can download it [here](https://www.docker.com/products/docker-desktop).
@@ -57,11 +73,6 @@ docker compose up
 ```
 
 This will start a Spigot server on your local machine. You can connect to it using the IP `localhost` and the port `25565`.
-
-If you make changes to the code, you can deploy the latest changes by rebuilding the Docker image:
-```bash
-docker compose up --build
-```
 
 ## Questions
 If you have any questions about contributing to the project, feel free to ask in the Discord server. You can join the Discord server [here](https://discord.gg/xXtuAQ2). This is the best place to ask questions.
