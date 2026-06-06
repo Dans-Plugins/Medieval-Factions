@@ -236,6 +236,11 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Description:** Accepts a vassalization request from another faction, making them your liege.  
 **Usage:** `/f swearfealty LiegeFaction`
 
+### `/faction declinevassalization [faction]` or `/f declinevassalization [faction]`
+**Permission:** `mf.declinevassalization` (default: true)  
+**Description:** Declines a pending vassalization request sent to your faction by another faction.  
+**Usage:** `/f declinevassalization OtherFaction`
+
 ### `/faction grantindependence [vassal]` or `/f grantindependence [vassal]`
 **Permission:** `mf.grantindependence` (default: true)  
 **Description:** Grants independence to one of your vassal factions.  
