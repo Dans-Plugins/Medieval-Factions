@@ -197,6 +197,43 @@ Controls player vs player combat mechanics.
 **Default:** `true`  
 **Description:** When `true`, allows placing ladders in enemy faction territory (useful for sieges).
 
+### `factions.wartimePlaceableBlocks`
+**Type:** List of Strings  
+**Default:** `[]` (empty)  
+**Description:** List of block types (by Material name) that become placeable in enemy faction territory during war. Blocks listed here can be placed by an attacker whose faction is at war with the territory owner.  
+**Example:**
+```yaml
+factions:
+  wartimePlaceableBlocks:
+    - SCAFFOLDING
+    - TORCH
+```
+
+### `factions.wartimeBreakableBlocks`
+**Type:** List of Strings  
+**Default:** `[]` (empty)  
+**Description:** List of block types (by Material name) that become breakable in enemy faction territory during war. Blocks listed here can be broken by an attacker whose faction is at war with the territory owner.  
+**Example:**
+```yaml
+factions:
+  wartimeBreakableBlocks:
+    - SCAFFOLDING
+```
+
+### `factions.wartimeInteractableBlocks`
+**Type:** List of Strings  
+**Default:** `[]` (empty)  
+**Description:** List of block types (by Material name) that become interactable in enemy faction territory during war. Blocks listed here can be interacted with (e.g., opened, pressed) by an attacker whose faction is at war with the territory owner.  
+**Example:**
+```yaml
+factions:
+  wartimeInteractableBlocks:
+    - OAK_DOOR
+    - IRON_DOOR
+    - OAK_FENCE_GATE
+    - STONE_BUTTON
+```
+
 ### `factions.maxNameLength`
 **Type:** Integer  
 **Default:** `20`  
@@ -536,6 +573,81 @@ Gates are structures that can be toggled open and closed by faction members.
 **Default:** `false`  
 **Description:** Enables developer commands for testing and debugging.  
 **Note:** Should only be enabled in development environments.
+
+---
+
+## DPC Community API
+
+Settings for the DPC (Dans Plugins Community) API integration.
+When enabled, the plugin periodically shares faction data with the DPC community website ([dansplugins.com](https://dansplugins.com)), allowing players and server owners to browse factions across the community.
+This integration is **strictly opt-in**.
+
+### `dpc-api.enabled`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** Whether this server is opted in to sharing faction data with the DPC community. When `true`, the plugin will periodically push faction data to the DPC API.
+
+### `dpc-api.url`
+**Type:** String  
+**Default:** `"https://dansplugins.com/api/v1/factions"`  
+**Description:** The full endpoint URL of the DPC API. Include a port if the API runs on a non-standard port (e.g. `"https://dansplugins.com:8080/api/v1/factions"`).
+
+### `dpc-api.key`
+**Type:** String  
+**Default:** `""`  
+**Description:** The API key used to authenticate with the DPC API. To obtain a key, visit [dansplugins.com](https://dansplugins.com), create an account or sign in, then generate a key from your account page. Required for faction data to be submitted successfully.
+
+### `dpc-api.server-id`
+**Type:** String  
+**Default:** `""`  
+**Description:** A unique identifier for this server (e.g. `"my-survival-server"`). Used to identify your server in the DPC registry. Must be set before faction data can be synced. Allowed characters are letters, digits, dot, underscore, colon, and hyphen (`[A-Za-z0-9._:-]`); whitespace and other punctuation are rejected to prevent accidental near-duplicate registry partitions. Once you have started syncing under a given `server-id`, treat it as permanent — changing it strands all factions previously registered under the old id (they remain visible until manually removed).
+
+### `dpc-api.login-reminder`
+**Type:** Boolean  
+**Default:** `true`  
+**Description:** Whether to show a chat reminder to operators on login when the DPC API is not yet enabled. Set to `false` to suppress the reminder.
+
+### `dpc-api.share-server-ip`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** Whether to include the server IP address in the faction data sent to DPC. Enabling this allows your server to be advertised on the DPC website alongside your factions.
+
+### `dpc-api.server-address`
+**Type:** String  
+**Default:** `""`  
+**Description:** An explicit server address to include in the DPC API payload when `share-server-ip` is `true` (e.g. `"play.myserver.com:25565"`). If blank, the plugin auto-detects from the server binding (ip:port). Set this when your server is behind a proxy or when the bound IP doesn't match your public address.
+
+### `dpc-api.discord-link`
+**Type:** String  
+**Default:** `""`  
+**Description:** An optional Discord invite link to display on the DPC website alongside your faction data. Leave empty to omit. The link must start with `https://discord.gg/` or `https://discord.com/`; other formats are rejected at command time (and silently omitted from the sync payload if set directly in config.yml). Use `/mf dpc discord <link>` or `/mf dpc discord clear` to manage this value at runtime.
+
+### `dpc-api.sync-interval-minutes`
+**Type:** Integer  
+**Default:** `10`  
+**Description:** How often (in minutes) the plugin syncs faction data to the DPC API. Minimum value is 1 minute. Lower values mean more frequent updates but increase network traffic.
+
+### DPC API troubleshooting
+
+If a sync returns a non-2xx status, the plugin logs a `WARNING` with the
+status code and a truncated response body to your server log. Common cases:
+
+- **`401 Unauthorized`** — `dpc-api.key` is missing or wrong. Re-generate the
+  key from your DPC account page (`https://dansplugins.com/account`).
+- **`400 Bad Request`** — usually means `dpc-api.server-id` contains
+  disallowed characters. Allowed characters are letters, digits, dot,
+  underscore, colon, and hyphen.
+- **`429` / `5xx`** — transient server-side issue; the next sync will retry.
+  Failed requests never crash the plugin.
+
+The DPC API server keeps a `last_synced_at` timestamp per faction and applies
+several safety guards before marking missing-from-batch factions as
+disbanded. If you see fewer disbands on the registry than expected (e.g. you
+disbanded one of two factions and the other still appears active for a
+cycle), that's the ratio guard at work — it's intentional and self-corrects
+within one or two sync cycles. See the
+[dpc-api README](https://github.com/Dans-Plugins/dansplugins-dot-com/blob/main/dpc-api/README.md#sync-safety-guards)
+for the full server-side semantics.
 
 ---
 

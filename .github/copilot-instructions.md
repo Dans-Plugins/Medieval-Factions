@@ -1,5 +1,61 @@
-# Copilot Instructions
+# Medieval Factions — Copilot Instructions
 
+## Stack
+Kotlin · Bukkit/Paper API · Gradle (Shadow JAR) · Java 17 toolchain
+
+## Build
+`./gradlew shadowJar`. CI builds Ponder from source (`Dans-Plugins/Ponder` tag `2.0.0`)
+via `publishToMavenLocal` before the main build.
+
+## DPC API integration (`dpc/MfDpcApiService`)
+- Wire contract source of truth: the dpc-api OpenAPI spec, exposed by the
+  provider at `GET /v3/api-docs` (JSON) and `GET /swagger-ui.html`. It is
+  auto-generated from `FactionRequest`'s Bean Validation annotations in
+  `Dans-Plugins/dansplugins-dot-com` (`dpc-api/src/main/java/com/dansplugins/api/dto/FactionRequest.java`),
+  so it never drifts from the actual server-side validation.
+- Field limits (mirror the provider's `@Size` rules): `name` 64 · `serverId` 64 · `description` 512 · `serverIp` 253 · `discordLink` 512.
+- `serverId` must match `[A-Za-z0-9._:-]+` — validated client-side in `MfDpcApiService` before sending.
+- Truncate every field before adding to JSON; use the `truncate()` helper.
+- `discordLink` must start with `https://discord.gg/` or `https://discord.com/`; validate at command time **and** in the service before including in the payload.
+- `memberCount` must be a non-negative integer (`maxOf(0, …)`).
+- `HttpClient` is injected for testability — tests mock it, no real network calls.
+- `description`, `serverIp`, and `discordLink` are optional; the server-side API accepts null.
+- Collect the faction snapshot on the Bukkit main thread, then dispatch HTTP off-thread via `HttpClient.sendAsync`. The scheduler uses `runTaskTimer`, not `runTaskTimerAsynchronously`.
+
+## Contract Tests (Pact)
+
+Consumer-driven contract tests live in `MfDpcApiPactConsumerTest` (this repo) and
+`DpcApiPactProviderTest` (dansplugins-dot-com). They cover the
+`POST /api/v1/factions` wire format at the HTTP level without a real Minecraft server.
+
+- **Consumer** (`src/test/kotlin/…/dpc/MfDpcApiPactConsumerTest.kt`): uses
+  `au.com.dius.pact.consumer:junit5:4.6.7`. Builds a `DpcFactionPayload` list with Gson
+  and sends it to a Pact mock server. Generates pact files to `pacts/` (configured via
+  `pact.rootDir` in `build.gradle`).
+- **Committed pact file**: `pacts/medieval-factions-dpc-api.json` — committed to both
+  repos so the provider can verify without running the consumer test first.
+- **Provider** (`DpcApiPactProviderTest` in dansplugins-dot-com): reads the committed pact
+  file, starts Spring Boot on a random port (H2 in-memory, `@ActiveProfiles("test")`),
+  `@MockBean ApiKeyService` accepting `"test-api-key"`, and verifies each interaction via
+  `PactVerificationInvocationContextProvider`.
+
+## Integration Testing Path Forward
+The unit tests mock `HttpClient` and verify the JSON payload shape. For end-to-end
+confidence, the next step is OMCSI-based integration tests (see
+`.github/workflows/integration.yml` in `Dans-Plugin-Manager` for the pattern):
+
+1. Build the MF shadow JAR.
+2. Spin up a real Minecraft server via OMCSI.
+3. Start a local mock DPC API (e.g. WireMock or a TestContainers-backed instance of
+   `dpc-api` from the `dansplugins-dot-com` repo).
+4. Set `dpc-api.enabled=true`, `dpc-api.key=<test-key>`, `dpc-api.server-id=ci-server`
+   via RCON or config injection.
+5. Wait one sync interval and assert the mock received a well-formed POST.
+
+Until OMCSI tests exist, keep the mock-`HttpClient` tests comprehensive for all edge
+cases (truncation, omitted fields, validation failures, skip-when-misconfigured).
+
+## Conventions
 This repository follows the DPC (Dans Plugins Community) conventions defined at
 https://github.com/Dans-Plugins/dpc-conventions. Read those conventions before
 making any changes.
@@ -35,7 +91,7 @@ making any changes.
 
 ## Contribution Workflow
 
-- Branch from `develop` for all changes.
-- Open a pull request against `develop`, not `main`.
+- Branch from `main` for all changes. (The legacy `develop` branch was retired; trunk-based development on `main` is the current flow.)
+- Open a pull request against `main`.
 - Reference the related GitHub issue in every pull request description using `#<number>`.
 - The CI build (`.github/workflows/build.yml`) must pass before a pull request can be merged.

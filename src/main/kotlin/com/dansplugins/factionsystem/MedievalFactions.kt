@@ -14,6 +14,7 @@ import com.dansplugins.factionsystem.command.gate.MfGateCommand
 import com.dansplugins.factionsystem.command.lock.MfLockCommand
 import com.dansplugins.factionsystem.command.power.MfPowerCommand
 import com.dansplugins.factionsystem.command.unlock.MfUnlockCommand
+import com.dansplugins.factionsystem.dpc.MfDpcApiService
 import com.dansplugins.factionsystem.duel.JooqMfDuelInviteRepository
 import com.dansplugins.factionsystem.duel.JooqMfDuelRepository
 import com.dansplugins.factionsystem.duel.MfDuelId
@@ -294,6 +295,26 @@ class MedievalFactions : JavaPlugin() {
                 config.getBoolean("factions.allowNeutrality").toString()
             }
         )
+        metrics.addCustomChart(
+            SimplePie("dpc_api_opt_in") {
+                config.getBoolean("dpc-api.enabled").toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("dpc_api_login_reminder") {
+                config.getBoolean("dpc-api.login-reminder").toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("dpc_api_share_server_ip") {
+                config.getBoolean("dpc-api.share-server-ip").toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("dpc_api_discord_link_set") {
+                (config.getString("dpc-api.discord-link")?.isNotEmpty() == true).toString()
+            }
+        )
 
         if (config.getBoolean("migrateMf4")) {
             migrator.migrate()
@@ -473,6 +494,19 @@ class MedievalFactions : JavaPlugin() {
                 }
             }, 5L, 20L)
         }
+
+        val dpcApiService = MfDpcApiService(this)
+        val syncIntervalMinutes = config.getInt("dpc-api.sync-interval-minutes", 10).coerceAtLeast(1)
+        val syncIntervalTicks = syncIntervalMinutes.toLong() * 20L * 60L
+        // Run on the main thread so the snapshot-collection phase can safely touch
+        // Bukkit-managed faction state. The HTTP send inside syncFactions() is
+        // dispatched via HttpClient.sendAsync and does not block the main thread.
+        server.scheduler.runTaskTimer(
+            this,
+            Runnable { dpcApiService.syncFactions() },
+            syncIntervalTicks,
+            syncIntervalTicks
+        )
     }
 
     internal fun onPowerCycle(

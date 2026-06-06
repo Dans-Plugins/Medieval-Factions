@@ -236,6 +236,11 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Description:** Accepts a vassalization request from another faction, making them your liege.  
 **Usage:** `/f swearfealty LiegeFaction`
 
+### `/faction declinevassalization [faction]` or `/f declinevassalization [faction]`
+**Permission:** `mf.declinevassalization` (default: true)  
+**Description:** Declines a pending vassalization request sent to your faction by another faction.  
+**Usage:** `/f declinevassalization OtherFaction`
+
 ### `/faction grantindependence [vassal]` or `/f grantindependence [vassal]`
 **Permission:** `mf.grantindependence` (default: true)  
 **Description:** Grants independence to one of your vassal factions.  
@@ -485,6 +490,43 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 
 ---
 
+## DPC Community API
+
+### `/faction dpc optin` or `/mf dpc optin`
+**Permission:** `mf.dpc` (default: op)  
+**Description:** Enables DPC API sharing. Sets `dpc-api.enabled` to `true` and saves the config.
+
+### `/faction dpc optout` or `/mf dpc optout`
+**Permission:** `mf.dpc` (default: op)  
+**Description:** Disables DPC API sharing. Sets `dpc-api.enabled` to `false` and saves the config.
+
+### `/faction dpc reminder on` or `/mf dpc reminder on`
+**Permission:** `mf.dpc` (default: op)  
+**Description:** Enables the DPC opt-in login reminder for operators.
+
+### `/faction dpc reminder off` or `/mf dpc reminder off`
+**Permission:** `mf.dpc` (default: op)  
+**Description:** Disables the DPC opt-in login reminder for operators.
+
+### `/faction dpc shareip on` or `/mf dpc shareip on`
+**Permission:** `mf.dpc` (default: op)  
+**Description:** Enables sharing the server IP with the DPC API for server advertising.
+
+### `/faction dpc shareip off` or `/mf dpc shareip off`
+**Permission:** `mf.dpc` (default: op)  
+**Description:** Disables sharing the server IP with the DPC API.
+
+### `/faction dpc discord <link>` or `/mf dpc discord <link>`
+**Permission:** `mf.dpc` (default: op)  
+**Description:** Sets the Discord invite link to share on the DPC website alongside faction data. The link must start with `https://discord.gg/` or `https://discord.com/`; other formats are rejected.  
+**Usage:** `/mf dpc discord https://discord.gg/yourserver`
+
+### `/faction dpc discord clear` or `/mf dpc discord clear`
+**Permission:** `mf.dpc` (default: op)  
+**Description:** Clears the Discord invite link from DPC API data.
+
+---
+
 ## Permission Groups
 
 ### Player Permissions
@@ -499,6 +541,7 @@ The `mf.admin` permission grants access to all admin commands including:
 - `mf.admin.create` - Create leaderless factions
 - `mf.admin.setleader` - Set faction leaders
 - `mf.approve` - Approve/deny pending faction actions
+- `mf.dpc` - Manage DPC community API settings
 
 ## Notes
 

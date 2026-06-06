@@ -4,6 +4,7 @@ import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipId
 import org.bukkit.Chunk
+import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.block.Block
 import org.bukkit.command.Command
@@ -34,6 +35,7 @@ class TestUtils {
         `when`(block.y).thenReturn(0)
         `when`(block.z).thenReturn(0)
         `when`(block.chunk).thenReturn(mock(org.bukkit.Chunk::class.java))
+        `when`(block.type).thenReturn(Material.STONE)
         return block
     }
 
@@ -53,6 +55,7 @@ class TestUtils {
         `when`(block.y).thenReturn(y)
         `when`(block.z).thenReturn(z)
         `when`(block.chunk).thenReturn(mock(org.bukkit.Chunk::class.java))
+        `when`(block.type).thenReturn(Material.STONE)
         return block
     }
 

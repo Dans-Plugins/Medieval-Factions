@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+- `/faction declinevassalization [faction]` command (permission `mf.declinevassalization`, default `true`): lets a faction decline a pending vassalization request sent to it, with notifications to both factions.
+- DPC community API integration: opt-in sync of faction data to `https://dansplugins.com` via `POST /api/v1/factions`. Enabled with `/mf dpc optin` and configured under the `dpc-api.*` section of `config.yml`. Requires an API key from the DPC website.
+- `/mf dpc` subcommand (permission `mf.dpc`, default `op`) with `optin`, `optout`, `reminder on|off`, `shareip on|off`, `discord <link>|clear` actions.
+- bStats charts for DPC opt-in rate, login-reminder usage, server-IP sharing, and Discord-link presence.
+
+### Fixed
+- Faction snapshot for the DPC sync is now collected on the Bukkit main thread before being dispatched off-thread via `HttpClient.sendAsync`. Off-thread access to `factionService.factions` could otherwise produce inconsistent reads or `ConcurrentModificationException` under load.
+- The DPC sync no longer POSTs an empty faction roster. A transient empty read (e.g. faction data not yet loaded at startup, or a reload mid-cycle) is skipped client-side rather than sent, so it can never depend on the provider's safety guards to avoid a faction wipe.
+
+## [5.8.1] – 2026-04-25
+
+### Fixed
+- Holding a `wartimePlaceableBlocks` item (e.g. ladders or scaffolding) no longer bypasses interaction protection on enemy territory blocks such as chests and levers during wartime.
+
+## [5.8.0] – 2026-04-25
+
+### Added
+- `factions.wartimePlaceableBlocks`: configurable list of block types that attackers can place in enemy territory during war.
+- `factions.wartimeBreakableBlocks`: configurable list of block types that attackers can break in enemy territory during war.
+- `factions.wartimeInteractableBlocks`: configurable list of block types that attackers can interact with in enemy territory during war.
+
 ## [5.7.2] – 2026-01-03
 
 ### Fixed

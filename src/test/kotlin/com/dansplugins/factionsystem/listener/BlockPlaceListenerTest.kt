@@ -4,9 +4,17 @@ import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.TestUtils
 import com.dansplugins.factionsystem.area.MfBlockPosition
 import com.dansplugins.factionsystem.claim.MfClaimService
+import com.dansplugins.factionsystem.claim.MfClaimedChunk
+import com.dansplugins.factionsystem.faction.MfFaction
+import com.dansplugins.factionsystem.faction.MfFactionId
+import com.dansplugins.factionsystem.faction.MfFactionService
 import com.dansplugins.factionsystem.gate.MfGate
 import com.dansplugins.factionsystem.gate.MfGateService
 import com.dansplugins.factionsystem.lang.Language
+import com.dansplugins.factionsystem.player.MfPlayer
+import com.dansplugins.factionsystem.player.MfPlayerId
+import com.dansplugins.factionsystem.player.MfPlayerService
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
 import org.bukkit.ChatColor
 import org.bukkit.World
 import org.bukkit.block.Block
@@ -18,6 +26,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import java.util.UUID
 
 class BlockPlaceListenerTest {
     private val testUtils = TestUtils()
@@ -26,6 +35,9 @@ class BlockPlaceListenerTest {
     private lateinit var medievalFactions: MedievalFactions
     private lateinit var gateService: MfGateService
     private lateinit var claimService: MfClaimService
+    private lateinit var factionService: MfFactionService
+    private lateinit var playerService: MfPlayerService
+    private lateinit var relationshipService: MfFactionRelationshipService
     private lateinit var uut: BlockPlaceListener
 
     @BeforeEach
@@ -93,6 +105,47 @@ class BlockPlaceListenerTest {
         verify(event, never()).isCancelled = false
     }
 
+    @Test
+    fun onBlockPlace_Claimed_AtWar_WartimePlaceableBlock_ShouldAllow() {
+        // Arrange
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
+
+        val playerId = UUID.randomUUID()
+        `when`(player.uniqueId).thenReturn(playerId)
+
+        val claimFactionId = MfFactionId("claim-faction")
+        val claim = mock(MfClaimedChunk::class.java)
+        `when`(claim.factionId).thenReturn(claimFactionId)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
+
+        val claimFaction = mock(MfFaction::class.java)
+        `when`(claimFaction.id).thenReturn(claimFactionId)
+        `when`(claimFaction.name).thenReturn("Enemy Faction")
+        `when`(factionService.getFaction(claimFactionId)).thenReturn(claimFaction)
+
+        val mfPlayer = mock(MfPlayer::class.java)
+        val mfPlayerId = MfPlayerId(playerId.toString())
+        `when`(mfPlayer.id).thenReturn(mfPlayerId)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+
+        val playerFactionId = MfFactionId("player-faction")
+        val playerFaction = mock(MfFaction::class.java)
+        `when`(playerFaction.id).thenReturn(playerFactionId)
+        `when`(factionService.getFaction(mfPlayerId)).thenReturn(playerFaction)
+        `when`(relationshipService.getFactionsAtWarWith(playerFactionId)).thenReturn(listOf(claimFactionId))
+
+        `when`(claimService.isInteractionAllowed(mfPlayerId, claim)).thenReturn(false)
+        `when`(claimService.isWartimePlaceableBlock(mfPlayerId, claim, block.type)).thenReturn(true)
+
+        // Act
+        uut.onBlockPlace(event)
+
+        // Assert - event should NOT be cancelled because block is in wartime placeable list
+        verify(event, never()).isCancelled = true
+    }
+
     // Helper functions
 
     private fun createBasicFixture(): BlockPlaceListenerTestFixture {
@@ -113,11 +166,17 @@ class BlockPlaceListenerTest {
     private fun mockServices() {
         gateService = mock(MfGateService::class.java)
         claimService = mock(MfClaimService::class.java)
+        factionService = mock(MfFactionService::class.java)
+        playerService = mock(MfPlayerService::class.java)
+        relationshipService = mock(MfFactionRelationshipService::class.java)
 
         val services = mock(com.dansplugins.factionsystem.service.Services::class.java)
         `when`(medievalFactions.services).thenReturn(services)
         `when`(services.gateService).thenReturn(gateService)
         `when`(services.claimService).thenReturn(claimService)
+        `when`(services.factionService).thenReturn(factionService)
+        `when`(services.playerService).thenReturn(playerService)
+        `when`(services.factionRelationshipService).thenReturn(relationshipService)
     }
 
     private fun mockLanguageSystem() {

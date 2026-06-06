@@ -64,6 +64,9 @@ factions:
   - TRIAL_SPAWNER
   - VILLAGE_DEFENSE
   laddersPlaceableInEnemyFactionTerritory: true
+  wartimePlaceableBlocks: [] # List of block types that become placeable in enemy faction territory during war. Example: ["SCAFFOLDING", "TORCH"]
+  wartimeBreakableBlocks: [] # List of block types that become breakable in enemy faction territory during war. Example: ["SCAFFOLDING"]
+  wartimeInteractableBlocks: [] # List of block types that become interactable in enemy faction territory during war. Example: ["OAK_DOOR", "IRON_DOOR", "OAK_FENCE_GATE", "STONE_BUTTON"]
   maxNameLength: 20
   zeroPowerFactionsGetDisbanded: false
   vassalPowerContributionMultiplier: 0.75
@@ -265,5 +268,15 @@ gates:
     - *beds
     - *signs
     - *buttons
+dpc-api:
+  enabled: false
+  url: "https://dansplugins.com/api/v1/factions"  # full endpoint URL of the DPC API; include port if needed (e.g. "https://dansplugins.com:8080/api/v1/factions")
+  key: ""                      # API key from https://dansplugins.com — register or sign in, then generate a key from your account page
+  server-id: ""                # unique name for this server (e.g. "my-survival-server"); used to identify your server in the DPC registry
+  login-reminder: true
+  share-server-ip: false
+  server-address: ""           # explicit server address (e.g. "play.myserver.com:25565"); used when share-server-ip is true. If blank, auto-detects from server binding.
+  discord-link: ""
+  sync-interval-minutes: 10   # how often to sync faction data to the DPC API (in minutes, minimum 1)
 dev:
   enableDevCommands: false
