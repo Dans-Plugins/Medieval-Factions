@@ -4,7 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## 5.8.0 - 2026-04-25
+## [5.8.1] – 2026-04-25
+
+### Fixed
+- Holding a `wartimePlaceableBlocks` item (e.g. ladders or scaffolding) no longer bypasses interaction protection on enemy territory blocks such as chests and levers during wartime.
+
+## [5.8.0] – 2026-04-25
 
 ### Added
 - `factions.wartimePlaceableBlocks`: configurable list of block types that attackers can place in enemy territory during war.
