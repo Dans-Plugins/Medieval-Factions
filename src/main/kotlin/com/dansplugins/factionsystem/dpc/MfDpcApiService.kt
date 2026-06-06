@@ -151,6 +151,16 @@ class MfDpcApiService(
             )
         }
 
+        // Never POST an empty roster. The provider already treats an empty array
+        // as a no-op, so sending one accomplishes nothing — but skipping it here
+        // is defense-in-depth: a transient empty read (e.g. faction data not yet
+        // loaded during startup, or a reload mid-cycle) can never reach the wire
+        // and depend on the provider's guards to avoid a faction wipe.
+        if (payloads.isEmpty()) {
+            plugin.logger.fine("No factions to sync to the DPC API; skipping this cycle.")
+            return null
+        }
+
         return SyncSnapshot(apiUri, apiKey, payloads)
     }
 

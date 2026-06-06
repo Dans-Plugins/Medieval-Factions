@@ -179,6 +179,23 @@ class MfDpcApiServiceTest {
     }
 
     @Test
+    fun testSyncFactions_skippedWhenNoFactions() {
+        // Even with a fully valid config, an empty roster must never be POSTed.
+        // The provider treats an empty array as a no-op, but skipping the send
+        // here is defense-in-depth: a transient empty read (faction data not yet
+        // loaded at startup, or a reload mid-cycle) can never reach the wire.
+        setupEnabledConfig()
+        setupFactions(emptyList())
+
+        uut.syncFactions()
+
+        verify(httpClient, never()).sendAsync(
+            anyNonNull<HttpRequest>(),
+            anyNonNull<HttpResponse.BodyHandler<String>>()
+        )
+    }
+
+    @Test
     fun testSyncFactions_nonDefaultPortIncludedInServerIp() {
         setupEnabledConfig()
         val server = plugin.server
