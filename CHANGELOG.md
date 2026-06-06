@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- `/faction declinevassalization [faction]` command (permission `mf.declinevassalization`, default `true`): lets a faction decline a pending vassalization request sent to it, with notifications to both factions.
 - DPC community API integration: opt-in sync of faction data to `https://dansplugins.com` via `POST /api/v1/factions`. Enabled with `/mf dpc optin` and configured under the `dpc-api.*` section of `config.yml`. Requires an API key from the DPC website.
 - `/mf dpc` subcommand (permission `mf.dpc`, default `op`) with `optin`, `optout`, `reminder on|off`, `shareip on|off`, `discord <link>|clear` actions.
 - bStats charts for DPC opt-in rate, login-reminder usage, server-IP sharing, and Discord-link presence.
