@@ -4,6 +4,7 @@ import au.com.dius.pact.consumer.MockServer
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt
 import au.com.dius.pact.consumer.junit5.PactTestFor
+import au.com.dius.pact.core.model.PactSpecVersion
 import au.com.dius.pact.core.model.RequestResponsePact
 import au.com.dius.pact.core.model.annotations.Pact
 import com.google.gson.Gson
@@ -15,7 +16,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
 @ExtendWith(PactConsumerTestExt::class)
-@PactTestFor(providerName = "dpc-api")
+@PactTestFor(providerName = "dpc-api", pactVersion = PactSpecVersion.V3)
 class MfDpcApiPactConsumerTest {
 
     private val gson = Gson()
