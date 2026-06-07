@@ -1,7 +1,6 @@
 package com.dansplugins.factionsystem.command.faction.addmember
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.command.dropFirst
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionMember
 import com.dansplugins.factionsystem.player.MfPlayer
