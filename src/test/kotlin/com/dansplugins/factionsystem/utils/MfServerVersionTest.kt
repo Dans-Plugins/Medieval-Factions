@@ -8,16 +8,14 @@ import org.junit.jupiter.api.Test
 
 class MfServerVersionTest {
 
-    private lateinit var savedProvider: () -> String
-
     @BeforeEach
     fun setUp() {
-        savedProvider = MfServerVersion.versionProvider
+        MfServerVersion.resetForTesting()
     }
 
     @AfterEach
     fun tearDown() {
-        MfServerVersion.versionProvider = savedProvider
+        MfServerVersion.resetForTesting()
     }
 
     private fun setVersion(version: String) {
