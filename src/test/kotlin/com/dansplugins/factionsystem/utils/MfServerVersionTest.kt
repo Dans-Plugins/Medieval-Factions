@@ -1,30 +1,27 @@
 package com.dansplugins.factionsystem.utils
 
-import org.bukkit.Bukkit
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.MockedStatic
-import org.mockito.Mockito
 
 class MfServerVersionTest {
 
-    private lateinit var mockedBukkit: MockedStatic<Bukkit>
+    private lateinit var savedProvider: () -> String
 
     @BeforeEach
     fun setUp() {
-        mockedBukkit = Mockito.mockStatic(Bukkit::class.java)
+        savedProvider = MfServerVersion.versionProvider
     }
 
     @AfterEach
     fun tearDown() {
-        mockedBukkit.close()
+        MfServerVersion.versionProvider = savedProvider
     }
 
     private fun setVersion(version: String) {
-        mockedBukkit.`when`<String> { Bukkit.getBukkitVersion() }.thenReturn(version)
+        MfServerVersion.versionProvider = { version }
     }
 
     @Test

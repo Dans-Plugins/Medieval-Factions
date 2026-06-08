@@ -11,21 +11,23 @@ import org.bukkit.potion.PotionEffectType
 
 class AreaEffectCloudApplyListener(private val plugin: MedievalFactions) : Listener {
 
+    var harmfulPotionEffectTypeNames: List<String> = listOf(
+        "BAD_OMEN",
+        "BLINDNESS",
+        "CONFUSION",
+        "DARKNESS",
+        "HARM",
+        "HUNGER",
+        "POISON",
+        "SLOW",
+        "SLOW_DIGGING",
+        "UNLUCK",
+        "WEAKNESS",
+        "WITHER"
+    )
+
     private val harmfulPotionEffectTypes: List<PotionEffectType?> by lazy {
-        listOf(
-            "BAD_OMEN",
-            "BLINDNESS",
-            "CONFUSION",
-            "DARKNESS",
-            "HARM",
-            "HUNGER",
-            "POISON",
-            "SLOW",
-            "SLOW_DIGGING",
-            "UNLUCK",
-            "WEAKNESS",
-            "WITHER"
-        ).mapNotNull {
+        harmfulPotionEffectTypeNames.mapNotNull {
             PotionEffectType.getByName(it)
         }
     }

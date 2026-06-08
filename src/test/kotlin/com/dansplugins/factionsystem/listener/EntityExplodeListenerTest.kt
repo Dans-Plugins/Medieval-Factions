@@ -9,7 +9,7 @@ import com.dansplugins.factionsystem.gate.MfGateService
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerService
-import org.bukkit.Bukkit
+import com.dansplugins.factionsystem.utils.MfServerVersion
 import org.bukkit.Chunk
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -21,12 +21,10 @@ import org.bukkit.event.entity.EntityExplodeEvent
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.MockedStatic
-import org.mockito.Mockito.any
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.mockStatic
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
+import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.Mockito.`when`
 import java.util.*
 
@@ -40,12 +38,12 @@ class EntityExplodeListenerTest {
     private lateinit var factionService: MfFactionService
     private lateinit var gateService: MfGateService
     private lateinit var uut: EntityExplodeListener
-    private lateinit var mockedBukkit: MockedStatic<Bukkit>
+    private lateinit var savedVersionProvider: () -> String
 
     @BeforeEach
     fun setUp() {
-        mockedBukkit = mockStatic(Bukkit::class.java)
-        mockedBukkit.`when`<String> { Bukkit.getBukkitVersion() }.thenReturn("1.21-R0.1-SNAPSHOT")
+        savedVersionProvider = MfServerVersion.versionProvider
+        MfServerVersion.versionProvider = { "1.21-R0.1-SNAPSHOT" }
 
         medievalFactions = mock(MedievalFactions::class.java)
         gateService = mock(MfGateService::class.java)
@@ -65,7 +63,7 @@ class EntityExplodeListenerTest {
 
     @AfterEach
     fun tearDown() {
-        mockedBukkit.close()
+        MfServerVersion.versionProvider = savedVersionProvider
     }
 
     @Test
@@ -100,7 +98,7 @@ class EntityExplodeListenerTest {
 
     @Test
     fun onEntityExplode_WindCharge_Pre121_ShouldNotCheck() {
-        mockedBukkit.`when`<String> { Bukkit.getBukkitVersion() }.thenReturn("1.17-R0.1-SNAPSHOT")
+        MfServerVersion.versionProvider = { "1.17-R0.1-SNAPSHOT" }
         val chunk = testUtils.createMockChunk()
         val block = createMockBlockInChunk(chunk)
         val entity = createWindChargeEntity()
@@ -112,7 +110,7 @@ class EntityExplodeListenerTest {
         uut.onEntityExplode(event)
 
         assert(event.blockList().contains(block))
-        verify(claimService, never()).getClaim(any(Chunk::class.java))
+        verifyNoInteractions(claimService)
     }
 
     @Test
