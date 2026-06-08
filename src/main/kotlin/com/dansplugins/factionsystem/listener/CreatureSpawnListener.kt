@@ -1,7 +1,7 @@
 package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
-import org.bukkit.entity.Monster
+import com.dansplugins.factionsystem.utils.MfHostileMobChecker
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.CreatureSpawnEvent
@@ -14,7 +14,7 @@ class CreatureSpawnListener(private val plugin: MedievalFactions) : Listener {
             return
         }
 
-        if (event.entity !is Monster) {
+        if (!MfHostileMobChecker.isHostileMob(event.entity)) {
             return
         }
 
