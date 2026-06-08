@@ -42,6 +42,7 @@ class EntityExplodeListenerTest {
     fun setUp() {
         savedVersionProvider = MfServerVersion.versionProvider
         MfServerVersion.versionProvider = { "1.21-R0.1-SNAPSHOT" }
+        MfServerVersion.resetForTesting()
 
         medievalFactions = mock(MedievalFactions::class.java)
         gateService = mock(MfGateService::class.java)
@@ -62,6 +63,7 @@ class EntityExplodeListenerTest {
     @AfterEach
     fun tearDown() {
         MfServerVersion.versionProvider = savedVersionProvider
+        MfServerVersion.resetForTesting()
     }
 
     @Test
@@ -97,6 +99,7 @@ class EntityExplodeListenerTest {
     @Test
     fun onEntityExplode_WindCharge_Pre121_ShouldNotCheck() {
         MfServerVersion.versionProvider = { "1.17-R0.1-SNAPSHOT" }
+        MfServerVersion.resetForTesting()
         val chunk = testUtils.createMockChunk()
         val block = createMockBlockInChunk(chunk)
         val entity = createWindChargeEntity()
