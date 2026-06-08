@@ -121,6 +121,28 @@ class MfFactionPowerCommand(private val plugin: MedievalFactions) : CommandExecu
                             ]
                             }"
                         )
+                        val claimService = plugin.services.claimService
+                        val claimCount = claimService.getClaims(faction.id).size
+                        if (plugin.config.getBoolean("factions.limitLand")) {
+                            sender.sendMessage(
+                                "$GRAY${
+                                plugin.language[
+                                    "CommandFactionPowerFactionClaims",
+                                    decimalFormat.format(claimCount.toLong()),
+                                    decimalFormat.format(floor(faction.power))
+                                ]
+                                }"
+                            )
+                        } else {
+                            sender.sendMessage(
+                                "$GRAY${
+                                plugin.language[
+                                    "CommandFactionPowerFactionClaimsUnlimited",
+                                    decimalFormat.format(claimCount.toLong())
+                                ]
+                                }"
+                            )
+                        }
                     }
                 } else {
                     sender.sendMessage("$RED${plugin.language["CommandFactionPowerNotAPlayer"]}")
