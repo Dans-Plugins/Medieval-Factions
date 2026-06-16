@@ -42,6 +42,38 @@ import java.util.*
 import org.bukkit.block.data.type.Gate as FenceGateData
 
 class PlayerInteractListenerTest {
+    companion object {
+        private lateinit var mockedBukkit: org.mockito.MockedStatic<org.bukkit.Bukkit>
+
+        @org.junit.jupiter.api.BeforeAll
+        @JvmStatic
+        fun setUpBukkit() {
+            mockedBukkit = org.mockito.Mockito.mockStatic(org.bukkit.Bukkit::class.java) { invocation ->
+                if (invocation.method.name == "getRegistry") {
+                    java.lang.reflect.Proxy.newProxyInstance(
+                        org.bukkit.Registry::class.java.classLoader,
+                        arrayOf(org.bukkit.Registry::class.java),
+                        java.lang.reflect.InvocationHandler { _, m, _ ->
+                            if (m.name == "iterator") {
+                                ArrayList<org.bukkit.Keyed>().iterator()
+                            } else {
+                                null
+                            }
+                        }
+                    )
+                } else {
+                    org.mockito.Mockito.RETURNS_DEFAULTS.answer(invocation)
+                }
+            }
+        }
+
+        @org.junit.jupiter.api.AfterAll
+        @JvmStatic
+        fun tearDownBukkit() {
+            mockedBukkit.close()
+        }
+    }
+
     private val testUtils = TestUtils()
 
     private lateinit var fixture: PlayerInteractListenerTestFixture
@@ -1062,8 +1094,13 @@ class PlayerInteractListenerTest {
         `when`(event.clickedBlock).thenReturn(block)
         `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
         `when`(event.item).thenReturn(item)
-        val itemMaterial = mock(Material::class.java)
-        `when`(itemMaterial.isEdible).thenReturn(false)
+        val itemMaterial = if (ladderItem) {
+            Material.LADDER
+        } else {
+            val mockMat = mock(Material::class.java)
+            `when`(mockMat.isEdible).thenReturn(false)
+            mockMat
+        }
         `when`(item.type).thenReturn(itemMaterial)
         `when`(event.hasItem()).thenReturn(true)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
@@ -1083,8 +1120,7 @@ class PlayerInteractListenerTest {
         `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
         `when`(medievalFactions.config.getBoolean("factions.laddersPlaceableInEnemyFactionTerritory")).thenReturn(configEnabled)
 
-        // Production code computes isPlacingLadder = false because item.type is a mock (never equals Material.LADDER)
-        `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, false)).thenReturn(isWartimeLadderPlacementAllowed)
+        `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, ladderItem)).thenReturn(isWartimeLadderPlacementAllowed)
     }
 
     private fun createBasicFixture(): PlayerInteractListenerTestFixture {

@@ -73,7 +73,7 @@ class EntityExplodeListenerTest {
         val entity = createWindChargeEntity()
         val event = createExplodeEvent(entity, listOf(block))
 
-        val shooter = mockShooter(chunk, block, event)
+        val shooter = mockShooter(event)
         setupEnemyClaim(shooter, chunk)
 
         uut.onEntityExplode(event)
@@ -88,7 +88,7 @@ class EntityExplodeListenerTest {
         val entity = createWindChargeEntity()
         val event = createExplodeEvent(entity, listOf(block))
 
-        val shooter = mockShooter(chunk, block, event)
+        val shooter = mockShooter(event)
         setupOwnClaim(shooter, chunk)
 
         uut.onEntityExplode(event)
@@ -106,7 +106,7 @@ class EntityExplodeListenerTest {
         val event = createExplodeEvent(entity, listOf(block))
 
         val shooter = mock(Player::class.java)
-        `when`((entity as Projectile).shooter).thenReturn(shooter)
+        `when`(entity.shooter).thenReturn(shooter)
 
         uut.onEntityExplode(event)
 
@@ -124,7 +124,7 @@ class EntityExplodeListenerTest {
         val shooter = mock(Player::class.java)
         val shooterId = UUID.randomUUID()
         `when`(shooter.uniqueId).thenReturn(shooterId)
-        `when`((entity as Projectile).shooter).thenReturn(shooter)
+        `when`(entity.shooter).thenReturn(shooter)
 
         val mfPlayer = mock(MfPlayer::class.java)
         val playerId = MfPlayerId(shooterId.toString())
@@ -145,7 +145,7 @@ class EntityExplodeListenerTest {
         val entity = createWindChargeEntity()
         val event = createExplodeEvent(entity, listOf(block))
 
-        val shooter = mockShooter(chunk, block, event)
+        mockShooter(event)
         `when`(claimService.getClaim(chunk)).thenReturn(null)
 
         uut.onEntityExplode(event)
@@ -180,7 +180,7 @@ class EntityExplodeListenerTest {
         val shooter = mock(Player::class.java)
         val shooterId = UUID.randomUUID()
         `when`(shooter.uniqueId).thenReturn(shooterId)
-        `when`((entity as Projectile).shooter).thenReturn(shooter)
+        `when`(entity.shooter).thenReturn(shooter)
 
         val mfPlayer = mock(MfPlayer::class.java)
         val playerId = MfPlayerId(shooterId.toString())
@@ -220,8 +220,6 @@ class EntityExplodeListenerTest {
     }
 
     private fun mockShooter(
-        chunk: Chunk,
-        block: Block,
         event: EntityExplodeEvent
     ): Player {
         val shooter = mock(Player::class.java)

@@ -87,7 +87,7 @@ jooq {
     configurations {
         main {
             generationTool {
-                logging = Logging.WARN
+                logging = 'WARN'
                 generator {
                     name = 'org.jooq.codegen.DefaultGenerator'
                     database {
@@ -120,7 +120,6 @@ jooq {
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens
-import org.jooq.meta.jaxb.Logging
 
 processResources {
     filter ReplaceTokens, tokens: [
