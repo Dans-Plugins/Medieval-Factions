@@ -42,6 +42,38 @@ import java.util.*
 import org.bukkit.block.data.type.Gate as FenceGateData
 
 class PlayerInteractListenerTest {
+    companion object {
+        private lateinit var mockedBukkit: org.mockito.MockedStatic<org.bukkit.Bukkit>
+
+        @org.junit.jupiter.api.BeforeAll
+        @JvmStatic
+        fun setUpBukkit() {
+            mockedBukkit = org.mockito.Mockito.mockStatic(org.bukkit.Bukkit::class.java) { invocation ->
+                if (invocation.method.name == "getRegistry") {
+                    java.lang.reflect.Proxy.newProxyInstance(
+                        org.bukkit.Registry::class.java.classLoader,
+                        arrayOf(org.bukkit.Registry::class.java),
+                        java.lang.reflect.InvocationHandler { _, m, _ ->
+                            if (m.name == "iterator") {
+                                ArrayList<org.bukkit.Keyed>().iterator()
+                            } else {
+                                null
+                            }
+                        }
+                    )
+                } else {
+                    org.mockito.Mockito.RETURNS_DEFAULTS.answer(invocation)
+                }
+            }
+        }
+
+        @org.junit.jupiter.api.AfterAll
+        @JvmStatic
+        fun tearDownBukkit() {
+            mockedBukkit.close()
+        }
+    }
+
     private val testUtils = TestUtils()
 
     private lateinit var fixture: PlayerInteractListenerTestFixture
@@ -336,7 +368,9 @@ class PlayerInteractListenerTest {
         `when`(event.clickedBlock).thenReturn(block)
         `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
         `when`(event.item).thenReturn(item)
-        `when`(item.type).thenReturn(Material.LADDER)
+        val itemMaterial = mock(Material::class.java)
+        `when`(itemMaterial.isEdible).thenReturn(false)
+        `when`(item.type).thenReturn(itemMaterial)
         `when`(event.hasItem()).thenReturn(true)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
         `when`(mfPlayer.id).thenReturn(playerId)
@@ -465,7 +499,9 @@ class PlayerInteractListenerTest {
 
         val event = fixture.event
         val item = mock(ItemStack::class.java)
-        `when`(item.type).thenReturn(Material.SCAFFOLDING)
+        val itemMaterial = mock(Material::class.java)
+        `when`(itemMaterial.isEdible).thenReturn(false)
+        `when`(item.type).thenReturn(itemMaterial)
         `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
         `when`(event.hasItem()).thenReturn(true)
         `when`(event.item).thenReturn(item)
@@ -475,7 +511,7 @@ class PlayerInteractListenerTest {
         val claim = claimService.getClaim(block.chunk)!!
 
         `when`(claimService.isWartimeInteractableBlock(playerId, claim, block.type)).thenReturn(false)
-        `when`(claimService.isWartimePlaceableBlock(playerId, claim, Material.SCAFFOLDING)).thenReturn(true)
+        `when`(claimService.isWartimePlaceableBlock(playerId, claim, itemMaterial)).thenReturn(true)
 
         // Act
         uut.onPlayerInteract(fixture.event)
@@ -512,7 +548,9 @@ class PlayerInteractListenerTest {
         `when`(event.clickedBlock).thenReturn(block)
         `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
         `when`(event.item).thenReturn(item)
-        `when`(item.type).thenReturn(Material.SCAFFOLDING)
+        val itemMaterial = mock(Material::class.java)
+        `when`(itemMaterial.isEdible).thenReturn(false)
+        `when`(item.type).thenReturn(itemMaterial)
         `when`(event.hasItem()).thenReturn(true)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
         `when`(mfPlayer.id).thenReturn(playerId)
@@ -531,8 +569,7 @@ class PlayerInteractListenerTest {
         // isPlacingLadder is false because block is interactable
         `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, false)).thenReturn(false)
         `when`(claimService.isWartimeInteractableBlock(playerId, claim, interactableMaterial)).thenReturn(false)
-        // SCAFFOLDING is in wartimePlaceableBlocks — must NOT bypass interaction with the chest
-        `when`(claimService.isWartimePlaceableBlock(playerId, claim, Material.SCAFFOLDING)).thenReturn(true)
+        `when`(claimService.isWartimePlaceableBlock(playerId, claim, itemMaterial)).thenReturn(true)
 
         // Act
         uut.onPlayerInteract(event)
@@ -556,7 +593,9 @@ class PlayerInteractListenerTest {
 
         val event = fixture.event
         val item = mock(ItemStack::class.java)
-        `when`(item.type).thenReturn(Material.SCAFFOLDING)
+        val itemMaterial = mock(Material::class.java)
+        `when`(itemMaterial.isEdible).thenReturn(false)
+        `when`(item.type).thenReturn(itemMaterial)
         `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
         `when`(event.hasItem()).thenReturn(true)
         `when`(event.item).thenReturn(item)
@@ -566,7 +605,7 @@ class PlayerInteractListenerTest {
         val claim = claimService.getClaim(block.chunk)!!
 
         `when`(claimService.isWartimeInteractableBlock(playerId, claim, block.type)).thenReturn(false)
-        `when`(claimService.isWartimePlaceableBlock(playerId, claim, Material.SCAFFOLDING)).thenReturn(true)
+        `when`(claimService.isWartimePlaceableBlock(playerId, claim, itemMaterial)).thenReturn(true)
 
         // Act
         uut.onPlayerInteract(fixture.event)
@@ -602,7 +641,9 @@ class PlayerInteractListenerTest {
         `when`(event.clickedBlock).thenReturn(block)
         `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
         `when`(event.item).thenReturn(item)
-        `when`(item.type).thenReturn(Material.DIRT) // not in any wartime list
+        val itemMaterial = mock(Material::class.java)
+        `when`(itemMaterial.isEdible).thenReturn(false)
+        `when`(item.type).thenReturn(itemMaterial)
         `when`(event.hasItem()).thenReturn(true)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
         `when`(mfPlayer.id).thenReturn(playerId)
@@ -620,7 +661,7 @@ class PlayerInteractListenerTest {
 
         `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, false)).thenReturn(false)
         `when`(claimService.isWartimeInteractableBlock(playerId, claim, interactableMaterial)).thenReturn(false)
-        `when`(claimService.isWartimePlaceableBlock(playerId, claim, Material.DIRT)).thenReturn(false)
+        `when`(claimService.isWartimePlaceableBlock(playerId, claim, itemMaterial)).thenReturn(false)
 
         // Act
         uut.onPlayerInteract(event)
@@ -704,7 +745,9 @@ class PlayerInteractListenerTest {
         `when`(event.clickedBlock).thenReturn(block)
         `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
         `when`(event.item).thenReturn(item)
-        `when`(item.type).thenReturn(Material.CHEST)
+        val itemMaterial = mock(Material::class.java)
+        `when`(itemMaterial.isEdible).thenReturn(false)
+        `when`(item.type).thenReturn(itemMaterial)
         `when`(event.hasItem()).thenReturn(true)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
         `when`(mfPlayer.id).thenReturn(playerId)
@@ -723,7 +766,7 @@ class PlayerInteractListenerTest {
         // NOT in interactable list
         `when`(claimService.isWartimeInteractableBlock(playerId, claim, chestMaterial)).thenReturn(false)
         // IS in placeable list — but clicked block is interactable so this must not apply
-        `when`(claimService.isWartimePlaceableBlock(playerId, claim, Material.CHEST)).thenReturn(true)
+        `when`(claimService.isWartimePlaceableBlock(playerId, claim, itemMaterial)).thenReturn(true)
 
         // Act
         uut.onPlayerInteract(event)
@@ -1051,7 +1094,14 @@ class PlayerInteractListenerTest {
         `when`(event.clickedBlock).thenReturn(block)
         `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
         `when`(event.item).thenReturn(item)
-        `when`(item.type).thenReturn(if (ladderItem) Material.LADDER else Material.STONE)
+        val itemMaterial = if (ladderItem) {
+            Material.LADDER
+        } else {
+            val mockMat = mock(Material::class.java)
+            `when`(mockMat.isEdible).thenReturn(false)
+            mockMat
+        }
+        `when`(item.type).thenReturn(itemMaterial)
         `when`(event.hasItem()).thenReturn(true)
         `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
         `when`(mfPlayer.id).thenReturn(playerId)
@@ -1070,10 +1120,7 @@ class PlayerInteractListenerTest {
         `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
         `when`(medievalFactions.config.getBoolean("factions.laddersPlaceableInEnemyFactionTerritory")).thenReturn(configEnabled)
 
-        // Mock the isWartimeLadderPlacementAllowed with the actual parameter that will be used (isPlacingLadder)
-        // isPlacingLadder is calculated as: event.action == RIGHT_CLICK_BLOCK && event.hasItem() && event.item?.type == Material.LADDER && clickedBlock.type.isSolid && !clickedBlock.type.isInteractable
-        val isPlacingLadder = event.action == Action.RIGHT_CLICK_BLOCK && ladderItem && block.type.isSolid && !block.type.isInteractable
-        `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, isPlacingLadder)).thenReturn(isWartimeLadderPlacementAllowed)
+        `when`(claimService.isWartimeLadderPlacementAllowed(playerId, claim, ladderItem)).thenReturn(isWartimeLadderPlacementAllowed)
     }
 
     private fun createBasicFixture(): PlayerInteractListenerTestFixture {

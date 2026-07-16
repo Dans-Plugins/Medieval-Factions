@@ -4,7 +4,7 @@
   },
   "interactions": [
     {
-      "description": "a faction sync with required fields only",
+      "description": "a faction sync with all optional fields",
       "providerStates": [
         {
           "name": "a valid API key exists"
@@ -13,10 +13,12 @@
       "request": {
         "body": [
           {
-            "name": "Test Faction",
+            "description": "A faction with all optional fields",
+            "discordLink": "https://discord.gg/example",
+            "memberCount": 10,
+            "name": "Full Faction",
             "serverId": "test-server",
-            "memberCount": 5,
-            "description": "A test faction"
+            "serverIp": "play.example.com"
           }
         ],
         "headers": {
@@ -31,7 +33,7 @@
       }
     },
     {
-      "description": "a faction sync with all optional fields",
+      "description": "a faction sync with required fields only",
       "providerStates": [
         {
           "name": "a valid API key exists"
@@ -40,12 +42,10 @@
       "request": {
         "body": [
           {
-            "name": "Full Faction",
-            "serverId": "test-server",
-            "memberCount": 10,
-            "description": "A faction with all optional fields",
-            "serverIp": "play.example.com",
-            "discordLink": "https://discord.gg/example"
+            "description": "A test faction",
+            "memberCount": 5,
+            "name": "Test Faction",
+            "serverId": "test-server"
           }
         ],
         "headers": {

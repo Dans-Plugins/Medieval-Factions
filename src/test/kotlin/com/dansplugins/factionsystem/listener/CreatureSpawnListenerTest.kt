@@ -4,15 +4,19 @@ import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.service.Services
+import org.bukkit.Bukkit
 import org.bukkit.Chunk
 import org.bukkit.Location
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Monster
 import org.bukkit.event.entity.CreatureSpawnEvent
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.MockedStatic
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.mockStatic
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
@@ -24,9 +28,13 @@ class CreatureSpawnListenerTest {
     private lateinit var services: Services
     private lateinit var claimService: MfClaimService
     private lateinit var uut: CreatureSpawnListener
+    private lateinit var mockedBukkit: MockedStatic<Bukkit>
 
     @BeforeEach
     fun setUp() {
+        mockedBukkit = mockStatic(Bukkit::class.java)
+        mockedBukkit.`when`<String> { Bukkit.getBukkitVersion() }.thenReturn("1.17-R0.1-SNAPSHOT")
+
         plugin = mock(MedievalFactions::class.java)
         config = mock(FileConfiguration::class.java)
         services = mock(Services::class.java)
@@ -41,9 +49,15 @@ class CreatureSpawnListenerTest {
         uut = CreatureSpawnListener(plugin)
     }
 
+    @AfterEach
+    fun tearDown() {
+        mockedBukkit.close()
+    }
+
     @Test
-    fun onCreatureSpawn_ClaimedNonMonster_ShouldNotCancelEvent() {
-        val event = createEvent(mock(LivingEntity::class.java))
+    fun onCreatureSpawn_ClaimedNonHostileMob_ShouldNotCancelEvent() {
+        val entity = mock(LivingEntity::class.java)
+        val event = createEvent(entity)
 
         uut.onCreatureSpawn(event)
 
@@ -51,8 +65,9 @@ class CreatureSpawnListenerTest {
     }
 
     @Test
-    fun onCreatureSpawn_ClaimedMonsterWithDisallowedReason_ShouldCancelEvent() {
-        val event = createEvent(mock(Monster::class.java))
+    fun onCreatureSpawn_ClaimedHostileMobWithDisallowedReason_ShouldCancelEvent() {
+        val entity = mock(Monster::class.java)
+        val event = createEvent(entity)
 
         uut.onCreatureSpawn(event)
 

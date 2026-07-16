@@ -7,31 +7,27 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent
-import org.bukkit.potion.PotionEffectType
+import org.bukkit.potion.PotionType
 
 class AreaEffectCloudApplyListener(private val plugin: MedievalFactions) : Listener {
 
-    private val harmfulPotionEffectTypes = listOf(
-        "BAD_OMEN",
-        "BLINDNESS",
-        "CONFUSION",
-        "DARKNESS",
-        "HARM",
-        "HUNGER",
-        "POISON",
-        "SLOW",
-        "SLOW_DIGGING",
-        "UNLUCK",
-        "WEAKNESS",
-        "WITHER"
-    ).mapNotNull {
-        PotionEffectType.getByName(it)
-    }
+    internal val harmfulPotionTypes: List<PotionType> = listOf(
+        PotionType.POISON,
+        PotionType.LONG_POISON,
+        PotionType.STRONG_POISON,
+        PotionType.HARMING,
+        PotionType.STRONG_HARMING,
+        PotionType.SLOWNESS,
+        PotionType.LONG_SLOWNESS,
+        PotionType.STRONG_SLOWNESS,
+        PotionType.WEAKNESS,
+        PotionType.LONG_WEAKNESS
+    )
 
     @EventHandler
     fun onAreaEffectCloudApply(event: AreaEffectCloudApplyEvent) {
         val basePotionData = event.entity.basePotionData ?: return
-        if (!harmfulPotionEffectTypes.contains(basePotionData.type.effectType)) return
+        if (!harmfulPotionTypes.contains(basePotionData.type)) return
         val potionService = plugin.services.potionService
         val damager = potionService.getLingeringPotionEffectThrower(event.entity) ?: return
         for (damaged in event.affectedEntities.filterIsInstance<Player>()) {
