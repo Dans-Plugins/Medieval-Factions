@@ -10,7 +10,7 @@ import org.bukkit.ChatColor.GRAY
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
 import org.bukkit.NamespacedKey
-import org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH
+import org.bukkit.attribute.Attribute
 import org.bukkit.boss.BarColor
 import org.bukkit.boss.BarStyle
 import org.bukkit.command.Command
@@ -103,8 +103,13 @@ class MfDuelAcceptCommand(private val plugin: MedievalFactions) : CommandExecuto
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
-                        sender.health = sender.getAttribute(GENERIC_MAX_HEALTH)?.value ?: sender.health
-                        target.health = target.getAttribute(GENERIC_MAX_HEALTH)?.value ?: target.health
+                        val maxHealthAttr = try {
+                            Attribute.valueOf("MAX_HEALTH")
+                        } catch (e: IllegalArgumentException) {
+                            Attribute.valueOf("GENERIC_MAX_HEALTH")
+                        }
+                        sender.health = sender.getAttribute(maxHealthAttr)?.value ?: sender.health
+                        target.health = target.getAttribute(maxHealthAttr)?.value ?: target.health
 
                         val bar = plugin.server.createBossBar(
                             NamespacedKey(plugin, "duel_${duel.id.value}"),

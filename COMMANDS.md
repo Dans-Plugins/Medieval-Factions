@@ -395,7 +395,7 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 
 ### `/faction power` or `/f power`
 **Permission:** `mf.power` (default: true)  
-**Description:** Displays power statistics for yourself or your faction.  
+**Description:** Displays power statistics for yourself or your faction. When viewing a faction, also shows the number of chunks it has claimed; if `factions.limitLand` is enabled, this is shown as `claimed/capacity` where the capacity equals the faction's current power.  
 **Usage:** `/f power`
 
 ### `/power set [player] [amount]`
