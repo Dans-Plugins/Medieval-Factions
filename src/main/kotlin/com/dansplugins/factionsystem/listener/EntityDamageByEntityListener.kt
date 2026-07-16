@@ -3,8 +3,8 @@ package com.dansplugins.factionsystem.listener
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType
+import com.dansplugins.factionsystem.utils.MfHostileMobChecker
 import org.bukkit.ChatColor
-import org.bukkit.entity.Monster
 import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
@@ -33,7 +33,7 @@ class EntityDamageByEntityListener(private val plugin: MedievalFactions) : Liste
                 val claim = claimService.getClaim(damaged.location.chunk) ?: return
                 val damagedFaction = factionService.getFaction(claim.factionId) ?: return
                 if (!damagedFaction.flags[plugin.flags.enableMobProtection]) return
-                if (damaged is Monster) return
+                if (MfHostileMobChecker.isHostileMob(damaged)) return
                 if (claimService.isInteractionAllowed(damagerMfPlayer.id, claim)) return
                 if (damagerMfPlayer.isBypassEnabled && damagerPlayer.hasPermission("mf.bypass")) {
                     damagerPlayer.sendMessage("${ChatColor.RED}${plugin.language["FactionTerritoryProtectionBypassed"]}")
@@ -46,6 +46,10 @@ class EntityDamageByEntityListener(private val plugin: MedievalFactions) : Liste
             val damagerDuel = duelService.getDuel(damagerMfPlayer.id)
             val damagedDuel = duelService.getDuel(damagedMfPlayer.id)
             if (damagerDuel != null && damagedDuel != null && damagerDuel.id == damagedDuel.id) {
+                return
+            }
+            if (damagerDuel != null || damagedDuel != null) {
+                event.isCancelled = true
                 return
             }
             val damagedFaction = factionService.getFaction(damagedMfPlayer.id)

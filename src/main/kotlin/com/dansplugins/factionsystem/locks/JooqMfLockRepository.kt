@@ -9,19 +9,20 @@ import com.dansplugins.factionsystem.player.MfPlayerId
 import org.jooq.Condition
 import org.jooq.DSLContext
 import java.util.*
+import com.dansplugins.factionsystem.locks.MfLockedBlock as DomainMfLockedBlock
 
 class JooqMfLockRepository(private val dsl: DSLContext) : MfLockRepository {
-    override fun getLockedBlock(id: MfLockedBlockId): MfLockedBlock? = getLockedBlock(MF_LOCKED_BLOCK.ID.eq(id.value))
+    override fun getLockedBlock(id: MfLockedBlockId): DomainMfLockedBlock? = getLockedBlock(MF_LOCKED_BLOCK.ID.eq(id.value))
 
-    override fun getLockedBlock(worldId: UUID, x: Int, y: Int, z: Int): MfLockedBlock? =
+    override fun getLockedBlock(worldId: UUID, x: Int, y: Int, z: Int): DomainMfLockedBlock? =
         getLockedBlock(
             MF_LOCKED_BLOCK.WORLD_ID.eq(worldId.toString())
-                .and(MF_LOCKED_BLOCK.X.eq(MF_LOCKED_BLOCK.X))
-                .and(MF_LOCKED_BLOCK.Y.eq(MF_LOCKED_BLOCK.Y))
-                .and(MF_LOCKED_BLOCK.Z.eq(MF_LOCKED_BLOCK.Z))
+                .and(MF_LOCKED_BLOCK.X.eq(x))
+                .and(MF_LOCKED_BLOCK.Y.eq(y))
+                .and(MF_LOCKED_BLOCK.Z.eq(z))
         )
 
-    private fun getLockedBlock(condition: Condition): MfLockedBlock? {
+    private fun getLockedBlock(condition: Condition): DomainMfLockedBlock? {
         val results = dsl.selectFrom(
             MF_LOCKED_BLOCK
                 .leftJoin(MF_LOCKED_BLOCK_ACCESSOR)
@@ -33,7 +34,7 @@ class JooqMfLockRepository(private val dsl: DSLContext) : MfLockRepository {
         return lockedBlockRecord.toDomain(accessors)
     }
 
-    override fun getLockedBlocks(): List<MfLockedBlock> {
+    override fun getLockedBlocks(): List<DomainMfLockedBlock> {
         return dsl.selectFrom(
             MF_LOCKED_BLOCK
                 .leftJoin(MF_LOCKED_BLOCK_ACCESSOR)
@@ -47,7 +48,7 @@ class JooqMfLockRepository(private val dsl: DSLContext) : MfLockRepository {
             }
     }
 
-    override fun upsert(lockedBlock: MfLockedBlock): MfLockedBlock {
+    override fun upsert(lockedBlock: DomainMfLockedBlock): DomainMfLockedBlock {
         return dsl.transactionResult { config ->
             val transactionalDsl = config.dsl()
             val newState = upsertLockedBlock(transactionalDsl, lockedBlock)
@@ -61,7 +62,7 @@ class JooqMfLockRepository(private val dsl: DSLContext) : MfLockRepository {
         }
     }
 
-    private fun upsertLockedBlock(dsl: DSLContext, lockedBlock: MfLockedBlock): MfLockedBlock {
+    private fun upsertLockedBlock(dsl: DSLContext, lockedBlock: DomainMfLockedBlock): DomainMfLockedBlock {
         val rowCount = dsl.insertInto(MF_LOCKED_BLOCK)
             .set(MF_LOCKED_BLOCK.ID, lockedBlock.id.value)
             .set(MF_LOCKED_BLOCK.WORLD_ID, lockedBlock.block.worldId.toString())
@@ -122,7 +123,7 @@ class JooqMfLockRepository(private val dsl: DSLContext) : MfLockRepository {
             .let(::MfPlayerId)
     }
 
-    private fun MfLockedBlockRecord.toDomain(accessors: List<MfPlayerId> = emptyList()) = MfLockedBlock(
+    private fun MfLockedBlockRecord.toDomain(accessors: List<MfPlayerId> = emptyList()) = DomainMfLockedBlock(
         id = id.let(::MfLockedBlockId),
         version = version,
         block = MfBlockPosition(
