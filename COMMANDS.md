@@ -185,7 +185,7 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 
 ### `/faction ally [faction]` or `/f ally [faction]`
 **Permission:** `mf.ally` (default: true)  
-**Description:** Sends an alliance request to another faction or accepts an incoming alliance request.  
+**Description:** Sends an alliance request to another faction or accepts an incoming alliance request. If `factions.allyDeclarationRequiresApproval` is enabled in config, the request will be held for moderator approval. When approval is required, you can optionally include a reason: `/f ally OtherFaction -- reason for alliance`.  
 **Usage:** `/f ally OtherFaction`
 
 ### `/faction breakalliance [faction]` or `/f breakalliance [faction]`
@@ -195,7 +195,7 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 
 ### `/faction declarewar [faction]` or `/f declarewar [faction]`
 **Permission:** `mf.declarewar` (default: true)  
-**Description:** Declares war on another faction.  
+**Description:** Declares war on another faction. If `factions.warDeclarationRequiresApproval` is enabled in config, the declaration will be held for moderator approval. When approval is required, you can optionally include a reason: `/f declarewar EnemyFaction -- reason for war`.  
 **Usage:** `/f declarewar EnemyFaction`
 
 ### `/faction makepeace [faction]` or `/f makepeace [faction]`
@@ -228,7 +228,7 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 
 ### `/faction vassalize [faction]` or `/f vassalize [faction]`
 **Permission:** `mf.vassalize` (default: true)  
-**Description:** Sends a vassalization request to another faction, asking them to become your vassal.  
+**Description:** Sends a vassalization request to another faction, asking them to become your vassal. If `factions.vassalizeDeclarationRequiresApproval` is enabled in config, the request will be held for moderator approval. When approval is required, you can optionally include a reason: `/f vassalize OtherFaction -- reason for vassalization`.  
 **Usage:** `/f vassalize OtherFaction`
 
 ### `/faction swearfealty [faction]` or `/f swearfealty [faction]`
@@ -448,6 +448,23 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Description:** Denies a player's application to join your faction.  
 **Usage:** `/denyapp PlayerName`
 
+## Moderator Approval
+
+### `/faction approve [id]` or `/f approve [id]`
+**Permission:** `mf.approve` (default: op)  
+**Description:** Approves a pending faction action (war declaration, alliance, or vassalization) that requires moderator approval. The request ID is provided in the notification sent to moderators when a pending action is created.  
+**Usage:** `/f approve <request-id>`
+
+### `/faction deny [id]` or `/f deny [id]`
+**Permission:** `mf.approve` (default: op)  
+**Description:** Denies a pending faction action. The requesting faction will be notified that their action was denied.  
+**Usage:** `/f deny <request-id>`
+
+### `/faction pendingactions` or `/f pendingactions`
+**Permission:** `mf.approve` (default: op)  
+**Description:** Lists all pending faction actions that are awaiting moderator approval, including the request ID, type, involved factions, and any provided reason.  
+**Usage:** `/f pendingactions`
+
 ## Admin Commands
 
 ### `/faction bypass` or `/f bypass`
@@ -523,6 +540,7 @@ The `mf.admin` permission grants access to all admin commands including:
 - `mf.power.set` - Set player power
 - `mf.admin.create` - Create leaderless factions
 - `mf.admin.setleader` - Set faction leaders
+- `mf.approve` - Approve/deny pending faction actions
 - `mf.dpc` - Manage DPC community API settings
 
 ## Notes

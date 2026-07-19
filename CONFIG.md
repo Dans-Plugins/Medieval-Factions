@@ -312,6 +312,21 @@ factions:
 **Default:** `false`  
 **Description:** When `true`, allows factions to declare themselves as neutral, preventing them from participating in wars.
 
+### `factions.warDeclarationRequiresApproval`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, war declarations require moderator approval before taking effect. Players with the `mf.approve` permission can approve or deny pending war declarations using `/faction approve` and `/faction deny`. Players can optionally include a reason by appending `-- <reason>` after the faction name.
+
+### `factions.allyDeclarationRequiresApproval`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, alliance requests require moderator approval before taking effect. Players with the `mf.approve` permission can approve or deny pending alliance requests using `/faction approve` and `/faction deny`. Players can optionally include a reason by appending `-- <reason>` after the faction name.
+
+### `factions.vassalizeDeclarationRequiresApproval`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, vassalization requests require moderator approval before taking effect. Players with the `mf.approve` permission can approve or deny pending vassalization requests using `/faction approve` and `/faction deny`. Players can optionally include a reason by appending `-- <reason>` after the faction name.
+
 ### `factions.factionlessFactionName`
 **Type:** String  
 **Default:** `Factionless`  
