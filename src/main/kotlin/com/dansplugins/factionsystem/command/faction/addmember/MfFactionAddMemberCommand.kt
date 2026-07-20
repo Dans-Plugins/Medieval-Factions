@@ -77,6 +77,12 @@ class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandE
             return true
         }
 
+        val maxMembers = plugin.config.getInt("factions.maxMembers")
+        if (maxMembers > 0 && targetFaction.members.size >= maxMembers) {
+            sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberTargetFactionFull"]}")
+            return true
+        }
+
         // if target player is already in a faction, handle accordingly
         val currentFaction = factionService.getFaction(targetMfPlayer.id)
         if (currentFaction != null) {
@@ -109,12 +115,6 @@ class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandE
                     )
                 }
             }
-        }
-
-        val maxMembers = plugin.config.getInt("factions.maxMembers")
-        if (maxMembers > 0 && targetFaction.members.size >= maxMembers) {
-            sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberTargetFactionFull"]}")
-            return true
         }
 
         // add member to faction
