@@ -14,7 +14,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `/mf dpc` subcommand (permission `mf.dpc`, default `op`) with `optin`, `optout`, `reminder on|off`, `shareip on|off`, `discord <link>|clear` actions.
 - bStats charts for DPC opt-in rate, login-reminder usage, server-IP sharing, and Discord-link presence.
 
+### Changed
+- `/faction addmember` no longer silently refuses when the target player is already in another faction. It now prompts the admin for confirmation before removing the player from their current faction and adding them to the target; the `-f` flag skips the prompt and moves the player immediately. Both factions are notified of the move.
+
 ### Fixed
+- `/faction addmember` now checks whether the target faction is full before removing the target player from their current faction, so a full target faction can no longer leave the player factionless.
 - Faction snapshot for the DPC sync is now collected on the Bukkit main thread before being dispatched off-thread via `HttpClient.sendAsync`. Off-thread access to `factionService.factions` could otherwise produce inconsistent reads or `ConcurrentModificationException` under load.
 - The DPC sync no longer POSTs an empty faction roster. A transient empty read (e.g. faction data not yet loaded at startup, or a reload mid-cycle) is skipped client-side rather than sent, so it can never depend on the provider's safety guards to avoid a faction wipe.
 

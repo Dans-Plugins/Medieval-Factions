@@ -485,8 +485,8 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 
 ### `/faction addmember [faction] [player]` or `/f addmember [faction] [player]`
 **Permission:** `mf.force.addmember` (default: op)  
-**Description:** Forcefully adds a player to a faction (admin command).  
-**Usage:** `/f addmember FactionName PlayerName`
+**Description:** Forcefully adds a player to a faction (admin command). If the target player is already in another faction, you are prompted to confirm moving them (which removes them from their current faction first). Append the `-f` flag to skip the confirmation and move them immediately.  
+**Usage:** `/f addmember FactionName PlayerName` or `/f addmember FactionName PlayerName -f`
 
 ---
 
