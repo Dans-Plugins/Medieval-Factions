@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
@@ -141,7 +141,7 @@ class MfFactionAddMemberCommandTest {
         // verify
         assertTrue(result)
         verify(player).sendMessage("${ChatColor.RED}Faction full")
-        verify(factionService, never()).save(any())
+        verify(factionService, never()).save(anyFaction())
     }
 
     /**
@@ -174,10 +174,22 @@ class MfFactionAddMemberCommandTest {
         // verify
         assertTrue(result)
         verify(player).sendMessage("${ChatColor.RED}Faction full")
-        verify(factionService, never()).save(any())
+        verify(factionService, never()).save(anyFaction())
     }
 
     // Helper functions
+
+    /**
+     * Mockito's [ArgumentMatchers.any] returns null, which trips Kotlin's null-check on the
+     * non-nullable [MfFaction] parameter of [MfFactionService.save] before the matcher is
+     * registered, corrupting Mockito's matcher stack for subsequent tests. This generic
+     * indirection avoids the compiler inserting that check.
+     */
+    private fun <T> anyFaction(): T {
+        ArgumentMatchers.any<MfFaction>()
+        @Suppress("UNCHECKED_CAST")
+        return null as T
+    }
 
     private fun mockOfflinePlayer(name: String): OfflinePlayer {
         val offlinePlayer = mock(OfflinePlayer::class.java)
