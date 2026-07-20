@@ -1,5 +1,6 @@
 package com.dansplugins.factionsystem.service
 
+import com.dansplugins.factionsystem.approval.MfApprovalRequestService
 import com.dansplugins.factionsystem.chat.MfChatService
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.duel.MfDuelService
@@ -29,5 +30,6 @@ class Services(
     val duelService: MfDuelService,
     val potionService: MfPotionService,
     val teleportService: MfTeleportService,
-    val mapService: MapService?
+    val mapService: MapService?,
+    val approvalRequestService: MfApprovalRequestService
 )

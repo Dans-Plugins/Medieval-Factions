@@ -1,6 +1,8 @@
 package com.dansplugins.factionsystem.command.faction.declarewar
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.approval.MfApprovalRequest
+import com.dansplugins.factionsystem.approval.MfApprovalRequestType
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationship
@@ -9,6 +11,7 @@ import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.AT_W
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.VASSAL
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor
+import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -53,7 +56,11 @@ class MfFactionDeclareWarCommand(private val plugin: MedievalFactions) : Command
                     sender.sendMessage("$RED${plugin.language["CommandFactionDeclareWarNoFactionPermission"]}")
                     return@Runnable
                 }
-                val target = factionService.getFaction(args.joinToString(" "))
+                val requiresApproval = plugin.config.getBoolean("factions.warDeclarationRequiresApproval")
+                val dashDashIndex = if (requiresApproval) args.indexOfFirst { it == "--" } else -1
+                val factionName = if (dashDashIndex >= 0) args.take(dashDashIndex).joinToString(" ") else args.joinToString(" ")
+                val reason = if (dashDashIndex >= 0 && dashDashIndex + 1 < args.size) args.drop(dashDashIndex + 1).joinToString(" ") else null
+                val target = factionService.getFaction(factionName)
                 if (target == null) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionDeclareWarInvalidTarget"]}")
                     return@Runnable
@@ -79,6 +86,38 @@ class MfFactionDeclareWarCommand(private val plugin: MedievalFactions) : Command
                 }
                 if (target.flags[plugin.flags.isNeutral]) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionDeclareWarNeutralTarget"]}")
+                    return@Runnable
+                }
+                if (requiresApproval) {
+                    val approvalService = plugin.services.approvalRequestService
+                    if (approvalService.hasPendingRequest(faction.id, target.id, MfApprovalRequestType.WAR)) {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionDeclareWarAlreadyPending"]}")
+                        return@Runnable
+                    }
+                    val request = approvalService.addRequest(
+                        MfApprovalRequest(
+                            factionId = faction.id,
+                            targetId = target.id,
+                            type = MfApprovalRequestType.WAR,
+                            requesterId = mfPlayer.id,
+                            reason = reason
+                        )
+                    )
+                    sender.sendMessage("$GREEN${plugin.language["CommandFactionDeclareWarPendingApproval", target.name]}")
+                    plugin.server.scheduler.runTask(
+                        plugin,
+                        Runnable {
+                            val warActionLabel = plugin.language["ApprovalRequestTypeWar"]
+                            plugin.server.onlinePlayers
+                                .filter { it.hasPermission("mf.approve") }
+                                .forEach { moderator ->
+                                    moderator.sendMessage("${ChatColor.YELLOW}${plugin.language["ApprovalRequestNotification", faction.name, warActionLabel, target.name, request.id.value]}")
+                                    if (reason != null) {
+                                        moderator.sendMessage("${ChatColor.GRAY}${plugin.language["ApprovalRequestReason", reason]}")
+                                    }
+                                }
+                        }
+                    )
                     return@Runnable
                 }
                 factionRelationshipService.save(MfFactionRelationship(factionId = faction.id, targetId = target.id, type = AT_WAR))
