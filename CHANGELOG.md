@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - bStats charts for DPC opt-in rate, login-reminder usage, server-IP sharing, and Discord-link presence.
 
 ### Fixed
+- Standing on a pressure plate (or tripwire, or farmland) you are not allowed to use no longer floods chat with a protection message every tick. Physical interactions are still blocked exactly as before; only the accompanying message is suppressed, for the faction-territory, wilderness and bypass notices alike.
 - Faction snapshot for the DPC sync is now collected on the Bukkit main thread before being dispatched off-thread via `HttpClient.sendAsync`. Off-thread access to `factionService.factions` could otherwise produce inconsistent reads or `ConcurrentModificationException` under load.
 - The DPC sync no longer POSTs an empty faction roster. A transient empty read (e.g. faction data not yet loaded at startup, or a reload mid-cycle) is skipped client-side rather than sent, so it can never depend on the provider's safety guards to avoid a faction wipe.
 

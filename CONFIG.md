@@ -123,7 +123,7 @@ Controls behavior and alerts in unclaimed wilderness areas.
 ### `wilderness.interaction.alert`
 **Type:** Boolean  
 **Default:** `false`  
-**Description:** When `true`, sends an alert message when players interact with blocks in wilderness.
+**Description:** When `true`, sends an alert message when players interact with blocks in wilderness. No alert is sent for physical interactions (stepping on a pressure plate or tripwire, trampling farmland), which repeat every tick and would flood chat; the interaction is still prevented.
 
 ### `wilderness.place.prevent`
 **Type:** Boolean  
