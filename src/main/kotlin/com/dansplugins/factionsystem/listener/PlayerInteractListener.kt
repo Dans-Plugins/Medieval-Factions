@@ -107,6 +107,11 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         val claimService = plugin.services.claimService
         val mfPlayer = playerService.getPlayer(event.player)
 
+        // Physical interactions (pressure plates, tripwire, farmland) fire once per tick for as long as
+        // the player is stood on the block, so notifying on each one floods the player's chat. The
+        // interaction is still cancelled - only the message is suppressed.
+        val suppressProtectionMessages = event.action == PHYSICAL
+
         if (mfPlayer == null) {
             event.isCancelled = true
             plugin.server.scheduler.runTaskAsynchronously(
@@ -182,7 +187,7 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         if (claim == null) {
             if (plugin.config.getBoolean("wilderness.interaction.prevent", false)) {
                 event.isCancelled = true
-                if (plugin.config.getBoolean("wilderness.interaction.alert", true)) {
+                if (plugin.config.getBoolean("wilderness.interaction.alert", true) && !suppressProtectionMessages) {
                     event.player.sendMessage("$RED${plugin.language["CannotInteractBlockInWilderness"]}")
                 }
             }
@@ -201,7 +206,9 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         // Check if player is allowed to interact based on faction relationships
         if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
             if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
-                event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
+                if (!suppressProtectionMessages) {
+                    event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
+                }
             } else {
                 // Check if player is at war and trying to place a ladder
                 // Only allow if they're right-clicking with a ladder on a solid, non-interactable block
@@ -234,7 +241,9 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                     }
                 }
                 event.isCancelled = true
-                event.player.sendMessage("$RED${plugin.language["CannotInteractWithBlockInFactionTerritory", claimFaction.name]}")
+                if (!suppressProtectionMessages) {
+                    event.player.sendMessage("$RED${plugin.language["CannotInteractWithBlockInFactionTerritory", claimFaction.name]}")
+                }
             }
         }
     }

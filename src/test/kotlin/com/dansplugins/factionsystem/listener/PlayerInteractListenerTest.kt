@@ -431,9 +431,10 @@ class PlayerInteractListenerTest {
         // Act
         uut.onPlayerInteract(fixture.event)
 
-        // Assert - physical action with ladder should not bypass protection
+        // Assert - physical action with ladder should not bypass protection.
+        // No message is sent because physical interactions repeat every tick (see #1957).
         verifyEventCancelled()
-        verifyPlayerNotified()
+        verifyPlayerNotNotified()
     }
 
     @Test
@@ -972,6 +973,106 @@ class PlayerInteractListenerTest {
         verifyPlayerNotified()
     }
 
+    // --- Physical interaction tests ---
+
+    @Test
+    fun onPlayerInteract_PhysicalActionInFactionTerritory_ShouldCancelWithoutNotifyingPlayer() {
+        // Regression test for #1957: a pressure plate fires a PHYSICAL interaction on every tick the
+        // player stands on it, so notifying on each one floods chat. The interaction must still be
+        // cancelled - only the message is suppressed.
+        // Arrange
+        mockBlockData<BlockData>()
+        setupConfigForDoorInteraction(enabled = false)
+        val (_, playerId) = setupPlayerMocks(fixture.player)
+        val (claim, _) = setupClaimAndFaction(fixture.block)
+
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
+        `when`(fixture.event.action).thenReturn(Action.PHYSICAL)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - protection still applies, but the player is not spammed
+        verifyEventCancelled()
+        verifyPlayerNotNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_RightClickInFactionTerritory_ShouldCancelAndNotifyPlayer() {
+        // Contrast case for #1957: a deliberate right-click happens once, so the player is still told
+        // why the interaction was blocked.
+        // Arrange
+        mockBlockData<BlockData>()
+        setupConfigForDoorInteraction(enabled = false)
+        val (_, playerId) = setupPlayerMocks(fixture.player)
+        val (claim, _) = setupClaimAndFaction(fixture.block)
+
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
+        `when`(fixture.event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyEventCancelled()
+        verifyPlayerNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_PhysicalActionInWilderness_WildernessPreventInteractionSetToTrue_ShouldCancelWithoutNotifyingPlayer() {
+        // The same per-tick flood applies to pressure plates in wilderness when
+        // wilderness.interaction.prevent is enabled.
+        // Arrange
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
+
+        val blockData = mock(BlockData::class.java)
+        `when`(block.blockData).thenReturn(blockData)
+
+        val mfPlayer = mock(MfPlayer::class.java)
+        val playerId = MfPlayerId(player.uniqueId.toString())
+        `when`(mfPlayer.id).thenReturn(playerId)
+
+        `when`(event.clickedBlock).thenReturn(block)
+        `when`(event.action).thenReturn(Action.PHYSICAL)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(null)
+        `when`(medievalFactions.config).thenReturn(mock(FileConfiguration::class.java))
+        `when`(medievalFactions.config.getBoolean("wilderness.interaction.prevent", false)).thenReturn(true)
+        `when`(medievalFactions.config.getBoolean("wilderness.interaction.alert", true)).thenReturn(true)
+
+        // Act
+        uut.onPlayerInteract(event)
+
+        // Assert
+        verifyEventCancelled()
+        verifyPlayerNotNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_PhysicalActionWithBypassEnabled_ShouldNotNotifyPlayer() {
+        // The bypass notice is sent on every blocked-then-bypassed interaction, so it floods an
+        // admin's chat for exactly the same reason.
+        // Arrange
+        mockBlockData<BlockData>()
+        setupConfigForDoorInteraction(enabled = false)
+        val (_, playerId) = setupPlayerMocks(fixture.player, bypassEnabled = true)
+        val (claim, _) = setupClaimAndFaction(fixture.block)
+
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
+        `when`(fixture.player.hasPermission("mf.bypass")).thenReturn(true)
+        `when`(fixture.event.action).thenReturn(Action.PHYSICAL)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - bypass still applies, but without the per-tick notice
+        verifyEventNotCancelled()
+        verifyPlayerNotNotified()
+    }
+
     // Helper functions
 
     private inline fun <reified T> mockBlockData() {
@@ -1161,6 +1262,10 @@ class PlayerInteractListenerTest {
 
     private fun verifyPlayerNotified() {
         verify(fixture.player).sendMessage(any(String::class.java))
+    }
+
+    private fun verifyPlayerNotNotified() {
+        verify(fixture.player, never()).sendMessage(any(String::class.java))
     }
 
     private data class PlayerInteractListenerTestFixture(
