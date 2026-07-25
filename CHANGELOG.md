@@ -4,10 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [6.0.0] – 2026-07-25
+## [6.0.0-SNAPSHOT-7-25-2026] – 2026-07-25
 
 ### Changed
-- Medieval Factions is now developed AI-first. Day-to-day feature work, grooming, review and maintenance run through AI agents working directly against this repository, with the maintainers setting direction and approving what lands. The major version bump marks that change in how the project is built — it is not a break in the plugin API, the configuration format or the database schema, and 5.x servers can upgrade in place.
+- Medieval Factions is now developed AI-first. Day-to-day feature work, grooming, review and maintenance run through AI agents working directly against this repository, with the maintainers setting direction and approving what lands. The major version bump marks that change in how the project is built — it is not a break in the plugin API, the configuration format or the database schema, and 5.x servers can upgrade in place. Released as `6.0.0-SNAPSHOT-7-25-2026`: the AI-first line has not yet been verified in live server operation, and the dated snapshot designation stays until it has.
 
 ### Added
 - Configurable moderator approval for faction declarations. When enabled, `/faction declarewar`, `/faction ally`, and `/faction vassalize` create a pending request that a moderator (permission `mf.approve`, default `op`) must approve before it takes effect. Gated independently by the `factions.warDeclarationRequiresApproval`, `factions.allyDeclarationRequiresApproval`, and `factions.vassalizeDeclarationRequiresApproval` config options (all default `false`). New `/faction approve [id]`, `/faction deny [id]`, and `/faction pendingactions` commands manage requests, and a reason can be attached with `-- <reason>`.
