@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.dansplugins"
-version = "5.9.0-SNAPSHOT"
+version = "6.0.0-SNAPSHOT-7-25-2026"
 
 def repoUsername = ""
 def repoPassword = ""
