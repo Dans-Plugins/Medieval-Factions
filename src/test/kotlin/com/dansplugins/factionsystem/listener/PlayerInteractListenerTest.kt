@@ -1201,9 +1201,12 @@ class PlayerInteractListenerTest {
 
         // Mock the neighbouring block positions as well, since bisected blocks are looked up as a pair
         // with either their upper or their lower half.
-        listOf(BlockFace.UP, BlockFace.DOWN).forEach { face ->
-            val neighbour = fixture.block.getRelative(face)
-            doReturn(null).`when`(lockService).getLockedBlock(MfBlockPosition.fromBukkitBlock(neighbour))
+        // The position must be resolved before the doReturn(...) call: reading the neighbour mock's
+        // coordinates part-way through stubbing lockService raises UnfinishedStubbingException.
+        val neighbourPositions = listOf(BlockFace.UP, BlockFace.DOWN)
+            .map { face -> MfBlockPosition.fromBukkitBlock(fixture.block.getRelative(face)) }
+        neighbourPositions.forEach { position ->
+            doReturn(null).`when`(lockService).getLockedBlock(position)
         }
     }
 
