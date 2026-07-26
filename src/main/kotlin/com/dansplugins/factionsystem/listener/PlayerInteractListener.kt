@@ -151,21 +151,27 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             if (event.player.uniqueId.toString() !in (lockedBlock.accessors + lockedBlock.playerId).map(MfPlayerId::value)) {
                 // Check if player has bypass permission from mf.bypass or faction permission
                 if ((mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) || hasLockBypassPermission(mfPlayer)) {
-                    plugin.server.scheduler.runTaskAsynchronously(
-                        plugin,
-                        Runnable {
-                            val owner = playerService.getPlayer(lockedBlock.playerId)
-                            event.player.sendMessage("$RED${plugin.language["LockProtectionBypassed", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
-                        }
-                    )
+                    // The whole task is skipped when suppressing, not just the message: each one performs
+                    // an owner lookup, so scheduling it per tick is the expensive half of the problem.
+                    if (!suppressProtectionMessages) {
+                        plugin.server.scheduler.runTaskAsynchronously(
+                            plugin,
+                            Runnable {
+                                val owner = playerService.getPlayer(lockedBlock.playerId)
+                                event.player.sendMessage("$RED${plugin.language["LockProtectionBypassed", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
+                            }
+                        )
+                    }
                 } else {
-                    plugin.server.scheduler.runTaskAsynchronously(
-                        plugin,
-                        Runnable {
-                            val owner = playerService.getPlayer(lockedBlock.playerId)
-                            event.player.sendMessage("$RED${plugin.language["BlockLocked", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
-                        }
-                    )
+                    if (!suppressProtectionMessages) {
+                        plugin.server.scheduler.runTaskAsynchronously(
+                            plugin,
+                            Runnable {
+                                val owner = playerService.getPlayer(lockedBlock.playerId)
+                                event.player.sendMessage("$RED${plugin.language["BlockLocked", owner?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]]}")
+                            }
+                        )
+                    }
                     event.isCancelled = true
                 }
                 return

@@ -17,6 +17,7 @@ import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerService
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
 import org.bukkit.Material
+import org.bukkit.Server
 import org.bukkit.World
 import org.bukkit.block.Block
 import org.bukkit.block.BlockFace
@@ -29,10 +30,14 @@ import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
+import org.bukkit.scheduler.BukkitScheduler
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchers.eq
+import org.mockito.Mockito.atLeast
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
@@ -84,6 +89,7 @@ class PlayerInteractListenerTest {
     private lateinit var lockService: MfLockService
     private lateinit var relationshipService: MfFactionRelationshipService
     private lateinit var factionService: com.dansplugins.factionsystem.faction.MfFactionService
+    private lateinit var scheduler: BukkitScheduler
     private lateinit var uut: PlayerInteractListener
 
     // Common test constants
@@ -96,6 +102,7 @@ class PlayerInteractListenerTest {
         medievalFactions = mock(MedievalFactions::class.java)
         mockServices()
         mockLanguageSystem()
+        mockScheduler()
         uut = PlayerInteractListener(medievalFactions)
     }
 
@@ -215,8 +222,32 @@ class PlayerInteractListenerTest {
         // Act
         uut.onPlayerInteract(fixture.event)
 
-        // Assert - event should NOT be cancelled because player has bypass enabled
+        // Assert - event should NOT be cancelled because player has bypass enabled, and the bypass
+        // notice is sent once for the deliberate right-click
         verifyEventNotCancelled()
+        runScheduledAsyncTasks()
+        verifyPlayerNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_LockedBlock_NonOwnerWithoutBypass_ShouldCancelAndNotifyPlayer() {
+        // Arrange
+        mockBlockData<Door>()
+        setupConfigForDoorInteraction(enabled = false)
+        setupPlayerMocks(fixture.player, bypassEnabled = false)
+
+        // Create a locked block owned by a different player
+        setupLockedBlock(ownedByPlayer = false, playerIsAccessor = false)
+
+        `when`(fixture.player.hasPermission("mf.bypass")).thenReturn(false)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - lock protection applies and the player is told why
+        verifyEventCancelled()
+        runScheduledAsyncTasks()
+        verifyPlayerNotified()
     }
 
     @Test
@@ -232,8 +263,9 @@ class PlayerInteractListenerTest {
         // Act
         uut.onPlayerInteract(fixture.event)
 
-        // Assert - event should NOT be cancelled because player is an accessor
+        // Assert - event should NOT be cancelled because player is an accessor, and no notice is sent
         verifyEventNotCancelled()
+        verifyNoAsyncTaskScheduled()
     }
 
     @Test
@@ -1073,6 +1105,49 @@ class PlayerInteractListenerTest {
         verifyPlayerNotNotified()
     }
 
+    @Test
+    fun onPlayerInteract_PhysicalActionOnLockedBlock_ShouldCancelWithoutSchedulingOwnerLookup() {
+        // Regression test for #1978: a locked pressure plate produced not just a message per tick, but a
+        // scheduled async task and an owner lookup per tick. The lock protection itself must not change.
+        // Arrange
+        mockBlockData<BlockData>()
+        setupConfigForDoorInteraction(enabled = false)
+        setupPlayerMocks(fixture.player, bypassEnabled = false)
+        setupLockedBlock(ownedByPlayer = false, playerIsAccessor = false)
+
+        `when`(fixture.player.hasPermission("mf.bypass")).thenReturn(false)
+        `when`(fixture.event.action).thenReturn(Action.PHYSICAL)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - still blocked, but no per-tick task, lookup or message
+        verifyEventCancelled()
+        verifyNoAsyncTaskScheduled()
+        verifyPlayerNotNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_PhysicalActionOnLockedBlockWithBypassEnabled_ShouldNotScheduleOwnerLookup() {
+        // The bypass notice on a locked block floods for the same reason as the blocked notice.
+        // Arrange
+        mockBlockData<BlockData>()
+        setupConfigForDoorInteraction(enabled = false)
+        setupPlayerMocks(fixture.player, bypassEnabled = true)
+        setupLockedBlock(ownedByPlayer = false, playerIsAccessor = false)
+
+        `when`(fixture.player.hasPermission("mf.bypass")).thenReturn(true)
+        `when`(fixture.event.action).thenReturn(Action.PHYSICAL)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - bypass still applies, without the per-tick task
+        verifyEventNotCancelled()
+        verifyNoAsyncTaskScheduled()
+        verifyPlayerNotNotified()
+    }
+
     // Helper functions
 
     private inline fun <reified T> mockBlockData() {
@@ -1124,10 +1199,12 @@ class PlayerInteractListenerTest {
         // Mock the lockService to return our locked block for the specific block position
         doReturn(lockedBlock).`when`(lockService).getLockedBlock(blockPosition)
 
-        // Mock the upward block position as well for bisected blocks
-        val upBlock = fixture.block.getRelative(BlockFace.UP)
-        val upBlockPosition = MfBlockPosition.fromBukkitBlock(upBlock)
-        doReturn(null).`when`(lockService).getLockedBlock(upBlockPosition)
+        // Mock the neighbouring block positions as well, since bisected blocks are looked up as a pair
+        // with either their upper or their lower half.
+        listOf(BlockFace.UP, BlockFace.DOWN).forEach { face ->
+            val neighbour = fixture.block.getRelative(face)
+            doReturn(null).`when`(lockService).getLockedBlock(MfBlockPosition.fromBukkitBlock(neighbour))
+        }
     }
 
     private fun setupClaimAndFaction(block: Block): Pair<MfClaimedChunk, MfFactionId> {
@@ -1226,11 +1303,13 @@ class PlayerInteractListenerTest {
 
     private fun createBasicFixture(): PlayerInteractListenerTestFixture {
         val world = testUtils.createMockWorld()
-        val block = testUtils.createMockBlock(world)
+        val block = testUtils.createMockBlock(world, 0, 0, 0)
 
-        // Mock blocks for UP and DOWN directions
-        val blockAbove = testUtils.createMockBlock(world)
-        val blockBelow = testUtils.createMockBlock(world)
+        // Mock blocks for UP and DOWN directions. These must have distinct coordinates: MfBlockPosition
+        // is a data class over (worldId, x, y, z), so neighbours left at the default (0, 0, 0) would
+        // collapse onto the clicked block's position and overwrite its lockService stub.
+        val blockAbove = testUtils.createMockBlock(world, 0, 1, 0)
+        val blockBelow = testUtils.createMockBlock(world, 0, -1, 0)
 
         // Set up relative block retrieval
         `when`(block.getRelative(BlockFace.UP)).thenReturn(blockAbove)
@@ -1296,6 +1375,28 @@ class PlayerInteractListenerTest {
     private fun mockLanguageSystem() {
         val language = mock(Language::class.java)
         `when`(language.get(anyString(), anyString())).thenReturn("Cannot interact with block in faction territory")
+        `when`(language["UnknownPlayer"]).thenReturn("Unknown player")
         `when`(medievalFactions.language).thenReturn(language)
+    }
+
+    private fun mockScheduler() {
+        val server = mock(Server::class.java)
+        scheduler = mock(BukkitScheduler::class.java)
+        `when`(medievalFactions.server).thenReturn(server)
+        `when`(server.scheduler).thenReturn(scheduler)
+    }
+
+    /**
+     * Runs every [Runnable] that was dispatched to the async scheduler, so that the logic inside it is
+     * actually exercised rather than only asserted to have been scheduled.
+     */
+    private fun runScheduledAsyncTasks() {
+        val captor = ArgumentCaptor.forClass(Runnable::class.java)
+        verify(scheduler, atLeast(0)).runTaskAsynchronously(eq(medievalFactions), captor.capture())
+        captor.allValues.forEach { it.run() }
+    }
+
+    private fun verifyNoAsyncTaskScheduled() {
+        verify(scheduler, never()).runTaskAsynchronously(eq(medievalFactions), any(Runnable::class.java))
     }
 }
