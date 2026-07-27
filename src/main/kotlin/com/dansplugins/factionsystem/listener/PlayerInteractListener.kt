@@ -37,10 +37,16 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.Action.PHYSICAL
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot.HAND
+import java.util.concurrent.ConcurrentHashMap
 import java.util.logging.Level.SEVERE
 import org.bukkit.block.data.type.Gate as FenceGateData
 
 class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
+
+    // Tracks players whose MfPlayer record is currently being created asynchronously, so that
+    // Action.PHYSICAL (which fires once per tick while the player stands on the block) doesn't
+    // queue a duplicate save for every tick until the first one completes.
+    private val playersWithPendingSave: MutableSet<MfPlayerId> = ConcurrentHashMap.newKeySet()
 
     @EventHandler
     fun onPlayerInteract(event: PlayerInteractEvent) {
@@ -114,16 +120,23 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
 
         if (mfPlayer == null) {
             event.isCancelled = true
-            plugin.server.scheduler.runTaskAsynchronously(
-                plugin,
-                Runnable {
-                    playerService.save(MfPlayer(plugin, event.player)).onFailure {
-                        event.player.sendMessage("$RED${plugin.language["BlockInteractFailedToSavePlayer"]}")
-                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
-                        return@Runnable
+            val playerId = MfPlayerId(event.player.uniqueId.toString())
+            if (playersWithPendingSave.add(playerId)) {
+                plugin.server.scheduler.runTaskAsynchronously(
+                    plugin,
+                    Runnable {
+                        try {
+                            playerService.save(MfPlayer(plugin, event.player)).onFailure {
+                                event.player.sendMessage("$RED${plugin.language["BlockInteractFailedToSavePlayer"]}")
+                                plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                                return@Runnable
+                            }
+                        } finally {
+                            playersWithPendingSave.remove(playerId)
+                        }
                     }
-                }
-            )
+                )
+            }
             return
         }
 

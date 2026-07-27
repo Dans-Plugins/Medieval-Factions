@@ -16,6 +16,7 @@ import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerService
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
+import dev.forkhandles.result4k.Success
 import org.bukkit.Material
 import org.bukkit.Server
 import org.bukkit.World
@@ -34,6 +35,7 @@ import org.bukkit.scheduler.BukkitScheduler
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.ArgumentMatchers.eq
@@ -1148,7 +1150,58 @@ class PlayerInteractListenerTest {
         verifyPlayerNotNotified()
     }
 
+    @Test
+    fun onPlayerInteract_PhysicalActionByUnregisteredPlayer_ShouldOnlyScheduleOneSavePerTick() {
+        // Regression test for #1981: applyProtections schedules an async save when the player has no
+        // MfPlayer record. Action.PHYSICAL fires once per tick for as long as the player stands on the
+        // block, so without de-duplication every tick between the first dispatch and the save completing
+        // queues another save. `playerService.getPlayer` returns null by default (unstubbed mock).
+        // Arrange
+        `when`(fixture.event.action).thenReturn(Action.PHYSICAL)
+
+        // Act - two physical interactions land before the first save has run
+        uut.onPlayerInteract(fixture.event)
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - both interactions are cancelled, but only one save is in flight
+        verify(fixture.event, org.mockito.Mockito.times(2)).isCancelled = true
+        verify(scheduler, org.mockito.Mockito.times(1)).runTaskAsynchronously(eq(medievalFactions), any(Runnable::class.java))
+    }
+
+    @Test
+    fun onPlayerInteract_PhysicalActionByUnregisteredPlayer_ShouldScheduleAnotherSaveOnceThePriorOneCompletes() {
+        // Once the in-flight save finishes (success or failure), the player is no longer "pending", so a
+        // later physical interaction (e.g. next tick, if the record still isn't visible yet) may dispatch
+        // another save.
+        // Arrange
+        `when`(fixture.event.action).thenReturn(Action.PHYSICAL)
+        // MfPlayer(plugin, event.player) reads plugin.config.getDouble(...), so config must be mocked
+        // before the scheduled save runnable is actually executed below.
+        setupConfigForDoorInteraction(enabled = false)
+        `when`(playerService.save(anyMfPlayer())).thenReturn(Success(mock(MfPlayer::class.java)))
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+        runScheduledAsyncTasks()
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - the completed save's player id was released, so the second interaction schedules again
+        verify(scheduler, org.mockito.Mockito.times(2)).runTaskAsynchronously(eq(medievalFactions), any(Runnable::class.java))
+    }
+
     // Helper functions
+
+    /**
+     * Mockito's [ArgumentMatchers.any] returns null, which trips Kotlin's null-check on the
+     * non-nullable [MfPlayer] parameter of [MfPlayerService.save] before the matcher is registered,
+     * corrupting Mockito's matcher stack for subsequent tests. This generic indirection avoids the
+     * compiler inserting that check.
+     */
+    private fun <T> anyMfPlayer(): T {
+        ArgumentMatchers.any<MfPlayer>()
+        @Suppress("UNCHECKED_CAST")
+        return null as T
+    }
 
     private inline fun <reified T> mockBlockData() {
         val blockData = mock(T::class.java)

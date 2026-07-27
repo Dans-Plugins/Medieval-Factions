@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Standing on a *locked* pressure plate (or tripwire, or farmland) you are not allowed to use no longer floods chat with a lock message every tick. This covers the one path missed by the previous physical-interaction fix, and it also stops the per-tick scheduled task and block-owner lookup that each of those messages performed. The lock protection itself is unchanged — the interaction is still blocked.
+- A player with no `MfPlayer` record yet who stands on a protected physical block (pressure plate, tripwire, farmland) no longer queues a duplicate async player-save every tick. Only the first physical interaction dispatches a save; further ticks are ignored until that save completes.
 
 ## [6.0.0-SNAPSHOT-7-25-2026] – 2026-07-25
 
