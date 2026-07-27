@@ -1175,6 +1175,9 @@ class PlayerInteractListenerTest {
         // another save.
         // Arrange
         `when`(fixture.event.action).thenReturn(Action.PHYSICAL)
+        // MfPlayer(plugin, event.player) reads plugin.config.getDouble(...), so config must be mocked
+        // before the scheduled save runnable is actually executed below.
+        setupConfigForDoorInteraction(enabled = false)
         `when`(playerService.save(anyMfPlayer())).thenReturn(Success(mock(MfPlayer::class.java)))
 
         // Act
