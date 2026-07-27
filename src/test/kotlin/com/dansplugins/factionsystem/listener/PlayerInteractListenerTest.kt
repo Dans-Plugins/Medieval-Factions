@@ -35,6 +35,7 @@ import org.bukkit.scheduler.BukkitScheduler
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.ArgumentMatchers.eq
@@ -1174,7 +1175,7 @@ class PlayerInteractListenerTest {
         // another save.
         // Arrange
         `when`(fixture.event.action).thenReturn(Action.PHYSICAL)
-        `when`(playerService.save(any(MfPlayer::class.java))).thenReturn(Success(mock(MfPlayer::class.java)))
+        `when`(playerService.save(anyMfPlayer())).thenReturn(Success(mock(MfPlayer::class.java)))
 
         // Act
         uut.onPlayerInteract(fixture.event)
@@ -1186,6 +1187,18 @@ class PlayerInteractListenerTest {
     }
 
     // Helper functions
+
+    /**
+     * Mockito's [ArgumentMatchers.any] returns null, which trips Kotlin's null-check on the
+     * non-nullable [MfPlayer] parameter of [MfPlayerService.save] before the matcher is registered,
+     * corrupting Mockito's matcher stack for subsequent tests. This generic indirection avoids the
+     * compiler inserting that check.
+     */
+    private fun <T> anyMfPlayer(): T {
+        ArgumentMatchers.any<MfPlayer>()
+        @Suppress("UNCHECKED_CAST")
+        return null as T
+    }
 
     private inline fun <reified T> mockBlockData() {
         val blockData = mock(T::class.java)
