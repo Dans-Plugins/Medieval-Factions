@@ -1194,8 +1194,11 @@ class PlayerInteractListenerTest {
         `when`(blockMaterial.isInteractable).thenReturn(false)
         `when`(block.type).thenReturn(blockMaterial)
 
+        // Built before the stubbing below starts: mockEdibleMaterial() stubs a mock of its own, and
+        // doing that part-way through a `when(...)` raises UnfinishedStubbingException.
+        val edibleMaterial = mockEdibleMaterial()
         val item = mock(ItemStack::class.java)
-        `when`(item.type).thenReturn(mockEdibleMaterial())
+        `when`(item.type).thenReturn(edibleMaterial)
         `when`(event.item).thenReturn(item)
         `when`(event.hasItem()).thenReturn(true)
         `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
