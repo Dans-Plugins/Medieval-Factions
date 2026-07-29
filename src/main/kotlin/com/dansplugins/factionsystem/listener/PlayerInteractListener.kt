@@ -46,11 +46,6 @@ import org.bukkit.block.data.type.Gate as FenceGateData
 
 class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
 
-    private companion object {
-        // Drinkable items that Material.isEdible does not report as edible.
-        private val DRINKABLE_MATERIALS = setOf(Material.POTION, Material.MILK_BUCKET, Material.HONEY_BOTTLE)
-    }
-
     // Tracks players whose MfPlayer record is currently being created asynchronously, so that
     // Action.PHYSICAL (which fires once per tick while the player stands on the block) doesn't
     // queue a duplicate save for every tick until the first one completes.
@@ -208,12 +203,6 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             }
         }
 
-        // Eating or drinking cannot modify the world, so protection must never cancel it - see #1747.
-        // Checked ahead of the territory rules so it holds in wilderness as well as in a claim.
-        if (isConsumingItem(event, clickedBlock)) {
-            return
-        }
-
         // Apply territory protection
         val claim = claimService.getClaim(clickedBlock.chunk)
 
@@ -229,6 +218,12 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
 
         val factionService = plugin.services.factionService
         val claimFaction = factionService.getFaction(claim.factionId) ?: return
+
+        // Allow eating food in faction territory without triggering protection
+        val item = event.item
+        if (item != null && item.type.isEdible && !isInteractiveBlock(clickedBlock.type)) {
+            return
+        }
 
         // Check if player is allowed to interact based on faction relationships
         if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
@@ -265,32 +260,10 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
      * Named predicate for "interactive block" (chest, lever, door, etc. - anything that responds
      * to a right-click independently of what the player is holding). Kept as a thin wrapper around
      * Bukkit's [Material.isInteractable] - already the definition used elsewhere in this listener
-     * (the consumable-item and ladder-placement checks above) - so the definition lives in one named
+     * (the edible-food and ladder-placement checks above) - so the definition lives in one named
      * place per #1970, rather than being re-derived inline at each call site.
      */
     private fun isInteractiveBlock(material: Material): Boolean = material.isInteractable
-
-    /**
-     * Named predicate for "consumable item" - one whose right-click use is eating or drinking, so it
-     * cannot place, break or otherwise alter a block. Bukkit's [Material.isEdible] only covers food,
-     * so the drinkables it omits are listed explicitly. Splash and lingering potions are deliberately
-     * excluded: those are thrown rather than drunk.
-     */
-    private fun isConsumableItem(material: Material): Boolean = material.isEdible || material in DRINKABLE_MATERIALS
-
-    /**
-     * True when this interaction is the player consuming what they are holding rather than acting on
-     * the block: a right-click, with a consumable in hand, against a block that does not respond to
-     * right-clicks. Protection must not cancel these, or the player is unable to eat or drink while
-     * looking at a protected block (#1747). The action type is checked first and strictly - a
-     * left-click never consumes an item, so holding food must not exempt one - and the block must be
-     * non-interactive, so holding food cannot be used to reach a chest or a lever.
-     */
-    private fun isConsumingItem(event: PlayerInteractEvent, clickedBlock: Block): Boolean {
-        if (event.action != RIGHT_CLICK_BLOCK) return false
-        val item = event.item ?: return false
-        return isConsumableItem(item.type) && !isInteractiveBlock(clickedBlock.type)
-    }
 
     /**
      * Strictly gates which wartime permission check (if any) is consulted, based solely on the
