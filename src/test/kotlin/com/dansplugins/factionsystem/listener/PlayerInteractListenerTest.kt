@@ -472,7 +472,11 @@ class PlayerInteractListenerTest {
     }
 
     @Test
-    fun onPlayerInteract_WartimeInteractableBlock_ShouldAllowInteraction() {
+    fun onPlayerInteract_WartimeInteractableBlock_HeldItemInPlaceableList_ShouldStillAllowInteractionWithoutConsultingPlaceableList() {
+        // Regression test for #1970 - requirement 4: the item held in hand must play no role in
+        // branch selection. Here the clicked block is interactive AND the held item is itself in
+        // wartimePlaceableBlocks - only the isWartimeInteractableBlock check may run; the
+        // isWartimePlaceableBlock stub for the held item's material must never be reached.
         // Arrange
         setupWartimeLadderTest(
             ladderItem = false,
@@ -482,16 +486,93 @@ class PlayerInteractListenerTest {
         )
 
         val block = fixture.block
+        val event = fixture.event
+        val interactableMaterial = mock(Material::class.java)
+        `when`(interactableMaterial.isSolid).thenReturn(true)
+        `when`(interactableMaterial.isInteractable).thenReturn(true)
+        `when`(block.type).thenReturn(interactableMaterial)
+
         val playerId = MfPlayerId(fixture.player.uniqueId.toString())
         val claim = claimService.getClaim(block.chunk)!!
+        val heldItemMaterial = event.item!!.type
 
-        `when`(claimService.isWartimeInteractableBlock(playerId, claim, block.type)).thenReturn(true)
+        `when`(claimService.isWartimeInteractableBlock(playerId, claim, interactableMaterial)).thenReturn(true)
+        `when`(claimService.isWartimePlaceableBlock(playerId, claim, heldItemMaterial)).thenReturn(true)
 
         // Act
-        uut.onPlayerInteract(fixture.event)
+        uut.onPlayerInteract(event)
 
-        // Assert - event should NOT be cancelled because block is in wartime interactable list
+        // Assert - allowed via the interactable list; the placeable list must never be consulted
         verifyEventNotCancelled()
+        verify(claimService, never()).isWartimePlaceableBlock(playerId, claim, heldItemMaterial)
+    }
+
+    @Test
+    fun onPlayerInteract_LeftClickBlock_NeverConsultsInteractableOrPlaceableLists() {
+        // Regression test for #1970 - requirement 1. Empirically distinguishes old vs. new
+        // behaviour: the old code called isWartimeInteractableBlock(clickedBlock.type) unconditionally,
+        // regardless of action, so a block whose material appeared in wartimeInteractableBlocks would
+        // wrongly be allowed to break even though it is absent from wartimeBreakableBlocks. Under the
+        // fix, LEFT_CLICK_BLOCK must consult only the breakable list.
+        // Arrange
+        setupWartimeLadderTest(
+            ladderItem = false,
+            isWartimeLadderPlacementAllowed = false,
+            configEnabled = false,
+            atWarWithClaimFaction = true
+        )
+
+        val event = fixture.event
+        `when`(event.action).thenReturn(Action.LEFT_CLICK_BLOCK)
+
+        val block = fixture.block
+        val playerId = MfPlayerId(fixture.player.uniqueId.toString())
+        val claim = claimService.getClaim(block.chunk)!!
+        val heldItemMaterial = event.item!!.type
+
+        // Both other lists are wrongly permissive - only the breakable list's answer may matter
+        `when`(claimService.isWartimeBreakableBlock(playerId, claim, block.type)).thenReturn(false)
+        `when`(claimService.isWartimeInteractableBlock(playerId, claim, block.type)).thenReturn(true)
+        `when`(claimService.isWartimePlaceableBlock(playerId, claim, heldItemMaterial)).thenReturn(true)
+
+        // Act
+        uut.onPlayerInteract(event)
+
+        // Assert - blocked: the leaked interactable/placeable stubs must not be reachable from LEFT_CLICK_BLOCK
+        verifyEventCancelled()
+        verify(claimService, never()).isWartimeInteractableBlock(playerId, claim, block.type)
+        verify(claimService, never()).isWartimePlaceableBlock(playerId, claim, heldItemMaterial)
+    }
+
+    @Test
+    fun onPlayerInteract_RightClickPlacingOnNonInteractiveSurface_NeverConsultsInteractableList() {
+        // Regression test for #1970 - requirement 3. The interactable list is wrongly permissive here
+        // (would leak placement rights under the old unconditional isWartimeInteractableBlock call);
+        // the placeable list is the only correct source of truth for a non-interactive surface and
+        // says no, so placement must be blocked.
+        // Arrange
+        setupWartimeLadderTest(
+            ladderItem = false,
+            isWartimeLadderPlacementAllowed = false,
+            configEnabled = false,
+            atWarWithClaimFaction = true
+        )
+
+        val event = fixture.event
+        val block = fixture.block
+        val playerId = MfPlayerId(fixture.player.uniqueId.toString())
+        val claim = claimService.getClaim(block.chunk)!!
+        val heldItemMaterial = event.item!!.type
+
+        `when`(claimService.isWartimeInteractableBlock(playerId, claim, block.type)).thenReturn(true)
+        `when`(claimService.isWartimePlaceableBlock(playerId, claim, heldItemMaterial)).thenReturn(false)
+
+        // Act
+        uut.onPlayerInteract(event)
+
+        // Assert - blocked (placeable list says no), and the interactable list is never touched
+        verifyEventCancelled()
+        verify(claimService, never()).isWartimeInteractableBlock(playerId, claim, block.type)
     }
 
     @Test
@@ -806,9 +887,12 @@ class PlayerInteractListenerTest {
         // Act
         uut.onPlayerInteract(event)
 
-        // Assert — interaction must be blocked; placeable list must not affect interactive blocks
+        // Assert — interaction must be blocked; placeable list must not affect interactive blocks.
+        // Regression test for #1970 - requirement 2: the placeable check must never be reached for
+        // an interactive block, not merely produce the right outcome.
         verifyEventCancelled()
         verifyPlayerNotified()
+        verify(claimService, never()).isWartimePlaceableBlock(playerId, claim, itemMaterial)
     }
 
     @Test
