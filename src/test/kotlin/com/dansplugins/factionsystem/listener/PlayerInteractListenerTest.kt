@@ -1091,6 +1091,127 @@ class PlayerInteractListenerTest {
         verifyPlayerNotified()
     }
 
+    // --- Consuming an item (eating/drinking) tests, see #1747 ---
+
+    @Test
+    fun onPlayerInteract_EdibleItem_RightClickNonInteractiveBlockInEnemyTerritory_ShouldAllowEating() {
+        // Arrange
+        setupConsumingItemTestInEnemyTerritory(mockEdibleMaterial())
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - the player is eating, not acting on the block, so protection must not cancel it
+        verifyEventNotCancelled()
+        verifyPlayerNotNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_PotionInHand_RightClickNonInteractiveBlockInEnemyTerritory_ShouldAllowDrinking() {
+        // Material.isEdible is false for potions, so drinking was still being cancelled after the
+        // original food fix.
+        // Arrange
+        setupConsumingItemTestInEnemyTerritory(Material.POTION)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyEventNotCancelled()
+        verifyPlayerNotNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_MilkBucketInHand_RightClickNonInteractiveBlockInEnemyTerritory_ShouldAllowDrinking() {
+        // Arrange
+        setupConsumingItemTestInEnemyTerritory(Material.MILK_BUCKET)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyEventNotCancelled()
+        verifyPlayerNotNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_EdibleItem_RightClickInteractiveBlockInEnemyTerritory_ShouldBlockInteraction() {
+        // Holding food must not become a way to reach a chest or a lever in enemy territory.
+        // Arrange
+        setupConsumingItemTestInEnemyTerritory(mockEdibleMaterial(), blockIsInteractable = true)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyEventCancelled()
+        verifyPlayerNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_EdibleItem_LeftClickBlockInEnemyTerritory_ShouldBlockInteraction() {
+        // A left-click never consumes an item, so holding food must not exempt one.
+        // Arrange
+        setupConsumingItemTestInEnemyTerritory(mockEdibleMaterial(), action = Action.LEFT_CLICK_BLOCK)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyEventCancelled()
+        verifyPlayerNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_SplashPotionInHand_RightClickNonInteractiveBlockInEnemyTerritory_ShouldBlockInteraction() {
+        // Splash potions are thrown rather than drunk, so they are not treated as consumed.
+        // Arrange
+        setupConsumingItemTestInEnemyTerritory(Material.SPLASH_POTION)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyEventCancelled()
+        verifyPlayerNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_EdibleItem_InWilderness_WildernessPreventInteractionSetToTrue_ShouldAllowEating() {
+        // Arrange
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
+
+        mockBlockData<BlockData>()
+        setupConfigForDoorInteraction(enabled = false)
+        val (_, playerId) = setupPlayerMocks(player)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(null)
+        `when`(medievalFactions.config.getBoolean("wilderness.interaction.prevent", false)).thenReturn(true)
+        `when`(medievalFactions.config.getBoolean("wilderness.interaction.alert", true)).thenReturn(true)
+
+        val blockMaterial = mock(Material::class.java)
+        `when`(blockMaterial.isInteractable).thenReturn(false)
+        `when`(block.type).thenReturn(blockMaterial)
+
+        // Built before the stubbing below starts: mockEdibleMaterial() stubs a mock of its own, and
+        // doing that part-way through a `when(...)` raises UnfinishedStubbingException.
+        val edibleMaterial = mockEdibleMaterial()
+        val item = mock(ItemStack::class.java)
+        `when`(item.type).thenReturn(edibleMaterial)
+        `when`(event.item).thenReturn(item)
+        `when`(event.hasItem()).thenReturn(true)
+        `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
+        `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
+
+        // Act
+        uut.onPlayerInteract(event)
+
+        // Assert - wilderness interaction prevention protects blocks, not the player's own food
+        verifyEventNotCancelled()
+        verifyPlayerNotNotified()
+    }
+
     // --- Physical interaction tests ---
 
     @Test
@@ -1381,6 +1502,45 @@ class PlayerInteractListenerTest {
         `when`(factionService.getFaction(factionId)).thenReturn(mockFaction)
 
         return Pair(claim, factionId)
+    }
+
+    /**
+     * A material that reports itself as edible. Real food constants are not usable here: this class
+     * mocks [org.bukkit.Bukkit] statically for the whole run, under which the real enum's
+     * [Material.isEdible] does not report true. Mocking the material instead is what the rest of this
+     * file already does, and it keeps the test independent of Bukkit's internals.
+     */
+    private fun mockEdibleMaterial(): Material {
+        val material = mock(Material::class.java)
+        `when`(material.isEdible).thenReturn(true)
+        return material
+    }
+
+    /**
+     * Arranges an interaction with [itemMaterial] in hand against the fixture block, which sits in a
+     * claim the player is not allowed to interact with. Defaults to the shape of eating or drinking:
+     * a right-click against a block that does not respond to right-clicks.
+     */
+    private fun setupConsumingItemTestInEnemyTerritory(
+        itemMaterial: Material,
+        blockIsInteractable: Boolean = false,
+        action: Action = Action.RIGHT_CLICK_BLOCK
+    ) {
+        mockBlockData<BlockData>()
+        setupConfigForDoorInteraction(enabled = false)
+        val (_, playerId) = setupPlayerMocks(fixture.player)
+        val (claim, _) = setupClaimAndFaction(fixture.block)
+        `when`(claimService.isInteractionAllowed(playerId, claim)).thenReturn(false)
+
+        val blockMaterial = mock(Material::class.java)
+        `when`(blockMaterial.isInteractable).thenReturn(blockIsInteractable)
+        `when`(fixture.block.type).thenReturn(blockMaterial)
+
+        val item = mock(ItemStack::class.java)
+        `when`(item.type).thenReturn(itemMaterial)
+        `when`(fixture.event.item).thenReturn(item)
+        `when`(fixture.event.hasItem()).thenReturn(true)
+        `when`(fixture.event.action).thenReturn(action)
     }
 
     private fun setupWartimeLadderTest(
