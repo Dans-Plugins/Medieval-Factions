@@ -118,7 +118,7 @@ Controls behavior and alerts in unclaimed wilderness areas.
 ### `wilderness.interaction.prevent`
 **Type:** Boolean  
 **Default:** `false`  
-**Description:** When `true`, prevents block interactions (buttons, levers, etc.) in wilderness.
+**Description:** When `true`, prevents block interactions (buttons, levers, etc.) in wilderness. Eating and drinking are exempt: right-clicking a block that does not itself respond to a right-click while holding food, a potion, a milk bucket or a honey bottle consumes the item as normal.
 
 ### `wilderness.interaction.alert`
 **Type:** Boolean  
