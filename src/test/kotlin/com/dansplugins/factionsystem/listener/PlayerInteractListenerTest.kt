@@ -1096,7 +1096,7 @@ class PlayerInteractListenerTest {
     @Test
     fun onPlayerInteract_EdibleItem_RightClickNonInteractiveBlockInEnemyTerritory_ShouldAllowEating() {
         // Arrange
-        setupConsumingItemTestInEnemyTerritory(Material.BREAD)
+        setupConsumingItemTestInEnemyTerritory(mockEdibleMaterial())
 
         // Act
         uut.onPlayerInteract(fixture.event)
@@ -1138,7 +1138,7 @@ class PlayerInteractListenerTest {
     fun onPlayerInteract_EdibleItem_RightClickInteractiveBlockInEnemyTerritory_ShouldBlockInteraction() {
         // Holding food must not become a way to reach a chest or a lever in enemy territory.
         // Arrange
-        setupConsumingItemTestInEnemyTerritory(Material.BREAD, blockIsInteractable = true)
+        setupConsumingItemTestInEnemyTerritory(mockEdibleMaterial(), blockIsInteractable = true)
 
         // Act
         uut.onPlayerInteract(fixture.event)
@@ -1152,7 +1152,7 @@ class PlayerInteractListenerTest {
     fun onPlayerInteract_EdibleItem_LeftClickBlockInEnemyTerritory_ShouldBlockInteraction() {
         // A left-click never consumes an item, so holding food must not exempt one.
         // Arrange
-        setupConsumingItemTestInEnemyTerritory(Material.BREAD, action = Action.LEFT_CLICK_BLOCK)
+        setupConsumingItemTestInEnemyTerritory(mockEdibleMaterial(), action = Action.LEFT_CLICK_BLOCK)
 
         // Act
         uut.onPlayerInteract(fixture.event)
@@ -1195,7 +1195,7 @@ class PlayerInteractListenerTest {
         `when`(block.type).thenReturn(blockMaterial)
 
         val item = mock(ItemStack::class.java)
-        `when`(item.type).thenReturn(Material.BREAD)
+        `when`(item.type).thenReturn(mockEdibleMaterial())
         `when`(event.item).thenReturn(item)
         `when`(event.hasItem()).thenReturn(true)
         `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
@@ -1499,6 +1499,18 @@ class PlayerInteractListenerTest {
         `when`(factionService.getFaction(factionId)).thenReturn(mockFaction)
 
         return Pair(claim, factionId)
+    }
+
+    /**
+     * A material that reports itself as edible. Real food constants are not usable here: this class
+     * mocks [org.bukkit.Bukkit] statically for the whole run, under which the real enum's
+     * [Material.isEdible] does not report true. Mocking the material instead is what the rest of this
+     * file already does, and it keeps the test independent of Bukkit's internals.
+     */
+    private fun mockEdibleMaterial(): Material {
+        val material = mock(Material::class.java)
+        `when`(material.isEdible).thenReturn(true)
+        return material
     }
 
     /**
