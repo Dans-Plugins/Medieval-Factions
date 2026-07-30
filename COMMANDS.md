@@ -35,10 +35,11 @@ The main faction command can be accessed using any of the following aliases:
 **Description:** Displays a list of helpful commands and usage information.  
 **Usage:** `/f help`
 
-### `/faction info` or `/f info`
+### `/faction info [player|faction]` or `/f info [player|faction]`
 **Permission:** `mf.info` (default: true)  
 **Description:** Displays information about your faction.  
-**Usage:** `/f info`
+**Usage:** `/f info`  
+**Notes:** With `mf.info.other` (default: true), an argument can be given to view another player's faction or a faction by name instead of your own; this also allows console usage.
 
 ### `/faction who [player]` or `/f who [player]`
 **Permission:** `mf.who` (default: true)  
@@ -65,11 +66,11 @@ The main faction command can be accessed using any of the following aliases:
 **Usage:** `/f create MyFaction`  
 **Notes:** Faction names are limited to 20 characters by default (configurable).
 
-### `/faction disband` or `/f disband`
+### `/faction disband [faction]` or `/f disband [faction]`
 **Permission:** `mf.disband` (default: true)  
 **Description:** Disbands your faction. This action is irreversible.  
 **Usage:** `/f disband`  
-**Notes:** You must be the faction leader to disband the faction. All claimed land will be unclaimed.
+**Notes:** You must be the faction leader to disband the faction, and it must be down to a single member. All claimed land will be unclaimed. With `mf.disband.others` (default: op), a faction name can be given to disband any faction regardless of its member count (admin command).
 
 ### `/faction join [faction]` or `/f join [faction]`
 **Permission:** `mf.join` (default: true)  
@@ -393,10 +394,11 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 
 ## Power System
 
-### `/faction power` or `/f power`
+### `/faction power [player|faction]` or `/f power [player|faction]`
 **Permission:** `mf.power` (default: true)  
 **Description:** Displays power statistics for yourself or your faction. When viewing a faction, also shows the number of chunks it has claimed; if `factions.limitLand` is enabled, this is shown as `claimed/capacity` where the capacity equals the faction's current power.  
-**Usage:** `/f power`
+**Usage:** `/f power`  
+**Notes:** With `mf.power.view.other` (default: true), an argument can be given to view another player's or faction's power instead of your own; this also allows console usage.
 
 ### `/power set [player] [amount]`
 **Permission:** `mf.power.set` or `mf.force.power` (default: op)  
