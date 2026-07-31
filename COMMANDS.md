@@ -17,7 +17,10 @@ This document provides a comprehensive list of all commands available in the Med
 - [Power System](#power-system)
 - [Chat System](#chat-system)
 - [Applications](#applications)
+- [Moderator Approval](#moderator-approval)
 - [Admin Commands](#admin-commands)
+- [DPC Community API](#dpc-community-api)
+- [Permission Groups](#permission-groups)
 
 ## Command Aliases
 
@@ -75,7 +78,8 @@ The main faction command can be accessed using any of the following aliases:
 ### `/faction join [faction]` or `/f join [faction]`
 **Permission:** `mf.join` (default: true)  
 **Description:** Joins a faction that you have been invited to.  
-**Usage:** `/f join FactionName`
+**Usage:** `/f join FactionName`  
+**Notes:** With `mf.force.join` (default: op), you can join a faction you were never invited to. Running `/f join FactionName` without an invite shows a clickable confirmation prompt instead of the "not invited" error; appending `-f` (`/f join FactionName -f`) skips the prompt and joins immediately.
 
 ### `/faction leave` or `/f leave`
 **Permission:** `mf.leave` (default: true)  
@@ -90,7 +94,8 @@ The main faction command can be accessed using any of the following aliases:
 ### `/faction kick [player]` or `/f kick [player]`
 **Permission:** `mf.kick` (default: true)  
 **Description:** Kicks a player from your faction.  
-**Usage:** `/f kick PlayerName`
+**Usage:** `/f kick PlayerName`  
+**Notes:** With `mf.force.kick` (default: op), a faction name can be given before the player (`/f kick FactionName PlayerName`) to target a faction other than the one you are in. The faction-role check is still applied against the target faction, so you must also hold that faction's kick role permission — the permission selects which faction is acted on, it does not by itself override the faction's own permissions.
 
 ### `/faction set [name|description|prefix] [value]` or `/f set [name|description|prefix] [value]`
 **Permissions:** 
@@ -104,6 +109,8 @@ The main faction command can be accessed using any of the following aliases:
 - `/f set description "Our faction description"` - Sets faction description
 - `/f set prefix [TAG]` - Sets faction prefix
 
+**Notes:** With `mf.force.rename` (default: op), a faction name or ID can be given before the new name (`/f set name FactionName NewName`) to rename a faction other than the one you are in. As with `mf.force.kick`, the faction-role check still runs against the target faction, so you must also hold that faction's change-name role permission.
+
 ### `/faction flag [list|set]` or `/f flag [list|set]`
 **Permissions:** 
 - `mf.flag.list` (default: true)
@@ -115,6 +122,8 @@ The main faction command can be accessed using any of the following aliases:
 - `/f flag set [flag] [value]` - Sets a flag value
 
 **Example:** `/f flag set color #FF0000`
+
+**Notes:** With `mf.force.flag` (default: op), a faction name or ID can be given as the first argument to list or set flags on a faction other than your own (`/f flag list FactionName [page]`, `/f flag set FactionName [flag] [value]`). Unlike `mf.force.kick` and `mf.force.rename`, this genuinely bypasses the target faction's role permissions; the base `mf.flag.list` / `mf.flag.set` node is still required. The permission also enables faction-name tab completion for both subcommands.
 
 See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 
@@ -356,6 +365,8 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 - `/unlock` - Enables unlock mode
 - `/unlock cancel` - Cancels unlock mode
 
+**Notes:** Normally you can only unlock blocks you locked yourself. With `mf.force.unlock` (default: op), unlock mode also works on blocks locked by another player — a message naming the lock owner whose protection was bypassed is shown — and breaking another player's locked block unlocks it instead of being refused. (A faction role can also grant a lock bypass for unlock mode, independently of this permission.)
+
 ### `/accessors list`
 **Permission:** `mf.accessors.list` (default: true)  
 **Aliases:** `/accessoren list`, `/accesseurs list`  
@@ -486,7 +497,7 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Usage:** `/f admin setleader FactionName PlayerName`
 
 ### `/faction addmember [faction] [player]` or `/f addmember [faction] [player]`
-**Permission:** `mf.force.addmember` (default: op)  
+**Permission:** `mf.force.addmember` or `mf.force.join` (default: op)  
 **Description:** Forcefully adds a player to a faction (admin command).  
 **Usage:** `/f addmember FactionName PlayerName`
 
@@ -544,6 +555,24 @@ The `mf.admin` permission grants access to all admin commands including:
 - `mf.admin.setleader` - Set faction leaders
 - `mf.approve` - Approve/deny pending faction actions
 - `mf.dpc` - Manage DPC community API settings
+
+### Force Permissions
+The `mf.force.*` nodes (all `default: op`) do not add new commands — each one changes the behavior of an existing command or listener. They are documented with the command they affect; this table is an index.
+
+| Permission | Affects | Effect |
+|------------|---------|--------|
+| `mf.force.addmember` | [`/f addmember`](#faction-addmember-faction-player-or-f-addmember-faction-player) | Forcefully adds a player to a faction. |
+| `mf.force.bonuspower` | [`/f bonuspower`](#faction-bonuspower-faction-amount-or-f-bonuspower-faction-amount) | Sets a faction's bonus power. |
+| `mf.force.flag` | [`/f flag list`, `/f flag set`](#faction-flag-listset-or-f-flag-listset) | Lists/sets flags on another faction, bypassing its role permissions. |
+| `mf.force.join` | [`/f join`](#faction-join-faction-or-f-join-faction), [`/f addmember`](#faction-addmember-faction-player-or-f-addmember-faction-player) | Joins a faction without an invite (confirmation prompt, or `-f` to skip it). Also grants `/f addmember`. |
+| `mf.force.kick` | [`/f kick`](#faction-kick-player-or-f-kick-player) | Targets a faction other than your own; the target faction's role check still applies. |
+| `mf.force.power` | [`/power set`](#power-set-player-amount) | Sets a player's power (alternative to `mf.power.set`). |
+| `mf.force.rename` | [`/f set name`](#faction-set-namedescriptionprefix-value-or-f-set-namedescriptionprefix-value) | Targets a faction other than your own; the target faction's role check still applies. |
+| `mf.force.unlock` | [`/unlock`](#unlock-cancel), block breaking | Unlocks blocks locked by another player. |
+
+`mf.force.claim` and `mf.force.unclaim` are declared in `plugin.yml` and granted by `mf.force.*`, but nothing in the plugin currently reads them — granting them has no effect. See issue [#1987](https://github.com/Dans-Plugins/Medieval-Factions/issues/1987).
+
+`mf.force.kick` and `mf.force.rename` only widen which faction the command targets; the target faction's own role check still applies. `mf.force.flag` behaves differently and does bypass it. See issue [#1988](https://github.com/Dans-Plugins/Medieval-Factions/issues/1988).
 
 ## Notes
 
