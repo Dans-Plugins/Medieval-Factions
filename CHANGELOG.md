@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Changed
+- `/faction addmember` no longer silently refuses when the target player is already in another faction. It now prompts the admin for confirmation before removing the player from their current faction and adding them to the target; the `-f` flag skips the prompt and moves the player immediately. Both factions are notified of the move.
+
 ### Fixed
 - Standing on a *locked* pressure plate (or tripwire, or farmland) you are not allowed to use no longer floods chat with a lock message every tick. This covers the one path missed by the previous physical-interaction fix, and it also stops the per-tick scheduled task and block-owner lookup that each of those messages performed. The lock protection itself is unchanged — the interaction is still blocked.
 - A player with no `MfPlayer` record yet who stands on a protected physical block (pressure plate, tripwire, farmland) no longer queues a duplicate async player-save every tick. Only the first physical interaction dispatches a save; further ticks are ignored until that save completes.
@@ -13,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Eating or drinking in wilderness is no longer blocked when `wilderness.interaction.prevent` is enabled. That option is there to protect blocks, and consuming an item does not touch the block being looked at.
 - Holding food no longer exempts a `LEFT_CLICK_BLOCK` from interaction protection in a claim. A left-click never consumes an item, so the exemption is now limited to right-clicks, closing a small protection gap. Right-clicking an interactive block (chest, lever, door) while holding food is still blocked, as before.
 - Breaking a block in enemy territory (`LEFT_CLICK_BLOCK`) whose material happened to appear in `factions.wartimeInteractableBlocks` was wrongly allowed even when that material was absent from `factions.wartimeBreakableBlocks`, because the interactable-list check ran unconditionally before the action type was considered. Which wartime permission list (breakable / interactable / placeable) applies is now decided strictly by the Bukkit action type and whether the clicked block is interactive, before any wartime list is consulted, so a block appearing in one list can no longer leak permission for a different kind of action.
+- `/faction addmember` now checks whether the target faction is full before removing the target player from their current faction, so a full target faction can no longer leave the player factionless.
 
 ## [6.0.0-SNAPSHOT-7-25-2026] – 2026-07-25
 
@@ -27,12 +31,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `/mf dpc` subcommand (permission `mf.dpc`, default `op`) with `optin`, `optout`, `reminder on|off`, `shareip on|off`, `discord <link>|clear` actions.
 - bStats charts for DPC opt-in rate, login-reminder usage, server-IP sharing, and Discord-link presence.
 
-### Changed
-- `/faction addmember` no longer silently refuses when the target player is already in another faction. It now prompts the admin for confirmation before removing the player from their current faction and adding them to the target; the `-f` flag skips the prompt and moves the player immediately. Both factions are notified of the move.
-
 ### Fixed
 - Standing on a pressure plate (or tripwire, or farmland) you are not allowed to use no longer floods chat with a protection message every tick. Physical interactions are still blocked exactly as before; only the accompanying message is suppressed, for the faction-territory, wilderness and bypass notices alike.
-- `/faction addmember` now checks whether the target faction is full before removing the target player from their current faction, so a full target faction can no longer leave the player factionless.
 - Faction snapshot for the DPC sync is now collected on the Bukkit main thread before being dispatched off-thread via `HttpClient.sendAsync`. Off-thread access to `factionService.factions` could otherwise produce inconsistent reads or `ConcurrentModificationException` under load.
 - The DPC sync no longer POSTs an empty faction roster. A transient empty read (e.g. faction data not yet loaded at startup, or a reload mid-cycle) is skipped client-side rather than sent, so it can never depend on the provider's safety guards to avoid a faction wipe.
 
