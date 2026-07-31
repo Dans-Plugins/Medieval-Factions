@@ -1,11 +1,16 @@
 package com.dansplugins.factionsystem.command.faction.addmember
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.command.dropFirst
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionMember
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
+import net.md_5.bungee.api.chat.ClickEvent
+import net.md_5.bungee.api.chat.ClickEvent.Action.RUN_COMMAND
+import net.md_5.bungee.api.chat.HoverEvent
+import net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT
+import net.md_5.bungee.api.chat.TextComponent
+import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -14,6 +19,7 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import java.util.logging.Level
 import java.util.logging.Level.SEVERE
+import net.md_5.bungee.api.ChatColor as SpigotChatColor
 
 class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
@@ -27,6 +33,22 @@ class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandE
             return true
         }
         if (args.isEmpty()) {
+            sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberUsage"]}")
+            return true
+        }
+
+        // Check for force flag - only allow if sender has permission
+        val hasForcePermission = sender.hasPermission("mf.force.addmember") || sender.hasPermission("mf.force.join")
+        var lastArgOffset = 0
+        val force = if (hasForcePermission && args.lastOrNull() == "-f") {
+            lastArgOffset = 1
+            true
+        } else {
+            false
+        }
+
+        // Ensure we have enough args after accounting for potential flag
+        if (args.size <= lastArgOffset + 1) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberUsage"]}")
             return true
         }
@@ -47,15 +69,9 @@ class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandE
 
         val factionService = plugin.services.factionService
 
-        // if target player is already in a faction, cancel
-        if (factionService.getFaction(targetMfPlayer.id) != null) {
-            sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberTargetPlayerAlreadyInFaction"]}")
-            return true
-            // question: should we remove the player from their current faction in this case instead of returning?
-        }
-
         // get target faction
-        val targetFaction = factionService.getFaction(args.dropFirst().joinToString(" "))
+        val factionNameArgs = args.drop(1).dropLast(lastArgOffset)
+        val targetFaction = factionService.getFaction(factionNameArgs.joinToString(" "))
         if (targetFaction == null) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberInvalidTargetFaction"]}")
             return true
@@ -65,6 +81,40 @@ class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandE
         if (maxMembers > 0 && targetFaction.members.size >= maxMembers) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberTargetFactionFull"]}")
             return true
+        }
+
+        // if target player is already in a faction, handle accordingly
+        val currentFaction = factionService.getFaction(targetMfPlayer.id)
+        if (currentFaction != null) {
+            if (!force) {
+                // Prompt user to confirm removal from current faction
+                confirmAddMember(sender, targetMfPlayer, currentFaction, targetFaction, args.dropLast(lastArgOffset))
+                return true
+            } else {
+                // Remove from current faction
+                val updatedCurrentFaction = factionService.save(
+                    currentFaction.copy(
+                        members = currentFaction.members.filter { it.playerId != targetMfPlayer.id }
+                    )
+                ).onFailure {
+                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberFailedToRemoveFromCurrentFaction"]}")
+                    plugin.logger.log(SEVERE, "Failed to remove player from current faction: ${it.reason.message}", it.reason.cause)
+                    return true
+                }
+                // Notify old faction
+                val targetName = targetMfPlayer.name ?: plugin.language["CommandFactionAddMemberUnknownNewPlayerFaction"]
+                updatedCurrentFaction.sendMessage(
+                    plugin.language["CommandFactionAddMemberRemovedFromFactionTitle", targetName],
+                    plugin.language["CommandFactionAddMemberRemovedFromFactionBody", targetName]
+                )
+                // Notify target player (if online) about being moved from one faction to another
+                val onlineTargetPlayer = plugin.server.getPlayer(targetMfPlayer.id.value)
+                if (onlineTargetPlayer != null) {
+                    onlineTargetPlayer.sendMessage(
+                        "${ChatColor.YELLOW}${plugin.language["CommandFactionAddMemberPlayerNotification", currentFaction.name, targetFaction.name]}"
+                    )
+                }
+            }
         }
 
         // add member to faction
@@ -96,6 +146,32 @@ class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandE
             plugin.logger.log(SEVERE, "Failed to cancel applications: ${e.message}", e)
         }
         return true
+    }
+
+    private fun confirmAddMember(
+        sender: Player,
+        targetPlayer: MfPlayer,
+        currentFaction: MfFaction,
+        targetFaction: MfFaction,
+        originalArgs: List<String>
+    ) {
+        val targetName = targetPlayer.name ?: plugin.language["CommandFactionAddMemberUnknownNewPlayerFaction"]
+        sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberConfirmRemoval", targetName, currentFaction.name, targetFaction.name]}")
+        sender.spigot().sendMessage(
+            TextComponent(plugin.language["CommandFactionAddMemberConfirmButton"]).apply {
+                color = SpigotChatColor.GREEN
+                isBold = true
+                hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionAddMemberConfirmButtonHover"]))
+                clickEvent = ClickEvent(RUN_COMMAND, "/mf addmember ${originalArgs.joinToString(" ")} -f")
+            },
+            TextComponent(" "),
+            TextComponent(plugin.language["CommandFactionAddMemberCancelButton"]).apply {
+                color = SpigotChatColor.RED
+                isBold = true
+                hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionAddMemberCancelButtonHover"]))
+                clickEvent = ClickEvent(RUN_COMMAND, "/mf help")
+            }
+        )
     }
 
     override fun onTabComplete(
