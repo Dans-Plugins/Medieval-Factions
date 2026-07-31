@@ -123,7 +123,7 @@ The main faction command can be accessed using any of the following aliases:
 
 **Example:** `/f flag set color #FF0000`
 
-**Notes:** With `mf.force.flag` (default: op), a faction name or ID can be given as the first argument to list or set flags on a faction other than your own (`/f flag list FactionName [page]`, `/f flag set FactionName [flag] [value]`). Unlike `mf.force.kick` and `mf.force.rename`, this genuinely bypasses the target faction's role permissions; setting a flag this way still additionally requires `mf.flag.set`. The permission also enables faction-name tab completion for both subcommands.
+**Notes:** With `mf.force.flag` (default: op), a faction name or ID can be given as the first argument to list or set flags on a faction other than your own (`/f flag list FactionName [page]`, `/f flag set FactionName [flag] [value]`). Unlike `mf.force.kick` and `mf.force.rename`, this genuinely bypasses the target faction's role permissions; the base `mf.flag.list` / `mf.flag.set` node is still required. The permission also enables faction-name tab completion for both subcommands.
 
 See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 
@@ -365,7 +365,7 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 - `/unlock` - Enables unlock mode
 - `/unlock cancel` - Cancels unlock mode
 
-**Notes:** Normally you can only unlock blocks you locked yourself. With `mf.force.unlock` (default: op), unlock mode also works on blocks locked by another player, and breaking another player's locked block unlocks it instead of being refused. A message is shown naming the lock owner whose protection was bypassed. (Faction roles can also grant a lock bypass independently of this permission.)
+**Notes:** Normally you can only unlock blocks you locked yourself. With `mf.force.unlock` (default: op), unlock mode also works on blocks locked by another player — a message naming the lock owner whose protection was bypassed is shown — and breaking another player's locked block unlocks it instead of being refused. (A faction role can also grant a lock bypass for unlock mode, independently of this permission.)
 
 ### `/accessors list`
 **Permission:** `mf.accessors.list` (default: true)  
