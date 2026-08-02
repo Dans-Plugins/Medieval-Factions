@@ -130,15 +130,17 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 ## Territory & Claims
 
 ### `/faction claim [radius]` or `/f claim [radius]`
-**Permission:** `mf.claim` (default: true)  
-**Description:** Claims the chunk you are standing in, or claims in a radius if specified.  
+**Permission:** `mf.claim` or `mf.claim.circle` (default: true)  
+**Description:** Claims the chunk you are standing in, or claims in a circular radius if specified.  
 **Usage:**
 - `/f claim` - Claims the current chunk
-- `/f claim 2` - Claims chunks in a 2-chunk radius (5x5 area)
+- `/f claim 2` - Claims chunks in a circular 2-chunk radius
+- `/f claim circle 2` - Same as above; `circle` is an explicit alias for the default radius-claiming behavior
 
 **Notes:** 
 - Each chunk claimed requires power. Your faction must have enough power to claim land.
 - Maximum claim radius is configurable (default: 3).
+- The claimed area is a circle (chunks within the given radius of your current chunk), not a square.
 
 ### `/faction claim auto` or `/f claim auto`
 **Permission:** `mf.claim.auto` or `mf.autoclaim` (default: true)  
