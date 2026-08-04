@@ -261,7 +261,9 @@ class MfCuboidAreaTest {
 
     @Test
     fun testDistanceSquaredIgnoresTheWorldOfTheGivenPosition() {
-        // prepare - distanceSquared does not compare worlds, unlike contains
+        // prepare - distanceSquared does not compare worlds, unlike contains.
+        // See https://github.com/Dans-Plugins/Medieval-Factions/issues/1993 - this test characterizes
+        // the current behaviour rather than endorsing it.
         val area = MfCuboidArea(position(0, 64, 0), position(4, 70, 8))
         val otherWorldPosition = position(2, 67, 4, UUID.randomUUID())
 
