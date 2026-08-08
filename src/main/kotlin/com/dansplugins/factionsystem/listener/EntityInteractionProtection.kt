@@ -85,10 +85,14 @@ class EntityInteractionProtection(private val plugin: MedievalFactions) {
 
     private fun shouldNotify(playerId: UUID, entityId: UUID): Boolean {
         val now = System.currentTimeMillis()
-        val previous = lastNotifications.put(playerId, Notification(entityId, now))
-        return previous == null ||
+        val previous = lastNotifications[playerId]
+        val shouldNotify = previous == null ||
             previous.entityId != entityId ||
             now - previous.timeMillis > DUPLICATE_NOTIFICATION_WINDOW_MILLISECONDS
+        if (shouldNotify) {
+            lastNotifications[playerId] = Notification(entityId, now)
+        }
+        return shouldNotify
     }
 
     companion object {
