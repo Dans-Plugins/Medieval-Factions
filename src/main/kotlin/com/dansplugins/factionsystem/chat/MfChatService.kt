@@ -85,11 +85,10 @@ class MfChatService(
         val name = bukkitPlayer.name ?: plugin.language["UnknownPlayer"]
         val displayName = bukkitPlayer.player?.displayName ?: bukkitPlayer.name ?: plugin.language["UnknownPlayer"]
         return (
-            plugin.config.getString("chat.${channel.toString().lowercase()}.format") ?: when (mfPlayer.chatChannel) {
+            plugin.config.getString("chat.${channel.toString().lowercase()}.format") ?: when (channel) {
                 FACTION -> "&7[faction] [\${factionColor}\${faction}&7] [\${role}] &f\${displayName}: \${message}"
                 VASSALS -> "&7[vassals] [\${factionColor}\${faction}&7] [\${role}] &f\${displayName}: \${message}"
                 ALLIES -> "&7[allies] [\${factionColor}\${faction}&7] [\${role}] &f\${displayName}: \${message}"
-                null -> ""
             }
             )
             // Resolved against the operator's format template only, before any player-controlled text is substituted
