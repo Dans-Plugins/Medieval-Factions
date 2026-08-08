@@ -54,28 +54,24 @@ class JsonMfLockRepository(
         return data.locks.toList()
     }
 
-    override fun upsert(lockedBlock: MfLockedBlock): MfLockedBlock {
+    override fun upsert(lockedBlock: MfLockedBlock): MfLockedBlock = storageManager.withFileLock(fileName) {
         val data = loadData()
         val existingIndex = data.locks.indexOfFirst { it.id == lockedBlock.id }
 
-        if (existingIndex >= 0) {
+        val updated = if (existingIndex >= 0) {
             val existing = data.locks[existingIndex]
             if (existing.version != lockedBlock.version) {
                 throw OptimisticLockingFailureException("Invalid version: ${lockedBlock.version}")
             }
-            val updated = lockedBlock.copy(version = lockedBlock.version + 1)
-            data.locks[existingIndex] = updated
-            saveData(data)
-            return updated
+            lockedBlock.copy(version = lockedBlock.version + 1).also { data.locks[existingIndex] = it }
         } else {
-            val newLock = lockedBlock.copy(version = 1)
-            data.locks.add(newLock)
-            saveData(data)
-            return newLock
+            lockedBlock.copy(version = 1).also { data.locks.add(it) }
         }
+        saveData(data)
+        updated
     }
 
-    override fun delete(block: MfBlockPosition) {
+    override fun delete(block: MfBlockPosition) = storageManager.withFileLock(fileName) {
         val data = loadData()
         data.locks.removeIf { it.block.worldId == block.worldId && it.block.x == block.x && it.block.y == block.y && it.block.z == block.z }
         saveData(data)

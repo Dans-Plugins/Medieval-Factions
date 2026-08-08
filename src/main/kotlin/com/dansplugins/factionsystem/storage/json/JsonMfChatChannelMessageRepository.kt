@@ -44,7 +44,7 @@ class JsonMfChatChannelMessageRepository(
         storageManager.writeJsonFile(fileName, data, null)
     }
 
-    override fun insert(message: MfChatChannelMessage) {
+    override fun insert(message: MfChatChannelMessage) = storageManager.withFileLock(fileName) {
         val data = loadData()
         data.messages.add(message)
 

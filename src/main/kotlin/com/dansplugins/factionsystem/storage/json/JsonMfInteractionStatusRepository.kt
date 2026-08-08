@@ -41,7 +41,7 @@ class JsonMfInteractionStatusRepository(
         return data.statuses[playerId.value]
     }
 
-    override fun setInteractionStatus(playerId: MfPlayerId, status: MfInteractionStatus?) {
+    override fun setInteractionStatus(playerId: MfPlayerId, status: MfInteractionStatus?) = storageManager.withFileLock(fileName) {
         val data = loadData()
         if (status == null) {
             data.statuses.remove(playerId.value)

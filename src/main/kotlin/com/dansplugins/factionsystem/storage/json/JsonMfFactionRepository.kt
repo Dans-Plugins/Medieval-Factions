@@ -10,7 +10,10 @@ import com.google.gson.Gson
 import org.everit.json.schema.Schema
 
 /**
- * JSON-based implementation of MfFactionRepository
+ * JSON-based implementation of MfFactionRepository.
+ *
+ * Factions are persisted through [JsonFactionDto] rather than as domain objects, because [MfFaction]
+ * (and the roles and flag values it contains) holds a plugin reference that Gson cannot serialize.
  */
 class JsonMfFactionRepository(
     private val plugin: MedievalFactions,
@@ -26,20 +29,25 @@ class JsonMfFactionRepository(
         null
     }
 
-    data class FactionData(
-        val factions: MutableList<MfFaction> = mutableListOf()
+    internal data class FactionData(
+        val factions: MutableList<JsonFactionDto> = mutableListOf()
     )
 
     private fun loadData(): FactionData {
-        val json = storageManager.readJsonFileAsString(fileName)
-        return if (json != null) {
+        val json = storageManager.readJsonFileAsString(fileName) ?: return FactionData()
+        return try {
+            gson.fromJson(json, FactionData::class.java) ?: FactionData()
+        } catch (e: Exception) {
+            plugin.logger.severe("CRITICAL: Failed to parse factions JSON: ${e.message}")
+            plugin.logger.severe("The JSON file may be corrupted. Creating a backup and returning empty data.")
+            plugin.logger.severe("Please investigate the file: $fileName")
             try {
-                gson.fromJson(json, FactionData::class.java)
-            } catch (e: Exception) {
-                plugin.logger.severe("Failed to parse factions JSON: ${e.message}")
-                FactionData()
+                val backupFile = java.io.File(storageManager.getStorageDirectory(), "$fileName.corrupted.backup")
+                backupFile.writeText(json)
+                plugin.logger.warning("Corrupted file backed up to: ${backupFile.absolutePath}")
+            } catch (backupError: Exception) {
+                plugin.logger.severe("Failed to create backup: ${backupError.message}")
             }
-        } else {
             FactionData()
         }
     }
@@ -48,52 +56,37 @@ class JsonMfFactionRepository(
         storageManager.writeJsonFile(fileName, data, schema)
     }
 
-    override fun getFaction(id: MfFactionId): MfFaction? {
-        val data = loadData()
-        return data.factions.find { it.id == id }
-    }
+    override fun getFaction(id: MfFactionId): MfFaction? =
+        loadData().factions.find { it.id == id.value }?.toDomain(plugin)
 
-    override fun getFaction(name: String): MfFaction? {
-        val data = loadData()
-        return data.factions.find { it.name == name }
-    }
+    override fun getFaction(name: String): MfFaction? =
+        loadData().factions.find { it.name == name }?.toDomain(plugin)
 
-    override fun getFaction(playerId: MfPlayerId): MfFaction? {
-        val data = loadData()
-        return data.factions.find { faction ->
-            faction.members.any { it.playerId == playerId }
-        }
-    }
+    override fun getFaction(playerId: MfPlayerId): MfFaction? =
+        loadData().factions.find { faction -> faction.members.any { it.playerId == playerId.value } }
+            ?.toDomain(plugin)
 
-    override fun getFactions(): List<MfFaction> {
-        val data = loadData()
-        return data.factions.toList()
-    }
+    override fun getFactions(): List<MfFaction> = loadData().factions.map { it.toDomain(plugin) }
 
-    override fun upsert(faction: MfFaction): MfFaction {
+    override fun upsert(faction: MfFaction): MfFaction = storageManager.withFileLock(fileName) {
         val data = loadData()
-        val existingIndex = data.factions.indexOfFirst { it.id == faction.id }
+        val existingIndex = data.factions.indexOfFirst { it.id == faction.id.value }
 
-        if (existingIndex >= 0) {
-            val existing = data.factions[existingIndex]
-            if (existing.version != faction.version) {
+        val updated = if (existingIndex >= 0) {
+            if (data.factions[existingIndex].version != faction.version) {
                 throw OptimisticLockingFailureException("Invalid version: ${faction.version}")
             }
-            val updated = faction.copy(version = faction.version + 1)
-            data.factions[existingIndex] = updated
-            saveData(data)
-            return updated
+            faction.copy(version = faction.version + 1).also { data.factions[existingIndex] = it.toDto() }
         } else {
-            val newFaction = faction.copy(version = 1)
-            data.factions.add(newFaction)
-            saveData(data)
-            return newFaction
+            faction.copy(version = 1).also { data.factions.add(it.toDto()) }
         }
+        saveData(data)
+        updated
     }
 
-    override fun delete(factionId: MfFactionId) {
+    override fun delete(factionId: MfFactionId) = storageManager.withFileLock(fileName) {
         val data = loadData()
-        data.factions.removeIf { it.id == factionId }
+        data.factions.removeIf { it.id == factionId.value }
         saveData(data)
     }
 }

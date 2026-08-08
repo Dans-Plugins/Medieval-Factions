@@ -46,15 +46,15 @@ class JsonMfDuelInviteRepository(
         return data.invites.toList()
     }
 
-    override fun upsert(invite: MfDuelInvite): MfDuelInvite {
+    override fun upsert(invite: MfDuelInvite): MfDuelInvite = storageManager.withFileLock(fileName) {
         val data = loadData()
         data.invites.removeIf { it.inviterId == invite.inviterId && it.inviteeId == invite.inviteeId }
         data.invites.add(invite)
         saveData(data)
-        return invite
+        invite
     }
 
-    override fun deleteInvite(inviter: MfPlayerId, invitee: MfPlayerId) {
+    override fun deleteInvite(inviter: MfPlayerId, invitee: MfPlayerId) = storageManager.withFileLock(fileName) {
         val data = loadData()
         data.invites.removeIf { it.inviterId == inviter && it.inviteeId == invitee }
         saveData(data)

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "MfFactions",
-  "description": "Schema for Medieval Factions faction data",
+  "description": "Schema for Medieval Factions faction data. Mirrors the JsonFactionDto serialization shape. Nullable fields (prefix, home) are omitted entirely by Gson when null, so they are not required.",
   "type": "object",
   "properties": {
     "factions": {
@@ -18,7 +18,7 @@
       "properties": {
         "id": {
           "type": "string",
-          "format": "uuid",
+          "minLength": 1,
           "description": "Unique faction identifier"
         },
         "version": {
@@ -44,20 +44,27 @@
         "invites": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/invite"
+            "$ref": "#/definitions/playerRef"
           }
         },
         "flags": {
           "type": "object",
-          "description": "Faction flags and their values"
+          "description": "Faction flag values, keyed by flag name"
         },
         "prefix": {
           "type": ["string", "null"],
           "description": "Faction prefix"
         },
         "home": {
-          "type": ["object", "null"],
-          "$ref": "#/definitions/position"
+          "oneOf": [
+            {
+              "$ref": "#/definitions/position"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Faction home location"
         },
         "bonusPower": {
           "type": "number",
@@ -68,30 +75,36 @@
           "description": "Whether autoclaim is enabled"
         },
         "roles": {
-          "type": "object",
-          "description": "Faction roles",
-          "properties": {
-            "roles": {
-              "type": "array"
-            },
-            "defaultRoleId": {
-              "type": "string"
-            }
-          },
-          "required": ["roles", "defaultRoleId"]
+          "$ref": "#/definitions/roles"
         },
         "defaultPermissionsByName": {
           "type": "object",
-          "description": "Default permissions by permission name"
+          "description": "Default permission values, keyed by permission name",
+          "additionalProperties": {
+            "type": "boolean"
+          }
         },
         "applications": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/application"
+            "$ref": "#/definitions/playerRef"
           }
         }
       },
-      "required": ["id", "version", "name", "description", "members", "invites", "flags", "bonusPower", "autoclaim", "roles", "defaultPermissionsByName", "applications"],
+      "required": [
+        "id",
+        "version",
+        "name",
+        "description",
+        "members",
+        "invites",
+        "flags",
+        "bonusPower",
+        "autoclaim",
+        "roles",
+        "defaultPermissionsByName",
+        "applications"
+      ],
       "additionalProperties": false
     },
     "member": {
@@ -99,41 +112,72 @@
       "properties": {
         "playerId": {
           "type": "string",
-          "format": "uuid"
+          "minLength": 1
         },
         "roleId": {
           "type": "string",
-          "format": "uuid"
+          "minLength": 1
         }
       },
-      "required": ["playerId", "roleId"]
+      "required": ["playerId", "roleId"],
+      "additionalProperties": false
     },
-    "invite": {
+    "playerRef": {
       "type": "object",
       "properties": {
         "playerId": {
           "type": "string",
-          "format": "uuid"
+          "minLength": 1
         }
       },
-      "required": ["playerId"]
+      "required": ["playerId"],
+      "additionalProperties": false
     },
-    "application": {
+    "roles": {
       "type": "object",
       "properties": {
-        "playerId": {
+        "defaultRoleId": {
           "type": "string",
-          "format": "uuid"
+          "minLength": 1
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/role"
+          }
         }
       },
-      "required": ["playerId"]
+      "required": ["defaultRoleId", "roles"],
+      "additionalProperties": false
+    },
+    "role": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "permissionsByName": {
+          "type": "object",
+          "description": "Permission values for this role, keyed by permission name",
+          "additionalProperties": {
+            "type": ["boolean", "null"]
+          }
+        }
+      },
+      "required": ["id", "name", "permissionsByName"],
+      "additionalProperties": false
     },
     "position": {
       "type": "object",
       "properties": {
         "worldId": {
           "type": "string",
-          "format": "uuid"
+          "minLength": 1
         },
         "x": {
           "type": "number"
@@ -151,7 +195,8 @@
           "type": "number"
         }
       },
-      "required": ["worldId", "x", "y", "z", "yaw", "pitch"]
+      "required": ["worldId", "x", "y", "z", "yaw", "pitch"],
+      "additionalProperties": false
     }
   }
 }

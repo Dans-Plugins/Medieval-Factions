@@ -42,28 +42,24 @@ class JsonMfDuelRepository(
         return data.duels.toList()
     }
 
-    override fun upsert(duel: MfDuel): MfDuel {
+    override fun upsert(duel: MfDuel): MfDuel = storageManager.withFileLock(fileName) {
         val data = loadData()
         val existingIndex = data.duels.indexOfFirst { it.id == duel.id }
 
-        if (existingIndex >= 0) {
+        val updated = if (existingIndex >= 0) {
             val existing = data.duels[existingIndex]
             if (existing.version != duel.version) {
                 throw OptimisticLockingFailureException("Invalid version: ${duel.version}")
             }
-            val updated = duel.copy(version = duel.version + 1)
-            data.duels[existingIndex] = updated
-            saveData(data)
-            return updated
+            duel.copy(version = duel.version + 1).also { data.duels[existingIndex] = it }
         } else {
-            val newDuel = duel.copy(version = 1)
-            data.duels.add(newDuel)
-            saveData(data)
-            return newDuel
+            duel.copy(version = 1).also { data.duels.add(it) }
         }
+        saveData(data)
+        updated
     }
 
-    override fun delete(id: MfDuelId) {
+    override fun delete(id: MfDuelId) = storageManager.withFileLock(fileName) {
         val data = loadData()
         data.duels.removeIf { it.id == id }
         saveData(data)

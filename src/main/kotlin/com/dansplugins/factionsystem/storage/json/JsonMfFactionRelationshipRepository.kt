@@ -63,15 +63,15 @@ class JsonMfFactionRelationshipRepository(
         return data.relationships.toList()
     }
 
-    override fun upsert(relationship: MfFactionRelationship): MfFactionRelationship {
+    override fun upsert(relationship: MfFactionRelationship): MfFactionRelationship = storageManager.withFileLock(fileName) {
         val data = loadData()
         data.relationships.removeIf { it.id == relationship.id }
         data.relationships.add(relationship)
         saveData(data)
-        return relationship
+        relationship
     }
 
-    override fun delete(relationshipId: MfFactionRelationshipId) {
+    override fun delete(relationshipId: MfFactionRelationshipId) = storageManager.withFileLock(fileName) {
         val data = loadData()
         data.relationships.removeIf { it.id == relationshipId }
         saveData(data)

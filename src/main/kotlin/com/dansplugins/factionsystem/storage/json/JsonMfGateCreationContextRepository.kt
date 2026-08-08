@@ -42,28 +42,24 @@ class JsonMfGateCreationContextRepository(
         return data.contexts.find { it.playerId == playerId }
     }
 
-    override fun upsert(context: MfGateCreationContext): MfGateCreationContext {
+    override fun upsert(context: MfGateCreationContext): MfGateCreationContext = storageManager.withFileLock(fileName) {
         val data = loadData()
         val existingIndex = data.contexts.indexOfFirst { it.playerId == context.playerId }
 
-        if (existingIndex >= 0) {
+        val updated = if (existingIndex >= 0) {
             val existing = data.contexts[existingIndex]
             if (existing.version != context.version) {
                 throw OptimisticLockingFailureException("Invalid version: ${context.version}")
             }
-            val updated = context.copy(version = context.version + 1)
-            data.contexts[existingIndex] = updated
-            saveData(data)
-            return updated
+            context.copy(version = context.version + 1).also { data.contexts[existingIndex] = it }
         } else {
-            val newContext = context.copy(version = 1)
-            data.contexts.add(newContext)
-            saveData(data)
-            return newContext
+            context.copy(version = 1).also { data.contexts.add(it) }
         }
+        saveData(data)
+        updated
     }
 
-    override fun delete(playerId: MfPlayerId) {
+    override fun delete(playerId: MfPlayerId) = storageManager.withFileLock(fileName) {
         val data = loadData()
         data.contexts.removeIf { it.playerId == playerId }
         saveData(data)

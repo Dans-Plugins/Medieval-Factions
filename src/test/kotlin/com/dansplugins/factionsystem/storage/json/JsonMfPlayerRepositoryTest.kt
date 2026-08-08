@@ -31,6 +31,11 @@ class JsonMfPlayerRepositoryTest {
         plugin = mock(MedievalFactions::class.java)
         `when`(plugin.logger).thenReturn(Logger.getLogger("TestLogger"))
         `when`(plugin.dataFolder).thenReturn(tempDir.toFile())
+        // Serve the real schema resource so that schema validation actually runs. Leaving getResource
+        // mocked away makes loadSchemaFromResource throw, which silently disables validation and lets
+        // mismatches between the schema and the serialized shape go unnoticed.
+        `when`(plugin.getResource("schemas/players.json"))
+            .thenAnswer { java.io.File("src/main/resources/schemas/players.json").inputStream() }
         storageManager = JsonStorageManager(plugin, tempDir.toString())
         repository = JsonMfPlayerRepository(plugin, storageManager)
     }

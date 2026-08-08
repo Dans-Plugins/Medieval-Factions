@@ -72,28 +72,24 @@ class JsonMfPlayerRepository(
         return data.players.toList()
     }
 
-    override fun upsert(player: MfPlayer): MfPlayer {
+    override fun upsert(player: MfPlayer): MfPlayer = storageManager.withFileLock(fileName) {
         val data = loadData()
         val existingIndex = data.players.indexOfFirst { it.id == player.id }
 
-        if (existingIndex >= 0) {
+        val updated = if (existingIndex >= 0) {
             val existing = data.players[existingIndex]
             if (existing.version != player.version) {
                 throw OptimisticLockingFailureException("Invalid version: ${player.version}")
             }
-            val updated = player.copy(version = player.version + 1)
-            data.players[existingIndex] = updated
-            saveData(data)
-            return updated
+            player.copy(version = player.version + 1).also { data.players[existingIndex] = it }
         } else {
-            val newPlayer = player.copy(version = 1)
-            data.players.add(newPlayer)
-            saveData(data)
-            return newPlayer
+            player.copy(version = 1).also { data.players.add(it) }
         }
+        saveData(data)
+        updated
     }
 
-    override fun increaseOnlinePlayerPower(onlinePlayerIds: List<MfPlayerId>) {
+    override fun increaseOnlinePlayerPower(onlinePlayerIds: List<MfPlayerId>) = storageManager.withFileLock(fileName) {
         val data = loadData()
         val minPower = plugin.config.getDouble("players.minPower")
         val maxPower = plugin.config.getDouble("players.maxPower")
@@ -125,7 +121,7 @@ class JsonMfPlayerRepository(
         saveData(data)
     }
 
-    override fun decreaseOfflinePlayerPower(offlinePlayerIds: List<MfPlayerId>) {
+    override fun decreaseOfflinePlayerPower(offlinePlayerIds: List<MfPlayerId>) = storageManager.withFileLock(fileName) {
         val data = loadData()
         val minPower = plugin.config.getDouble("players.minPower")
         val maxPower = plugin.config.getDouble("players.maxPower")

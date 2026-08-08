@@ -406,6 +406,9 @@ permissions:
   mf.dpc:
     description: Allows managing DPC community API integration settings
     default: op
+  mf.migrate:
+    description: Allows migrating faction data between the database and JSON storage backends
+    default: op
   mf.admin:
     description: Admin permission
     default: op
@@ -419,3 +422,4 @@ permissions:
     - mf.admin.create
     - mf.admin.setleader
     - mf.approve
+    - mf.migrate

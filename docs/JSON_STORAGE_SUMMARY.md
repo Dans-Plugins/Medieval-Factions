@@ -53,21 +53,31 @@ All repository interfaces now have JSON-based implementations:
 - Documented all configuration options
 
 ### 7. Data Validation
-- JSON schemas created for players and factions
-- Schema validation on all read/write operations
-- Improved error messages with schema location details
+- JSON schemas created for players and factions (`schemas/players.json`, `schemas/factions.json`)
+- Those two files are validated against their schema on every read and write; the remaining entity files
+  have no schema yet and are read and written unvalidated
+- Validation failures are logged with the schema location and a pointer to the offending value
 
 ## Key Features
 
+### Serialization
+Domain types such as `MfFaction`, `MfFactionRole`, `MfFlagValues` and `MfGate` hold a reference to the
+plugin instance, which Gson cannot serialize. Those types are persisted through the DTOs in
+`JsonStorageDtos.kt`, which describe exactly the state that belongs on disk (mirroring the columns the
+Jooq repositories persist) and re-attach the plugin reference when reading back.
+
 ### Thread Safety
-- All JSON repositories use thread-safe file operations
-- ReadWriteLock ensures concurrent access safety
-- Optimistic locking with version numbers prevents conflicts
+- Individual file reads and writes are guarded by a per-file `ReentrantReadWriteLock`
+- Mutating repository methods hold that file's write lock across the whole load-modify-save cycle
+  (`JsonStorageManager.withFileLock`), so concurrent writers cannot overwrite each other's changes
+- Version numbers give each entity an optimistic-locking check against the current on-disk state
 
 ### Data Integrity
-- JSON schema validation ensures data correctness
+- Schema validation for the player and faction files (see above)
 - Validation errors include detailed location information
-- Automatic backup capabilities before risky operations
+- A file that fails to parse is copied aside as `<name>.corrupted.backup` rather than being silently
+  overwritten with empty data
+- `backupJsonFile` is available for taking a timestamped copy before risky operations
 
 ### Performance Considerations
 - JSON files loaded on-demand

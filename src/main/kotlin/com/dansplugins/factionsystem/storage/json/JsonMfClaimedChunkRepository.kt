@@ -52,21 +52,21 @@ class JsonMfClaimedChunkRepository(
         return data.claims.toList()
     }
 
-    override fun upsert(claim: MfClaimedChunk): MfClaimedChunk {
+    override fun upsert(claim: MfClaimedChunk): MfClaimedChunk = storageManager.withFileLock(fileName) {
         val data = loadData()
         data.claims.removeIf { it.worldId == claim.worldId && it.x == claim.x && it.z == claim.z }
         data.claims.add(claim)
         saveData(data)
-        return claim
+        claim
     }
 
-    override fun delete(worldId: UUID, x: Int, z: Int) {
+    override fun delete(worldId: UUID, x: Int, z: Int) = storageManager.withFileLock(fileName) {
         val data = loadData()
         data.claims.removeIf { it.worldId == worldId && it.x == x && it.z == z }
         saveData(data)
     }
 
-    override fun deleteAll(factionId: MfFactionId) {
+    override fun deleteAll(factionId: MfFactionId) = storageManager.withFileLock(fileName) {
         val data = loadData()
         data.claims.removeIf { it.factionId == factionId }
         saveData(data)

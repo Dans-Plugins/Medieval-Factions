@@ -58,28 +58,24 @@ class JsonMfLawRepository(
         return data.laws.filter { it.factionId == factionId }.sortedBy { it.number }
     }
 
-    override fun upsert(law: MfLaw): MfLaw {
+    override fun upsert(law: MfLaw): MfLaw = storageManager.withFileLock(fileName) {
         val data = loadData()
         val existingIndex = data.laws.indexOfFirst { it.id == law.id }
 
-        if (existingIndex >= 0) {
+        val updated = if (existingIndex >= 0) {
             val existing = data.laws[existingIndex]
             if (existing.version != law.version) {
                 throw OptimisticLockingFailureException("Invalid version: ${law.version}")
             }
-            val updated = law.copy(version = law.version + 1)
-            data.laws[existingIndex] = updated
-            saveData(data)
-            return updated
+            law.copy(version = law.version + 1).also { data.laws[existingIndex] = it }
         } else {
-            val newLaw = law.copy(version = 1)
-            data.laws.add(newLaw)
-            saveData(data)
-            return newLaw
+            law.copy(version = 1).also { data.laws.add(it) }
         }
+        saveData(data)
+        updated
     }
 
-    override fun delete(id: MfLawId) {
+    override fun delete(id: MfLawId) = storageManager.withFileLock(fileName) {
         val data = loadData()
         data.laws.removeIf { it.id == id }
         saveData(data)
@@ -89,7 +85,7 @@ class JsonMfLawRepository(
         delete(law.id)
     }
 
-    override fun move(law: MfLaw, number: Int) {
+    override fun move(law: MfLaw, number: Int) = storageManager.withFileLock(fileName) {
         val data = loadData()
         val existingIndex = data.laws.indexOfFirst { it.id == law.id }
         if (existingIndex >= 0) {

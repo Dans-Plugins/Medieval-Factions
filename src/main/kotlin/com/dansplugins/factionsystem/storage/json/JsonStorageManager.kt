@@ -46,6 +46,18 @@ class JsonStorageManager(
     }
 
     /**
+     * Runs [block] while holding this file's write lock.
+     *
+     * Repositories mutate a file by loading it, changing the loaded copy and writing it back. Those three
+     * steps each take the lock individually, so without an enclosing lock two concurrent callers can both
+     * load the same snapshot and the second write silently discards the first one's change. The version
+     * check in each repository cannot catch that, because it compares against the same stale snapshot.
+     * Wrapping the whole read-modify-write cycle in this method makes it atomic with respect to other
+     * callers. The locks are reentrant, so the reads and writes inside [block] may take them again.
+     */
+    fun <R> withFileLock(fileName: String, block: () -> R): R = getLock(fileName).write(block)
+
+    /**
      * Reads and validates a JSON file
      */
     fun <T> readJsonFile(fileName: String, clazz: Class<T>, schema: Schema? = null): T? {

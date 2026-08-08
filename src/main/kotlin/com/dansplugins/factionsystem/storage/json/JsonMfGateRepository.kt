@@ -8,6 +8,12 @@ import com.dansplugins.factionsystem.gate.MfGateId
 import com.dansplugins.factionsystem.gate.MfGateRepository
 import com.google.gson.Gson
 
+/**
+ * JSON-based implementation of MfGateRepository.
+ *
+ * Gates are persisted through [JsonGateDto] rather than as domain objects, because [MfGate] holds a
+ * plugin reference that Gson cannot serialize.
+ */
 class JsonMfGateRepository(
     private val plugin: MedievalFactions,
     private val storageManager: JsonStorageManager
@@ -16,20 +22,16 @@ class JsonMfGateRepository(
     private val fileName = "gates.json"
     private val gson: Gson = Gson()
 
-    data class GateData(
-        val gates: MutableList<MfGate> = mutableListOf()
+    internal data class GateData(
+        val gates: MutableList<JsonGateDto> = mutableListOf()
     )
 
     private fun loadData(): GateData {
-        val json = storageManager.readJsonFileAsString(fileName)
-        return if (json != null) {
-            try {
-                gson.fromJson(json, GateData::class.java)
-            } catch (e: Exception) {
-                plugin.logger.severe("Failed to parse gates JSON: ${e.message}")
-                GateData()
-            }
-        } else {
+        val json = storageManager.readJsonFileAsString(fileName) ?: return GateData()
+        return try {
+            gson.fromJson(json, GateData::class.java) ?: GateData()
+        } catch (e: Exception) {
+            plugin.logger.severe("Failed to parse gates JSON: ${e.message}")
             GateData()
         }
     }
@@ -38,46 +40,36 @@ class JsonMfGateRepository(
         storageManager.writeJsonFile(fileName, data, null)
     }
 
-    override fun getGate(id: MfGateId): MfGate? {
-        val data = loadData()
-        return data.gates.find { it.id == id }
-    }
+    override fun getGate(id: MfGateId): MfGate? =
+        loadData().gates.find { it.id == id.value }?.toDomain(plugin)
 
-    override fun getGates(): List<MfGate> {
-        val data = loadData()
-        return data.gates.toList()
-    }
+    override fun getGates(): List<MfGate> = loadData().gates.mapNotNull { it.toDomain(plugin) }
 
-    override fun upsert(gate: MfGate): MfGate {
+    override fun upsert(gate: MfGate): MfGate = storageManager.withFileLock(fileName) {
         val data = loadData()
-        val existingIndex = data.gates.indexOfFirst { it.id == gate.id }
+        val existingIndex = data.gates.indexOfFirst { it.id == gate.id.value }
 
-        if (existingIndex >= 0) {
-            val existing = data.gates[existingIndex]
-            if (existing.version != gate.version) {
+        val updated = if (existingIndex >= 0) {
+            if (data.gates[existingIndex].version != gate.version) {
                 throw OptimisticLockingFailureException("Invalid version: ${gate.version}")
             }
-            val updated = gate.copy(version = gate.version + 1)
-            data.gates[existingIndex] = updated
-            saveData(data)
-            return updated
+            gate.copy(version = gate.version + 1).also { data.gates[existingIndex] = it.toDto() }
         } else {
-            val newGate = gate.copy(version = 1)
-            data.gates.add(newGate)
-            saveData(data)
-            return newGate
+            gate.copy(version = 1).also { data.gates.add(it.toDto()) }
         }
+        saveData(data)
+        updated
     }
 
-    override fun delete(gateId: MfGateId) {
+    override fun delete(gateId: MfGateId) = storageManager.withFileLock(fileName) {
         val data = loadData()
-        data.gates.removeIf { it.id == gateId }
+        data.gates.removeIf { it.id == gateId.value }
         saveData(data)
     }
 
-    override fun deleteAll(factionId: MfFactionId) {
+    override fun deleteAll(factionId: MfFactionId) = storageManager.withFileLock(fileName) {
         val data = loadData()
-        data.gates.removeIf { it.factionId == factionId }
+        data.gates.removeIf { it.factionId == factionId.value }
         saveData(data)
     }
 }
