@@ -67,6 +67,17 @@ class EntityInteractionProtection(private val plugin: MedievalFactions) {
         return true
     }
 
+    /**
+     * Discards the retained notification state for [playerId].
+     *
+     * The cache holds one entry per player and is only consulted for the few hundred milliseconds
+     * after a notification, so it is dropped when the player leaves rather than being kept for the
+     * lifetime of the server.
+     */
+    fun forgetPlayer(playerId: UUID) {
+        lastNotifications.remove(playerId)
+    }
+
     private fun notify(player: Player, clickedEntity: Entity, message: String) {
         if (!shouldNotify(player.uniqueId, clickedEntity.uniqueId)) return
         player.sendMessage(message)
