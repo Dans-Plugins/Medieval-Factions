@@ -55,6 +55,7 @@ import com.dansplugins.factionsystem.listener.CreatureSpawnListener
 import com.dansplugins.factionsystem.listener.EntityDamageByEntityListener
 import com.dansplugins.factionsystem.listener.EntityDamageListener
 import com.dansplugins.factionsystem.listener.EntityExplodeListener
+import com.dansplugins.factionsystem.listener.EntityInteractionProtection
 import com.dansplugins.factionsystem.listener.InventoryClickListener
 import com.dansplugins.factionsystem.listener.InventoryMoveItemListener
 import com.dansplugins.factionsystem.listener.LingeringPotionSplashListener
@@ -299,6 +300,10 @@ class MedievalFactions : JavaPlugin() {
             }
         }
 
+        // Shared between the two entity interaction listeners so that a right-click raising both events
+        // only produces a single message.
+        val entityInteractionProtection = EntityInteractionProtection(this)
+
         listOf(
             AreaEffectCloudApplyListener(this),
             AsyncPlayerChatListener(this),
@@ -318,8 +323,8 @@ class MedievalFactions : JavaPlugin() {
             LingeringPotionSplashListener(this),
             PlayerBucketListener(this),
             PlayerDeathListener(this),
-            PlayerInteractAtEntityListener(this),
-            PlayerInteractEntityListener(this),
+            PlayerInteractAtEntityListener(this, entityInteractionProtection),
+            PlayerInteractEntityListener(this, entityInteractionProtection),
             PlayerInteractListener(this),
             PlayerJoinListener(this),
             PlayerMoveListener(this),

@@ -9,7 +9,10 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import java.util.logging.Level.SEVERE
 
-class PlayerInteractAtEntityListener(private val plugin: MedievalFactions) : Listener {
+class PlayerInteractAtEntityListener(
+    private val plugin: MedievalFactions,
+    private val entityInteractionProtection: EntityInteractionProtection = EntityInteractionProtection(plugin)
+) : Listener {
 
     @EventHandler
     fun onPlayerInteractAtEntity(event: PlayerInteractAtEntityEvent) {
@@ -30,29 +33,6 @@ class PlayerInteractAtEntityListener(private val plugin: MedievalFactions) : Lis
             return
         }
 
-        val clickedEntity = event.rightClicked
-        val claimService = plugin.services.claimService
-        val claim = claimService.getClaim(clickedEntity.location.chunk)
-        if (claim == null) {
-            if (plugin.config.getBoolean("wilderness.interaction.prevent", false)) {
-                event.isCancelled = true
-                if (plugin.config.getBoolean("wilderness.interaction.alert", true)) {
-                    event.player.sendMessage("$RED${plugin.language["CannotInteractWithEntityInWilderness"]}")
-                }
-            }
-            return
-        }
-
-        val factionService = plugin.services.factionService
-        val claimFaction = factionService.getFaction(claim.factionId) ?: return
-
-        if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
-            if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
-                event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
-            } else {
-                event.isCancelled = true
-                event.player.sendMessage("$RED${plugin.language["CannotInteractWithEntityInFactionTerritory", claimFaction.name]}")
-            }
-        }
+        entityInteractionProtection.protect(event, mfPlayer)
     }
 }
