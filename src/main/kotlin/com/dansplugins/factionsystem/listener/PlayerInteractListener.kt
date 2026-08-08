@@ -56,25 +56,29 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         // deliberately absent, because releasing the item half of a protected interaction for those
         // would let a non-member alter a claim. The list is therefore fail-closed: an item missing from
         // it is merely restricted, never a hole in protection.
-        private val WORLD_NEUTRAL_MATERIALS = setOf(
-            Material.POTION,
-            Material.SPLASH_POTION,
-            Material.LINGERING_POTION,
-            Material.MILK_BUCKET,
-            Material.HONEY_BOTTLE,
-            Material.OMINOUS_BOTTLE,
-            Material.EXPERIENCE_BOTTLE,
-            Material.BOW,
-            Material.CROSSBOW,
-            Material.SNOWBALL,
-            Material.EGG,
-            Material.ENDER_PEARL,
-            Material.FISHING_ROD,
-            Material.TRIDENT,
-            Material.SHIELD,
-            Material.SPYGLASS,
-            Material.GOAT_HORN
-        )
+        private val WORLD_NEUTRAL_MATERIALS: Set<Material> = buildSet {
+            addAll(listOf(
+                Material.POTION,
+                Material.SPLASH_POTION,
+                Material.LINGERING_POTION,
+                Material.MILK_BUCKET,
+                Material.HONEY_BOTTLE,
+                Material.EXPERIENCE_BOTTLE,
+                Material.BOW,
+                Material.CROSSBOW,
+                Material.SNOWBALL,
+                Material.EGG,
+                Material.ENDER_PEARL,
+                Material.FISHING_ROD,
+                Material.TRIDENT,
+                Material.SHIELD,
+                Material.SPYGLASS
+            ))
+            // Added in 1.19+; use name-based lookup so the plugin loads on older servers.
+            Material.getMaterial("OMINOUS_BOTTLE")?.let { add(it) }
+            // Added in 1.19.3+; use name-based lookup for the same reason.
+            Material.getMaterial("GOAT_HORN")?.let { add(it) }
+        }
     }
 
     // Tracks players whose MfPlayer record is currently being created asynchronously, so that
