@@ -328,7 +328,7 @@ class MedievalFactions : JavaPlugin() {
             PlayerInteractListener(this),
             PlayerJoinListener(this),
             PlayerMoveListener(this),
-            PlayerQuitListener(this),
+            PlayerQuitListener(this, entityInteractionProtection),
             PlayerTeleportListener(this),
             PotionSplashListener(this)
         ).forEach { server.pluginManager.registerEvents(it, this) }

@@ -30,6 +30,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import java.util.UUID
@@ -254,6 +255,26 @@ class PlayerInteractEntityListenerTest {
         verify(atEntityEvent).isCancelled = true
         verify(entityEvent).isCancelled = true
         verify(player).sendMessage(any(String::class.java))
+    }
+
+    @Test
+    fun onPlayerInteractEntity_AfterPlayerIsForgotten_ShouldNotifyAgainWithinWindow() {
+        // Arrange - the notification cache is dropped when a player quits, so it cannot grow without
+        // bound. A player who quits and rejoins must still be told why an interaction was refused,
+        // even if their previous notification was only moments ago.
+        val entity = createEntity(EntityType.CHEST_MINECART)
+        setUpClaim(entity, interactionAllowed = false)
+
+        val entityInteractionProtection = EntityInteractionProtection(medievalFactions)
+        val entityListener = PlayerInteractEntityListener(medievalFactions, entityInteractionProtection)
+
+        // Act - two clicks inside the de-duplication window, with the player forgotten in between
+        entityListener.onPlayerInteractEntity(createEvent(entity))
+        entityInteractionProtection.forgetPlayer(player.uniqueId)
+        entityListener.onPlayerInteractEntity(createEvent(entity))
+
+        // Assert - the suppressed second notification is restored by forgetting the player
+        verify(player, times(2)).sendMessage(any(String::class.java))
     }
 
     private fun assertEntityIsProtected(entityType: EntityType) {
