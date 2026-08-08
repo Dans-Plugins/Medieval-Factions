@@ -74,5 +74,8 @@ docker compose up
 
 This will start a Spigot server on your local machine. You can connect to it using the IP `localhost` and the port `25565`.
 
+### Continuous Integration
+Every pull request runs the `build` and `docker-build` checks. If a pull request changes nothing but markdown files, both checks still report, but the Gradle build and the Docker image build are skipped, so documentation changes are not held up by a full build. Any change outside markdown — sources, resources, gradle files, the `Dockerfile`, workflows — triggers the full build as usual.
+
 ## Questions
 If you have any questions about contributing to the project, feel free to ask in the Discord server. You can join the Discord server [here](https://discord.gg/xXtuAQ2). This is the best place to ask questions.

@@ -9,19 +9,77 @@ permissions:
   contents: read
 
 jobs:
+  # Decides whether a pull request touches anything buildable. The build and
+  # docker-build jobs below still run and still report a status either way,
+  # because both are required status checks on main and a check that never
+  # reports leaves a pull request blocked forever. What changes is that their
+  # expensive steps are skipped for documentation-only changes.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      docs_only: ${{ steps.filter.outputs.docs_only }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check whether only documentation changed
+        id: filter
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          # Anything other than a pull request always gets a full build.
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if ! changed=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA"); then
+            # If the diff cannot be resolved, build rather than guess.
+            echo "Could not diff $BASE_SHA..$HEAD_SHA, assuming a full build is needed"
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Changed files:"
+          echo "$changed"
+
+          # A change counts as documentation only if every changed file is a
+          # markdown file or the licence. Everything else - sources, resources,
+          # gradle files, Dockerfile, workflows - forces a full build.
+          if echo "$changed" | grep -qvE '(\.md$|^LICENSE$)'; then
+            echo "docs_only=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "docs_only=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Report decision
+        run: echo "docs_only=${{ steps.filter.outputs.docs_only }}"
+
   build:
     runs-on: ubuntu-latest
+    needs: changes
+    # Runs even if the filter job fails, so the required check always reports.
+    if: always()
 
     steps:
       - uses: actions/checkout@v4
 
+      - name: Skip build for documentation-only changes
+        if: needs.changes.outputs.docs_only == 'true'
+        run: echo "Only documentation changed - nothing to build."
+
       - name: Set up JDK 17
+        if: needs.changes.outputs.docs_only != 'true'
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
       - name: Build Ponder dependency
+        if: needs.changes.outputs.docs_only != 'true'
         run: |
           git clone https://github.com/Dans-Plugins/Ponder.git /tmp/Ponder
           cd /tmp/Ponder
@@ -30,16 +88,26 @@ jobs:
           ./gradlew publishToMavenLocal
 
       - name: Grant execute permission for gradlew
+        if: needs.changes.outputs.docs_only != 'true'
         run: chmod +x gradlew
 
       - name: Build with Gradle
+        if: needs.changes.outputs.docs_only != 'true'
         run: ./gradlew clean build
 
   docker-build:
     runs-on: ubuntu-latest
+    needs: changes
+    # Runs even if the filter job fails, so the required check always reports.
+    if: always()
 
     steps:
       - uses: actions/checkout@v4
 
+      - name: Skip image build for documentation-only changes
+        if: needs.changes.outputs.docs_only == 'true'
+        run: echo "Only documentation changed - nothing to build."
+
       - name: Build Docker image
+        if: needs.changes.outputs.docs_only != 'true'
         run: docker build -t medieval-factions:ci-test .

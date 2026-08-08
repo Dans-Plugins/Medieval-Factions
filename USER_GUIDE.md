@@ -957,6 +957,7 @@ Duels are time-limited and notify nearby players.
 ## Additional Resources
 
 - [Commands Reference](COMMANDS.md) - Complete list of all commands
+- [FAQ](FAQ.md) - Answers to frequently asked questions
 - [Configuration Guide](CONFIG.md) - Server configuration options
 - [Faction Flags](FACTION_FLAGS.md) - Detailed flag documentation
 - [GitHub Repository](https://github.com/Dans-Plugins/Medieval-Factions) - Source code and issues

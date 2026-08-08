@@ -24,6 +24,7 @@ Dynmap has been integrated with this plugin. In order to be able to view claimed
 
 ### Documentation
 - [User Guide](USER_GUIDE.md) - Getting started and common scenarios
+- [FAQ](FAQ.md) - Answers to frequently asked questions
 - [Commands Reference](COMMANDS.md) - Complete list of all commands
 - [Configuration Guide](CONFIG.md) - Detailed config options
 - [Faction Flags](FACTION_FLAGS.md) - Faction flag reference
