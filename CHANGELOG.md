@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+- `FAQ.md`, a committed FAQ document alongside the existing guides. The first section covers disbanding: how self-disband works, and that `/faction disband <faction name>` (permission `mf.disband.others`, default `op`) force-disbands any faction, bypassing both the `DISBAND` role permission check and the last-member-only requirement, with no confirmation prompt. Linked from `README.md` and `USER_GUIDE.md`.
+
 ### Changed
 - `/faction addmember` no longer silently refuses when the target player is already in another faction. It now prompts the admin for confirmation before removing the player from their current faction and adding them to the target; the `-f` flag skips the prompt and moves the player immediately. Both factions are notified of the move.
 
