@@ -33,7 +33,8 @@ You may want to migrate between these backends for various reasons:
 - [ ] Document your current plugin version
 
 ### System Requirements
-- The migration command can run while server is online (but server restart required after migration to switch backends)
+- The target storage must be **empty**. The migration refuses to run into a backend that already holds data, because entity versions in the two backends advance independently and merging them aborts partway.
+- The migration command can technically run while the server is online, but see the warning below — an empty server is strongly preferred
 - Sufficient disk space for both source and target storage
 - Read/write permissions for storage directories
 - Database credentials (if migrating to/from database)
@@ -59,7 +60,8 @@ Medieval Factions now provides a migration command that allows operators to tran
 **Important Notes:**
 - **Always backup your data** before running any migration command
 - The migration runs asynchronously and may take several minutes for large datasets
-- The server does NOT need to be stopped to run the migration
+- The server does not have to be stopped, **but any change a player makes while the migration is running may be lost.** The migration reads each entity type once; anything written to the source after that read is not carried over. Run it with no players online, or stop the server first
+- **The target must be empty.** If it already holds data the migration refuses to start and tells you what it found. To retry a failed migration, clear the target first — a failed run leaves it partially written
 - **Chat message limit**: When migrating to JSON, only the most recent 1000 messages per faction are retained to prevent file bloat. If you have more messages in your database, older messages will not be migrated.
 - After successful migration, you must:
   1. Stop the server

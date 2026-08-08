@@ -49,9 +49,21 @@ class JsonToDatabaseMigrator(
         plugin.logger.info("Starting migration from JSON to database...")
         val startTime = System.currentTimeMillis()
 
-        try {
-            var totalMigrated = 0
+        val existingTargetData = describeExistingTargetData()
+        if (existingTargetData.isNotEmpty()) {
+            val message = "Target storage already contains ${existingTargetData.joinToString(", ")}. " +
+                "Migrating into a non-empty target is not supported. Stop the server, drop or empty the Medieval Factions tables in the target database, then run the migration again."
+            plugin.logger.severe(message)
+            return MigrationResult(
+                success = false,
+                itemsMigrated = 0,
+                durationMs = System.currentTimeMillis() - startTime,
+                message = message
+            )
+        }
 
+        var totalMigrated = 0
+        try {
             // Migrate players
             plugin.logger.info("Migrating players...")
             val players = sourcePlayerRepo.getPlayers()
@@ -191,11 +203,30 @@ class JsonToDatabaseMigrator(
             e.printStackTrace()
             return MigrationResult(
                 success = false,
-                itemsMigrated = 0,
+                itemsMigrated = totalMigrated,
                 durationMs = duration,
-                message = "Migration failed: ${e.message}",
+                message = "Migration failed after migrating $totalMigrated items, so the target is " +
+                    "partially written and must be cleared before retrying: ${e.message}",
                 error = e
             )
         }
+    }
+
+    /**
+     * Names the data already present in the target, so a migration can refuse to run into a non-empty
+     * target rather than merging two data sets. Merging is not a supported operation: entity versions
+     * from the two backends diverge independently, so an upsert of an entity that already exists at a
+     * different version throws and aborts the migration partway, leaving the target half-written.
+     */
+    private fun describeExistingTargetData(): List<String> {
+        val existing = mutableListOf<String>()
+        targetPlayerRepo.getPlayers().size.takeIf { it > 0 }?.let { existing += "$it players" }
+        targetFactionRepo.getFactions().size.takeIf { it > 0 }?.let { existing += "$it factions" }
+        targetRelationshipRepo.getFactionRelationships().size.takeIf { it > 0 }?.let { existing += "$it faction relationships" }
+        targetClaimRepo.getClaims().size.takeIf { it > 0 }?.let { existing += "$it claims" }
+        targetLockRepo.getLockedBlocks().size.takeIf { it > 0 }?.let { existing += "$it locked blocks" }
+        targetGateRepo.getGates().size.takeIf { it > 0 }?.let { existing += "$it gates" }
+        targetDuelRepo.getDuels().size.takeIf { it > 0 }?.let { existing += "$it duels" }
+        return existing
     }
 }

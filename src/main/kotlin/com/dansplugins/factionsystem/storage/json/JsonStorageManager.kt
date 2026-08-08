@@ -13,6 +13,9 @@ import org.json.JSONObject
 import org.json.JSONTokener
 import java.io.File
 import java.io.FileWriter
+import java.nio.file.AtomicMoveNotSupportedException
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.time.Instant
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -121,10 +124,26 @@ class JsonStorageManager(
                     validateJson(jsonContent, schema)
                 }
 
+                // Write to a sibling temporary file and swap it into place, so that a crash, a kill or a
+                // full disk partway through cannot leave a truncated file behind. Opening the real file
+                // for writing truncates it immediately, which would destroy every entity of this type.
                 val file = File(storageDir, fileName)
                 file.parentFile?.mkdirs()
-                FileWriter(file).use { writer ->
+                val tempFile = File(file.parentFile, "$fileName.tmp")
+                FileWriter(tempFile).use { writer ->
                     writer.write(jsonContent)
+                }
+                try {
+                    Files.move(
+                        tempFile.toPath(),
+                        file.toPath(),
+                        StandardCopyOption.REPLACE_EXISTING,
+                        StandardCopyOption.ATOMIC_MOVE
+                    )
+                } catch (e: AtomicMoveNotSupportedException) {
+                    // Some filesystems cannot promise atomicity; a plain replace is still better than
+                    // having truncated the destination up front.
+                    Files.move(tempFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING)
                 }
             } catch (e: ValidationException) {
                 plugin.logger.severe("JSON validation failed for $fileName: ${e.message}")

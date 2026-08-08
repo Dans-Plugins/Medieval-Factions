@@ -550,6 +550,8 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Notes:** 
 - **Always backup your data before migrating!**
 - Migration runs asynchronously and may take several minutes for large datasets
+- The target backend must be empty; the command refuses to migrate into one that already holds data
+- Run it with no players online — changes made during the migration may not be carried over
 - After successful migration, you must:
   1. Stop the server
   2. Update `storage.type` in config.yml to match the new backend
