@@ -78,3 +78,5 @@ an add-on can veto a disband (including a forceful one) if a server needs strict
 - [User Guide](USER_GUIDE.md) - Getting started and common scenarios
 - [Configuration Guide](CONFIG.md) - Server configuration options
 - [Wiki FAQ](https://github.com/Dans-Plugins/Medieval-Factions/wiki/FAQ) - Community-maintained questions
+
+<!-- ci skip-path verification -->
