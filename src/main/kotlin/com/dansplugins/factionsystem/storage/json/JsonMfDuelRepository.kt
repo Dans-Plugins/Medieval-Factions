@@ -6,6 +6,8 @@ import com.dansplugins.factionsystem.duel.MfDuelId
 import com.dansplugins.factionsystem.duel.MfDuelRepository
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import java.time.Instant
 
 class JsonMfDuelRepository(
     private val plugin: MedievalFactions,
@@ -13,7 +15,15 @@ class JsonMfDuelRepository(
 ) : MfDuelRepository {
 
     private val fileName = "duels.json"
-    private val gson: Gson = Gson()
+
+    // MfDuel carries an Instant, which Gson cannot populate reflectively. Writes go through
+    // JsonStorageManager, whose Gson registers this adapter, but reads happen here and must register it
+    // too. Without it every read throws, loadData swallows the failure and reports an empty file, so
+    // stored duels become invisible and the next write overwrites them.
+    private val gson: Gson = GsonBuilder()
+        .setPrettyPrinting()
+        .registerTypeAdapter(Instant::class.java, InstantTypeAdapter())
+        .create()
 
     data class DuelData(
         val duels: MutableList<MfDuel> = mutableListOf()
