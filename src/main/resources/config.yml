@@ -71,6 +71,7 @@ factions:
   zeroPowerFactionsGetDisbanded: false
   vassalPowerContributionMultiplier: 0.75
   nonMembersCanInteractWithDoors: false
+  nonMembersCanInteractWithEntities: false # When true, non-members can right-click entities (minecarts, boats, item frames, animals, armour stands) in faction territory. Villager trading is governed separately by the protectVillagerTrade faction flag.
   maxClaimRadius: 3
   limitLand: true
   contiguousClaims: false
