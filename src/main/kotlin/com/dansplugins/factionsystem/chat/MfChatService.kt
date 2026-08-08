@@ -6,34 +6,23 @@ import com.dansplugins.factionsystem.chat.MfFactionChatChannel.FACTION
 import com.dansplugins.factionsystem.chat.MfFactionChatChannel.VASSALS
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionId
+import com.dansplugins.factionsystem.placeholder.MfPlaceholderApiResolver
+import com.dansplugins.factionsystem.placeholder.MfPlaceholderResolver
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.ALLY
 import net.md_5.bungee.api.ChatColor
 import java.time.Instant
 
-class MfChatService(private val plugin: MedievalFactions, private val repo: MfChatChannelMessageRepository) {
+class MfChatService(
+    private val plugin: MedievalFactions,
+    private val repo: MfChatChannelMessageRepository,
+    private val placeholderResolver: MfPlaceholderResolver = MfPlaceholderApiResolver(plugin)
+) {
 
     fun sendMessage(mfPlayer: MfPlayer, faction: MfFaction, channel: MfFactionChatChannel, message: String) {
-        val bukkitPlayer = mfPlayer.toBukkit()
-        val name = bukkitPlayer.name ?: plugin.language["UnknownPlayer"]
-        val displayName = bukkitPlayer.player?.displayName ?: bukkitPlayer.name ?: plugin.language["UnknownPlayer"]
         val factionService = plugin.services.factionService
         val relationshipService = plugin.services.factionRelationshipService
-        val formattedMessage = (
-            plugin.config.getString("chat.${channel.toString().lowercase()}.format") ?: when (mfPlayer.chatChannel) {
-                FACTION -> "&7[faction] [\${factionColor}\${faction}&7] [\${role}] &f\${displayName}: \${message}"
-                VASSALS -> "&7[vassals] [\${factionColor}\${faction}&7] [\${role}] &f\${displayName}: \${message}"
-                ALLIES -> "&7[allies] [\${factionColor}\${faction}&7] [\${role}] &f\${displayName}: \${message}"
-                null -> ""
-            }
-            )
-            .replace("\${factionColor}", ChatColor.of(faction.flags[plugin.flags.color]).toString())
-            .replace("\${faction}", faction.name)
-            .replace("\${role}", faction.getRole(mfPlayer.id)?.name ?: plugin.language["NoRole"])
-            .replace("\${name}", name)
-            .replace("\${displayName}", displayName)
-            .replace("\${message}", message)
-            .let { ChatColor.translateAlternateColorCodes('&', it) }
+        val formattedMessage = formatMessage(mfPlayer, faction, channel, message)
         val recipients = when (channel) {
             FACTION -> faction.members.mapNotNull { it.playerId.toBukkitPlayer().player }
             VASSALS -> {
@@ -69,6 +58,41 @@ class MfChatService(private val plugin: MedievalFactions, private val repo: MfCh
         // It doesn't automatically give the [MedievalFactions] prefix like with the plugin's logger though
         // If we want to use the plugin's logger we could do something like ChatColor.stripColor.
         plugin.server.consoleSender.sendMessage(formattedMessage)
+    }
+
+    /**
+     * Builds the message that is sent to a chat channel's recipients.
+     *
+     * Medieval Factions' own `${...}` tokens are substituted first, then any placeholders belonging to other plugins
+     * are resolved for the sender, and finally colour codes are translated. Placeholders are resolved before colour
+     * code translation so that colour codes emitted by a placeholder are translated too.
+     *
+     * @param mfPlayer the player sending the message.
+     * @param faction the faction the message is sent from.
+     * @param channel the chat channel the message is sent to.
+     * @param message the message the player typed.
+     * @return the fully formatted message.
+     */
+    fun formatMessage(mfPlayer: MfPlayer, faction: MfFaction, channel: MfFactionChatChannel, message: String): String {
+        val bukkitPlayer = mfPlayer.toBukkit()
+        val name = bukkitPlayer.name ?: plugin.language["UnknownPlayer"]
+        val displayName = bukkitPlayer.player?.displayName ?: bukkitPlayer.name ?: plugin.language["UnknownPlayer"]
+        return (
+            plugin.config.getString("chat.${channel.toString().lowercase()}.format") ?: when (mfPlayer.chatChannel) {
+                FACTION -> "&7[faction] [\${factionColor}\${faction}&7] [\${role}] &f\${displayName}: \${message}"
+                VASSALS -> "&7[vassals] [\${factionColor}\${faction}&7] [\${role}] &f\${displayName}: \${message}"
+                ALLIES -> "&7[allies] [\${factionColor}\${faction}&7] [\${role}] &f\${displayName}: \${message}"
+                null -> ""
+            }
+            )
+            .replace("\${factionColor}", ChatColor.of(faction.flags[plugin.flags.color]).toString())
+            .replace("\${faction}", faction.name)
+            .replace("\${role}", faction.getRole(mfPlayer.id)?.name ?: plugin.language["NoRole"])
+            .replace("\${name}", name)
+            .replace("\${displayName}", displayName)
+            .replace("\${message}", message)
+            .let { placeholderResolver.resolve(bukkitPlayer, it) }
+            .let { ChatColor.translateAlternateColorCodes('&', it) }
     }
 
     @JvmName("getChatChannelMessagesByFactionId")
