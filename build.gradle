@@ -151,6 +151,11 @@ shadowJar {
         include(dependency('com.h2database:h2'))
         include(dependency('com.zaxxer:HikariCP'))
         include(dependency('com.google.code.gson:gson'))
+        // everit's own transitive dependencies (commons-validator, handy-uri-templates) are deliberately
+        // not shaded in: they are only reached by the "format" keyword validators for email/hostname/ip/
+        // uri-template, which the schemas under src/main/resources/schemas do not use. Adding one of those
+        // formats to a schema would fail at runtime with NoClassDefFoundError until the corresponding
+        // dependency is included here.
         include(dependency('com.github.everit-org.json-schema:org.everit.json.schema'))
         include(dependency('org.json:json'))
     }
