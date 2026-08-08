@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - `FAQ.md`, a committed FAQ document alongside the existing guides. The first section covers disbanding: how self-disband works, and that `/faction disband <faction name>` (permission `mf.disband.others`, default `op`) force-disbands any faction, bypassing both the `DISBAND` role permission check and the last-member-only requirement, with no confirmation prompt. Linked from `README.md` and `USER_GUIDE.md`.
+- Chat formats now resolve PlaceholderAPI placeholders belonging to other plugins. A placeholder such as `%someplugin_some_placeholder%` written into `chat.faction.format`, `chat.vassals.format` or `chat.allies.format` is replaced with its value for the player sending the message, rather than being shown verbatim. Placeholders are resolved before colour codes are translated, so a placeholder that emits `&`-codes is coloured as expected. PlaceholderAPI stays optional: when it is not installed, formats behave exactly as before. The default (non-channel) chat format is unchanged, as it is hardcoded and contains no placeholders to resolve.
 
 ### Changed
 - `/faction addmember` no longer silently refuses when the target player is already in another faction. It now prompts the admin for confirmation before removing the player from their current faction and adding them to the target; the `-f` flag skips the prompt and moves the player immediately. Both factions are notified of the move.

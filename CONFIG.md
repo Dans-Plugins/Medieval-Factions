@@ -441,6 +441,9 @@ These settings define the default values for faction flags when a new faction is
 **Default:** `&7[allies] [${factionColor}${faction}&7] [${role}] &f${displayName}: ${message}`  
 **Description:** Format for ally chat messages (chat between allied factions).
 
+### PlaceholderAPI placeholders in chat formats
+When PlaceholderAPI is installed, placeholders provided by any registered expansion (for example `%someplugin_some_placeholder%`) may be used in the chat formats above, alongside the `${...}` variables listed. They are resolved for the player sending the message, before colour codes are translated, so a placeholder that returns `&`-codes is coloured as expected. When PlaceholderAPI is not installed, such text is left exactly as written.
+
 ## Duels
 
 ### `duels.duration`
