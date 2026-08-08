@@ -36,6 +36,7 @@ import com.dansplugins.factionsystem.command.faction.list.MfFactionListCommand
 import com.dansplugins.factionsystem.command.faction.makepeace.MfFactionMakePeaceCommand
 import com.dansplugins.factionsystem.command.faction.map.MfFactionMapCommand
 import com.dansplugins.factionsystem.command.faction.members.MfFactionMembersCommand
+import com.dansplugins.factionsystem.command.faction.migrate.MfFactionMigrateCommand
 import com.dansplugins.factionsystem.command.faction.pendingactions.MfFactionPendingActionsCommand
 import com.dansplugins.factionsystem.command.faction.power.MfFactionPowerCommand
 import com.dansplugins.factionsystem.command.faction.relationship.MfFactionRelationshipCommand
@@ -104,6 +105,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val factionApproveAppCommand = MfFactionApproveAppCommand(plugin)
     private val factionDenyAppCommand = MfFactionDenyAppCommand(plugin)
     private val factionAdminCommand = MfFactionAdminCommand(plugin)
+    private val factionMigrateCommand = MfFactionMigrateCommand(plugin)
     private val factionApproveCommand = MfFactionApproveCommand(plugin)
     private val factionDenyCommand = MfFactionDenyCommand(plugin)
     private val factionPendingActionsCommand = MfFactionPendingActionsCommand(plugin)
@@ -153,6 +155,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val approveAppAliases = listOf("approveapp", plugin.language["CmdFactionApproveApp"])
     private val denyAppAliases = listOf("denyapp", plugin.language["CmdFactionDenyApp"])
     private val adminAliases = listOf("admin", plugin.language["CmdFactionAdmin"])
+    private val migrateAliases = listOf("migrate")
     private val approveAliases = listOf("approve", plugin.language["CmdFactionApprove"])
     private val denyAliases = listOf("deny", plugin.language["CmdFactionDeny"])
     private val pendingActionsAliases = listOf("pendingactions", plugin.language["CmdFactionPendingActions"])
@@ -202,6 +205,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
         approveAppAliases +
         denyAppAliases +
         adminAliases +
+        migrateAliases +
         approveAliases +
         denyAliases +
         pendingActionsAliases
@@ -253,6 +257,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in approveAppAliases -> factionApproveAppCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in denyAppAliases -> factionDenyAppCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in adminAliases -> factionAdminCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in migrateAliases -> factionMigrateCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in approveAliases -> factionApproveCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in denyAliases -> factionDenyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in pendingActionsAliases -> factionPendingActionsCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -320,6 +325,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in approveAppAliases -> factionApproveAppCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in denyAppAliases -> factionDenyAppCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in adminAliases -> factionAdminCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in migrateAliases -> factionMigrateCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in approveAliases -> factionApproveCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in denyAliases -> factionDenyCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in pendingActionsAliases -> factionPendingActionsCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
