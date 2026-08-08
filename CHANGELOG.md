@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- A JSON file storage backend as an alternative to the database, selected with `storage.type: json` in `config.yml`. The default remains `database`, so existing servers are unaffected. Files are written to `storage.json.path`, one per entity type. `players.json` and `factions.json` are validated against a JSON schema on read and write; the other entity files are not yet schema-validated. Intended for smaller servers that want simpler deployment and file-level backups — the database backend remains the better choice under load, since every JSON write rewrites the whole file for that entity type.
+- `/faction migrate toJson` and `/faction migrate toDatabase` (permission `mf.migrate`, default `op`), which copy all data between the two storage backends. The migration runs asynchronously and does not require stopping the server, but `storage.type` must be changed and the server restarted afterwards for the new backend to take effect. When migrating to JSON, only the most recent 1000 chat messages per faction are retained. See `docs/MIGRATION_GUIDE.md`.
 - `FAQ.md`, a committed FAQ document alongside the existing guides. The first section covers disbanding: how self-disband works, and that `/faction disband <faction name>` (permission `mf.disband.others`, default `op`) force-disbands any faction, bypassing both the `DISBAND` role permission check and the last-member-only requirement, with no confirmation prompt. Linked from `README.md` and `USER_GUIDE.md`.
 
 ### Changed
