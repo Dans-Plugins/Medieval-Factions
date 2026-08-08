@@ -54,8 +54,9 @@ All repository interfaces now have JSON-based implementations:
 
 ### 7. Data Validation
 - JSON schemas created for players and factions (`schemas/players.json`, `schemas/factions.json`)
-- Those two files are validated against their schema on every read and write; the remaining entity files
-  have no schema yet and are read and written unvalidated
+- Those two files are validated against their schema before being written, so malformed data is rejected
+  rather than persisted. The remaining entity files have no schema yet, and no file is schema-validated on
+  read (repositories load through `readJsonFileAsString`, which does not validate)
 - Validation failures are logged with the schema location and a pointer to the offending value
 
 ## Key Features
@@ -73,7 +74,7 @@ Jooq repositories persist) and re-attach the plugin reference when reading back.
 - Version numbers give each entity an optimistic-locking check against the current on-disk state
 
 ### Data Integrity
-- Schema validation for the player and faction files (see above)
+- Schema validation on write for the player and faction files (see above)
 - Validation errors include detailed location information
 - A file that fails to parse is copied aside as `<name>.corrupted.backup` rather than being silently
   overwritten with empty data

@@ -101,7 +101,7 @@ When `storage.type` is set to `json`, the following options apply:
 **Important Notes:**
 - Ensure the server has read/write permissions for this directory
 - Regular backups are recommended for JSON storage
-- `players.json` and `factions.json` are validated against a JSON schema on read and write; the other entity files are not yet schema-validated
+- `players.json` and `factions.json` are validated against a JSON schema before being written, so malformed data is rejected rather than persisted. The other entity files have no schema yet, and no file is schema-validated when read back
 - Individual entity types are stored in separate JSON files (players.json, factions.json, etc.)
 
 ### Migrating Between Storage Types
