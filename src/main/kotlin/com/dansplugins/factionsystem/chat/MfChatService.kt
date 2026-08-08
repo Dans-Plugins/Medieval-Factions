@@ -63,9 +63,16 @@ class MfChatService(
     /**
      * Builds the message that is sent to a chat channel's recipients.
      *
-     * Medieval Factions' own `${...}` tokens are substituted first, then any placeholders belonging to other plugins
-     * are resolved for the sender, and finally colour codes are translated. Placeholders are resolved before colour
-     * code translation so that colour codes emitted by a placeholder are translated too.
+     * Placeholders belonging to other plugins are resolved against the raw format template first, then Medieval
+     * Factions' own `${...}` tokens are substituted, and finally colour codes are translated.
+     *
+     * This ordering is a correctness constraint rather than a preference:
+     * - Placeholders are resolved before the `${...}` tokens are substituted so that only the server owner's format
+     *   string is ever passed to the placeholder provider. Were it done afterwards, player-controlled text (the chat
+     *   message itself, or a display name set by a nickname plugin) could smuggle a `%placeholder%` into the string
+     *   and have it expanded against the sender's context.
+     * - Placeholders are resolved before colour codes are translated so that colour codes emitted by a placeholder
+     *   are translated too.
      *
      * @param mfPlayer the player sending the message.
      * @param faction the faction the message is sent from.
@@ -85,13 +92,15 @@ class MfChatService(
                 null -> ""
             }
             )
+            // Resolved against the operator's format template only, before any player-controlled text is substituted
+            // in. Moving this below the replacements would let a player expand placeholders through chat.
+            .let { placeholderResolver.resolve(bukkitPlayer, it) }
             .replace("\${factionColor}", ChatColor.of(faction.flags[plugin.flags.color]).toString())
             .replace("\${faction}", faction.name)
             .replace("\${role}", faction.getRole(mfPlayer.id)?.name ?: plugin.language["NoRole"])
             .replace("\${name}", name)
             .replace("\${displayName}", displayName)
             .replace("\${message}", message)
-            .let { placeholderResolver.resolve(bukkitPlayer, it) }
             .let { ChatColor.translateAlternateColorCodes('&', it) }
     }
 

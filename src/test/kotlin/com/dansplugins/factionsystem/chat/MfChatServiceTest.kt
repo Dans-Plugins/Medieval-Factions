@@ -13,6 +13,7 @@ import net.md_5.bungee.api.ChatColor
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.configuration.file.FileConfiguration
+import org.bukkit.entity.Player
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -75,16 +76,13 @@ class MfChatServiceTest {
     }
 
     @Test
-    fun formatMessage_ShouldPassFactionTokensToThePlaceholderResolverAlreadySubstituted() {
+    fun formatMessage_ShouldPassOnlyTheConfiguredFormatToThePlaceholderResolver() {
         val resolver = RecordingPlaceholderResolver()
         val uut = MfChatService(plugin, repo, resolver)
 
         uut.formatMessage(mfPlayer, faction, MfFactionChatChannel.FACTION, "hello")
 
-        assertEquals(
-            "&7[${ChatColor.of(FACTION_COLOR)}TestFaction&7] [No Role] &f%testplugin_card_name%: hello",
-            resolver.lastText
-        )
+        assertEquals(CHAT_FORMAT, resolver.lastText)
     }
 
     @Test
@@ -108,6 +106,46 @@ class MfChatServiceTest {
 
         assertTrue(result.contains("${ChatColor.AQUA}Bilbo Baggins"), "Expected a translated colour code in: $result")
         assertFalse(result.contains("&b"), "Expected no untranslated colour codes in: $result")
+    }
+
+    @Test
+    fun formatMessage_PlaceholderTypedIntoTheMessage_ShouldNotBeResolved() {
+        val resolver = RecordingPlaceholderResolver { text ->
+            text.replace("%testplugin_card_name%", "Bilbo Baggins")
+        }
+        val uut = MfChatService(plugin, repo, resolver)
+
+        val result = uut.formatMessage(
+            mfPlayer,
+            faction,
+            MfFactionChatChannel.FACTION,
+            "look at this: %testplugin_card_name%"
+        )
+
+        assertTrue(
+            result.endsWith("look at this: %testplugin_card_name%"),
+            "Expected the placeholder typed into the message to be left alone in: $result"
+        )
+    }
+
+    @Test
+    fun formatMessage_PlaceholderInADisplayName_ShouldNotBeResolved() {
+        `when`(config.getString("chat.faction.format")).thenReturn(DISPLAY_NAME_CHAT_FORMAT)
+        val onlinePlayer = mock(Player::class.java)
+        `when`(onlinePlayer.displayName).thenReturn("%testplugin_card_name%")
+        `when`(sender.player).thenReturn(onlinePlayer)
+        val resolver = RecordingPlaceholderResolver { text ->
+            text.replace("%testplugin_card_name%", "Bilbo Baggins")
+        }
+        val uut = MfChatService(plugin, repo, resolver)
+
+        val result = uut.formatMessage(mfPlayer, faction, MfFactionChatChannel.FACTION, "hello")
+
+        assertTrue(
+            result.contains("%testplugin_card_name%"),
+            "Expected the placeholder in the display name to be left alone in: $result"
+        )
+        assertFalse(result.contains("Bilbo Baggins"), "Expected no resolved display name in: $result")
     }
 
     @Test
@@ -142,5 +180,6 @@ class MfChatServiceTest {
     companion object {
         private const val FACTION_COLOR = "#aabbcc"
         private const val CHAT_FORMAT = "&7[\${factionColor}\${faction}&7] [\${role}] &f%testplugin_card_name%: \${message}"
+        private const val DISPLAY_NAME_CHAT_FORMAT = "&7[\${factionColor}\${faction}&7] [\${role}] &f\${displayName}: \${message}"
     }
 }
