@@ -573,14 +573,14 @@ If enemy faction is disbanded or surrenders, war ends automatically.
 
 **Removing a Gate:**
 
-1. **Start gate removal**:
+1. **Stand next to the gate** you want removed, in the same world as it.
+
+2. **Run the command**:
    ```
    /gate remove
    ```
 
-2. **Click on a gate block** within removal distance (default: 12 blocks).
-
-3. **Confirm removal** - The entire gate is removed.
+   Your faction's nearest gate is removed immediately. There is no click step and no confirmation prompt, so make sure you are standing by the right gate before running it. Nothing is removed if the nearest one is further away than the removal distance (default: 12 blocks) or is in another world.
 
 **Cancelling Gate Creation:**
 

@@ -335,9 +335,9 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 
 ### `/gate remove` or `/tor remove`
 **Permission:** `mf.gate` (default: true)  
-**Description:** Removes a gate. Click on a gate block to remove the entire gate.  
+**Description:** Removes your faction's gate nearest to you, in its entirety. There is no click step and no confirmation prompt.  
 **Usage:** `/gate remove`  
-**Notes:** Maximum removal distance: 12 blocks (default, configurable)
+**Notes:** Maximum removal distance: 12 blocks (default, configurable). Gates in other worlds are never candidates, however close their coordinates are.
 
 ### `/gate cancel` or `/tor cancel`
 **Permission:** `mf.gate` (default: true)  
