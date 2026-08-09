@@ -49,14 +49,16 @@ class MfGateRemoveCommand(private val plugin: MedievalFactions) : CommandExecuto
                 val gateService = plugin.services.gateService
                 val existingGates = gateService.getGatesByFaction(faction.id)
                 // We work with squared distances since calculating square root is an expensive call and best avoided where possible.
+                // A gate in a world other than the sender's has a null distance, so it is never picked as the closest one.
                 val gateDistanceSquared = existingGates.associateWith { gate ->
                     MfBlockPosition.fromBukkitLocation(sender.location)?.let { gate.area.distanceSquared(it) }
                 }
                 plugin.logger.log(INFO, gateDistanceSquared.map { (key, value) -> "${key.id.value}: $value" }.joinToString(", ", "{", "}"))
-                val closestGate = gateDistanceSquared.keys.minByOrNull { gateDistanceSquared[it] ?: Int.MAX_VALUE }
+                val closestGate = gateDistanceSquared.keys.minByOrNull { gateDistanceSquared[it] ?: Long.MAX_VALUE }
                 val distanceSquared = gateDistanceSquared[closestGate]
-                val minRemovalDistanceSquared = plugin.config.getInt("gates.maxRemoveDistance") * plugin.config.getInt("gates.maxRemoveDistance")
-                if (closestGate == null || distanceSquared == null || distanceSquared > minRemovalDistanceSquared) {
+                val maxRemoveDistance = plugin.config.getInt("gates.maxRemoveDistance").toLong()
+                val maxRemovalDistanceSquared = maxRemoveDistance * maxRemoveDistance
+                if (closestGate == null || distanceSquared == null || distanceSquared > maxRemovalDistanceSquared) {
                     sender.sendMessage("$RED${plugin.language["CommandGateRemoveFailedToFindGate"]}")
                     return@Runnable
                 }
