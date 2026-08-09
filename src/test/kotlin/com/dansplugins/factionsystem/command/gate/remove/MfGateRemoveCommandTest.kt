@@ -93,7 +93,7 @@ class MfGateRemoveCommandTest {
         val nearGate = gateAt(worldId, 3, 64, 0)
         val farGate = gateAt(worldId, 9, 64, 0)
         stubFactionGates(farGate, nearGate)
-        `when`(gateService.delete(nearGate.id)).thenReturn(Success(Unit))
+        stubDeletionOf(nearGate, farGate)
         `when`(language["CommandGateRemoveSuccess"]).thenReturn("Gate removed")
 
         // execute
@@ -119,7 +119,7 @@ class MfGateRemoveCommandTest {
         val netherGate = gateAt(netherId, 100, 64, 100)
         val overworldGate = gateAt(overworldId, 100, 64, 100)
         stubFactionGates(netherGate, overworldGate)
-        `when`(gateService.delete(overworldGate.id)).thenReturn(Success(Unit))
+        stubDeletionOf(overworldGate, netherGate)
         `when`(language["CommandGateRemoveSuccess"]).thenReturn("Gate removed")
 
         // execute
@@ -143,6 +143,7 @@ class MfGateRemoveCommandTest {
         stubSenderLocation(player, overworldId, 100, 64, 100)
         val netherGate = gateAt(netherId, 100, 64, 100)
         stubFactionGates(netherGate)
+        stubDeletionOf(netherGate)
         `when`(language["CommandGateRemoveFailedToFindGate"]).thenReturn("No gate found")
 
         // execute
@@ -165,6 +166,7 @@ class MfGateRemoveCommandTest {
         stubSenderLocation(player, worldId, 0, 64, 0)
         val distantGate = gateAt(worldId, 60000, 64, 0)
         stubFactionGates(distantGate)
+        stubDeletionOf(distantGate)
         `when`(language["CommandGateRemoveFailedToFindGate"]).thenReturn("No gate found")
 
         // execute
@@ -193,6 +195,15 @@ class MfGateRemoveCommandTest {
 
     private fun stubFactionGates(vararg gates: MfGate) {
         `when`(gateService.getGatesByFaction(faction.id)).thenReturn(gates.toList())
+    }
+
+    /**
+     * Stubs deletion of every gate a test knows about, including the ones it expects to be left alone. A gate the
+     * command was never meant to touch is therefore reported by the `never()` verification rather than by an
+     * exception on an unstubbed call, which keeps the failure legible if this protection ever regresses.
+     */
+    private fun stubDeletionOf(vararg gates: MfGate) {
+        gates.forEach { gate -> `when`(gateService.delete(gate.id)).thenReturn(Success(Unit)) }
     }
 
     private fun stubMembershipOf(player: Player) {
