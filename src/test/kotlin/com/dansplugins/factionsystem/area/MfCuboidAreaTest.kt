@@ -6,6 +6,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class MfCuboidAreaTest {
@@ -231,9 +232,9 @@ class MfCuboidAreaTest {
         val area = MfCuboidArea(position(0, 64, 0), position(4, 70, 8))
 
         // execute / verify
-        assertEquals(0, area.distanceSquared(position(2, 67, 4)))
-        assertEquals(0, area.distanceSquared(position(0, 64, 0)))
-        assertEquals(0, area.distanceSquared(position(4, 70, 8)))
+        assertEquals(0L, area.distanceSquared(position(2, 67, 4)))
+        assertEquals(0L, area.distanceSquared(position(0, 64, 0)))
+        assertEquals(0L, area.distanceSquared(position(4, 70, 8)))
     }
 
     @Test
@@ -242,9 +243,9 @@ class MfCuboidAreaTest {
         val area = MfCuboidArea(position(0, 64, 0), position(4, 70, 8))
 
         // execute / verify - three blocks beyond the maximum x bound, aligned on the other axes
-        assertEquals(9, area.distanceSquared(position(7, 67, 4)))
+        assertEquals(9L, area.distanceSquared(position(7, 67, 4)))
         // two blocks below the minimum y bound
-        assertEquals(4, area.distanceSquared(position(2, 62, 4)))
+        assertEquals(4L, area.distanceSquared(position(2, 62, 4)))
     }
 
     @Test
@@ -256,34 +257,30 @@ class MfCuboidAreaTest {
         val distanceSquared = area.distanceSquared(position(-1, 62, -3))
 
         // verify
-        assertEquals(1 + 4 + 9, distanceSquared)
+        assertEquals(1L + 4L + 9L, distanceSquared)
     }
 
     @Test
-    fun testDistanceSquaredIgnoresTheWorldOfTheGivenPosition() {
-        // prepare - distanceSquared does not compare worlds, unlike contains.
-        // See https://github.com/Dans-Plugins/Medieval-Factions/issues/1993 - this test characterizes
-        // the current behaviour rather than endorsing it.
+    fun testDistanceSquaredIsNullForAPositionInAnotherWorld() {
+        // prepare - the coordinates are inside the area, but the world is not the area's world
         val area = MfCuboidArea(position(0, 64, 0), position(4, 70, 8))
         val otherWorldPosition = position(2, 67, 4, UUID.randomUUID())
 
-        // execute / verify
-        assertEquals(0, area.distanceSquared(otherWorldPosition))
+        // execute / verify - no distance is comparable across worlds, matching contains
+        assertNull(area.distanceSquared(otherWorldPosition))
     }
 
     @Test
-    fun testDistanceSquaredOverflowsForVeryDistantPositions() {
-        // prepare - the return type is Int, so squared distances beyond Int.MAX_VALUE wrap around.
-        // See https://github.com/Dans-Plugins/Medieval-Factions/issues/1991 - this test characterizes
-        // the current behaviour rather than endorsing it.
+    fun testDistanceSquaredDoesNotOverflowForVeryDistantPositions() {
+        // prepare - 60000 blocks away on a single axis squares to more than Int.MAX_VALUE
         val area = MfCuboidArea(position(60000, 64, 0), position(60000, 64, 0))
 
         // execute
         val distanceSquared = area.distanceSquared(position(0, 64, 0))
 
-        // verify - 60000 * 60000 is 3,600,000,000, which wraps to a negative Int
-        assertEquals(-694967296, distanceSquared)
-        assertTrue(distanceSquared < 0)
+        // verify - 60000 * 60000 is 3,600,000,000, which is held exactly by a Long
+        assertEquals(3_600_000_000L, distanceSquared)
+        assertTrue(distanceSquared!! > 0)
     }
 
     @Test
