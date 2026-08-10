@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- A rolling `dev` prerelease, rebuilt and republished automatically on every push to `main` that touches something other than documentation. It carries the shadow JAR built from the current `main`, so unreleased changes can be picked up without waiting for a release. It is installable with Dan's Plugin Manager via `/dpm get medievalfactions --experimental`, and `/dpm get medievalfactions --stable` returns to published releases. Dev builds are unreleased, unreviewed code and are not suitable for a server that matters.
 - `FAQ.md`, a committed FAQ document alongside the existing guides. The first section covers disbanding: how self-disband works, and that `/faction disband <faction name>` (permission `mf.disband.others`, default `op`) force-disbands any faction, bypassing both the `DISBAND` role permission check and the last-member-only requirement, with no confirmation prompt. Linked from `README.md` and `USER_GUIDE.md`.
 
 ### Changed
