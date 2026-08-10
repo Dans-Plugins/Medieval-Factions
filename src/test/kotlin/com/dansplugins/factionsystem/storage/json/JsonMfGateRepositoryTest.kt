@@ -126,4 +126,18 @@ class JsonMfGateRepositoryTest {
 
         assertTrue(repository.getGates().isEmpty())
     }
+
+    @Test
+    fun `skips gates referencing an unknown status instead of failing the whole read`() {
+        val survivor = MfGateId.generate()
+        repository.upsert(gate(status = MfGateStatus.CLOSED))
+        repository.upsert(gate(id = survivor, status = MfGateStatus.OPEN))
+
+        val file = File(tempDir.toFile(), "gates.json")
+        file.writeText(file.readText().replace("\"CLOSED\"", "\"NOT_A_REAL_STATUS\""))
+
+        // Only the unreadable gate is dropped; the rest of the file still loads.
+        assertEquals(survivor, repository.getGates().single().id)
+        assertEquals(MfGateStatus.OPEN, repository.getGate(survivor)?.status)
+    }
 }
