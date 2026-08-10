@@ -54,6 +54,7 @@ dependencies {
     implementation 'com.h2database:h2:2.1.214'
     implementation 'com.zaxxer:HikariCP:5.0.1'
     implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.github.everit-org.json-schema:org.everit.json.schema:1.14.2' // JSON schema validation
     implementation 'org.slf4j:slf4j-api:1.8.0-beta4'
     implementation 'com.github.Dans-Plugins:Mailboxes:v1.1'
     implementation 'com.rpkit:rpk-core-bukkit:2.3.2:all'
@@ -155,6 +156,13 @@ shadowJar {
         include(dependency('com.h2database:h2'))
         include(dependency('com.zaxxer:HikariCP'))
         include(dependency('com.google.code.gson:gson'))
+        // everit's own transitive dependencies (commons-validator, handy-uri-templates) are deliberately
+        // not shaded in: they are only reached by the "format" keyword validators for email/hostname/ip/
+        // uri-template, which the schemas under src/main/resources/schemas do not use. Adding one of those
+        // formats to a schema would fail at runtime with NoClassDefFoundError until the corresponding
+        // dependency is included here.
+        include(dependency('com.github.everit-org.json-schema:org.everit.json.schema'))
+        include(dependency('org.json:json'))
     }
 
     relocate 'com.google', 'com.dansplugins.factionsystem.shadow.com.google'
@@ -173,6 +181,8 @@ shadowJar {
     relocate 'org.jetbrains', 'com.dansplugins.factionsystem.shadow.org.jetbrains'
     relocate 'org.jooq', 'com.dansplugins.factionsystem.shadow.org.jooq'
     relocate 'org.reactivestreams', 'com.dansplugins.factionsystem.shadow.org.reactivestreams'
+    relocate 'org.everit', 'com.dansplugins.factionsystem.shadow.org.everit'
+    relocate 'org.json', 'com.dansplugins.factionsystem.shadow.org.json'
 }
 
 artifacts {
