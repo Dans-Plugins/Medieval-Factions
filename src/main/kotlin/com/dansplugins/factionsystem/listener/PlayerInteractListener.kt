@@ -57,23 +57,25 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         // would let a non-member alter a claim. The list is therefore fail-closed: an item missing from
         // it is merely restricted, never a hole in protection.
         private val WORLD_NEUTRAL_MATERIALS: Set<Material> = buildSet {
-            addAll(listOf(
-                Material.POTION,
-                Material.SPLASH_POTION,
-                Material.LINGERING_POTION,
-                Material.MILK_BUCKET,
-                Material.HONEY_BOTTLE,
-                Material.EXPERIENCE_BOTTLE,
-                Material.BOW,
-                Material.CROSSBOW,
-                Material.SNOWBALL,
-                Material.EGG,
-                Material.ENDER_PEARL,
-                Material.FISHING_ROD,
-                Material.TRIDENT,
-                Material.SHIELD,
-                Material.SPYGLASS
-            ))
+            addAll(
+                listOf(
+                    Material.POTION,
+                    Material.SPLASH_POTION,
+                    Material.LINGERING_POTION,
+                    Material.MILK_BUCKET,
+                    Material.HONEY_BOTTLE,
+                    Material.EXPERIENCE_BOTTLE,
+                    Material.BOW,
+                    Material.CROSSBOW,
+                    Material.SNOWBALL,
+                    Material.EGG,
+                    Material.ENDER_PEARL,
+                    Material.FISHING_ROD,
+                    Material.TRIDENT,
+                    Material.SHIELD,
+                    Material.SPYGLASS
+                )
+            )
             // Added in 1.19+; use name-based lookup so the plugin loads on older servers.
             Material.getMaterial("OMINOUS_BOTTLE")?.let { add(it) }
             // Added in 1.19.3+; use name-based lookup for the same reason.
