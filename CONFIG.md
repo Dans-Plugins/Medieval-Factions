@@ -181,12 +181,12 @@ Controls behavior and alerts in unclaimed wilderness areas.
 ### `wilderness.interaction.prevent`
 **Type:** Boolean  
 **Default:** `false`  
-**Description:** When `true`, prevents block interactions (buttons, levers, etc.) in wilderness. Eating and drinking are exempt: right-clicking a block that does not itself respond to a right-click while holding food, a potion, a milk bucket or a honey bottle consumes the item as normal.
+**Description:** When `true`, prevents block interactions (buttons, levers, etc.) in wilderness. Only the block half of the interaction is refused when the held item cannot act on a block: eating, drinking, drawing a bow or a crossbow, throwing a snowball, an egg, an ender pearl, a trident or a potion, casting a fishing rod, raising a shield and using a spyglass or a goat horn all still work while looking at a block. Items that do act on the clicked block — a bucket, flint and steel, a hoe, an axe, a shovel, bone meal, an eye of ender, a firework rocket, a wind charge, or anything placeable — are refused outright, as are left-clicks and physical interactions.
 
 ### `wilderness.interaction.alert`
 **Type:** Boolean  
 **Default:** `false`  
-**Description:** When `true`, sends an alert message when players interact with blocks in wilderness. No alert is sent for physical interactions (stepping on a pressure plate or tripwire, trampling farmland), which repeat every tick and would flood chat; the interaction is still prevented.
+**Description:** When `true`, sends an alert message when players interact with blocks in wilderness. No alert is sent for physical interactions (stepping on a pressure plate or tripwire, trampling farmland), which repeat every tick and would flood chat, nor when only the block half of the interaction was refused (see `wilderness.interaction.prevent`), because the player was using the held item rather than the block; the interaction is still prevented in both cases.
 
 ### `wilderness.place.prevent`
 **Type:** Boolean  

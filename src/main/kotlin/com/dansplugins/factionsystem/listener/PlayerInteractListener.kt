@@ -33,6 +33,7 @@ import org.bukkit.block.data.Bisected.Half.BOTTOM
 import org.bukkit.block.data.type.Door
 import org.bukkit.block.data.type.TrapDoor
 import org.bukkit.entity.Player
+import org.bukkit.event.Event.Result.DENY
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action.LEFT_CLICK_BLOCK
@@ -47,8 +48,39 @@ import org.bukkit.block.data.type.Gate as FenceGateData
 class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
 
     private companion object {
-        // Drinkable items that Material.isEdible does not report as edible.
-        private val DRINKABLE_MATERIALS = setOf(Material.POTION, Material.MILK_BUCKET, Material.HONEY_BOTTLE)
+        // Hand-used items whose right-click use acts on the player rather than on the world - drinking,
+        // throwing, drawing or raising - and which therefore have no block-targeted behaviour at all.
+        // Material.isEdible already covers food, so only the non-edible cases are listed here.
+        // Items that do act on the clicked block (a bucket, flint and steel, a hoe, an axe, a shovel,
+        // bone meal, an eye of ender, a firework rocket, a wind charge, anything placeable) are
+        // deliberately absent, because releasing the item half of a protected interaction for those
+        // would let a non-member alter a claim. The list is therefore fail-closed: an item missing from
+        // it is merely restricted, never a hole in protection.
+        private val WORLD_NEUTRAL_MATERIALS: Set<Material> = buildSet {
+            addAll(
+                listOf(
+                    Material.POTION,
+                    Material.SPLASH_POTION,
+                    Material.LINGERING_POTION,
+                    Material.MILK_BUCKET,
+                    Material.HONEY_BOTTLE,
+                    Material.EXPERIENCE_BOTTLE,
+                    Material.BOW,
+                    Material.CROSSBOW,
+                    Material.SNOWBALL,
+                    Material.EGG,
+                    Material.ENDER_PEARL,
+                    Material.FISHING_ROD,
+                    Material.TRIDENT,
+                    Material.SHIELD,
+                    Material.SPYGLASS
+                )
+            )
+            // Added in 1.19+; use name-based lookup so the plugin loads on older servers.
+            Material.getMaterial("OMINOUS_BOTTLE")?.let { add(it) }
+            // Added in 1.19.3+; use name-based lookup for the same reason.
+            Material.getMaterial("GOAT_HORN")?.let { add(it) }
+        }
     }
 
     // Tracks players whose MfPlayer record is currently being created asynchronously, so that
@@ -184,7 +216,11 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                         )
                     }
                 } else {
-                    if (!suppressProtectionMessages) {
+                    // A lock is a separate protection mechanism from territory, but the two-result
+                    // distinction applies to it identically: the locked block must stay shut, while an
+                    // item that cannot act on it has no reason to be suppressed.
+                    val deniedInFull = denyInteraction(event)
+                    if (deniedInFull && !suppressProtectionMessages) {
                         plugin.server.scheduler.runTaskAsynchronously(
                             plugin,
                             Runnable {
@@ -193,7 +229,6 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                             }
                         )
                     }
-                    event.isCancelled = true
                 }
                 return
             } else {
@@ -208,19 +243,15 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
             }
         }
 
-        // Eating or drinking cannot modify the world, so protection must never cancel it - see #1747.
-        // Checked ahead of the territory rules so it holds in wilderness as well as in a claim.
-        if (isConsumingItem(event, clickedBlock)) {
-            return
-        }
-
         // Apply territory protection
         val claim = claimService.getClaim(clickedBlock.chunk)
 
         if (claim == null) {
             if (plugin.config.getBoolean("wilderness.interaction.prevent", false)) {
-                event.isCancelled = true
-                if (plugin.config.getBoolean("wilderness.interaction.alert", true) && !suppressProtectionMessages) {
+                // The option protects blocks, not the player's own food, so denyInteraction keeps
+                // eating and drinking working here exactly as it does inside a claim - see #1747.
+                val deniedInFull = denyInteraction(event)
+                if (deniedInFull && plugin.config.getBoolean("wilderness.interaction.alert", true) && !suppressProtectionMessages) {
                     event.player.sendMessage("$RED${plugin.language["CannotInteractBlockInWilderness"]}")
                 }
             }
@@ -253,8 +284,8 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                 if (isWartimeActionAllowed(event, clickedBlock, mfPlayer, claim)) {
                     return
                 }
-                event.isCancelled = true
-                if (!suppressProtectionMessages) {
+                val deniedInFull = denyInteraction(event)
+                if (deniedInFull && !suppressProtectionMessages) {
                     event.player.sendMessage("$RED${plugin.language["CannotInteractWithBlockInFactionTerritory", claimFaction.name]}")
                 }
             }
@@ -265,31 +296,51 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
      * Named predicate for "interactive block" (chest, lever, door, etc. - anything that responds
      * to a right-click independently of what the player is holding). Kept as a thin wrapper around
      * Bukkit's [Material.isInteractable] - already the definition used elsewhere in this listener
-     * (the consumable-item and ladder-placement checks above) - so the definition lives in one named
-     * place per #1970, rather than being re-derived inline at each call site.
+     * (the ladder-placement and wartime checks) - so the definition lives in one named place per
+     * #1970, rather than being re-derived inline at each call site.
      */
     private fun isInteractiveBlock(material: Material): Boolean = material.isInteractable
 
     /**
-     * Named predicate for "consumable item" - one whose right-click use is eating or drinking, so it
-     * cannot place, break or otherwise alter a block. Bukkit's [Material.isEdible] only covers food,
-     * so the drinkables it omits are listed explicitly. Splash and lingering potions are deliberately
-     * excluded: those are thrown rather than drunk.
+     * True when this interaction is the player using what they are holding on themselves - eating,
+     * drinking, throwing, drawing a bow, raising a shield - rather than acting on the block. The
+     * action type is checked first and strictly: a left-click never uses an item this way, and a
+     * physical interaction has no item at all, so neither may be exempted. See [WORLD_NEUTRAL_MATERIALS]
+     * for why the set of materials is a fail-closed allowance rather than a list of what to block.
      */
-    private fun isConsumableItem(material: Material): Boolean = material.isEdible || material in DRINKABLE_MATERIALS
-
-    /**
-     * True when this interaction is the player consuming what they are holding rather than acting on
-     * the block: a right-click, with a consumable in hand, against a block that does not respond to
-     * right-clicks. Protection must not cancel these, or the player is unable to eat or drink while
-     * looking at a protected block (#1747). The action type is checked first and strictly - a
-     * left-click never consumes an item, so holding food must not exempt one - and the block must be
-     * non-interactive, so holding food cannot be used to reach a chest or a lever.
-     */
-    private fun isConsumingItem(event: PlayerInteractEvent, clickedBlock: Block): Boolean {
+    private fun isWorldNeutralItemUse(event: PlayerInteractEvent): Boolean {
         if (event.action != RIGHT_CLICK_BLOCK) return false
         val item = event.item ?: return false
-        return isConsumableItem(item.type) && !isInteractiveBlock(clickedBlock.type)
+        return item.type.isEdible || item.type in WORLD_NEUTRAL_MATERIALS
+    }
+
+    /**
+     * Refuses a protected interaction, and reports whether it was refused in full.
+     *
+     * A [PlayerInteractEvent] carries two independent results - the interacted block and the item in
+     * hand - and `isCancelled = true` denies both at once. Denying the item in hand also suppresses
+     * the follow-up use-item packet the client sends when a block-targeted use does nothing, which is
+     * why cancelling outright stopped a player eating, drinking, shooting a bow, throwing a snowball
+     * or an ender pearl, casting a fishing rod or throwing a trident while merely looking at a
+     * protected block (#1747, #1995).
+     *
+     * So when the held item cannot act on the block, only the block result is denied and the item is
+     * left to run. Everything else - every left-click, every physical interaction, and every
+     * right-click with an item that could place, break or alter a block - is still cancelled in full,
+     * because a left-click and a physical interaction are gated on `isCancelled` alone, and because
+     * an item's block-targeted use is gated on the item result rather than the block result.
+     *
+     * @return true when both results were denied, false when only the block was protected. The
+     *         protection message is sent only in the former case: the player who was eating never
+     *         attempted to use the block, and #1747's per-interaction chat noise must not return.
+     */
+    private fun denyInteraction(event: PlayerInteractEvent): Boolean {
+        if (isWorldNeutralItemUse(event)) {
+            event.setUseInteractedBlock(DENY)
+            return false
+        }
+        event.isCancelled = true
+        return true
     }
 
     /**

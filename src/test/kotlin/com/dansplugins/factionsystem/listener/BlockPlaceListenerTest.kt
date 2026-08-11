@@ -22,6 +22,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockPlaceEvent
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
@@ -146,6 +147,44 @@ class BlockPlaceListenerTest {
         verify(event, never()).isCancelled = true
     }
 
+    @Test
+    fun onBlockPlace_Claimed_InteractionNotAllowed_ShouldCancelAndInformPlayer() {
+        // Placement protection is enforced here rather than by PlayerInteractListener, which no longer
+        // cancels a protected right-click in full for every item (#1995). A block item is never
+        // released by that listener either, so this check is the second of two independent refusals.
+        // Arrange
+        val block = fixture.block
+        val player = fixture.player
+        val event = fixture.event
+
+        val playerId = UUID.randomUUID()
+        `when`(player.uniqueId).thenReturn(playerId)
+
+        val claimFactionId = MfFactionId("claim-faction")
+        val claim = mock(MfClaimedChunk::class.java)
+        `when`(claim.factionId).thenReturn(claimFactionId)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
+
+        val claimFaction = mock(MfFaction::class.java)
+        `when`(claimFaction.id).thenReturn(claimFactionId)
+        `when`(claimFaction.name).thenReturn("Enemy Faction")
+        `when`(factionService.getFaction(claimFactionId)).thenReturn(claimFaction)
+
+        val mfPlayer = mock(MfPlayer::class.java)
+        val mfPlayerId = MfPlayerId(playerId.toString())
+        `when`(mfPlayer.id).thenReturn(mfPlayerId)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+
+        `when`(claimService.isInteractionAllowed(mfPlayerId, claim)).thenReturn(false)
+
+        // Act
+        uut.onBlockPlace(event)
+
+        // Assert
+        verify(event).isCancelled = true
+        verify(player).sendMessage("${ChatColor.RED}Cannot place block in faction territory")
+    }
+
     // Helper functions
 
     private fun createBasicFixture(): BlockPlaceListenerTestFixture {
@@ -183,6 +222,8 @@ class BlockPlaceListenerTest {
         val language = mock(Language::class.java)
         `when`(language["CannotPlaceBlockInGate"]).thenReturn("Cannot place block in gate")
         `when`(language["CannotPlaceBlockInWilderness"]).thenReturn("Cannot place block in wilderness")
+        // Matches the single-parameter lookups, i.e. CannotPlaceBlockInFactionTerritory(factionName)
+        `when`(language.get(anyString(), anyString())).thenReturn("Cannot place block in faction territory")
         `when`(medievalFactions.language).thenReturn(language)
     }
 }

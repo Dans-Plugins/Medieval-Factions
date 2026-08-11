@@ -27,6 +27,7 @@ import org.bukkit.block.data.type.Door
 import org.bukkit.block.data.type.TrapDoor
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
+import org.bukkit.event.Event
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
@@ -1091,18 +1092,20 @@ class PlayerInteractListenerTest {
         verifyPlayerNotified()
     }
 
-    // --- Consuming an item (eating/drinking) tests, see #1747 ---
+    // --- Hand-used items in protected territory, see #1747 and #1995 ---
 
     @Test
     fun onPlayerInteract_EdibleItem_RightClickNonInteractiveBlockInEnemyTerritory_ShouldAllowEating() {
         // Arrange
-        setupConsumingItemTestInEnemyTerritory(mockEdibleMaterial())
+        setupItemUseTestInEnemyTerritory(mockEdibleMaterial())
 
         // Act
         uut.onPlayerInteract(fixture.event)
 
         // Assert - the player is eating, not acting on the block, so protection must not cancel it
         verifyEventNotCancelled()
+        verifyBlockUseDenied()
+        verifyItemUseNotDenied()
         verifyPlayerNotNotified()
     }
 
@@ -1111,48 +1114,173 @@ class PlayerInteractListenerTest {
         // Material.isEdible is false for potions, so drinking was still being cancelled after the
         // original food fix.
         // Arrange
-        setupConsumingItemTestInEnemyTerritory(Material.POTION)
+        setupItemUseTestInEnemyTerritory(Material.POTION)
 
         // Act
         uut.onPlayerInteract(fixture.event)
 
         // Assert
         verifyEventNotCancelled()
+        verifyItemUseNotDenied()
         verifyPlayerNotNotified()
     }
 
     @Test
     fun onPlayerInteract_MilkBucketInHand_RightClickNonInteractiveBlockInEnemyTerritory_ShouldAllowDrinking() {
         // Arrange
-        setupConsumingItemTestInEnemyTerritory(Material.MILK_BUCKET)
+        setupItemUseTestInEnemyTerritory(Material.MILK_BUCKET)
 
         // Act
         uut.onPlayerInteract(fixture.event)
 
         // Assert
         verifyEventNotCancelled()
+        verifyItemUseNotDenied()
         verifyPlayerNotNotified()
     }
 
     @Test
-    fun onPlayerInteract_EdibleItem_RightClickInteractiveBlockInEnemyTerritory_ShouldBlockInteraction() {
-        // Holding food must not become a way to reach a chest or a lever in enemy territory.
+    fun onPlayerInteract_BowInHand_RightClickNonInteractiveBlockInEnemyTerritory_ShouldAllowDrawing() {
+        // #1995: a bow is not edible, so the material whitelist left it cancelled outright, which also
+        // suppressed the use-item packet that draws it.
         // Arrange
-        setupConsumingItemTestInEnemyTerritory(mockEdibleMaterial(), blockIsInteractable = true)
+        setupItemUseTestInEnemyTerritory(Material.BOW)
 
         // Act
         uut.onPlayerInteract(fixture.event)
 
         // Assert
-        verifyEventCancelled()
-        verifyPlayerNotified()
+        verifyEventNotCancelled()
+        verifyItemUseNotDenied()
+        verifyPlayerNotNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_SnowballInHand_RightClickNonInteractiveBlockInEnemyTerritory_ShouldAllowThrowing() {
+        // Arrange
+        setupItemUseTestInEnemyTerritory(Material.SNOWBALL)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyEventNotCancelled()
+        verifyItemUseNotDenied()
+        verifyPlayerNotNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_EnderPearlInHand_RightClickNonInteractiveBlockInEnemyTerritory_ShouldAllowThrowing() {
+        // Arrange
+        setupItemUseTestInEnemyTerritory(Material.ENDER_PEARL)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyEventNotCancelled()
+        verifyItemUseNotDenied()
+        verifyPlayerNotNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_EggInHand_RightClickNonInteractiveBlockInEnemyTerritory_ShouldAllowThrowing() {
+        // Arrange
+        setupItemUseTestInEnemyTerritory(Material.EGG)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyEventNotCancelled()
+        verifyItemUseNotDenied()
+        verifyPlayerNotNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_FishingRodInHand_RightClickNonInteractiveBlockInEnemyTerritory_ShouldAllowCasting() {
+        // Arrange
+        setupItemUseTestInEnemyTerritory(Material.FISHING_ROD)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyEventNotCancelled()
+        verifyItemUseNotDenied()
+        verifyPlayerNotNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_TridentInHand_RightClickNonInteractiveBlockInEnemyTerritory_ShouldAllowThrowing() {
+        // Arrange
+        setupItemUseTestInEnemyTerritory(Material.TRIDENT)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyEventNotCancelled()
+        verifyItemUseNotDenied()
+        verifyPlayerNotNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_SplashPotionInHand_RightClickNonInteractiveBlockInEnemyTerritory_ShouldAllowThrowing() {
+        // A splash potion is thrown rather than drunk, so it was excluded from the consumable
+        // whitelist. Throwing it still cannot alter a block, and the harm it can do is protected
+        // against by PotionSplashListener and AreaEffectCloudApplyListener, so it is released too.
+        // Arrange
+        setupItemUseTestInEnemyTerritory(Material.SPLASH_POTION)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyEventNotCancelled()
+        verifyItemUseNotDenied()
+        verifyPlayerNotNotified()
+    }
+
+    // --- Invariants that must survive the two-result change, see #1995 ---
+
+    @Test
+    fun onPlayerInteract_EdibleItem_RightClickInteractiveBlockInEnemyTerritory_ShouldDenyBlockUseButAllowEating() {
+        // Holding food must not become a way to reach a chest or a lever in enemy territory. The block
+        // half is what protects the chest, so it is denied; eating is unrelated to it and runs.
+        // Arrange
+        setupItemUseTestInEnemyTerritory(mockEdibleMaterial(), blockIsInteractable = true)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyBlockUseDenied()
+        verifyItemUseNotDenied()
+        verifyEventNotCancelled()
+    }
+
+    @Test
+    fun onPlayerInteract_BowInHand_RightClickInteractiveBlockInEnemyTerritory_ShouldDenyBlockUse() {
+        // The same holds for every other hand-used item: a chest, lever, door, button or cauldron is
+        // protected by the block half regardless of what is being held.
+        // Arrange
+        setupItemUseTestInEnemyTerritory(Material.BOW, blockIsInteractable = true)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyBlockUseDenied()
+        verifyItemUseNotDenied()
     }
 
     @Test
     fun onPlayerInteract_EdibleItem_LeftClickBlockInEnemyTerritory_ShouldBlockInteraction() {
-        // A left-click never consumes an item, so holding food must not exempt one.
+        // A left-click never consumes an item, so holding food must not exempt one. It must still be
+        // cancelled outright rather than block-denied: a block-break attempt is gated on isCancelled.
         // Arrange
-        setupConsumingItemTestInEnemyTerritory(mockEdibleMaterial(), action = Action.LEFT_CLICK_BLOCK)
+        setupItemUseTestInEnemyTerritory(mockEdibleMaterial(), action = Action.LEFT_CLICK_BLOCK)
 
         // Act
         uut.onPlayerInteract(fixture.event)
@@ -1163,10 +1291,9 @@ class PlayerInteractListenerTest {
     }
 
     @Test
-    fun onPlayerInteract_SplashPotionInHand_RightClickNonInteractiveBlockInEnemyTerritory_ShouldBlockInteraction() {
-        // Splash potions are thrown rather than drunk, so they are not treated as consumed.
+    fun onPlayerInteract_BowInHand_LeftClickBlockInEnemyTerritory_ShouldBlockInteraction() {
         // Arrange
-        setupConsumingItemTestInEnemyTerritory(Material.SPLASH_POTION)
+        setupItemUseTestInEnemyTerritory(Material.BOW, action = Action.LEFT_CLICK_BLOCK)
 
         // Act
         uut.onPlayerInteract(fixture.event)
@@ -1174,6 +1301,113 @@ class PlayerInteractListenerTest {
         // Assert
         verifyEventCancelled()
         verifyPlayerNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_BowInHand_PhysicalActionInEnemyTerritory_ShouldBlockInteraction() {
+        // A physical interaction carries no item use at all, and is gated on isCancelled, so it must
+        // still be cancelled outright. The per-tick message suppression from #1957 is unchanged.
+        // Arrange
+        setupItemUseTestInEnemyTerritory(Material.BOW, action = Action.PHYSICAL)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyEventCancelled()
+        verifyPlayerNotNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_FlintAndSteelInHand_RightClickNonInteractiveBlockInEnemyTerritory_ShouldBlockInteraction() {
+        // An item whose use is aimed at the clicked block must still be cancelled in full: releasing
+        // the item half would let a non-member set fire to a claim, which no other listener prevents.
+        // Arrange
+        setupItemUseTestInEnemyTerritory(Material.FLINT_AND_STEEL)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyEventCancelled()
+        verifyPlayerNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_PlaceableBlockInHand_RightClickNonInteractiveBlockInEnemyTerritory_ShouldBlockInteraction() {
+        // Placement is refused here as well as by BlockPlaceListener - a block item is never released.
+        // Arrange
+        setupItemUseTestInEnemyTerritory(Material.STONE)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyEventCancelled()
+        verifyPlayerNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_BowInHand_LockedBlockNonOwnerWithoutBypass_ShouldDenyBlockUseButAllowDrawing() {
+        // A lock protects a specific block rather than territory, but the same distinction applies:
+        // the block stays shut while an item that cannot act on it is left alone. No lock message is
+        // sent, because the player never attempted to use the block.
+        // Arrange
+        mockBlockData<BlockData>()
+        setupConfigForDoorInteraction(enabled = false)
+        setupPlayerMocks(fixture.player, bypassEnabled = false)
+        setupLockedBlock(ownedByPlayer = false, playerIsAccessor = false)
+
+        `when`(fixture.player.hasPermission("mf.bypass")).thenReturn(false)
+
+        val item = mock(ItemStack::class.java)
+        `when`(item.type).thenReturn(Material.BOW)
+        `when`(fixture.event.item).thenReturn(item)
+        `when`(fixture.event.hasItem()).thenReturn(true)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyBlockUseDenied()
+        verifyItemUseNotDenied()
+        verifyNoAsyncTaskScheduled()
+        verifyPlayerNotNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_BowInHand_InWilderness_WildernessPreventInteractionSetToTrue_ShouldAllowDrawing() {
+        // The wilderness allowance must cover every hand-used item, not just food, and it must keep
+        // sitting ahead of nothing in particular - the same helper decides it for both paths.
+        // Arrange
+        val block = fixture.block
+        val event = fixture.event
+
+        mockBlockData<BlockData>()
+        setupConfigForDoorInteraction(enabled = false)
+        val (_, playerId) = setupPlayerMocks(fixture.player)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(null)
+        `when`(medievalFactions.config.getBoolean("wilderness.interaction.prevent", false)).thenReturn(true)
+        `when`(medievalFactions.config.getBoolean("wilderness.interaction.alert", true)).thenReturn(true)
+
+        val blockMaterial = mock(Material::class.java)
+        `when`(blockMaterial.isInteractable).thenReturn(false)
+        `when`(block.type).thenReturn(blockMaterial)
+
+        val item = mock(ItemStack::class.java)
+        `when`(item.type).thenReturn(Material.BOW)
+        `when`(event.item).thenReturn(item)
+        `when`(event.hasItem()).thenReturn(true)
+        `when`(event.action).thenReturn(Action.RIGHT_CLICK_BLOCK)
+        `when`(interactionService.getInteractionStatus(playerId)).thenReturn(null)
+
+        // Act
+        uut.onPlayerInteract(event)
+
+        // Assert
+        verifyEventNotCancelled()
+        verifyItemUseNotDenied()
+        verifyPlayerNotNotified()
     }
 
     @Test
@@ -1518,10 +1752,11 @@ class PlayerInteractListenerTest {
 
     /**
      * Arranges an interaction with [itemMaterial] in hand against the fixture block, which sits in a
-     * claim the player is not allowed to interact with. Defaults to the shape of eating or drinking:
-     * a right-click against a block that does not respond to right-clicks.
+     * claim the player is not allowed to interact with. Defaults to the shape of using an item on
+     * oneself - eating, drinking, throwing, drawing - a right-click against a block that does not
+     * respond to right-clicks.
      */
-    private fun setupConsumingItemTestInEnemyTerritory(
+    private fun setupItemUseTestInEnemyTerritory(
         itemMaterial: Material,
         blockIsInteractable: Boolean = false,
         action: Action = Action.RIGHT_CLICK_BLOCK
@@ -1636,6 +1871,23 @@ class PlayerInteractListenerTest {
     }
 
     private fun verifyEventNotCancelled() {
+        verify(fixture.event, never()).isCancelled = true
+    }
+
+    /**
+     * Asserts that the interacted-block half of the event was refused. This is what protects the
+     * block itself once the event is no longer cancelled outright - see #1995.
+     */
+    private fun verifyBlockUseDenied() {
+        verify(fixture.event).setUseInteractedBlock(Event.Result.DENY)
+    }
+
+    /**
+     * Asserts that the item-in-hand half of the event was left alone, by neither of the two routes
+     * that would deny it: `setUseItemInHand(DENY)` and `isCancelled = true`, which denies both halves.
+     */
+    private fun verifyItemUseNotDenied() {
+        verify(fixture.event, never()).setUseItemInHand(Event.Result.DENY)
         verify(fixture.event, never()).isCancelled = true
     }
 
