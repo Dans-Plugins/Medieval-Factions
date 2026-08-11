@@ -1,6 +1,8 @@
 package com.dansplugins.factionsystem.storage.json
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.failure.UnreadableJsonFileException
+import com.google.gson.Gson
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
@@ -25,6 +28,8 @@ class JsonStorageManagerTest {
     private lateinit var storageManager: JsonStorageManager
 
     data class TestData(val name: String, val value: Int)
+
+    private val empty = TestData("", 0)
 
     @BeforeEach
     fun setup() {
@@ -156,4 +161,103 @@ class JsonStorageManagerTest {
         val result = storageManager.readJsonFile(fileName, TestData::class.java)
         assertNotNull(result)
     }
+
+    @Test
+    fun `test loadJsonData returns the empty value for a missing or empty file`() {
+        assertEquals(empty, loadTestData("missing.json"))
+        assertFalse(storageManager.isUnreadable("missing.json"))
+
+        File(storageManager.getStorageDirectory(), "blank.json").writeText("   \n")
+
+        assertEquals(empty, loadTestData("blank.json"))
+        assertFalse(
+            storageManager.isUnreadable("blank.json"),
+            "a file holding nothing has no data to lose, so writing over it is allowed"
+        )
+        storageManager.writeJsonFile("blank.json", TestData("written", 1))
+    }
+
+    @Test
+    fun `test loadJsonData backs up a file it cannot parse and refuses to write over it`() {
+        val fileName = "unreadable.json"
+        val file = File(storageManager.getStorageDirectory(), fileName)
+        file.writeText("{ this is not json")
+
+        assertEquals(empty, loadTestData(fileName))
+        assertTrue(storageManager.isUnreadable(fileName))
+        assertEquals(
+            "{ this is not json",
+            File(storageManager.getStorageDirectory(), "$fileName.corrupted.backup").readText()
+        )
+
+        assertThrows<UnreadableJsonFileException> { storageManager.writeJsonFile(fileName, TestData("over", 1)) }
+        assertEquals("{ this is not json", file.readText())
+    }
+
+    @Test
+    fun `test loadJsonData treats a file parsing to nothing as unreadable`() {
+        val fileName = "null.json"
+        File(storageManager.getStorageDirectory(), fileName).writeText("null")
+
+        assertEquals(empty, loadTestData(fileName))
+        assertTrue(storageManager.isUnreadable(fileName))
+    }
+
+    @Test
+    fun `test loadJsonData allows writes again once the file can be read`() {
+        val fileName = "repaired.json"
+        val file = File(storageManager.getStorageDirectory(), fileName)
+        file.writeText("{ this is not json")
+        loadTestData(fileName)
+        assertTrue(storageManager.isUnreadable(fileName))
+
+        file.writeText("""{"name":"repaired","value":7}""")
+
+        assertEquals(TestData("repaired", 7), loadTestData(fileName))
+        assertFalse(storageManager.isUnreadable(fileName))
+        storageManager.writeJsonFile(fileName, TestData("written", 8))
+        assertEquals(TestData("written", 8), loadTestData(fileName))
+    }
+
+    @Test
+    fun `test loadJsonData keeps an earlier backup of the same file`() {
+        val fileName = "twice.json"
+        val file = File(storageManager.getStorageDirectory(), fileName)
+
+        file.writeText("first corruption")
+        loadTestData(fileName)
+        file.writeText("""{"name":"repaired","value":1}""")
+        loadTestData(fileName)
+        file.writeText("second corruption")
+        loadTestData(fileName)
+
+        assertEquals(
+            "first corruption",
+            File(storageManager.getStorageDirectory(), "$fileName.corrupted.backup").readText(),
+            "the first backup is the only copy of the first failure, so it is not written over"
+        )
+        assertTrue(
+            storageManager.getStorageDirectory().listFiles()
+                ?.any { it.name.startsWith("$fileName.corrupted.") && it.readText() == "second corruption" } == true,
+            "the second failure should be backed up alongside the first"
+        )
+    }
+
+    @Test
+    fun `test loadJsonData logs and backs up only the first of repeated failures`() {
+        val fileName = "repeated.json"
+        File(storageManager.getStorageDirectory(), fileName).writeText("{ this is not json")
+
+        repeat(5) { loadTestData(fileName) }
+
+        assertEquals(
+            1,
+            storageManager.getStorageDirectory().listFiles()
+                ?.count { it.name.startsWith("$fileName.corrupted.") },
+            "reads happen on every lookup, so a corrupted file should not accumulate a backup per read"
+        )
+    }
+
+    private fun loadTestData(fileName: String): TestData =
+        storageManager.loadJsonData(fileName, "test data", Gson(), TestData::class.java) { empty }
 }

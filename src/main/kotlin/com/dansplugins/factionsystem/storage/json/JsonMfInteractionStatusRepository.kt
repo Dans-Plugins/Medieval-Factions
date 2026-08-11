@@ -18,19 +18,10 @@ class JsonMfInteractionStatusRepository(
         val statuses: MutableMap<String, MfInteractionStatus?> = mutableMapOf()
     )
 
-    private fun loadData(): InteractionStatusData {
-        val json = storageManager.readJsonFileAsString(fileName)
-        return if (json != null) {
-            try {
-                gson.fromJson(json, InteractionStatusData::class.java)
-            } catch (e: Exception) {
-                plugin.logger.severe("Failed to parse interaction statuses JSON: ${e.message}")
-                InteractionStatusData()
-            }
-        } else {
+    private fun loadData(): InteractionStatusData =
+        storageManager.loadJsonData(fileName, "interaction statuses", gson, InteractionStatusData::class.java) {
             InteractionStatusData()
         }
-    }
 
     private fun saveData(data: InteractionStatusData) {
         storageManager.writeJsonFile(fileName, data, null)

@@ -76,8 +76,14 @@ Jooq repositories persist) and re-attach the plugin reference when reading back.
 ### Data Integrity
 - Schema validation on write for the player and faction files (see above)
 - Validation errors include detailed location information
-- A file that fails to parse is copied aside as `<name>.corrupted.backup` rather than being silently
-  overwritten with empty data
+- A file that holds something which fails to parse is copied aside as `<name>.corrupted.backup`, and
+  writes to it are then refused (`UnreadableJsonFileException`) so that it is not overwritten with the
+  empty data the failed read produced. Reads of that entity type return nothing meanwhile, so the rest
+  of the plugin keeps running. Repairing or removing the file restores writes as soon as it is read
+  again — no restart is needed. An existing `.corrupted.backup` is never written over; a later failure
+  is copied to `<name>.corrupted.<timestamp>.backup` instead
+- An absent or empty file is not a failure: it is what a fresh install looks like, and is written to
+  normally
 - `backupJsonFile` is available for taking a timestamped copy before risky operations
 
 ### Performance Considerations

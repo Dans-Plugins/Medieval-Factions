@@ -19,19 +19,8 @@ class JsonMfGateCreationContextRepository(
         val contexts: MutableList<MfGateCreationContext> = mutableListOf()
     )
 
-    private fun loadData(): ContextData {
-        val json = storageManager.readJsonFileAsString(fileName)
-        return if (json != null) {
-            try {
-                gson.fromJson(json, ContextData::class.java)
-            } catch (e: Exception) {
-                plugin.logger.severe("Failed to parse gate creation contexts JSON: ${e.message}")
-                ContextData()
-            }
-        } else {
-            ContextData()
-        }
-    }
+    private fun loadData(): ContextData =
+        storageManager.loadJsonData(fileName, "gate creation contexts", gson, ContextData::class.java) { ContextData() }
 
     private fun saveData(data: ContextData) {
         storageManager.writeJsonFile(fileName, data, null)

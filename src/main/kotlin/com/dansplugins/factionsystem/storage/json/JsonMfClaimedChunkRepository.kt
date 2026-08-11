@@ -19,19 +19,8 @@ class JsonMfClaimedChunkRepository(
         val claims: MutableList<MfClaimedChunk> = mutableListOf()
     )
 
-    private fun loadData(): ClaimData {
-        val json = storageManager.readJsonFileAsString(fileName)
-        return if (json != null) {
-            try {
-                gson.fromJson(json, ClaimData::class.java)
-            } catch (e: Exception) {
-                plugin.logger.severe("Failed to parse claims JSON: ${e.message}")
-                ClaimData()
-            }
-        } else {
-            ClaimData()
-        }
-    }
+    private fun loadData(): ClaimData =
+        storageManager.loadJsonData(fileName, "claims", gson, ClaimData::class.java) { ClaimData() }
 
     private fun saveData(data: ClaimData) {
         storageManager.writeJsonFile(fileName, data, null)

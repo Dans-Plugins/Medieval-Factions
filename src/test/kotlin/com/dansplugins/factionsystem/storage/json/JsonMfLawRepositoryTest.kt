@@ -3,6 +3,7 @@ package com.dansplugins.factionsystem.storage.json
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
+import com.dansplugins.factionsystem.failure.UnreadableJsonFileException
 import com.dansplugins.factionsystem.law.MfLaw
 import com.dansplugins.factionsystem.law.MfLawId
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import java.io.File
 import java.nio.file.Path
 import java.util.logging.Logger
 
@@ -125,5 +127,44 @@ class JsonMfLawRepositoryTest {
     fun `returns null for an unknown law`() {
         assertNull(repository.getLaw(MfLawId.generate()))
         assertTrue(repository.getLaws(factionId).isEmpty())
+    }
+
+    @Test
+    fun `refuses to overwrite a corrupted laws file, and backs it up`() {
+        val lawsFile = File(tempDir.toFile(), "laws.json")
+        lawsFile.writeText("{ this is not json")
+
+        assertTrue(repository.getLaws(factionId).isEmpty())
+        assertTrue(
+            File(tempDir.toFile(), "laws.json.corrupted.backup").exists(),
+            "a corrupted file should be backed up rather than silently discarded"
+        )
+
+        assertThrows<UnreadableJsonFileException> { repository.upsert(law(text = "Written over the top")) }
+        assertEquals(
+            "{ this is not json",
+            lawsFile.readText(),
+            "a file that could not be read must not be replaced by what was loaded in its place"
+        )
+    }
+
+    @Test
+    fun `refuses to delete from a corrupted laws file`() {
+        val lawsFile = File(tempDir.toFile(), "laws.json")
+        lawsFile.writeText("{ this is not json")
+
+        assertThrows<UnreadableJsonFileException> { repository.delete(MfLawId.generate()) }
+        assertEquals("{ this is not json", lawsFile.readText())
+    }
+
+    @Test
+    fun `treats an empty laws file as no laws, and writes to it`() {
+        File(tempDir.toFile(), "laws.json").writeText("")
+
+        assertTrue(repository.getLaws(factionId).isEmpty())
+
+        val saved = repository.upsert(law(text = "Written after an empty file"))
+
+        assertEquals("Written after an empty file", repository.getLaw(saved.id)?.text)
     }
 }

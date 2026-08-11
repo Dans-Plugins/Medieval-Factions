@@ -29,19 +29,8 @@ class JsonMfDuelRepository(
         val duels: MutableList<MfDuel> = mutableListOf()
     )
 
-    private fun loadData(): DuelData {
-        val json = storageManager.readJsonFileAsString(fileName)
-        return if (json != null) {
-            try {
-                gson.fromJson(json, DuelData::class.java)
-            } catch (e: Exception) {
-                plugin.logger.severe("Failed to parse duels JSON: ${e.message}")
-                DuelData()
-            }
-        } else {
-            DuelData()
-        }
-    }
+    private fun loadData(): DuelData =
+        storageManager.loadJsonData(fileName, "duels", gson, DuelData::class.java) { DuelData() }
 
     private fun saveData(data: DuelData) {
         storageManager.writeJsonFile(fileName, data, null)

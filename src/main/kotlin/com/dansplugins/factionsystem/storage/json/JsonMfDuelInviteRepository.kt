@@ -18,19 +18,8 @@ class JsonMfDuelInviteRepository(
         val invites: MutableList<MfDuelInvite> = mutableListOf()
     )
 
-    private fun loadData(): DuelInviteData {
-        val json = storageManager.readJsonFileAsString(fileName)
-        return if (json != null) {
-            try {
-                gson.fromJson(json, DuelInviteData::class.java)
-            } catch (e: Exception) {
-                plugin.logger.severe("Failed to parse duel invites JSON: ${e.message}")
-                DuelInviteData()
-            }
-        } else {
-            DuelInviteData()
-        }
-    }
+    private fun loadData(): DuelInviteData =
+        storageManager.loadJsonData(fileName, "duel invites", gson, DuelInviteData::class.java) { DuelInviteData() }
 
     private fun saveData(data: DuelInviteData) {
         storageManager.writeJsonFile(fileName, data, null)

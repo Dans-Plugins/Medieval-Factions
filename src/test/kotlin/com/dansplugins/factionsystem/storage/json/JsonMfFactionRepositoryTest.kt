@@ -12,6 +12,7 @@ import com.dansplugins.factionsystem.faction.role.MfFactionRole
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.faction.role.MfFactionRoles
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
+import com.dansplugins.factionsystem.failure.UnreadableJsonFileException
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.google.gson.Gson
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -229,13 +230,38 @@ class JsonMfFactionRepositoryTest {
     }
 
     @Test
-    fun `survives a corrupted factions file by backing it up`() {
-        File(tempDir.toFile(), "factions.json").writeText("{ this is not json")
+    fun `refuses to overwrite a corrupted factions file, and backs it up`() {
+        val factionsFile = File(tempDir.toFile(), "factions.json")
+        factionsFile.writeText("{ this is not json")
 
         assertTrue(repository.getFactions().isEmpty())
         assertTrue(
             File(tempDir.toFile(), "factions.json.corrupted.backup").exists(),
             "a corrupted file should be backed up rather than silently discarded"
         )
+
+        val owner = role("Owner")
+        assertThrows<UnreadableJsonFileException> {
+            repository.upsert(faction(roles = MfFactionRoles(owner.id, listOf(owner))))
+        }
+        assertEquals(
+            "{ this is not json",
+            factionsFile.readText(),
+            "a file that could not be read must not be replaced by what was loaded in its place"
+        )
+    }
+
+    @Test
+    fun `resumes writing once a corrupted factions file is repaired`() {
+        val factionsFile = File(tempDir.toFile(), "factions.json")
+        factionsFile.writeText("{ this is not json")
+        assertTrue(repository.getFactions().isEmpty())
+
+        factionsFile.writeText("""{"factions":[]}""")
+
+        val owner = role("Owner")
+        val saved = repository.upsert(faction(name = "Repaired", roles = MfFactionRoles(owner.id, listOf(owner))))
+
+        assertEquals("Repaired", repository.getFaction(saved.id)?.name)
     }
 }

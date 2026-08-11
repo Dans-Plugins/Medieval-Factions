@@ -103,6 +103,7 @@ When `storage.type` is set to `json`, the following options apply:
 - Regular backups are recommended for JSON storage
 - `players.json` and `factions.json` are validated against a JSON schema before being written, so malformed data is rejected rather than persisted. The other entity files have no schema yet, and no file is schema-validated when read back
 - Individual entity types are stored in separate JSON files (players.json, factions.json, etc.)
+- If a file holds something that cannot be read back, it is copied aside as `<name>.corrupted.backup` and further writes to it are refused, so that its contents are not replaced by the empty data the failed read produced. That entity type behaves as though it holds nothing until the file is repaired or removed, and the failure is logged at `SEVERE`. Writes resume as soon as the file can be read again, without a restart
 
 ### Migrating Between Storage Types
 

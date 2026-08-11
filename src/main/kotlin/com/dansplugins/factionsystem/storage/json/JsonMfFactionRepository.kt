@@ -33,24 +33,8 @@ class JsonMfFactionRepository(
         val factions: MutableList<JsonFactionDto> = mutableListOf()
     )
 
-    private fun loadData(): FactionData {
-        val json = storageManager.readJsonFileAsString(fileName) ?: return FactionData()
-        return try {
-            gson.fromJson(json, FactionData::class.java) ?: FactionData()
-        } catch (e: Exception) {
-            plugin.logger.severe("CRITICAL: Failed to parse factions JSON: ${e.message}")
-            plugin.logger.severe("The JSON file may be corrupted. Creating a backup and returning empty data.")
-            plugin.logger.severe("Please investigate the file: $fileName")
-            try {
-                val backupFile = java.io.File(storageManager.getStorageDirectory(), "$fileName.corrupted.backup")
-                backupFile.writeText(json)
-                plugin.logger.warning("Corrupted file backed up to: ${backupFile.absolutePath}")
-            } catch (backupError: Exception) {
-                plugin.logger.severe("Failed to create backup: ${backupError.message}")
-            }
-            FactionData()
-        }
-    }
+    private fun loadData(): FactionData =
+        storageManager.loadJsonData(fileName, "factions", gson, FactionData::class.java) { FactionData() }
 
     private fun saveData(data: FactionData) {
         storageManager.writeJsonFile(fileName, data, schema)
