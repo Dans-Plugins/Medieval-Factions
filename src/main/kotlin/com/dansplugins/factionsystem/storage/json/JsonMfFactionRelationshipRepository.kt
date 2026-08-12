@@ -20,19 +20,8 @@ class JsonMfFactionRelationshipRepository(
         val relationships: MutableList<MfFactionRelationship> = mutableListOf()
     )
 
-    private fun loadData(): RelationshipData {
-        val json = storageManager.readJsonFileAsString(fileName)
-        return if (json != null) {
-            try {
-                gson.fromJson(json, RelationshipData::class.java)
-            } catch (e: Exception) {
-                plugin.logger.severe("Failed to parse relationships JSON: ${e.message}")
-                RelationshipData()
-            }
-        } else {
-            RelationshipData()
-        }
-    }
+    private fun loadData(): RelationshipData =
+        storageManager.loadJsonData(fileName, "relationships", gson, RelationshipData::class.java) { RelationshipData() }
 
     private fun saveData(data: RelationshipData) {
         storageManager.writeJsonFile(fileName, data, null)

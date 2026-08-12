@@ -21,19 +21,8 @@ class JsonMfLockRepository(
         val locks: MutableList<MfLockedBlock> = mutableListOf()
     )
 
-    private fun loadData(): LockData {
-        val json = storageManager.readJsonFileAsString(fileName)
-        return if (json != null) {
-            try {
-                gson.fromJson(json, LockData::class.java)
-            } catch (e: Exception) {
-                plugin.logger.severe("Failed to parse locks JSON: ${e.message}")
-                LockData()
-            }
-        } else {
-            LockData()
-        }
-    }
+    private fun loadData(): LockData =
+        storageManager.loadJsonData(fileName, "locks", gson, LockData::class.java) { LockData() }
 
     private fun saveData(data: LockData) {
         storageManager.writeJsonFile(fileName, data, null)

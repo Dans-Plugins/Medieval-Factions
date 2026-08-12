@@ -26,15 +26,8 @@ class JsonMfGateRepository(
         val gates: MutableList<JsonGateDto> = mutableListOf()
     )
 
-    private fun loadData(): GateData {
-        val json = storageManager.readJsonFileAsString(fileName) ?: return GateData()
-        return try {
-            gson.fromJson(json, GateData::class.java) ?: GateData()
-        } catch (e: Exception) {
-            plugin.logger.severe("Failed to parse gates JSON: ${e.message}")
-            GateData()
-        }
-    }
+    private fun loadData(): GateData =
+        storageManager.loadJsonData(fileName, "gates", gson, GateData::class.java) { GateData() }
 
     private fun saveData(data: GateData) {
         storageManager.writeJsonFile(fileName, data, null)

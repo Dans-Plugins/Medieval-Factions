@@ -34,29 +34,8 @@ class JsonMfPlayerRepository(
         val players: MutableList<MfPlayer> = mutableListOf()
     )
 
-    private fun loadData(): PlayerData {
-        val json = storageManager.readJsonFileAsString(fileName)
-        return if (json != null) {
-            try {
-                gson.fromJson(json, PlayerData::class.java)
-            } catch (e: Exception) {
-                plugin.logger.severe("CRITICAL: Failed to parse players JSON: ${e.message}")
-                plugin.logger.severe("The JSON file may be corrupted. Creating backup and returning empty data.")
-                plugin.logger.severe("Please investigate the file: $fileName")
-                // Create a backup of the corrupted file
-                try {
-                    val backupFile = java.io.File(storageManager.getStorageDirectory(), "$fileName.corrupted.backup")
-                    backupFile.writeText(json)
-                    plugin.logger.warning("Corrupted file backed up to: ${backupFile.absolutePath}")
-                } catch (backupError: Exception) {
-                    plugin.logger.severe("Failed to create backup: ${backupError.message}")
-                }
-                PlayerData()
-            }
-        } else {
-            PlayerData()
-        }
-    }
+    private fun loadData(): PlayerData =
+        storageManager.loadJsonData(fileName, "players", gson, PlayerData::class.java) { PlayerData() }
 
     private fun saveData(data: PlayerData) {
         storageManager.writeJsonFile(fileName, data, schema)

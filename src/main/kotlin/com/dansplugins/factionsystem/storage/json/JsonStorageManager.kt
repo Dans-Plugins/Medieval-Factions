@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.storage.json
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.failure.UnreadableJsonFileException
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.TypeAdapter
@@ -17,6 +18,7 @@ import java.nio.file.AtomicMoveNotSupportedException
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.time.Instant
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
@@ -42,11 +44,108 @@ class JsonStorageManager(
     // Thread-safe file operations using locks
     private val fileLocks = mutableMapOf<String, ReentrantReadWriteLock>()
 
+    /**
+     * Files whose stored contents were present but could not be parsed.
+     *
+     * Every repository mutates a file by loading it, changing the loaded copy and writing the whole
+     * thing back, so a load that fails and is treated as "no data" is one write away from replacing
+     * the stored data with nothing. A file listed here is therefore refused by [writeJsonFile] until
+     * it parses again — see [loadJsonData].
+     */
+    private val unreadableFiles: MutableSet<String> = ConcurrentHashMap.newKeySet()
+
     private fun getLock(fileName: String): ReentrantReadWriteLock {
         return synchronized(fileLocks) {
             fileLocks.getOrPut(fileName) { ReentrantReadWriteLock() }
         }
     }
+
+    /**
+     * Loads the whole contents of [fileName] as [clazz], or [empty] when there is nothing stored yet.
+     *
+     * This is the single load path every repository uses, so that a file which cannot be read is
+     * handled identically for every entity type rather than in twelve hand-copied ways.
+     *
+     * A file that is absent, or that holds nothing at all, is not an error: that is what a fresh
+     * install looks like, and [empty] is returned. A file that holds something which does not parse
+     * is a different matter — the stored data is still there, and it is only unreadable to us. In
+     * that case the contents are copied aside, the failure is logged, [fileName] is marked unreadable
+     * so that [writeJsonFile] refuses to replace it, and [empty] is returned so that the rest of the
+     * plugin keeps running without that entity type rather than failing to start.
+     *
+     * The mark is cleared as soon as the file parses again, so repairing or removing it and letting
+     * the plugin read it once is all that is needed to restore writes.
+     *
+     * @param fileName the file to load, relative to the storage directory
+     * @param description what the file holds, for the log message (for example `laws`)
+     * @param gson the parser to use, which varies by repository
+     * @param clazz the type the whole file deserializes to
+     * @param empty produces the value meaning "nothing stored"
+     */
+    fun <T : Any> loadJsonData(
+        fileName: String,
+        description: String,
+        gson: Gson,
+        clazz: Class<T>,
+        empty: () -> T
+    ): T = getLock(fileName).read {
+        val json = readJsonFileAsString(fileName)
+        if (json == null || json.isBlank()) {
+            unreadableFiles.remove(fileName)
+            return@read empty()
+        }
+        val parsed = try {
+            gson.fromJson(json, clazz)
+        } catch (e: Exception) {
+            markUnreadable(fileName, description, json, e.message)
+            return@read empty()
+        }
+        if (parsed == null) {
+            markUnreadable(fileName, description, json, "the file parsed to nothing")
+            return@read empty()
+        }
+        unreadableFiles.remove(fileName)
+        return@read parsed
+    }
+
+    /**
+     * Records that [fileName] could not be parsed, copying its contents aside on the first failure.
+     *
+     * Only the first failure logs and backs up: repositories load on every read, so a corrupted file
+     * would otherwise produce a log line per lookup and rewrite its own backup each time.
+     */
+    private fun markUnreadable(fileName: String, description: String, contents: String, reason: String?) {
+        if (!unreadableFiles.add(fileName)) {
+            return
+        }
+        plugin.logger.severe("CRITICAL: Failed to parse $description from $fileName: $reason")
+        plugin.logger.severe(
+            "Writes to $fileName are refused until it can be read, so that its contents are not replaced with nothing. " +
+                "Repair or remove the file; no restart is needed once it parses again."
+        )
+        backUpUnreadableFile(fileName, contents)
+    }
+
+    private fun backUpUnreadableFile(fileName: String, contents: String) {
+        try {
+            val preferredBackup = File(storageDir, "$fileName.corrupted.backup")
+            // An earlier backup is itself the only surviving copy of an earlier failure, so it is kept.
+            val backupFile = if (preferredBackup.exists()) {
+                File(storageDir, "$fileName.corrupted.${System.currentTimeMillis()}.backup")
+            } else {
+                preferredBackup
+            }
+            backupFile.writeText(contents)
+            plugin.logger.warning("Unreadable file backed up to: ${backupFile.absolutePath}")
+        } catch (e: Exception) {
+            plugin.logger.severe("Failed to back up unreadable file $fileName: ${e.message}")
+        }
+    }
+
+    /**
+     * Whether [fileName] last parsed as something other than valid data, and so cannot be written.
+     */
+    fun isUnreadable(fileName: String): Boolean = unreadableFiles.contains(fileName)
 
     /**
      * Runs [block] while holding this file's write lock.
@@ -116,6 +215,11 @@ class JsonStorageManager(
     fun <T> writeJsonFile(fileName: String, data: T, schema: Schema? = null) {
         val lock = getLock(fileName)
         lock.write {
+            // Refused rather than written: the data being written was built from a load that could not
+            // read this file, so writing it would replace real records with whatever was loaded instead.
+            if (unreadableFiles.contains(fileName)) {
+                throw UnreadableJsonFileException(fileName)
+            }
             try {
                 val jsonContent = gson.toJson(data)
 

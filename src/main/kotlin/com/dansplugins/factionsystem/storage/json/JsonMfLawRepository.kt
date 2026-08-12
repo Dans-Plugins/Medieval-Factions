@@ -20,19 +20,8 @@ class JsonMfLawRepository(
         val laws: MutableList<MfLaw> = mutableListOf()
     )
 
-    private fun loadData(): LawData {
-        val json = storageManager.readJsonFileAsString(fileName)
-        return if (json != null) {
-            try {
-                gson.fromJson(json, LawData::class.java)
-            } catch (e: Exception) {
-                plugin.logger.severe("Failed to parse laws JSON: ${e.message}")
-                LawData()
-            }
-        } else {
-            LawData()
-        }
-    }
+    private fun loadData(): LawData =
+        storageManager.loadJsonData(fileName, "laws", gson, LawData::class.java) { LawData() }
 
     private fun saveData(data: LawData) {
         storageManager.writeJsonFile(fileName, data, null)

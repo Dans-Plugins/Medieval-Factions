@@ -26,19 +26,8 @@ class JsonMfChatChannelMessageRepository(
         val messages: MutableList<MfChatChannelMessage> = mutableListOf()
     )
 
-    private fun loadData(): ChatMessageData {
-        val json = storageManager.readJsonFileAsString(fileName)
-        return if (json != null) {
-            try {
-                gson.fromJson(json, ChatMessageData::class.java)
-            } catch (e: Exception) {
-                plugin.logger.severe("Failed to parse chat messages JSON: ${e.message}")
-                ChatMessageData()
-            }
-        } else {
-            ChatMessageData()
-        }
-    }
+    private fun loadData(): ChatMessageData =
+        storageManager.loadJsonData(fileName, "chat messages", gson, ChatMessageData::class.java) { ChatMessageData() }
 
     private fun saveData(data: ChatMessageData) {
         storageManager.writeJsonFile(fileName, data, null)
