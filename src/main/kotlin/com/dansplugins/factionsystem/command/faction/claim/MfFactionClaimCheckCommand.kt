@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.claim
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.area.MfChunkPosition
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
 import org.bukkit.command.Command
@@ -19,11 +20,12 @@ class MfFactionClaimCheckCommand(private val plugin: MedievalFactions) : Command
             sender.sendMessage("$RED${plugin.language["CommandFactionCheckClaimNotAPlayer"]}")
             return true
         }
+        val senderChunkPosition = MfChunkPosition.fromBukkit(sender.location.chunk)
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
                 val claimService = plugin.services.claimService
-                val claim = claimService.getClaim(sender.location.chunk)
+                val claim = claimService.getClaim(senderChunkPosition)
                 if (claim == null) {
                     sender.sendMessage("$GREEN${plugin.language["CommandFactionCheckClaimNotClaimed"]}")
                     return@Runnable
