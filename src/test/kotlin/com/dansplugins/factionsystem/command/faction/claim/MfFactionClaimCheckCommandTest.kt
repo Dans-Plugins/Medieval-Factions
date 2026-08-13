@@ -11,6 +11,7 @@ import com.dansplugins.factionsystem.faction.MfFactionService
 import com.dansplugins.factionsystem.lang.Language
 import com.dansplugins.factionsystem.service.Services
 import org.bukkit.ChatColor
+import org.bukkit.Chunk
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.entity.Player
@@ -38,14 +39,16 @@ class MfFactionClaimCheckCommandTest {
     private lateinit var factionService: MfFactionService
     private lateinit var claimService: MfClaimService
     private lateinit var language: Language
-    private lateinit var pendingAsyncTasks: MutableList<Runnable>
+    private lateinit var pendingTasks: MutableList<Runnable>
+    private lateinit var chunks: MutableMap<MfChunkPosition, Chunk>
     private lateinit var uut: MfFactionClaimCheckCommand
 
     @BeforeEach
     fun setUp() {
         fixture = testUtils.createCommandTestFixture()
         plugin = mock(MedievalFactions::class.java)
-        pendingAsyncTasks = mutableListOf()
+        pendingTasks = mutableListOf()
+        chunks = mutableMapOf()
         mockServices()
         mockLanguageSystem()
         mockScheduler()
@@ -97,7 +100,7 @@ class MfFactionClaimCheckCommandTest {
 
         // execute
         val result = uut.onCommand(player, command, "label", arrayOf())
-        runPendingAsyncTasks()
+        runPendingTasks()
 
         // verify
         assertTrue(result)
@@ -115,7 +118,7 @@ class MfFactionClaimCheckCommandTest {
 
         // execute
         val result = uut.onCommand(player, command, "label", arrayOf())
-        runPendingAsyncTasks()
+        runPendingTasks()
 
         // verify
         assertTrue(result)
@@ -139,7 +142,7 @@ class MfFactionClaimCheckCommandTest {
         // execute
         val result = uut.onCommand(player, command, "label", arrayOf())
         stubSenderChunk(player, worldId, 8, 8)
-        runPendingAsyncTasks()
+        runPendingTasks()
 
         // verify — the chunk the sender occupied when the command was run is the one reported on
         assertTrue(result)
@@ -151,29 +154,37 @@ class MfFactionClaimCheckCommandTest {
     // Helper functions
 
     /**
-     * Stubs the claim held over one chunk, together with the faction holding it. A test that stubs more than one
-     * claim can then assert which of them the command consulted.
+     * Stubs the claim held over one chunk, together with the faction holding it. Both ways of asking for that claim
+     * are stubbed — by chunk and by chunk position — so a test asserts which chunk was consulted rather than which
+     * overload happened to be called.
      */
     private fun stubClaim(worldId: UUID, chunkX: Int, chunkZ: Int, factionName: String) {
         val factionId = MfFactionId.generate()
         val faction = mock(MfFaction::class.java)
         `when`(faction.name).thenReturn(factionName)
         `when`(factionService.getFaction(factionId)).thenReturn(faction)
-        `when`(claimService.getClaim(MfChunkPosition(worldId, chunkX, chunkZ)))
-            .thenReturn(MfClaimedChunk(worldId, chunkX, chunkZ, factionId))
+        val claim = MfClaimedChunk(worldId, chunkX, chunkZ, factionId)
+        `when`(claimService.getClaim(chunkOf(worldId, chunkX, chunkZ))).thenReturn(claim)
+        `when`(claimService.getClaim(MfChunkPosition(worldId, chunkX, chunkZ))).thenReturn(claim)
     }
 
     private fun stubSenderChunk(player: Player, worldId: UUID, chunkX: Int, chunkZ: Int) {
-        val world = testUtils.createMockWorld(worldId)
-        val chunk = testUtils.createMockChunk(world, chunkX, chunkZ)
         val location = mock(Location::class.java)
-        `when`(location.chunk).thenReturn(chunk)
+        `when`(location.chunk).thenReturn(chunkOf(worldId, chunkX, chunkZ))
         `when`(player.location).thenReturn(location)
     }
 
-    private fun runPendingAsyncTasks() {
-        while (pendingAsyncTasks.isNotEmpty()) {
-            pendingAsyncTasks.removeAt(0).run()
+    /**
+     * Returns one mock chunk per set of coordinates, so that the chunk a claim is stubbed against and the chunk the
+     * sender is standing in are the same object.
+     */
+    private fun chunkOf(worldId: UUID, chunkX: Int, chunkZ: Int) = chunks.getOrPut(MfChunkPosition(worldId, chunkX, chunkZ)) {
+        testUtils.createMockChunk(testUtils.createMockWorld(worldId), chunkX, chunkZ)
+    }
+
+    private fun runPendingTasks() {
+        while (pendingTasks.isNotEmpty()) {
+            pendingTasks.removeAt(0).run()
         }
     }
 
@@ -203,7 +214,7 @@ class MfFactionClaimCheckCommandTest {
         // The dispatched task is queued rather than run, so a test can move the sender in between the command
         // being run and the task executing — which is the case this command has to get right.
         `when`(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable::class.java))).thenAnswer { invocation ->
-            pendingAsyncTasks += invocation.arguments[1] as Runnable
+            pendingTasks += invocation.arguments[1] as Runnable
             null
         }
     }

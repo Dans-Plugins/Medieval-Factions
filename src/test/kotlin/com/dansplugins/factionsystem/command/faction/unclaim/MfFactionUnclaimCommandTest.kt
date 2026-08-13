@@ -17,6 +17,7 @@ import com.dansplugins.factionsystem.player.MfPlayerService
 import com.dansplugins.factionsystem.service.Services
 import dev.forkhandles.result4k.Success
 import org.bukkit.ChatColor
+import org.bukkit.Chunk
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.configuration.file.FileConfiguration
@@ -49,14 +50,16 @@ class MfFactionUnclaimCommandTest {
     private lateinit var language: Language
     private lateinit var config: FileConfiguration
     private lateinit var faction: MfFaction
-    private lateinit var pendingAsyncTasks: MutableList<Runnable>
+    private lateinit var pendingTasks: MutableList<Runnable>
+    private lateinit var chunks: MutableMap<MfChunkPosition, Chunk>
     private lateinit var uut: MfFactionUnclaimCommand
 
     @BeforeEach
     fun setUp() {
         fixture = testUtils.createCommandTestFixture()
         plugin = mock(MedievalFactions::class.java)
-        pendingAsyncTasks = mutableListOf()
+        pendingTasks = mutableListOf()
+        chunks = mutableMapOf()
         mockServices()
         mockLanguageSystem()
         mockConfig()
@@ -109,7 +112,7 @@ class MfFactionUnclaimCommandTest {
 
         // execute
         val result = uut.onCommand(player, command, "label", arrayOf())
-        runPendingAsyncTasks()
+        runPendingTasks()
 
         // verify
         assertTrue(result)
@@ -130,7 +133,7 @@ class MfFactionUnclaimCommandTest {
 
         // execute
         val result = uut.onCommand(player, command, "label", arrayOf())
-        runPendingAsyncTasks()
+        runPendingTasks()
 
         // verify
         assertTrue(result)
@@ -155,7 +158,7 @@ class MfFactionUnclaimCommandTest {
         // execute
         val result = uut.onCommand(player, command, "label", arrayOf())
         stubSenderChunk(player, worldId, 4, 4)
-        runPendingAsyncTasks()
+        runPendingTasks()
 
         // verify — the claim the sender was standing on is deleted, not the one they walked into
         assertTrue(result)
@@ -171,10 +174,13 @@ class MfFactionUnclaimCommandTest {
     /**
      * Stubs the claim held over one chunk, and stubs its deletion whether or not the test expects it to be deleted. A
      * claim the command was never meant to touch is therefore reported by the `never()` verification rather than by an
-     * exception on an unstubbed call, which keeps the failure legible if this protection ever regresses.
+     * exception on an unstubbed call, which keeps the failure legible if this protection ever regresses. Both ways of
+     * asking for the claim are stubbed — by chunk and by chunk position — so a test asserts which chunk was
+     * consulted rather than which overload happened to be called.
      */
     private fun stubClaimOwnedBy(worldId: UUID, chunkX: Int, chunkZ: Int, owningFactionId: MfFactionId): MfClaimedChunk {
         val claim = MfClaimedChunk(worldId, chunkX, chunkZ, owningFactionId)
+        `when`(claimService.getClaim(chunkOf(worldId, chunkX, chunkZ))).thenReturn(claim)
         `when`(claimService.getClaim(MfChunkPosition(worldId, chunkX, chunkZ))).thenReturn(claim)
         `when`(claimService.delete(claim)).thenReturn(Success(Unit))
         return claim
@@ -195,16 +201,22 @@ class MfFactionUnclaimCommandTest {
     }
 
     private fun stubSenderChunk(player: Player, worldId: UUID, chunkX: Int, chunkZ: Int) {
-        val world = testUtils.createMockWorld(worldId)
-        val chunk = testUtils.createMockChunk(world, chunkX, chunkZ)
         val location = mock(Location::class.java)
-        `when`(location.chunk).thenReturn(chunk)
+        `when`(location.chunk).thenReturn(chunkOf(worldId, chunkX, chunkZ))
         `when`(player.location).thenReturn(location)
     }
 
-    private fun runPendingAsyncTasks() {
-        while (pendingAsyncTasks.isNotEmpty()) {
-            pendingAsyncTasks.removeAt(0).run()
+    /**
+     * Returns one mock chunk per set of coordinates, so that the chunk a claim is stubbed against and the chunk the
+     * sender is standing in are the same object.
+     */
+    private fun chunkOf(worldId: UUID, chunkX: Int, chunkZ: Int) = chunks.getOrPut(MfChunkPosition(worldId, chunkX, chunkZ)) {
+        testUtils.createMockChunk(testUtils.createMockWorld(worldId), chunkX, chunkZ)
+    }
+
+    private fun runPendingTasks() {
+        while (pendingTasks.isNotEmpty()) {
+            pendingTasks.removeAt(0).run()
         }
     }
 
@@ -243,10 +255,15 @@ class MfFactionUnclaimCommandTest {
 
         val scheduler = mock(BukkitScheduler::class.java)
         `when`(server.scheduler).thenReturn(scheduler)
-        // The dispatched task is queued rather than run, so a test can move the sender in between the command
-        // being run and the task executing — which is the case this command has to get right.
+        // Every task the command schedules, on either thread, is queued rather than run, so a test can move the
+        // sender in between the command being run and the task executing — which is the case this command has to
+        // get right. `runPendingTasks` then drains the queue in the order the tasks were dispatched.
         `when`(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable::class.java))).thenAnswer { invocation ->
-            pendingAsyncTasks += invocation.arguments[1] as Runnable
+            pendingTasks += invocation.arguments[1] as Runnable
+            null
+        }
+        `when`(scheduler.runTask(eq(plugin), any(Runnable::class.java))).thenAnswer { invocation ->
+            pendingTasks += invocation.arguments[1] as Runnable
             null
         }
     }
