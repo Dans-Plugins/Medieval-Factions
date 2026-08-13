@@ -180,7 +180,8 @@ class MfFactionUnclaimCommandTest {
      */
     private fun stubClaimOwnedBy(worldId: UUID, chunkX: Int, chunkZ: Int, owningFactionId: MfFactionId): MfClaimedChunk {
         val claim = MfClaimedChunk(worldId, chunkX, chunkZ, owningFactionId)
-        `when`(claimService.getClaim(chunkOf(worldId, chunkX, chunkZ))).thenReturn(claim)
+        val chunk = chunkOf(worldId, chunkX, chunkZ)
+        `when`(claimService.getClaim(chunk)).thenReturn(claim)
         `when`(claimService.getClaim(MfChunkPosition(worldId, chunkX, chunkZ))).thenReturn(claim)
         `when`(claimService.delete(claim)).thenReturn(Success(Unit))
         return claim
@@ -201,8 +202,9 @@ class MfFactionUnclaimCommandTest {
     }
 
     private fun stubSenderChunk(player: Player, worldId: UUID, chunkX: Int, chunkZ: Int) {
+        val chunk = chunkOf(worldId, chunkX, chunkZ)
         val location = mock(Location::class.java)
-        `when`(location.chunk).thenReturn(chunkOf(worldId, chunkX, chunkZ))
+        `when`(location.chunk).thenReturn(chunk)
         `when`(player.location).thenReturn(location)
     }
 

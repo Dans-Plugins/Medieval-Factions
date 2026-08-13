@@ -164,13 +164,15 @@ class MfFactionClaimCheckCommandTest {
         `when`(faction.name).thenReturn(factionName)
         `when`(factionService.getFaction(factionId)).thenReturn(faction)
         val claim = MfClaimedChunk(worldId, chunkX, chunkZ, factionId)
-        `when`(claimService.getClaim(chunkOf(worldId, chunkX, chunkZ))).thenReturn(claim)
+        val chunk = chunkOf(worldId, chunkX, chunkZ)
+        `when`(claimService.getClaim(chunk)).thenReturn(claim)
         `when`(claimService.getClaim(MfChunkPosition(worldId, chunkX, chunkZ))).thenReturn(claim)
     }
 
     private fun stubSenderChunk(player: Player, worldId: UUID, chunkX: Int, chunkZ: Int) {
+        val chunk = chunkOf(worldId, chunkX, chunkZ)
         val location = mock(Location::class.java)
-        `when`(location.chunk).thenReturn(chunkOf(worldId, chunkX, chunkZ))
+        `when`(location.chunk).thenReturn(chunk)
         `when`(player.location).thenReturn(location)
     }
 
