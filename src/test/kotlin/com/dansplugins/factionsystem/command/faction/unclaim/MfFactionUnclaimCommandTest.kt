@@ -39,6 +39,7 @@ import java.util.logging.Logger
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class MfFactionUnclaimCommandTest {
     private val testUtils = TestUtils()
+    private val factionId = MfFactionId.generate()
 
     private lateinit var fixture: TestUtils.CommandTestFixture
     private lateinit var plugin: MedievalFactions
@@ -48,7 +49,6 @@ class MfFactionUnclaimCommandTest {
     private lateinit var language: Language
     private lateinit var config: FileConfiguration
     private lateinit var faction: MfFaction
-    private lateinit var factionId: MfFactionId
     private lateinit var pendingAsyncTasks: MutableList<Runnable>
     private lateinit var uut: MfFactionUnclaimCommand
 
@@ -221,7 +221,6 @@ class MfFactionUnclaimCommandTest {
         claimService = mock(MfClaimService::class.java)
         `when`(services.claimService).thenReturn(claimService)
 
-        factionId = MfFactionId.generate()
         faction = mock(MfFaction::class.java)
         `when`(faction.id).thenReturn(factionId)
     }
