@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- The `Dev Release` workflow now retries publishing the `dev` prerelease before giving up, and asserts that exactly one JAR is being published. The release and its tag have to be deleted and recreated for the tag to move to the new commit, and a transient API failure inside that window previously left the repository with no `dev` release at all until the workflow was re-run by hand.
+
 ### Added
 - A JSON file storage backend as an alternative to the database, selected with `storage.type: json` in `config.yml`. The default remains `database`, so existing servers are unaffected. Files are written to `storage.json.path`, one per entity type. `players.json` and `factions.json` are validated against a JSON schema before being written; the other entity files are not yet schema-validated, and no file is validated when read back. Intended for smaller servers that want simpler deployment and file-level backups — the database backend remains the better choice under load, since every JSON write rewrites the whole file for that entity type.
 - `/faction migrate toJson` and `/faction migrate toDatabase` (permission `mf.migrate`, default `op`), which copy all data between the two storage backends. The migration runs asynchronously; `storage.type` must be changed and the server restarted afterwards for the new backend to take effect. The target backend must be empty — the command refuses to migrate into one that already holds data — and it should be run with no players online, since changes made while it runs may not be carried over. When migrating to JSON, only the most recent 1000 chat messages per faction are retained. See `docs/MIGRATION_GUIDE.md`.

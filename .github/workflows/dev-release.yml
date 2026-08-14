@@ -58,18 +58,34 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
+          shopt -s nullglob
+
+          # Dan's Plugin Manager installs the first .jar asset it finds on the release, so publishing
+          # more than one would leave the installed build depending on asset order. An empty or
+          # ambiguous match fails the run rather than publishing something unpredictable.
+          jars=(build/libs/*-all.jar)
+          if [ ${#jars[@]} -ne 1 ]; then
+            echo "Expected exactly one JAR to publish, found ${#jars[@]}: ${jars[*]:-none}" >&2
+            exit 1
+          fi
 
           # The dev tag has to move to the new commit. Editing a published release does not move its
-          # tag, so the release and its tag are deleted and recreated. This leaves a window of a few
-          # seconds with no dev release; a client that fetches during it sees "no experimental build
-          # published" and succeeds on the next attempt.
-          gh release delete dev --yes --cleanup-tag || true
+          # tag, so the release and its tag are deleted and recreated. That leaves a window with no
+          # dev release, and a transient API failure inside it would strand the repository there
+          # until someone noticed by hand — which has happened. Each attempt therefore starts from a
+          # clean slate, so a half-finished attempt cannot wedge the next one.
+          published=
+          for attempt in 1 2 3; do
+            if [ -n "${attempt_delay:-}" ]; then sleep "$attempt_delay"; fi
+            attempt_delay=$((attempt * 15))
 
-          gh release create dev \
-            --prerelease \
-            --target "$GITHUB_SHA" \
-            --title "Development build" \
-            --notes "Automated build of \`main\` at ${GITHUB_SHA}.
+            gh release delete dev --yes --cleanup-tag || true
+
+            if gh release create dev \
+              --prerelease \
+              --target "$GITHUB_SHA" \
+              --title "Development build" \
+              --notes "Automated build of \`main\` at ${GITHUB_SHA}.
 
           **This is not a release.** It is unreleased, unreviewed code that has not been through any
           release check, and a broken build can stop a server from starting. Do not run it on a server
@@ -82,4 +98,15 @@ jobs:
           \`\`\`
 
           Return to published releases with \`/dpm get medievalfactions --stable\`." \
-            build/libs/*-all.jar
+              "${jars[0]}"; then
+              published=1
+              break
+            fi
+
+            echo "Publishing the dev prerelease failed (attempt $attempt of 3)." >&2
+          done
+
+          if [ -z "$published" ]; then
+            echo "Could not publish the dev prerelease after 3 attempts. The dev release may be missing until this workflow is re-run." >&2
+            exit 1
+          fi
