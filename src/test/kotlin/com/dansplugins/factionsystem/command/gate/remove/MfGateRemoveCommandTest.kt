@@ -52,6 +52,7 @@ class MfGateRemoveCommandTest {
     private lateinit var language: Language
     private lateinit var config: FileConfiguration
     private lateinit var faction: MfFaction
+    private lateinit var scheduler: BukkitScheduler
     private lateinit var uut: MfGateRemoveCommand
 
     @BeforeEach
@@ -178,6 +179,38 @@ class MfGateRemoveCommandTest {
         verify(player).sendMessage("${ChatColor.RED}No gate found")
     }
 
+    @Test
+    fun testOnCommand_removesTheGateClosestToWhereTheSenderStoodWhenTheCommandWasRun() {
+        // prepare — the sender walks 100 blocks away, well beyond gates.maxRemoveDistance, while the removal is
+        // still queued. See https://github.com/Dans-Plugins/Medieval-Factions/issues/2006.
+        val player = fixture.player
+        val command = fixture.command
+        val worldId = UUID.randomUUID()
+        val pendingAsyncTasks = mutableListOf<Runnable>()
+        // The dispatched task is queued rather than run, so the sender can be moved in between.
+        `when`(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable::class.java))).thenAnswer { invocation ->
+            pendingAsyncTasks += invocation.arguments[1] as Runnable
+            null
+        }
+        stubMembershipOf(player)
+        stubSenderLocation(player, worldId, 0, 64, 0)
+        val nearGate = gateAt(worldId, 3, 64, 0)
+        stubFactionGates(nearGate)
+        stubDeletionOf(nearGate)
+        `when`(language["CommandGateRemoveSuccess"]).thenReturn("Gate removed")
+        `when`(language["CommandGateRemoveFailedToFindGate"]).thenReturn("No gate found")
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf())
+        stubSenderLocation(player, worldId, 100, 64, 100)
+        pendingAsyncTasks.forEach(Runnable::run)
+
+        // verify — the gate is measured from where the sender stood when the command was run
+        assertTrue(result)
+        verify(gateService).delete(nearGate.id)
+        verify(player).sendMessage("${ChatColor.GREEN}Gate removed")
+    }
+
     // Helper functions
 
     private fun gateAt(worldId: UUID, x: Int, y: Int, z: Int): MfGate {
@@ -265,7 +298,7 @@ class MfGateRemoveCommandTest {
         val server = mock(Server::class.java)
         `when`(plugin.server).thenReturn(server)
 
-        val scheduler = mock(BukkitScheduler::class.java)
+        scheduler = mock(BukkitScheduler::class.java)
         `when`(server.scheduler).thenReturn(scheduler)
         // Run the dispatched task synchronously so the command body executes within the test.
         `when`(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable::class.java))).thenAnswer { invocation ->

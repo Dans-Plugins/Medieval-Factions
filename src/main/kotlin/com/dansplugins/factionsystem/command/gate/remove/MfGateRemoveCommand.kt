@@ -25,6 +25,7 @@ class MfGateRemoveCommand(private val plugin: MedievalFactions) : CommandExecuto
             sender.sendMessage("$RED${plugin.language["CommandGateRemoveNotAPlayer"]}")
             return true
         }
+        val senderBlockPosition = MfBlockPosition.fromBukkitLocation(sender.location)
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
@@ -51,7 +52,7 @@ class MfGateRemoveCommand(private val plugin: MedievalFactions) : CommandExecuto
                 // We work with squared distances since calculating square root is an expensive call and best avoided where possible.
                 // A gate in a world other than the sender's has a null distance, so it is never picked as the closest one.
                 val gateDistanceSquared = existingGates.associateWith { gate ->
-                    MfBlockPosition.fromBukkitLocation(sender.location)?.let { gate.area.distanceSquared(it) }
+                    senderBlockPosition?.let { gate.area.distanceSquared(it) }
                 }
                 plugin.logger.log(INFO, gateDistanceSquared.map { (key, value) -> "${key.id.value}: $value" }.joinToString(", ", "{", "}"))
                 val closestGate = gateDistanceSquared.keys.minByOrNull { gateDistanceSquared[it] ?: Long.MAX_VALUE }
