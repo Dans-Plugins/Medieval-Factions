@@ -324,7 +324,7 @@ factions:
 ### `factions.nonMembersCanInteractWithEntities`
 **Type:** Boolean  
 **Default:** `false`  
-**Description:** When `true`, non-faction members can right-click entities in faction territory — minecarts (including chest and hopper minecarts), boats, item frames, armour stands, animals and the like. When `false`, those interactions are blocked for anyone without interaction rights in the claim, and the player is told why. Villager trading is not covered by this option: it is governed by the `protectVillagerTrade` faction flag instead. Wilderness is not covered either; see `wilderness.interaction.prevent`.
+**Description:** When `true`, non-faction members can right-click entities in faction territory — minecarts (including chest and hopper minecarts), boats, item frames, armour stands, animals and the like. When `false`, those interactions are blocked for anyone without interaction rights in the claim, and the player is told why. Villager trading is not covered by this option: it is governed by the `protectVillagerTrade` faction flag instead. Wilderness is not covered either; see `wilderness.interaction.prevent`. Note that `true` is more permissive than releases before this option existed: armour stands were protected then, and setting this to `true` leaves them editable by non-members.
 
 ### `factions.maxClaimRadius`
 **Type:** Integer  
