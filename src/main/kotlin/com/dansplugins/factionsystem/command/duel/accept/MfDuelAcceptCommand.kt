@@ -46,6 +46,8 @@ class MfDuelAcceptCommand(private val plugin: MedievalFactions) : CommandExecuto
             sender.sendMessage("$RED${plugin.language["CommandDuelAcceptCannotDuelSelf"]}")
             return true
         }
+        val senderPosition = MfPosition.fromBukkitLocation(sender.location)
+        val targetPosition = MfPosition.fromBukkitLocation(target.location)
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
@@ -90,8 +92,8 @@ class MfDuelAcceptCommand(private val plugin: MedievalFactions) : CommandExecuto
                         challengerHealth = target.health,
                         challengedHealth = sender.health,
                         endTime = Instant.now().plus(Duration.parse(plugin.config.getString("duels.duration"))),
-                        challengerLocation = MfPosition.fromBukkitLocation(target.location),
-                        challengedLocation = MfPosition.fromBukkitLocation(sender.location)
+                        challengerLocation = targetPosition,
+                        challengedLocation = senderPosition
                     )
                 ).onFailure {
                     sender.sendMessage("$RED${plugin.language["CommandDuelAcceptFailedToSaveDuel"]}")
