@@ -31,6 +31,10 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimNotAPlayer"]}")
             return true
         }
+        val senderWorld = sender.world
+        val senderChunk = sender.location.chunk
+        val senderChunkX = senderChunk.x
+        val senderChunkZ = senderChunk.z
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
@@ -53,7 +57,7 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
                     return@Runnable
                 }
                 val claimService = plugin.services.claimService
-                if (claimService.isClaimingBlockedInWorld(sender.world)) {
+                if (claimService.isClaimingBlockedInWorld(senderWorld)) {
                     sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimWorldBlocked"]}")
                     return@Runnable
                 }
@@ -67,20 +71,18 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
                     sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimMaxClaimRadius", maxClaimRadius.toString()]}")
                     return@Runnable
                 }
-                val senderChunkX = sender.location.chunk.x
-                val senderChunkZ = sender.location.chunk.z
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
                         val chunks = if (radius == null) {
-                            listOf(MfChunkPosition(sender.world.uid, senderChunkX, senderChunkZ))
+                            listOf(MfChunkPosition(senderWorld.uid, senderChunkX, senderChunkZ))
                         } else {
                             (senderChunkX - radius..senderChunkX + radius).flatMap { x ->
                                 (senderChunkZ - radius..senderChunkZ + radius).filter { z ->
                                     val a = x - senderChunkX
                                     val b = z - senderChunkZ
                                     (a * a) + (b * b) <= radius * radius
-                                }.map { z -> MfChunkPosition.fromBukkit(sender.world.getChunkAt(x, z)) }
+                                }.map { z -> MfChunkPosition.fromBukkit(senderWorld.getChunkAt(x, z)) }
                             }
                         }
                         plugin.server.scheduler.runTaskAsynchronously(
