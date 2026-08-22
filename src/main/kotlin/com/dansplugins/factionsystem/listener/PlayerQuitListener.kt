@@ -8,10 +8,15 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
 import java.util.logging.Level.SEVERE
 
-class PlayerQuitListener(private val plugin: MedievalFactions) : Listener {
+class PlayerQuitListener(
+    private val plugin: MedievalFactions,
+    private val entityInteractionProtection: EntityInteractionProtection
+) : Listener {
 
     @EventHandler
     fun onPlayerQuit(event: PlayerQuitEvent) {
+        entityInteractionProtection.forgetPlayer(event.player.uniqueId)
+
         val teleportService = plugin.services.teleportService
         teleportService.cancelTeleportation(event.player)
 
