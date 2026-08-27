@@ -38,6 +38,7 @@ class PlayerQuitListenerTest {
     private lateinit var plugin: MedievalFactions
     private lateinit var playerService: MfPlayerService
     private lateinit var interactionService: MfInteractionService
+    private lateinit var entityInteractionProtection: EntityInteractionProtection
     private lateinit var teleportService: MfTeleportService
     private lateinit var logger: Logger
     private lateinit var config: FileConfiguration
@@ -55,7 +56,8 @@ class PlayerQuitListenerTest {
         mockLogger()
         mockScheduler()
         `when`(playerService.save(anyMfPlayer())).thenReturn(Success(fixture.mfPlayer))
-        uut = PlayerQuitListener(plugin)
+        entityInteractionProtection = mock(EntityInteractionProtection::class.java)
+        uut = PlayerQuitListener(plugin, entityInteractionProtection)
     }
 
     @Test
@@ -158,6 +160,22 @@ class PlayerQuitListenerTest {
         assertEquals(fixture.playerId, saved.id)
         assertEquals(20.0, saved.power)
         assertEquals(20.0, saved.powerAtLogout)
+    }
+
+    @Test
+    fun onPlayerQuit_ShouldDropRetainedEntityNotificationStateOnTheServerThread() {
+        // Arrange - the UUID is read up front rather than inside the verify() argument list, so that
+        // no invocation on another mock is made while verification mode is armed
+        `when`(playerService.getPlayer(fixture.player)).thenReturn(fixture.mfPlayer)
+        val playerUuid = fixture.player.uniqueId
+
+        // Act
+        uut.onPlayerQuit(fixture.event)
+
+        // Assert - the retained notification is keyed on the player's UUID, so it has to be dropped
+        // before the listener returns, or a reconnecting player inherits the de-duplication window
+        // that was open when they left
+        verify(entityInteractionProtection).forgetPlayer(playerUuid)
     }
 
     @Test
