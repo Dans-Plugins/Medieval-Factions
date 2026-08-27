@@ -164,8 +164,10 @@ class PlayerQuitListenerTest {
 
     @Test
     fun onPlayerQuit_ShouldDropRetainedEntityNotificationStateOnTheServerThread() {
-        // Arrange
+        // Arrange - the UUID is read up front rather than inside the verify() argument list, so that
+        // no invocation on another mock is made while verification mode is armed
         `when`(playerService.getPlayer(fixture.player)).thenReturn(fixture.mfPlayer)
+        val playerUuid = fixture.player.uniqueId
 
         // Act
         uut.onPlayerQuit(fixture.event)
@@ -173,7 +175,7 @@ class PlayerQuitListenerTest {
         // Assert - the retained notification is keyed on the player's UUID, so it has to be dropped
         // before the listener returns, or a reconnecting player inherits the de-duplication window
         // that was open when they left
-        verify(entityInteractionProtection).forgetPlayer(fixture.player.uniqueId)
+        verify(entityInteractionProtection).forgetPlayer(playerUuid)
     }
 
     @Test
