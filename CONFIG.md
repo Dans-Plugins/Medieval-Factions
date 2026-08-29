@@ -661,8 +661,8 @@ This integration is **strictly opt-in**.
 
 ### `dpc-api.url`
 **Type:** String  
-**Default:** `"https://dansplugins.com/api/v1/factions"`  
-**Description:** The full endpoint URL of the DPC API. Include a port if the API runs on a non-standard port (e.g. `"https://dansplugins.com:8080/api/v1/factions"`).
+**Default:** `"https://api.dansplugins.com/api/v1/factions"`  
+**Description:** The full endpoint URL of the DPC API. Note that the API is served from `api.dansplugins.com`, a different host from the `dansplugins.com` website — pointing this at the website returns the site's HTML 404 page rather than an API response. Include a port if the API runs on a non-standard port (e.g. `"https://api.dansplugins.com:8080/api/v1/factions"`).
 
 ### `dpc-api.key`
 **Type:** String  
@@ -709,6 +709,9 @@ status code and a truncated response body to your server log. Common cases:
 - **`400 Bad Request`** — usually means `dpc-api.server-id` contains
   disallowed characters. Allowed characters are letters, digits, dot,
   underscore, colon, and hyphen.
+- **`404 Not Found`** with an HTML body — `dpc-api.url` is pointing at the
+  website rather than the API. The API host is `api.dansplugins.com`; the
+  website answers every unknown `/api/...` path with its own 404 page.
 - **`429` / `5xx`** — transient server-side issue; the next sync will retry.
   Failed requests never crash the plugin.
 

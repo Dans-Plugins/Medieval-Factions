@@ -275,7 +275,7 @@ gates:
     - *buttons
 dpc-api:
   enabled: false
-  url: "https://dansplugins.com/api/v1/factions"  # full endpoint URL of the DPC API; include port if needed (e.g. "https://dansplugins.com:8080/api/v1/factions")
+  url: "https://api.dansplugins.com/api/v1/factions"  # full endpoint URL of the DPC API (the API is a separate host from the website); include port if needed (e.g. "https://api.dansplugins.com:8080/api/v1/factions")
   key: ""                      # API key from https://dansplugins.com — register or sign in, then generate a key from your account page
   server-id: ""                # unique name for this server (e.g. "my-survival-server"); used to identify your server in the DPC registry
   login-reminder: true
