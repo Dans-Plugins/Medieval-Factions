@@ -160,7 +160,7 @@ class MfDpcApiServiceTest {
     @Test
     fun testSyncFactions_skippedWhenServerIdBlank() {
         `when`(config.getBoolean("dpc-api.enabled")).thenReturn(true)
-        `when`(config.getString("dpc-api.url")).thenReturn("https://dansplugins.com/api/v1/factions")
+        `when`(config.getString("dpc-api.url")).thenReturn("https://api.dansplugins.com/api/v1/factions")
         `when`(config.getString("dpc-api.key")).thenReturn("test-key")
         `when`(config.getString("dpc-api.server-id")).thenReturn("")
 
@@ -282,7 +282,7 @@ class MfDpcApiServiceTest {
         serverId: String = "my-server"
     ) {
         `when`(config.getBoolean("dpc-api.enabled")).thenReturn(true)
-        `when`(config.getString("dpc-api.url")).thenReturn("https://dansplugins.com/api/v1/factions")
+        `when`(config.getString("dpc-api.url")).thenReturn("https://api.dansplugins.com/api/v1/factions")
         `when`(config.getString("dpc-api.key")).thenReturn("test-api-key")
         `when`(config.getString("dpc-api.server-id")).thenReturn(serverId)
         `when`(config.getBoolean("dpc-api.share-server-ip")).thenReturn(shareServerIp)
