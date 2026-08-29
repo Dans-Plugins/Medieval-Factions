@@ -44,6 +44,7 @@ class MfFactionMapCommand(private val plugin: MedievalFactions) : CommandExecuto
             MapType.valueOf(args.joinToString(" ").uppercase())
         }
         val senderChunk = sender.location.chunk
+        val senderWorld = senderChunk.world
         val senderChunkX = senderChunk.x
         val senderChunkZ = senderChunk.z
         plugin.server.scheduler.runTaskAsynchronously(
@@ -62,7 +63,7 @@ class MfFactionMapCommand(private val plugin: MedievalFactions) : CommandExecuto
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionMapMapTypeRequiresFaction"]}")
                     return@Runnable
                 }
-                val map = renderMap(faction, mapType, sender.world, senderChunkX - 10, senderChunkZ - 4, senderChunkX + 10, senderChunkZ + 4)
+                val map = renderMap(faction, mapType, senderWorld, senderChunkX - 10, senderChunkZ - 4, senderChunkX + 10, senderChunkZ + 4)
                 map.forEach { row ->
                     sender.spigot().sendMessage(*row)
                 }
