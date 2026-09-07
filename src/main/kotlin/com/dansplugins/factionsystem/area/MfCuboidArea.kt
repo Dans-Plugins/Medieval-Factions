@@ -64,7 +64,16 @@ data class MfCuboidArea(
             position.y <= maxPosition.y &&
             position.z <= maxPosition.z
 
-    fun distanceSquared(position: MfBlockPosition): Int {
+    /**
+     * The squared distance between [position] and the nearest point of this area, or null if [position] is in a
+     * different world. Callers must treat null as "not comparable" rather than as a distance, in the same way that
+     * [contains] reports false for a position in another world.
+     *
+     * The result is a [Long] because a squared distance exceeds `Int.MAX_VALUE` from roughly 46,341 blocks away on a
+     * single axis, which is reachable on a large world.
+     */
+    fun distanceSquared(position: MfBlockPosition): Long? {
+        if (position.worldId != minPosition.worldId) return null
         val x = position.x
         val y = position.y
         val z = position.z
@@ -83,6 +92,9 @@ data class MfCuboidArea(
             minPosition.z <= z && z <= maxPosition.z -> z
             else -> maxPosition.z
         }
-        return ((closestX - x) * (closestX - x)) + ((closestY - y) * (closestY - y)) + ((closestZ - z) * (closestZ - z))
+        val deltaX = closestX.toLong() - x.toLong()
+        val deltaY = closestY.toLong() - y.toLong()
+        val deltaZ = closestZ.toLong() - z.toLong()
+        return (deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ)
     }
 }

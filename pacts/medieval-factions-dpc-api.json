@@ -1,0 +1,74 @@
+{
+  "consumer": {
+    "name": "medieval-factions"
+  },
+  "interactions": [
+    {
+      "description": "a faction sync with all optional fields",
+      "providerStates": [
+        {
+          "name": "a valid API key exists"
+        }
+      ],
+      "request": {
+        "body": [
+          {
+            "description": "A faction with all optional fields",
+            "discordLink": "https://discord.gg/example",
+            "memberCount": 10,
+            "name": "Full Faction",
+            "serverId": "test-server",
+            "serverIp": "play.example.com"
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json",
+          "X-API-Key": "test-api-key"
+        },
+        "method": "POST",
+        "path": "/api/v1/factions"
+      },
+      "response": {
+        "status": 200
+      }
+    },
+    {
+      "description": "a faction sync with required fields only",
+      "providerStates": [
+        {
+          "name": "a valid API key exists"
+        }
+      ],
+      "request": {
+        "body": [
+          {
+            "description": "A test faction",
+            "memberCount": 5,
+            "name": "Test Faction",
+            "serverId": "test-server"
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json",
+          "X-API-Key": "test-api-key"
+        },
+        "method": "POST",
+        "path": "/api/v1/factions"
+      },
+      "response": {
+        "status": 200
+      }
+    }
+  ],
+  "metadata": {
+    "pact-jvm": {
+      "version": "4.6.7"
+    },
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  },
+  "provider": {
+    "name": "dpc-api"
+  }
+}

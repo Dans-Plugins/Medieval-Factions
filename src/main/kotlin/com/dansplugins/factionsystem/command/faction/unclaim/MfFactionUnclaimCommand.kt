@@ -10,16 +10,21 @@ class MfFactionUnclaimCommand(private val plugin: MedievalFactions) : CommandExe
     private val factionUnclaimAutoCommand = MfFactionUnclaimAutoCommand(plugin)
     private val factionUnclaimCircleCommand = MfFactionUnclaimCircleCommand(plugin)
 
-    private val autoAliases = listOf("auto", plugin.language["CmdFactionUnclaimAuto"])
+    // listOfNotNull, not listOf: the language lookup returns null when the key is
+    // absent from a language file, and a null in this list would make the
+    // no-argument case ("/f unclaim") match and dispatch to the auto subcommand
+    // instead of unclaiming the chunk the sender is standing in.
+    private val autoAliases = listOfNotNull("auto", plugin.language["CmdFactionUnclaimAuto"])
+        .map(String::lowercase)
 
     private val subcommands = autoAliases
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        return when (args.firstOrNull()?.lowercase()) {
-            in autoAliases -> factionUnclaimAutoCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
-            else -> {
-                return factionUnclaimCircleCommand.onCommand(sender, command, label, args)
-            }
+        val subcommand = args.firstOrNull()?.lowercase()
+        return if (subcommand != null && subcommand in autoAliases) {
+            factionUnclaimAutoCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+        } else {
+            factionUnclaimCircleCommand.onCommand(sender, command, label, args)
         }
     }
 

@@ -18,6 +18,7 @@ import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ChatMessageType.ACTION_BAR
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Chunk
+import org.bukkit.Material
 import org.bukkit.World
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -72,6 +73,72 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
         val atWar = relationshipService.getRelationships(claim.factionId, MfFactionRelationshipType.AT_WAR).map { it.targetId }
         if (plugin.config.getBoolean("pvp.enableWartimeBlockDestruction") && atWar.contains(playerFaction.id)) return true
         return false
+    }
+
+    /**
+     * Checks if ladder placement is allowed in enemy territory during wartime.
+     * This is used to allow players to place ladders for sieges when their faction is at war with the territory owner.
+     *
+     * @param playerId The ID of the player attempting to place a ladder
+     * @param claim The claimed chunk where the player is attempting the action
+     * @param isLadder Whether the item being placed is a ladder
+     * @return true if ladder placement should be allowed, false otherwise
+     */
+    fun isWartimeLadderPlacementAllowed(playerId: MfPlayerId, claim: MfClaimedChunk, isLadder: Boolean): Boolean {
+        if (!isLadder) return false
+        if (!plugin.config.getBoolean("factions.laddersPlaceableInEnemyFactionTerritory")) return false
+
+        val factionService = plugin.services.factionService
+        val playerFaction = factionService.getFaction(playerId) ?: return false
+        val claimFactionId = claim.factionId
+
+        val relationshipService = plugin.services.factionRelationshipService
+        return relationshipService.getFactionsAtWarWith(playerFaction.id).contains(claimFactionId)
+    }
+
+    /**
+     * Checks if placing a block of the given material is allowed in enemy territory during wartime
+     * because it appears in the `factions.wartimePlaceableBlocks` config list.
+     *
+     * @param playerId The ID of the player attempting to place the block
+     * @param claim The claimed chunk where the player is attempting the action
+     * @param material The material of the block being placed
+     * @return true if placement should be allowed, false otherwise
+     */
+    fun isWartimePlaceableBlock(playerId: MfPlayerId, claim: MfClaimedChunk, material: Material): Boolean =
+        isWartimeBlockActionAllowed(playerId, claim, material, "factions.wartimePlaceableBlocks")
+
+    /**
+     * Checks if breaking a block of the given material is allowed in enemy territory during wartime
+     * because it appears in the `factions.wartimeBreakableBlocks` config list.
+     *
+     * @param playerId The ID of the player attempting to break the block
+     * @param claim The claimed chunk where the player is attempting the action
+     * @param material The material of the block being broken
+     * @return true if breaking should be allowed, false otherwise
+     */
+    fun isWartimeBreakableBlock(playerId: MfPlayerId, claim: MfClaimedChunk, material: Material): Boolean =
+        isWartimeBlockActionAllowed(playerId, claim, material, "factions.wartimeBreakableBlocks")
+
+    /**
+     * Checks if interacting with a block of the given material is allowed in enemy territory during wartime
+     * because it appears in the `factions.wartimeInteractableBlocks` config list.
+     *
+     * @param playerId The ID of the player attempting to interact with the block
+     * @param claim The claimed chunk where the player is attempting the action
+     * @param material The material of the block being interacted with
+     * @return true if interaction should be allowed, false otherwise
+     */
+    fun isWartimeInteractableBlock(playerId: MfPlayerId, claim: MfClaimedChunk, material: Material): Boolean =
+        isWartimeBlockActionAllowed(playerId, claim, material, "factions.wartimeInteractableBlocks")
+
+    private fun isWartimeBlockActionAllowed(playerId: MfPlayerId, claim: MfClaimedChunk, material: Material, configKey: String): Boolean {
+        val blocks = plugin.config.getStringList(configKey).mapTo(HashSet()) { it.uppercase() }
+        if (material.name !in blocks) return false
+        val factionService = plugin.services.factionService
+        val playerFaction = factionService.getFaction(playerId) ?: return false
+        val relationshipService = plugin.services.factionRelationshipService
+        return relationshipService.getFactionsAtWarWith(playerFaction.id).contains(claim.factionId)
     }
 
     // Checks whether a set of chunks has at least one chunk that is adjacent to an existing claim. Works across multiple worlds.
