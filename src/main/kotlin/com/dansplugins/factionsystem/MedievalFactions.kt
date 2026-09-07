@@ -1,5 +1,7 @@
 package com.dansplugins.factionsystem
 
+import com.dansplugins.factionsystem.api.MfApiServer
+import com.dansplugins.factionsystem.approval.MfApprovalRequestService
 import com.dansplugins.factionsystem.chat.JooqMfChatChannelMessageRepository
 import com.dansplugins.factionsystem.chat.MfChatChannelMessageRepository
 import com.dansplugins.factionsystem.chat.MfChatService
@@ -13,6 +15,7 @@ import com.dansplugins.factionsystem.command.gate.MfGateCommand
 import com.dansplugins.factionsystem.command.lock.MfLockCommand
 import com.dansplugins.factionsystem.command.power.MfPowerCommand
 import com.dansplugins.factionsystem.command.unlock.MfUnlockCommand
+import com.dansplugins.factionsystem.dpc.MfDpcApiService
 import com.dansplugins.factionsystem.duel.JooqMfDuelInviteRepository
 import com.dansplugins.factionsystem.duel.JooqMfDuelRepository
 import com.dansplugins.factionsystem.duel.MfDuelId
@@ -53,19 +56,17 @@ import com.dansplugins.factionsystem.listener.CreatureSpawnListener
 import com.dansplugins.factionsystem.listener.EntityDamageByEntityListener
 import com.dansplugins.factionsystem.listener.EntityDamageListener
 import com.dansplugins.factionsystem.listener.EntityExplodeListener
-import com.dansplugins.factionsystem.listener.HighPriorityPlayerInteractListener
+import com.dansplugins.factionsystem.listener.EntityInteractionProtection
 import com.dansplugins.factionsystem.listener.InventoryClickListener
 import com.dansplugins.factionsystem.listener.InventoryMoveItemListener
 import com.dansplugins.factionsystem.listener.LingeringPotionSplashListener
 import com.dansplugins.factionsystem.listener.PlayerBucketListener
 import com.dansplugins.factionsystem.listener.PlayerDeathListener
-import com.dansplugins.factionsystem.listener.PlayerDropItemListener
 import com.dansplugins.factionsystem.listener.PlayerInteractAtEntityListener
 import com.dansplugins.factionsystem.listener.PlayerInteractEntityListener
 import com.dansplugins.factionsystem.listener.PlayerInteractListener
 import com.dansplugins.factionsystem.listener.PlayerJoinListener
 import com.dansplugins.factionsystem.listener.PlayerMoveListener
-import com.dansplugins.factionsystem.listener.PlayerPickupItemListener
 import com.dansplugins.factionsystem.listener.PlayerQuitListener
 import com.dansplugins.factionsystem.listener.PlayerTeleportListener
 import com.dansplugins.factionsystem.listener.PotionSplashListener
@@ -107,7 +108,6 @@ import org.flywaydb.core.Flyway
 import org.jooq.SQLDialect
 import org.jooq.conf.Settings
 import org.jooq.impl.DSL
-import preponderous.ponder.minecraft.bukkit.plugin.registerListeners
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalTime
@@ -118,8 +118,8 @@ import kotlin.math.roundToInt
 
 class MedievalFactions : JavaPlugin() {
 
-    private lateinit var dataSource: DataSource
-    private var apiServer: com.dansplugins.factionsystem.api.MfApiServer? = null
+    private var dataSource: DataSource? = null
+    private var apiServer: MfApiServer? = null
 
     lateinit var flags: MfFlags
     lateinit var factionPermissions: MfFactionPermissions
@@ -149,77 +149,41 @@ class MedievalFactions : JavaPlugin() {
 
         language = Language(this, config.getString("language") ?: "en-US")
 
-        Class.forName("org.h2.Driver")
-        val hikariConfig = HikariConfig()
-        hikariConfig.jdbcUrl = config.getString("database.url")
-        val databaseUsername = config.getString("database.username")
-        if (databaseUsername != null) {
-            hikariConfig.username = databaseUsername
-        }
-        val databasePassword = config.getString("database.password")
-        if (databasePassword != null) {
-            hikariConfig.password = databasePassword
-        }
-        dataSource = HikariDataSource(hikariConfig)
-        val oldClassLoader = Thread.currentThread().contextClassLoader
-        Thread.currentThread().contextClassLoader = classLoader
-        val flyway = Flyway.configure()
-            .dataSource(dataSource)
-            .locations("classpath:com/dansplugins/factionsystem/db/migration")
-            .table("mf_schema_history")
-            .baselineOnMigrate(true)
-            .baselineVersion("0")
-            .validateOnMigrate(false)
-            .load()
-        flyway.migrate()
-        Thread.currentThread().contextClassLoader = oldClassLoader
-
-        System.setProperty("org.jooq.no-logo", "true")
-        System.setProperty("org.jooq.no-tips", "true")
-
-        val dialect = config.getString("database.dialect")?.let(SQLDialect::valueOf)
-        val jooqSettings = Settings().withRenderSchema(false)
-        val dsl = DSL.using(
-            dataSource,
-            dialect,
-            jooqSettings
-        )
+        val storageType = config.getString("storage.type") ?: "database"
+        logger.info("Using storage type: $storageType")
 
         flags = MfFlags(this)
         factionPermissions = MfFactionPermissions(this)
 
         val gson = Gson()
-        val playerRepository: MfPlayerRepository = JooqMfPlayerRepository(this, dsl)
+
+        // Initialize repositories based on storage type
+        val repositories = if (storageType.equals("json", ignoreCase = true)) {
+            initializeJsonRepositories(gson)
+        } else {
+            initializeDatabaseRepositories(gson)
+        }
+
         val mapService = if (server.pluginManager.getPlugin("dynmap") != null && config.getBoolean("dynmap.enableDynmapIntegration")) {
             DynmapService(this)
         } else {
             null
         }
-        val factionRepository: MfFactionRepository = JooqMfFactionRepository(this, dsl, gson)
-        val lawRepository: MfLawRepository = JooqMfLawRepository(dsl)
-        val factionRelationshipRepository: MfFactionRelationshipRepository = JooqMfFactionRelationshipRepository(dsl)
-        val claimedChunkRepository: MfClaimedChunkRepository = JooqMfClaimedChunkRepository(dsl)
-        val lockRepository: MfLockRepository = JooqMfLockRepository(dsl)
-        val interactionStatusRepository: MfInteractionStatusRepository = JooqMfInteractionStatusRepository(dsl)
-        val gateRepository: MfGateRepository = JooqMfGateRepository(this, dsl)
-        val gateCreationContextRepository: MfGateCreationContextRepository = JooqMfGateCreationContextRepository(dsl)
-        val chatMessageRepository: MfChatChannelMessageRepository = JooqMfChatChannelMessageRepository(dsl)
-        val duelRepository: MfDuelRepository = JooqMfDuelRepository(dsl)
-        val duelInviteRepository: MfDuelInviteRepository = JooqMfDuelInviteRepository(dsl)
 
-        val playerService = MfPlayerService(this, playerRepository)
-        val factionService = MfFactionService(this, factionRepository)
-        val lawService = MfLawService(lawRepository)
-        val factionRelationshipService = MfFactionRelationshipService(this, factionRelationshipRepository)
-        val claimService = MfClaimService(this, claimedChunkRepository)
-        val lockService = MfLockService(this, lockRepository)
-        val interactionService = MfInteractionService(interactionStatusRepository)
+        val playerService = MfPlayerService(this, repositories.playerRepository)
+        val factionService = MfFactionService(this, repositories.factionRepository)
+        val lawService = MfLawService(repositories.lawRepository)
+        val factionRelationshipService = MfFactionRelationshipService(this, repositories.factionRelationshipRepository)
+        val claimService = MfClaimService(this, repositories.claimedChunkRepository)
+        val lockService = MfLockService(this, repositories.lockRepository)
+        val interactionService = MfInteractionService(repositories.interactionStatusRepository)
         val notificationService = setupNotificationService()
-        val gateService = MfGateService(this, gateRepository, gateCreationContextRepository)
-        val chatService = MfChatService(this, chatMessageRepository)
-        val duelService = MfDuelService(this, duelRepository, duelInviteRepository)
+        val gateService = MfGateService(this, repositories.gateRepository, repositories.gateCreationContextRepository)
+        val chatService = MfChatService(this, repositories.chatMessageRepository)
+        val duelService = MfDuelService(this, repositories.duelRepository, repositories.duelInviteRepository)
         val potionService = MfPotionService(this)
         val teleportService = MfTeleportService(this)
+        val approvalRequestService = MfApprovalRequestService()
 
         services = Services(
             playerService,
@@ -235,7 +199,8 @@ class MedievalFactions : JavaPlugin() {
             duelService,
             potionService,
             teleportService,
-            mapService
+            mapService,
+            approvalRequestService
         )
         setupRpkLockService()
 
@@ -296,6 +261,26 @@ class MedievalFactions : JavaPlugin() {
                 config.getBoolean("factions.allowNeutrality").toString()
             }
         )
+        metrics.addCustomChart(
+            SimplePie("dpc_api_opt_in") {
+                config.getBoolean("dpc-api.enabled").toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("dpc_api_login_reminder") {
+                config.getBoolean("dpc-api.login-reminder").toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("dpc_api_share_server_ip") {
+                config.getBoolean("dpc-api.share-server-ip").toString()
+            }
+        )
+        metrics.addCustomChart(
+            SimplePie("dpc_api_discord_link_set") {
+                (config.getString("dpc-api.discord-link")?.isNotEmpty() == true).toString()
+            }
+        )
 
         if (config.getBoolean("migrateMf4")) {
             migrator.migrate()
@@ -317,7 +302,11 @@ class MedievalFactions : JavaPlugin() {
             }
         }
 
-        registerListeners(
+        // Shared between the two entity interaction listeners so that a right-click raising both events
+        // only produces a single message.
+        val entityInteractionProtection = EntityInteractionProtection(this)
+
+        listOf(
             AreaEffectCloudApplyListener(this),
             AsyncPlayerChatListener(this),
             AsyncPlayerPreLoginListener(this),
@@ -331,23 +320,20 @@ class MedievalFactions : JavaPlugin() {
             EntityDamageByEntityListener(this),
             EntityDamageListener(this),
             EntityExplodeListener(this),
-            HighPriorityPlayerInteractListener(this),
             InventoryClickListener(this),
             InventoryMoveItemListener(this),
             LingeringPotionSplashListener(this),
             PlayerBucketListener(this),
             PlayerDeathListener(this),
-            PlayerDropItemListener(this),
-            PlayerInteractAtEntityListener(this),
-            PlayerInteractEntityListener(this),
+            PlayerInteractAtEntityListener(this, entityInteractionProtection),
+            PlayerInteractEntityListener(this, entityInteractionProtection),
             PlayerInteractListener(this),
             PlayerJoinListener(this),
             PlayerMoveListener(this),
-            PlayerPickupItemListener(this),
-            PlayerQuitListener(this),
+            PlayerQuitListener(this, entityInteractionProtection),
             PlayerTeleportListener(this),
             PotionSplashListener(this)
-        )
+        ).forEach { server.pluginManager.registerEvents(it, this) }
 
         getCommand("faction")?.setExecutor(MfFactionCommand(this))
         getCommand("lock")?.setExecutor(MfLockCommand(this))
@@ -478,15 +464,121 @@ class MedievalFactions : JavaPlugin() {
                 }
             }, 5L, 20L)
         }
-        
-        // Start REST API server
-        apiServer = com.dansplugins.factionsystem.api.MfApiServer(this)
+
+        val dpcApiService = MfDpcApiService(this)
+        val syncIntervalMinutes = config.getInt("dpc-api.sync-interval-minutes", 10).coerceAtLeast(1)
+        val syncIntervalTicks = syncIntervalMinutes.toLong() * 20L * 60L
+        // Run on the main thread so the snapshot-collection phase can safely touch
+        // Bukkit-managed faction state. The HTTP send inside syncFactions() is
+        // dispatched via HttpClient.sendAsync and does not block the main thread.
+        server.scheduler.runTaskTimer(
+            this,
+            Runnable { dpcApiService.syncFactions() },
+            syncIntervalTicks,
+            syncIntervalTicks
+        )
+
+        apiServer = MfApiServer(this)
         apiServer?.start()
     }
-    
-    override fun onDisable() {
-        // Stop REST API server
-        apiServer?.stop()
+
+    private data class Repositories(
+        val playerRepository: MfPlayerRepository,
+        val factionRepository: MfFactionRepository,
+        val lawRepository: MfLawRepository,
+        val factionRelationshipRepository: MfFactionRelationshipRepository,
+        val claimedChunkRepository: MfClaimedChunkRepository,
+        val lockRepository: MfLockRepository,
+        val interactionStatusRepository: MfInteractionStatusRepository,
+        val gateRepository: MfGateRepository,
+        val gateCreationContextRepository: MfGateCreationContextRepository,
+        val chatMessageRepository: MfChatChannelMessageRepository,
+        val duelRepository: MfDuelRepository,
+        val duelInviteRepository: MfDuelInviteRepository
+    )
+
+    private fun initializeDatabaseRepositories(gson: Gson): Repositories {
+        // Load appropriate database driver based on JDBC URL
+        val jdbcUrl = config.getString("database.url") ?: ""
+        val lowerUrl = jdbcUrl.lowercase()
+        when {
+            lowerUrl.startsWith("jdbc:h2:") -> Class.forName("org.h2.Driver")
+            lowerUrl.startsWith("jdbc:mysql:") -> Class.forName("com.mysql.cj.jdbc.Driver")
+            lowerUrl.startsWith("jdbc:mariadb:") -> Class.forName("org.mariadb.jdbc.Driver")
+            lowerUrl.startsWith("jdbc:postgresql:") -> Class.forName("org.postgresql.Driver")
+            // For other JDBC URLs, rely on JDBC 4.0+ auto-loading via SPI
+        }
+        val hikariConfig = HikariConfig()
+        hikariConfig.jdbcUrl = jdbcUrl
+        val databaseUsername = config.getString("database.username")
+        if (databaseUsername != null) {
+            hikariConfig.username = databaseUsername
+        }
+        val databasePassword = config.getString("database.password")
+        if (databasePassword != null) {
+            hikariConfig.password = databasePassword
+        }
+        dataSource = HikariDataSource(hikariConfig)
+        val oldClassLoader = Thread.currentThread().contextClassLoader
+        Thread.currentThread().contextClassLoader = classLoader
+        val flyway = Flyway.configure()
+            .dataSource(dataSource!!)
+            .locations("classpath:com/dansplugins/factionsystem/db/migration")
+            .table("mf_schema_history")
+            .baselineOnMigrate(true)
+            .baselineVersion("0")
+            .validateOnMigrate(false)
+            .load()
+        flyway.migrate()
+        Thread.currentThread().contextClassLoader = oldClassLoader
+
+        System.setProperty("org.jooq.no-logo", "true")
+        System.setProperty("org.jooq.no-tips", "true")
+
+        val dialect = config.getString("database.dialect")?.let(SQLDialect::valueOf)
+        val jooqSettings = Settings().withRenderSchema(false)
+        val dsl = DSL.using(
+            dataSource,
+            dialect,
+            jooqSettings
+        )
+
+        return Repositories(
+            playerRepository = JooqMfPlayerRepository(this, dsl),
+            factionRepository = JooqMfFactionRepository(this, dsl, gson),
+            lawRepository = JooqMfLawRepository(dsl),
+            factionRelationshipRepository = JooqMfFactionRelationshipRepository(dsl),
+            claimedChunkRepository = JooqMfClaimedChunkRepository(dsl),
+            lockRepository = JooqMfLockRepository(dsl),
+            interactionStatusRepository = JooqMfInteractionStatusRepository(dsl),
+            gateRepository = JooqMfGateRepository(this, dsl),
+            gateCreationContextRepository = JooqMfGateCreationContextRepository(dsl),
+            chatMessageRepository = JooqMfChatChannelMessageRepository(dsl),
+            duelRepository = JooqMfDuelRepository(dsl),
+            duelInviteRepository = JooqMfDuelInviteRepository(dsl)
+        )
+    }
+
+    private fun initializeJsonRepositories(gson: Gson): Repositories {
+        val storagePath = config.getString("storage.json.path") ?: "./medieval_factions_data"
+        val storageManager = com.dansplugins.factionsystem.storage.json.JsonStorageManager(this, storagePath)
+
+        logger.info("JSON storage path: $storagePath")
+
+        return Repositories(
+            playerRepository = com.dansplugins.factionsystem.storage.json.JsonMfPlayerRepository(this, storageManager),
+            factionRepository = com.dansplugins.factionsystem.storage.json.JsonMfFactionRepository(this, storageManager, gson),
+            lawRepository = com.dansplugins.factionsystem.storage.json.JsonMfLawRepository(this, storageManager),
+            factionRelationshipRepository = com.dansplugins.factionsystem.storage.json.JsonMfFactionRelationshipRepository(this, storageManager),
+            claimedChunkRepository = com.dansplugins.factionsystem.storage.json.JsonMfClaimedChunkRepository(this, storageManager),
+            lockRepository = com.dansplugins.factionsystem.storage.json.JsonMfLockRepository(this, storageManager),
+            interactionStatusRepository = com.dansplugins.factionsystem.storage.json.JsonMfInteractionStatusRepository(this, storageManager),
+            gateRepository = com.dansplugins.factionsystem.storage.json.JsonMfGateRepository(this, storageManager),
+            gateCreationContextRepository = com.dansplugins.factionsystem.storage.json.JsonMfGateCreationContextRepository(this, storageManager),
+            chatMessageRepository = com.dansplugins.factionsystem.storage.json.JsonMfChatChannelMessageRepository(this, storageManager),
+            duelRepository = com.dansplugins.factionsystem.storage.json.JsonMfDuelRepository(this, storageManager),
+            duelInviteRepository = com.dansplugins.factionsystem.storage.json.JsonMfDuelInviteRepository(this, storageManager)
+        )
     }
 
     internal fun onPowerCycle(
@@ -540,6 +632,18 @@ class MedievalFactions : JavaPlugin() {
         server.pluginManager.getPlugin("Mailboxes") != null -> MailboxesNotificationService(this)
         server.pluginManager.getPlugin("rpk-notification-lib-bukkit") != null -> RpkNotificationService(this)
         else -> NoOpNotificationService()
+    }
+
+    override fun onDisable() {
+        apiServer?.stop()
+        // Close database connection if it was initialized
+        dataSource?.let { ds ->
+            if (ds is HikariDataSource) {
+                logger.info("Closing database connection...")
+                ds.close()
+                logger.info("Database connection closed")
+            }
+        }
     }
 
     private fun setupRpkLockService() {

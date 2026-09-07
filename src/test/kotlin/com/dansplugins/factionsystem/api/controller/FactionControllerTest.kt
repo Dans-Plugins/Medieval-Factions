@@ -31,7 +31,7 @@ class FactionControllerTest {
         val faction1 = createMockFaction("Faction1")
         val faction2 = createMockFaction("Faction2")
         `when`(factionService.factions).thenReturn(listOf(faction1, faction2))
-        `when`(context.json(org.mockito.ArgumentMatchers.any())).thenReturn(context)
+        `when`(context.json(anyObject())).thenReturn(context)
 
         // Act
         controller.getAll(context)
@@ -45,18 +45,18 @@ class FactionControllerTest {
     @Test
     fun getById_WithValidId_ShouldReturnFaction() {
         // Arrange
-        val factionId = MfFactionId(UUID.randomUUID())
+        val factionId = MfFactionId(UUID.randomUUID().toString())
         val faction = createMockFaction("TestFaction", factionId)
         `when`(context.pathParam("id")).thenReturn(factionId.value.toString())
         `when`(factionService.getFaction(factionId)).thenReturn(faction)
-        `when`(context.json(org.mockito.ArgumentMatchers.any())).thenReturn(context)
+        `when`(context.json(anyObject())).thenReturn(context)
 
         // Act
         controller.getById(context)
 
         // Assert
         verify(factionService).getFaction(factionId)
-        verify(context).json(org.mockito.ArgumentMatchers.any())
+        verify(context).json(anyObject())
         verify(context).status(HttpStatus.OK)
     }
 
@@ -64,30 +64,30 @@ class FactionControllerTest {
     fun getById_WithInvalidId_ShouldReturnBadRequest() {
         // Arrange
         `when`(context.pathParam("id")).thenReturn("invalid-uuid")
-        `when`(context.json(org.mockito.ArgumentMatchers.any())).thenReturn(context)
+        `when`(context.json(anyObject())).thenReturn(context)
 
         // Act
         controller.getById(context)
 
         // Assert
-        verify(context).json(org.mockito.ArgumentMatchers.any())
+        verify(context).json(anyObject())
         verify(context).status(HttpStatus.BAD_REQUEST)
     }
 
     @Test
     fun getById_WithNonExistentId_ShouldReturnNotFound() {
         // Arrange
-        val factionId = MfFactionId(UUID.randomUUID())
+        val factionId = MfFactionId(UUID.randomUUID().toString())
         `when`(context.pathParam("id")).thenReturn(factionId.value.toString())
         `when`(factionService.getFaction(factionId)).thenReturn(null)
-        `when`(context.json(org.mockito.ArgumentMatchers.any())).thenReturn(context)
+        `when`(context.json(anyObject())).thenReturn(context)
 
         // Act
         controller.getById(context)
 
         // Assert
         verify(factionService).getFaction(factionId)
-        verify(context).json(org.mockito.ArgumentMatchers.any())
+        verify(context).json(anyObject())
         verify(context).status(HttpStatus.NOT_FOUND)
     }
 
@@ -98,14 +98,14 @@ class FactionControllerTest {
         val faction = createMockFaction(factionName)
         `when`(context.pathParam("name")).thenReturn(factionName)
         `when`(factionService.getFaction(factionName)).thenReturn(faction)
-        `when`(context.json(org.mockito.ArgumentMatchers.any())).thenReturn(context)
+        `when`(context.json(anyObject())).thenReturn(context)
 
         // Act
         controller.getByName(context)
 
         // Assert
         verify(factionService).getFaction(factionName)
-        verify(context).json(org.mockito.ArgumentMatchers.any())
+        verify(context).json(anyObject())
         verify(context).status(HttpStatus.OK)
     }
 
@@ -115,18 +115,18 @@ class FactionControllerTest {
         val factionName = "NonExistent"
         `when`(context.pathParam("name")).thenReturn(factionName)
         `when`(factionService.getFaction(factionName)).thenReturn(null)
-        `when`(context.json(org.mockito.ArgumentMatchers.any())).thenReturn(context)
+        `when`(context.json(anyObject())).thenReturn(context)
 
         // Act
         controller.getByName(context)
 
         // Assert
         verify(factionService).getFaction(factionName)
-        verify(context).json(org.mockito.ArgumentMatchers.any())
+        verify(context).json(anyObject())
         verify(context).status(HttpStatus.NOT_FOUND)
     }
 
-    private fun createMockFaction(name: String, id: MfFactionId = MfFactionId(UUID.randomUUID())): MfFaction {
+    private fun createMockFaction(name: String, id: MfFactionId = MfFactionId(UUID.randomUUID().toString())): MfFaction {
         val faction = mock(MfFaction::class.java)
         `when`(faction.id).thenReturn(id)
         `when`(faction.name).thenReturn(name)

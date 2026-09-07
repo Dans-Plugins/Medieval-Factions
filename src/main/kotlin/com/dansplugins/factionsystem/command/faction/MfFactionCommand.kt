@@ -5,6 +5,7 @@ import com.dansplugins.factionsystem.command.faction.addmember.MfFactionAddMembe
 import com.dansplugins.factionsystem.command.faction.admin.MfFactionAdminCommand
 import com.dansplugins.factionsystem.command.faction.ally.MfFactionAllyCommand
 import com.dansplugins.factionsystem.command.faction.apply.MfFactionApplyCommand
+import com.dansplugins.factionsystem.command.faction.approve.MfFactionApproveCommand
 import com.dansplugins.factionsystem.command.faction.approveapp.MfFactionApproveAppCommand
 import com.dansplugins.factionsystem.command.faction.bonuspower.MfFactionBonusPowerCommand
 import com.dansplugins.factionsystem.command.faction.breakalliance.MfFactionBreakAllianceCommand
@@ -14,9 +15,12 @@ import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimCommand
 import com.dansplugins.factionsystem.command.faction.create.MfFactionCreateCommand
 import com.dansplugins.factionsystem.command.faction.declareindependence.MfFactionDeclareIndependenceCommand
 import com.dansplugins.factionsystem.command.faction.declarewar.MfFactionDeclareWarCommand
+import com.dansplugins.factionsystem.command.faction.declinevassalization.MfFactionDeclineVassalizationCommand
+import com.dansplugins.factionsystem.command.faction.deny.MfFactionDenyCommand
 import com.dansplugins.factionsystem.command.faction.denyapp.MfFactionDenyAppCommand
 import com.dansplugins.factionsystem.command.faction.dev.MfFactionDevCommand
 import com.dansplugins.factionsystem.command.faction.disband.MfFactionDisbandCommand
+import com.dansplugins.factionsystem.command.faction.dpc.MfFactionDpcCommand
 import com.dansplugins.factionsystem.command.faction.flag.MfFactionFlagCommand
 import com.dansplugins.factionsystem.command.faction.grantindependence.MfFactionGrantIndependenceCommand
 import com.dansplugins.factionsystem.command.faction.help.MfFactionHelpCommand
@@ -32,6 +36,8 @@ import com.dansplugins.factionsystem.command.faction.list.MfFactionListCommand
 import com.dansplugins.factionsystem.command.faction.makepeace.MfFactionMakePeaceCommand
 import com.dansplugins.factionsystem.command.faction.map.MfFactionMapCommand
 import com.dansplugins.factionsystem.command.faction.members.MfFactionMembersCommand
+import com.dansplugins.factionsystem.command.faction.migrate.MfFactionMigrateCommand
+import com.dansplugins.factionsystem.command.faction.pendingactions.MfFactionPendingActionsCommand
 import com.dansplugins.factionsystem.command.faction.power.MfFactionPowerCommand
 import com.dansplugins.factionsystem.command.faction.relationship.MfFactionRelationshipCommand
 import com.dansplugins.factionsystem.command.faction.role.MfFactionRoleCommand
@@ -79,6 +85,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val factionSetNameCommand = MfFactionSetNameCommand(plugin)
     private val factionVassalizeCommand = MfFactionVassalizeCommand(plugin)
     private val factionSwearFealtyCommand = MfFactionSwearFealtyCommand(plugin)
+    private val factionDeclineVassalizationCommand = MfFactionDeclineVassalizationCommand(plugin)
     private val factionGrantIndependenceCommand = MfFactionGrantIndependenceCommand(plugin)
     private val factionDeclareIndependenceCommand = MfFactionDeclareIndependenceCommand(plugin)
     private val factionKickCommand = MfFactionKickCommand(plugin)
@@ -92,11 +99,16 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val factionRelationshipCommand = MfFactionRelationshipCommand(plugin)
     private val factionAddMemberCommand = MfFactionAddMemberCommand(plugin)
     private val factionDevCommand = MfFactionDevCommand(plugin)
+    private val factionDpcCommand = MfFactionDpcCommand(plugin)
     private val factionApplyCommand = MfFactionApplyCommand(plugin)
     private val factionShowAppsCommand = MfShowAppsCommand(plugin)
     private val factionApproveAppCommand = MfFactionApproveAppCommand(plugin)
     private val factionDenyAppCommand = MfFactionDenyAppCommand(plugin)
     private val factionAdminCommand = MfFactionAdminCommand(plugin)
+    private val factionMigrateCommand = MfFactionMigrateCommand(plugin)
+    private val factionApproveCommand = MfFactionApproveCommand(plugin)
+    private val factionDenyCommand = MfFactionDenyCommand(plugin)
+    private val factionPendingActionsCommand = MfFactionPendingActionsCommand(plugin)
 
     private val helpAliases = listOf("help", plugin.language["CmdFactionHelp"])
     private val createAliases = listOf("create", plugin.language["CmdFactionCreate"])
@@ -123,6 +135,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val renameAliases = listOf("rename")
     private val vassalizeAliases = listOf("vassalize", "vassalise", plugin.language["CmdFactionVassalize"])
     private val swearFealtyAliases = listOf("swearfealty", plugin.language["CmdFactionSwearFealty"])
+    private val declineVassalizationAliases = listOf("declinevassalization", "declinevassalisation", plugin.language["CmdFactionDeclineVassalization"])
     private val grantIndependenceAliases = listOf("grantindependence", plugin.language["CmdFactionGrantIndependence"])
     private val declareIndependenceAliases = listOf("declareindependence", plugin.language["CmdFactionDeclareIndependence"])
     private val kickAliases = listOf("kick", plugin.language["CmdFactionKick"])
@@ -136,11 +149,16 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val relationshipAliases = listOf("relationship", plugin.language["CmdFactionRelationship"])
     private val addMemberAliases = listOf("addmember", plugin.language["CmdFactionAddMember"])
     private val devAliases = if (plugin.config.getBoolean("dev.enableDevCommands")) listOf("dev") else emptyList()
+    private val dpcAliases = listOf("dpc", plugin.language["CmdFactionDpc"])
     private val applyAliases = listOf("apply", plugin.language["CmdFactionApply"])
     private val showAppsAliases = listOf("showapps", plugin.language["CmdFactionShowApps"])
     private val approveAppAliases = listOf("approveapp", plugin.language["CmdFactionApproveApp"])
     private val denyAppAliases = listOf("denyapp", plugin.language["CmdFactionDenyApp"])
     private val adminAliases = listOf("admin", plugin.language["CmdFactionAdmin"])
+    private val migrateAliases = listOf("migrate")
+    private val approveAliases = listOf("approve", plugin.language["CmdFactionApprove"])
+    private val denyAliases = listOf("deny", plugin.language["CmdFactionDeny"])
+    private val pendingActionsAliases = listOf("pendingactions", plugin.language["CmdFactionPendingActions"])
 
     private val subcommands = helpAliases +
         createAliases +
@@ -167,6 +185,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
         renameAliases +
         vassalizeAliases +
         swearFealtyAliases +
+        declineVassalizationAliases +
         grantIndependenceAliases +
         declareIndependenceAliases +
         kickAliases +
@@ -180,11 +199,16 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
         relationshipAliases +
         addMemberAliases +
         devAliases +
+        dpcAliases +
         applyAliases +
         showAppsAliases +
         approveAppAliases +
         denyAppAliases +
-        adminAliases
+        adminAliases +
+        migrateAliases +
+        approveAliases +
+        denyAliases +
+        pendingActionsAliases
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         return when (args.firstOrNull()?.lowercase()) {
@@ -213,6 +237,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in renameAliases -> factionSetNameCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in vassalizeAliases -> factionVassalizeCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in swearFealtyAliases -> factionSwearFealtyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in declineVassalizationAliases -> factionDeclineVassalizationCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in grantIndependenceAliases -> factionGrantIndependenceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in declareIndependenceAliases -> factionDeclareIndependenceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in kickAliases -> factionKickCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -226,11 +251,16 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in relationshipAliases -> factionRelationshipCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in addMemberAliases -> factionAddMemberCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in devAliases -> factionDevCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in dpcAliases -> factionDpcCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in applyAliases -> factionApplyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in showAppsAliases -> factionShowAppsCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in approveAppAliases -> factionApproveAppCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in denyAppAliases -> factionDenyAppCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in adminAliases -> factionAdminCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in migrateAliases -> factionMigrateCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in approveAliases -> factionApproveCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in denyAliases -> factionDenyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in pendingActionsAliases -> factionPendingActionsCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$AQUA${plugin.language["MedievalFactionsTitle", plugin.description.version]}")
                 sender.sendMessage("$GRAY${plugin.language["DeveloperList", plugin.description.authors.joinToString()]}")
@@ -276,6 +306,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in renameAliases -> factionSetNameCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in vassalizeAliases -> factionVassalizeCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in swearFealtyAliases -> factionSwearFealtyCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in declineVassalizationAliases -> factionDeclineVassalizationCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in grantIndependenceAliases -> factionGrantIndependenceCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in declareIndependenceAliases -> factionDeclareIndependenceCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in kickAliases -> factionKickCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
@@ -289,10 +320,15 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in relationshipAliases -> factionRelationshipCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in addMemberAliases -> factionAddMemberCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in devAliases -> factionDevCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in dpcAliases -> factionDpcCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in applyAliases -> factionApplyCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in approveAppAliases -> factionApproveAppCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in denyAppAliases -> factionDenyAppCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in adminAliases -> factionAdminCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in migrateAliases -> factionMigrateCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in approveAliases -> factionApproveCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in denyAliases -> factionDenyCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in pendingActionsAliases -> factionPendingActionsCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             else -> emptyList()
         }
     }

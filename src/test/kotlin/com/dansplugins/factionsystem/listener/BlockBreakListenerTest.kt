@@ -163,6 +163,33 @@ class BlockBreakListenerTest {
         verify(player).sendMessage("${ChatColor.RED}Cannot break block in faction territory")
     }
 
+    @Test
+    fun onBlockBreak_Claimed_InteractionNotAllowed_ButWartimeBreakable_ShouldAllow() {
+        // Arrange
+        val block = fixture.block
+        val event = fixture.event
+
+        val claimFactionId = com.dansplugins.factionsystem.faction.MfFactionId("claim-faction-id")
+        val claim = mock(com.dansplugins.factionsystem.claim.MfClaimedChunk::class.java)
+        `when`(claim.factionId).thenReturn(claimFactionId)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
+
+        val faction = mock(com.dansplugins.factionsystem.faction.MfFaction::class.java)
+        `when`(factionService.getFaction(claimFactionId)).thenReturn(faction)
+
+        val mfPlayer = mock(com.dansplugins.factionsystem.player.MfPlayer::class.java)
+        `when`(playerService.getPlayer(fixture.player)).thenReturn(mfPlayer)
+
+        `when`(claimService.isInteractionAllowed(mfPlayer.id, claim)).thenReturn(false)
+        `when`(claimService.isWartimeBreakableBlock(mfPlayer.id, claim, block.type)).thenReturn(true)
+
+        // Act
+        uut.onBlockBreak(event)
+
+        // Assert - event should NOT be cancelled because block is in wartime breakable list
+        verify(event, never()).isCancelled = true
+    }
+
     // Helper functions
 
     private fun createFixture(): BlockBreakListenerTestFixture {

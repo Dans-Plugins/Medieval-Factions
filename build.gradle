@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.dansplugins"
-version = "5.7.0-alpha-1"
+version = "6.0.0-SNAPSHOT-7-25-2026"
 
 def repoUsername = ""
 def repoPassword = ""
@@ -20,15 +20,20 @@ if (propertiesFile.exists()) {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven { url 'https://hub.spigotmc.org/nexus/content/repositories/public/' }
     maven { url 'https://oss.sonatype.org/content/groups/public/' }
     maven { url 'https://repo.mikeprimm.com/' }
     maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
-    maven { url 'https://jitpack.io' }
     maven { url 'https://repo.maven.apache.org/maven2/' }
     maven { url 'https://repo.rpkit.com/repository/maven-public/' }
-    maven { url 'https://repo.dansplugins.com/repository/maven-public/' }
+    maven {
+        url 'https://jitpack.io'
+        content {
+            includeGroupByRegex 'com\\.github\\..*'
+        }
+    }
 }
 
 configurations {
@@ -37,7 +42,7 @@ configurations {
 
 dependencies {
     implementation 'me.clip:placeholderapi:2.11.6'
-    implementation 'org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT'
+    implementation 'org.spigotmc:spigot-api:1.21.11-R0.1-SNAPSHOT'
     implementation 'us.dynmap:dynmap-api:2.2'
     implementation 'org.bstats:bstats-bukkit:3.0.0'
     implementation platform("dev.forkhandles:forkhandles-bom:2.2.0.0")
@@ -49,16 +54,23 @@ dependencies {
     implementation 'com.h2database:h2:2.1.214'
     implementation 'com.zaxxer:HikariCP:5.0.1'
     implementation 'com.google.code.gson:gson:2.9.0'
-    implementation 'org.slf4j:slf4j-api:1.8.0-beta4'
+    implementation 'com.github.everit-org.json-schema:org.everit.json.schema:1.14.2' // JSON schema validation
+    // 2.0.7 is what the build actually resolves: Javalin/Jetty pull slf4j-api 2.0.x
+    // and it wins over the 1.8.0-beta4 that used to be declared here. Declaring it
+    // explicitly keeps the file honest about the version MfSlf4jServiceProvider is
+    // written against.
+    implementation 'org.slf4j:slf4j-api:2.0.7'
     implementation 'com.github.Dans-Plugins:Mailboxes:v1.1'
     implementation 'com.rpkit:rpk-core-bukkit:2.3.2:all'
     implementation 'com.rpkit:rpk-player-lib-bukkit:2.3.2:all'
     implementation 'com.rpkit:rpk-notification-lib-bukkit:2.3.2:all'
     implementation 'com.rpkit:rpk-lock-lib-bukkit:2.3.2:all'
-    implementation 'com.dansplugins:ponder-bukkit:2.0.0'
-    implementation 'com.dansplugins:ponder-commands:2.0.0'
     implementation 'io.javalin:javalin:5.6.3'
-    implementation 'org.slf4j:slf4j-simple:2.0.9'
+    // No SLF4J binding is added here on purpose. Javalin logs through SLF4J, and
+    // MfSlf4jServiceProvider already routes SLF4J into the Bukkit plugin logger.
+    // Adding slf4j-simple would both duplicate the binding and pull slf4j-api 2.0.x,
+    // whose SLF4JServiceProvider renamed getRequesteApiVersion (a typo in 1.8.0-beta4)
+    // to getRequestedApiVersion, which breaks that provider.
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.15.3'
     jooqGenerator 'org.jooq:jooq-meta-extensions:3.17.4'
@@ -67,6 +79,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.mockito:mockito-core:4.0.0")
     testImplementation("org.mockito:mockito-inline:4.0.0")
+    testImplementation("au.com.dius.pact.consumer:junit5:4.6.7")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
@@ -92,7 +105,7 @@ jooq {
     configurations {
         main {
             generationTool {
-                logging = Logging.WARN
+                logging = 'WARN'
                 generator {
                     name = 'org.jooq.codegen.DefaultGenerator'
                     database {
@@ -125,7 +138,6 @@ jooq {
 }
 
 import org.apache.tools.ant.filters.ReplaceTokens
-import org.jooq.meta.jaxb.Logging
 
 processResources {
     filter ReplaceTokens, tokens: [
@@ -134,6 +146,14 @@ processResources {
 }
 
 shadowJar {
+    // jackson-core 2.15.x is a multi-release jar carrying Java 19 (class file major
+    // version 63) copies of its FastDoubleParser under META-INF/versions/19. Shadow
+    // 7.1.2 bundles an ASM that cannot read them and fails the task outright. The
+    // versioned copies are a parsing optimisation only; the base implementation under
+    // the normal package is kept, so excluding them costs nothing at runtime.
+    exclude 'META-INF/versions/**'
+
+    archiveClassifier.set('all')
     mergeServiceFiles()
     dependencies {
         include(dependency('org.jetbrains.kotlin:kotlin-stdlib-jdk8'))
@@ -155,8 +175,6 @@ shadowJar {
         include(dependency('com.h2database:h2'))
         include(dependency('com.zaxxer:HikariCP'))
         include(dependency('com.google.code.gson:gson'))
-        include(dependency('com.dansplugins:ponder-bukkit'))
-        include(dependency('com.dansplugins:ponder-commands'))
         include(dependency('io.javalin:javalin'))
         include(dependency('org.eclipse.jetty:jetty-server'))
         include(dependency('org.eclipse.jetty:jetty-webapp'))
@@ -167,6 +185,13 @@ shadowJar {
         include(dependency('com.fasterxml.jackson.core:jackson-core'))
         include(dependency('com.fasterxml.jackson.core:jackson-annotations'))
         include(dependency('com.fasterxml.jackson.module:jackson-module-kotlin'))
+        // everit's own transitive dependencies (commons-validator, handy-uri-templates) are deliberately
+        // not shaded in: they are only reached by the "format" keyword validators for email/hostname/ip/
+        // uri-template, which the schemas under src/main/resources/schemas do not use. Adding one of those
+        // formats to a schema would fail at runtime with NoClassDefFoundError until the corresponding
+        // dependency is included here.
+        include(dependency('com.github.everit-org.json-schema:org.everit.json.schema'))
+        include(dependency('org.json:json'))
     }
 
     relocate 'com.google', 'com.dansplugins.factionsystem.shadow.com.google'
@@ -185,7 +210,8 @@ shadowJar {
     relocate 'org.jetbrains', 'com.dansplugins.factionsystem.shadow.org.jetbrains'
     relocate 'org.jooq', 'com.dansplugins.factionsystem.shadow.org.jooq'
     relocate 'org.reactivestreams', 'com.dansplugins.factionsystem.shadow.org.reactivestreams'
-    relocate 'preponderous.ponder', 'com.dansplugins.factionsystem.shadow.preponderous.ponder'
+    relocate 'org.everit', 'com.dansplugins.factionsystem.shadow.org.everit'
+    relocate 'org.json', 'com.dansplugins.factionsystem.shadow.org.json'
     relocate 'io.javalin', 'com.dansplugins.factionsystem.shadow.io.javalin'
     relocate 'org.eclipse.jetty', 'com.dansplugins.factionsystem.shadow.org.eclipse.jetty'
     relocate 'com.fasterxml.jackson', 'com.dansplugins.factionsystem.shadow.com.fasterxml.jackson'
@@ -206,6 +232,14 @@ publishing {
             def snapshotsRepoUrl = "https://repo.dansplugins.com/repository/maven-snapshots/"
             url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
         }
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/Dans-Plugins/Medieval-Factions")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
     }
     publications {
         maven(MavenPublication) { publication ->
@@ -213,7 +247,7 @@ publishing {
             artifactId = project.name
             version = project.version
 
-            from components.java
+            artifact(shadowJar)
         }
     }
 }
@@ -221,4 +255,5 @@ publishing {
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+    systemProperty 'pact.rootDir', "${projectDir}/pacts"
 }

@@ -36,6 +36,12 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
             sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillNotAPlayer"]}")
             return true
         }
+        val senderWorld = sender.world
+        val senderLocation = sender.location
+        val senderWorldId = senderLocation.world?.uid
+        val senderChunk = senderLocation.chunk
+        val senderChunkX = senderChunk.x
+        val senderChunkZ = senderChunk.z
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
@@ -58,13 +64,10 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                     return@Runnable
                 }
                 val claimService = plugin.services.claimService
-                if (claimService.isClaimingBlockedInWorld(sender.world)) {
+                if (claimService.isClaimingBlockedInWorld(senderWorld)) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionClaimWorldBlocked"]}")
                     return@Runnable
                 }
-                val senderWorldId = sender.location.world?.uid
-                val senderChunkX = sender.location.chunk.x
-                val senderChunkZ = sender.location.chunk.z
                 if (senderWorldId == null) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillMustBeInWorld"]}")
                     return@Runnable

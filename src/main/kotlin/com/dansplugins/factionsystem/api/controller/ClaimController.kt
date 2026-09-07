@@ -11,7 +11,7 @@ import java.util.UUID
 class ClaimController(private val claimService: MfClaimService) {
 
     fun getAll(ctx: Context) {
-        val claims = claimService.getClaims().map { ClaimDto.fromClaim(it) }
+        val claims = claimService.claims.map { ClaimDto.fromClaim(it) }
         ctx.json(claims).status(HttpStatus.OK)
     }
 

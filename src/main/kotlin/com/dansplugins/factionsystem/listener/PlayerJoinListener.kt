@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
 import net.md_5.bungee.api.ChatColor
+import net.md_5.bungee.api.ChatColor.YELLOW
 import net.md_5.bungee.api.ChatMessageType.ACTION_BAR
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.event.EventHandler
@@ -12,6 +13,13 @@ class PlayerJoinListener(private val plugin: MedievalFactions) : Listener {
 
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
+        if (event.player.isOp &&
+            !plugin.config.getBoolean("dpc-api.enabled") &&
+            plugin.config.getBoolean("dpc-api.login-reminder")
+        ) {
+            event.player.sendMessage("$YELLOW${plugin.language["DpcLoginReminder"]}")
+        }
+
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {

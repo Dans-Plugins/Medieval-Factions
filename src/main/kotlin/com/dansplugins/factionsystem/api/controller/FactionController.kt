@@ -21,7 +21,7 @@ class FactionController(private val factionService: MfFactionService) {
             UUID.fromString(id) // Validate UUID format
             val factionId = MfFactionId(id)
             val faction = factionService.getFaction(factionId)
-            
+
             if (faction != null) {
                 ctx.json(FactionDto.fromFaction(faction)).status(HttpStatus.OK)
             } else {
@@ -35,7 +35,7 @@ class FactionController(private val factionService: MfFactionService) {
     fun getByName(ctx: Context) {
         val name = ctx.pathParam("name")
         val faction = factionService.getFaction(name)
-        
+
         if (faction != null) {
             ctx.json(FactionDto.fromFaction(faction)).status(HttpStatus.OK)
         } else {

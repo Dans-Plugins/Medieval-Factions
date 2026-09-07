@@ -1,5 +1,9 @@
 version: @version@
 language: en-US
+storage:
+  type: 'database' # Options: 'database' or 'json'
+  json:
+    path: './medieval_factions_data' # Path where JSON files will be stored (only used when type is 'json')
 database:
   url: 'jdbc:h2:./medieval_factions_db;AUTO_SERVER=true;MODE=MYSQL;DATABASE_TO_UPPER=false'
   dialect: 'H2'
@@ -52,6 +56,7 @@ factions:
   - JOCKEY
   - METAMORPHOSIS
   - OCELOT_BABY
+  - REANIMATE
   - POTION_EFFECT
   - SHEARED
   - SHOULDER_ENTITY
@@ -63,10 +68,14 @@ factions:
   - TRIAL_SPAWNER
   - VILLAGE_DEFENSE
   laddersPlaceableInEnemyFactionTerritory: true
+  wartimePlaceableBlocks: [] # List of block types that become placeable in enemy faction territory during war. Example: ["SCAFFOLDING", "TORCH"]
+  wartimeBreakableBlocks: [] # List of block types that become breakable in enemy faction territory during war. Example: ["SCAFFOLDING"]
+  wartimeInteractableBlocks: [] # List of block types that become interactable in enemy faction territory during war. Example: ["OAK_DOOR", "IRON_DOOR", "OAK_FENCE_GATE", "STONE_BUTTON"]
   maxNameLength: 20
   zeroPowerFactionsGetDisbanded: false
   vassalPowerContributionMultiplier: 0.75
   nonMembersCanInteractWithDoors: false
+  nonMembersCanInteractWithEntities: false # When true, non-members can right-click entities (minecarts, boats, item frames, animals, armour stands) in faction territory. Villager trading is governed separately by the protectVillagerTrade faction flag.
   maxClaimRadius: 3
   limitLand: true
   contiguousClaims: false
@@ -77,6 +86,9 @@ factions:
   titleTerritoryDuration: 20
   titleTerritoryFadeOutLength: 5
   allowNeutrality: false
+  warDeclarationRequiresApproval: false
+  allyDeclarationRequiresApproval: false
+  vassalizeDeclarationRequiresApproval: false
   factionlessFactionName: Factionless
   factionHomeTeleportDelay: 5
   maxMembers: -1
@@ -262,8 +274,18 @@ gates:
     - *signs
     - *buttons
 api:
-  enabled: true
+  enabled: false               # opt-in: when true, MF serves its read API on the host/port below
   host: 127.0.0.1  # Bind to localhost only for security. Use 0.0.0.0 to allow external access.
   port: 8080
+dpc-api:
+  enabled: false
+  url: "https://api.dansplugins.com/api/v1/factions"  # full endpoint URL of the DPC API (the API is a separate host from the website); include port if needed (e.g. "https://api.dansplugins.com:8080/api/v1/factions")
+  key: ""                      # API key from https://dansplugins.com — register or sign in, then generate a key from your account page
+  server-id: ""                # unique name for this server (e.g. "my-survival-server"); used to identify your server in the DPC registry
+  login-reminder: true
+  share-server-ip: false
+  server-address: ""           # explicit server address (e.g. "play.myserver.com:25565"); used when share-server-ip is true. If blank, auto-detects from server binding.
+  discord-link: ""
+  sync-interval-minutes: 10   # how often to sync faction data to the DPC API (in minutes, minimum 1)
 dev:
   enableDevCommands: false

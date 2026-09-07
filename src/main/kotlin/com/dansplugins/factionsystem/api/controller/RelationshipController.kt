@@ -31,7 +31,7 @@ class RelationshipController(
             val factionId = MfFactionId(id)
             val relationships = relationshipService.getRelationships(factionId)
                 .map { RelationshipDto.fromRelationship(it) }
-            
+
             ctx.json(relationships).status(HttpStatus.OK)
         } catch (e: IllegalArgumentException) {
             ctx.json(ErrorResponse("INVALID_ID", "Invalid faction ID format")).status(HttpStatus.BAD_REQUEST)
