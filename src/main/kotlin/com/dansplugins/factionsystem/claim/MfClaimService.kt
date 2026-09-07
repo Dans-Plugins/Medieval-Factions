@@ -30,7 +30,7 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
     }
 
     private val claimsByKey: MutableMap<ClaimKey, MfClaimedChunk> = ConcurrentHashMap()
-    private val claims: List<MfClaimedChunk>
+    val claims: List<MfClaimedChunk>
         get() = claimsByKey.values.toList()
 
     init {
@@ -54,7 +54,6 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
         return isClaimingBlockedInWorld(world.name)
     }
 
-    @JvmName("getClaimsByFactionId")
     fun getClaims(factionId: MfFactionId): List<MfClaimedChunk> = claims.filter { it.factionId == factionId }
 
     @JvmName("isInteractionAllowedForPlayerInChunk")
