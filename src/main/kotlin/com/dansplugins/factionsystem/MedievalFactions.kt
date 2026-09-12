@@ -89,6 +89,7 @@ import com.dansplugins.factionsystem.relationship.MfFactionRelationshipRepositor
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
 import com.dansplugins.factionsystem.service.Services
 import com.dansplugins.factionsystem.teleport.MfTeleportService
+import com.dansplugins.factionsystem.trace.TraceClient
 import com.google.gson.Gson
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -101,6 +102,8 @@ import org.bstats.bukkit.Metrics
 import org.bstats.charts.SimplePie
 import org.bukkit.NamespacedKey
 import org.bukkit.boss.KeyedBossBar
+import org.bukkit.command.CommandExecutor
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import org.flywaydb.core.Flyway
@@ -123,6 +126,10 @@ class MedievalFactions : JavaPlugin() {
     lateinit var factionPermissions: MfFactionPermissions
     lateinit var services: Services
     lateinit var language: Language
+
+    // A no-op until the config has been read, so a command arriving before
+    // onEnable() finishes has something safe to report to.
+    private var trace: TraceClient = TraceClient.disabled()
 
     override fun onEnable() {
         val migrator = MfLegacyDataMigrator(this)
@@ -213,6 +220,22 @@ class MedievalFactions : JavaPlugin() {
                 config.getString("database.dialect")
             }
         )
+
+        // usage reporting: one event now, one per command; see config.yml.
+        // The one-argument getters, deliberately. saveDefaultConfig() never touches a
+        // config.yml that already exists, so a server upgraded from a version before
+        // usage reporting has no usage-reporting block on disk until copyDefaults
+        // above has written it. Bukkit registers the jar's config.yml as the defaults
+        // for that file, and the one-argument getters fall through to them -- but the
+        // two-argument getters return their explicit fallback instead, which for the
+        // key would be "" and would turn reporting off on every existing
+        // installation. Verified against YamlConfiguration, not assumed.
+        trace = TraceClient.builder(config.getString("usage-reporting.endpoint") ?: "https://trace.danielstephenson.dev", name)
+            .key(config.getString("usage-reporting.key") ?: "")
+            .enabled(config.getBoolean("usage-reporting.enabled"))
+            .logger(logger)
+            .build()
+        trace.report("startup", null, mapOf("version" to description.version))
         metrics.addCustomChart(
             SimplePie("average_claims") {
                 factionService.factions
@@ -333,13 +356,13 @@ class MedievalFactions : JavaPlugin() {
             PotionSplashListener(this)
         ).forEach { server.pluginManager.registerEvents(it, this) }
 
-        getCommand("faction")?.setExecutor(MfFactionCommand(this))
-        getCommand("lock")?.setExecutor(MfLockCommand(this))
-        getCommand("unlock")?.setExecutor(MfUnlockCommand(this))
-        getCommand("accessors")?.setExecutor(MfAccessorsCommand(this))
-        getCommand("power")?.setExecutor(MfPowerCommand(this))
-        getCommand("gate")?.setExecutor(MfGateCommand(this))
-        getCommand("duel")?.setExecutor(MfDuelCommand(this))
+        registerCommand("faction", MfFactionCommand(this))
+        registerCommand("lock", MfLockCommand(this))
+        registerCommand("unlock", MfUnlockCommand(this))
+        registerCommand("accessors", MfAccessorsCommand(this))
+        registerCommand("power", MfPowerCommand(this))
+        registerCommand("gate", MfGateCommand(this))
+        registerCommand("duel", MfDuelCommand(this))
 
         server.scheduler.scheduleSyncRepeatingTask(this, {
             val onlinePlayers = server.onlinePlayers
@@ -630,6 +653,8 @@ class MedievalFactions : JavaPlugin() {
     }
 
     override fun onDisable() {
+        trace.close()
+
         // Close database connection if it was initialized
         dataSource?.let { ds ->
             if (ds is HikariDataSource) {
@@ -638,6 +663,20 @@ class MedievalFactions : JavaPlugin() {
                 logger.info("Database connection closed")
             }
         }
+    }
+
+    // Every top-level command goes through here so that one usage event is reported
+    // per use. The event carries the command's declared name (so "/mf" and "/f"
+    // both report as "faction"), never the sender or the arguments. Tab completion
+    // is wired to the executor explicitly because wrapping it hides the fact that
+    // it is also a TabCompleter from PluginCommand's fallback.
+    private fun <T> registerCommand(name: String, executor: T) where T : CommandExecutor, T : TabCompleter {
+        val command = getCommand(name) ?: return
+        command.setExecutor { sender, cmd, label, args ->
+            trace.report("command", null, mapOf("name" to cmd.name))
+            executor.onCommand(sender, cmd, label, args)
+        }
+        command.tabCompleter = executor
     }
 
     private fun setupRpkLockService() {

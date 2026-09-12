@@ -283,5 +283,20 @@ dpc-api:
   server-address: ""           # explicit server address (e.g. "play.myserver.com:25565"); used when share-server-ip is true. If blank, auto-detects from server binding.
   discord-link: ""
   sync-interval-minutes: 10   # how often to sync faction data to the DPC API (in minutes, minimum 1)
+# Usage reporting. When the plugin is enabled, and each time one of its
+# commands is used, a small event (plugin name, event name, plugin version)
+# is sent to the author's trace server so it is known which plugins are
+# actually in use. Nothing about players or the server is included. Sending
+# happens off the main thread, never blocks a tick, and is dropped silently
+# if the server cannot be reached. Set enabled to false to turn it off.
+usage-reporting:
+  enabled: true
+  endpoint: https://trace.danielstephenson.dev
+  # The key identifies this plugin to the trace server, so reports are
+  # attributed to MedievalFactions and can be revoked as a group if they are ever
+  # abused. It is not a secret -- it ships in this file on every server that
+  # runs the plugin -- and it cannot do anything except report as this
+  # plugin. Empty means reporting is off regardless of the switch above.
+  key: "2TI4ChnyxT8Ar4E4Zsnl20MEXBvo3IYVvhqUWVPpQdQ"
 dev:
   enableDevCommands: false
