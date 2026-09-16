@@ -1,29 +1,34 @@
 /*
- * trace-client 0.1.0 -- https://github.com/Stephenson-Software/trace-client-java
+ * trace-client 0.2.0 -- https://github.com/Stephenson-Software/trace-client-java
  *
  * One call to report that a program was used. Copy this file into a project as
  * is, or depend on the artifact; either way there is nothing else to add.
  *
  * MIT licensed. Keep this header when vendoring so the file can be found again.
- *
- * Vendored into MedievalFactions unmodified apart from the package line.
  */
 package com.dansplugins.factionsystem.trace;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Reports usage events to a trace server, and never gets in the way of the
@@ -45,17 +50,39 @@ import java.util.logging.Logger;
  *       not the host's heap.</li>
  * </ul>
  *
- * <p>Reporting is opt-out: a client built with {@link Builder#enabled(boolean)
- * enabled(false)}, or with no key, is a no-op that costs nothing. Programs that
- * run on other people's machines should expose that switch in their
- * configuration.
+ * <p>Reporting is opt-out, and the person running the program always has the
+ * last word. {@link Builder#build()} checks, in this order, and the first
+ * match is what {@link #disabledReason()} reports:
+ *
+ * <ol>
+ *   <li>the environment: {@code TRACE_USAGE_REPORTING=off} (or {@code false},
+ *       {@code 0}, {@code no}) or {@code DO_NOT_TRACK=1} (or {@code true},
+ *       {@code yes}), case-insensitive -- reason {@code environment};</li>
+ *   <li>the server-wide switch, when {@link Builder#serverWideConfig(File)}
+ *       was given: {@code enabled: false} in {@code plugins/trace/config.yml}
+ *       -- reason {@code server-wide config: plugins/trace/config.yml};</li>
+ *   <li>the program's own setting, {@link Builder#enabled(boolean)
+ *       enabled(false)} -- reason {@code config.yml};</li>
+ *   <li>no key -- reason {@code no key}.</li>
+ * </ol>
+ *
+ * <p>A disabled client is a no-op that costs nothing. Programs that run on
+ * other people's machines should expose their own switch in their
+ * configuration and say on startup whether reporting is on.
  *
  * <pre>{@code
  * TraceClient trace = TraceClient.builder("https://trace.example.org", "MyPlugin")
  *         .key(config.getString("usage-reporting.key"))
  *         .enabled(config.getBoolean("usage-reporting.enabled", true))
+ *         .serverWideConfig(getDataFolder().getParentFile()) // plugins/
  *         .logger(getLogger())
  *         .build();
+ *
+ * if (trace.isEnabled()) {
+ *     getLogger().info("Usage reporting is on: ...");
+ * } else {
+ *     getLogger().info("Usage reporting is off (" + trace.disabledReason() + ").");
+ * }
  *
  * trace.report("startup");
  * trace.report("command", 1.0, Collections.singletonMap("name", "home"));
@@ -72,10 +99,43 @@ public final class TraceClient {
     private static final int CONNECT_TIMEOUT_MS = 5_000;
     private static final int READ_TIMEOUT_MS = 5_000;
 
+    /** Reason reported when an environment variable turned reporting off. */
+    public static final String REASON_ENVIRONMENT = "environment";
+    /** Reason reported when {@code plugins/trace/config.yml} turned reporting off. */
+    public static final String REASON_SERVER_WIDE = "server-wide config: plugins/trace/config.yml";
+    /** Reason reported when the program's own setting turned reporting off. */
+    public static final String REASON_CONFIG = "config.yml";
+    /** Reason reported when no key was given. */
+    public static final String REASON_NO_KEY = "no key";
+
+    /** Environment variable that turns reporting off: {@code off}, {@code false}, {@code 0}, {@code no}. */
+    public static final String ENV_USAGE_REPORTING = "TRACE_USAGE_REPORTING";
+    /** Environment variable that turns reporting off: {@code 1}, {@code true}, {@code yes}. See https://consoledonottrack.com. */
+    public static final String ENV_DO_NOT_TRACK = "DO_NOT_TRACK";
+
+    /** The server-wide switch, relative to the plugins directory. */
+    static final String SERVER_WIDE_CONFIG_PATH = "trace" + File.separator + "config.yml";
+
+    /** Exactly what a missing server-wide switch file is created with. */
+    static final String SERVER_WIDE_CONFIG_CONTENT =
+            "# Server-wide switch for usage reporting by plugins that report to trace\n"
+            + "# (https://github.com/Stephenson-Software/trace#usage-reporting).\n"
+            + "# Set enabled to false and every such plugin on this server stops reporting,\n"
+            + "# regardless of its own usage-reporting.enabled setting. Plugins never turn\n"
+            + "# this back on.\n"
+            + "enabled: true\n";
+
+    private static final Pattern ENABLED_LINE = Pattern.compile("^\\s*enabled\\s*:\\s*(\\S+)");
+
+    // Where environment variables come from. A seam rather than System.getenv
+    // directly, so tests can point it at a map; nothing else should touch it.
+    static Function<String, String> environment = System::getenv;
+
     private final String endpoint;
     private final String key;
     private final String application;
     private final Logger logger;
+    private final String disabledReason; // null when enabled
     private final ThreadPoolExecutor executor; // null when disabled
 
     private TraceClient(Builder builder) {
@@ -83,8 +143,8 @@ public final class TraceClient {
         this.key = builder.key;
         this.application = builder.application;
         this.logger = builder.logger;
-        boolean enabled = builder.enabled && builder.key != null && !builder.key.trim().isEmpty();
-        if (enabled) {
+        this.disabledReason = disabledReason(builder);
+        if (disabledReason == null) {
             this.executor = new ThreadPoolExecutor(
                     1, 1, 30, TimeUnit.SECONDS,
                     new ArrayBlockingQueue<Runnable>(QUEUE_CAPACITY),
@@ -118,6 +178,81 @@ public final class TraceClient {
         return executor != null;
     }
 
+    /**
+     * Why {@link #report} sends nothing: {@code null} when enabled, otherwise
+     * one of {@link #REASON_ENVIRONMENT}, {@link #REASON_SERVER_WIDE},
+     * {@link #REASON_CONFIG} or {@link #REASON_NO_KEY}, verbatim, so a program
+     * can print {@code "Usage reporting is off (" + reason + ")."}.
+     */
+    public String disabledReason() {
+        return disabledReason;
+    }
+
+    private String disabledReason(Builder builder) {
+        if (environmentDisables()) {
+            return REASON_ENVIRONMENT;
+        }
+        if (builder.pluginsDirectory != null && serverWideConfigDisables(builder.pluginsDirectory)) {
+            return REASON_SERVER_WIDE;
+        }
+        if (!builder.enabled) {
+            return REASON_CONFIG;
+        }
+        if (builder.key == null || builder.key.trim().isEmpty()) {
+            return REASON_NO_KEY;
+        }
+        return null;
+    }
+
+    private static boolean environmentDisables() {
+        return isOff(environment.apply(ENV_USAGE_REPORTING)) || isYes(environment.apply(ENV_DO_NOT_TRACK));
+    }
+
+    private static boolean isOff(String value) {
+        if (value == null) {
+            return false;
+        }
+        String v = value.trim().toLowerCase();
+        return v.equals("off") || v.equals("false") || v.equals("0") || v.equals("no");
+    }
+
+    private static boolean isYes(String value) {
+        if (value == null) {
+            return false;
+        }
+        String v = value.trim().toLowerCase();
+        return v.equals("1") || v.equals("true") || v.equals("yes");
+    }
+
+    /**
+     * Ensures {@code <pluginsDirectory>/trace/config.yml} exists and reads its
+     * {@code enabled:} line. No YAML library: the file is ours, one key deep,
+     * and a line regex is enough. Anything going wrong on disk is logged at
+     * FINE and counts as enabled -- a read-only plugins directory must not
+     * silently switch reporting off, nor stop the host program.
+     */
+    private boolean serverWideConfigDisables(File pluginsDirectory) {
+        Path file = new File(pluginsDirectory, SERVER_WIDE_CONFIG_PATH).toPath();
+        try {
+            if (!Files.exists(file)) {
+                Files.createDirectories(file.getParent());
+                Files.write(file, SERVER_WIDE_CONFIG_CONTENT.getBytes(StandardCharsets.UTF_8));
+                return false; // just written with enabled: true
+            }
+            List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
+            for (String line : lines) {
+                Matcher matcher = ENABLED_LINE.matcher(line);
+                if (matcher.find()) {
+                    return isOff(matcher.group(1));
+                }
+            }
+            return false; // no enabled: line at all
+        } catch (IOException | RuntimeException failure) {
+            log("could not read server-wide config " + file + ": " + failure);
+            return false;
+        }
+    }
+
     /** Reports that {@code name} happened. */
     public void report(String name) {
         report(name, null, null);
@@ -136,18 +271,25 @@ public final class TraceClient {
     }
 
     /**
-     * Stops the sending thread. Reports already queued are dropped; one in
-     * flight is given a moment to finish. Safe to call more than once, and on
-     * a disabled client.
+     * Stops the sending thread, giving reports already queued up to
+     * {@value #READ_TIMEOUT_MS} ms in total to be sent first. A program that
+     * reports and then exits within milliseconds -- a CLI -- would otherwise
+     * lose its one event to the race between queueing it and the thread
+     * picking it up. The bound still holds: an unreachable server delays exit
+     * by at most the timeout, never a hang; whatever has not been sent by
+     * then is dropped. Safe to call more than once, and on a disabled client.
      */
     public void close() {
         if (executor == null) {
             return;
         }
-        executor.shutdownNow();
+        executor.shutdown(); // no new work; queued reports still run
         try {
-            executor.awaitTermination(READ_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+            if (!executor.awaitTermination(READ_TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
+                executor.shutdownNow();
+            }
         } catch (InterruptedException interrupted) {
+            executor.shutdownNow();
             Thread.currentThread().interrupt();
         }
     }
@@ -161,7 +303,7 @@ public final class TraceClient {
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
             connection.setRequestProperty("Authorization", "Bearer " + key);
-            connection.setRequestProperty("User-Agent", "trace-client/0.1.0 (" + application + ")");
+            connection.setRequestProperty("User-Agent", "trace-client/0.2.0 (" + application + ")");
             connection.setDoOutput(true);
             byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
             connection.setFixedLengthStreamingMode(bytes.length);
@@ -259,6 +401,7 @@ public final class TraceClient {
         private final String application;
         private String key;
         private boolean enabled = true;
+        private File pluginsDirectory;
         private Logger logger;
 
         private Builder(String baseUrl, String application) {
@@ -284,12 +427,33 @@ public final class TraceClient {
             return this;
         }
 
+        /**
+         * The server-wide opt-out shared by every plugin on a Spigot server.
+         * Given the plugins directory ({@code getDataFolder().getParentFile()}
+         * in a Bukkit plugin), {@link #build()} makes sure
+         * {@code plugins/trace/config.yml} exists -- creating it with
+         * {@code enabled: true} if it is missing -- and honours
+         * {@code enabled: false} in it. The file is never rewritten once it
+         * exists. Optional; programs that are not plugins leave it unset.
+         */
+        public Builder serverWideConfig(File pluginsDirectory) {
+            this.pluginsDirectory = pluginsDirectory;
+            return this;
+        }
+
         /** Where dropped reports are mentioned, at {@link Level#FINE}. Optional. */
         public Builder logger(Logger logger) {
             this.logger = logger;
             return this;
         }
 
+        /**
+         * Builds the client. The environment variables
+         * {@value TraceClient#ENV_USAGE_REPORTING} and
+         * {@value TraceClient#ENV_DO_NOT_TRACK} are always consulted first,
+         * then the server-wide config if one was given, then
+         * {@link #enabled(boolean)}, then the key. Never throws.
+         */
         public TraceClient build() {
             return new TraceClient(this);
         }

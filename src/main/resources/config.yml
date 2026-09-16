@@ -289,6 +289,13 @@ dpc-api:
 # actually in use. Nothing about players or the server is included. Sending
 # happens off the main thread, never blocks a tick, and is dropped silently
 # if the server cannot be reached. Set enabled to false to turn it off.
+#
+# Other ways to turn it off, which win over the setting below:
+#   - for every plugin on this server that reports to trace: enabled: false in
+#     plugins/trace/config.yml (written by the first such plugin to start)
+#   - environment variable TRACE_USAGE_REPORTING=off or DO_NOT_TRACK=1
+# The plugin says on every startup whether reporting is on. Details:
+# https://github.com/Stephenson-Software/trace#usage-reporting
 usage-reporting:
   enabled: true
   endpoint: https://trace.danielstephenson.dev

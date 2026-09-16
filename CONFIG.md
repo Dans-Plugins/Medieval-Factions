@@ -732,7 +732,7 @@ for the full server-side semantics.
 
 When the plugin is enabled, and each time one of its commands is used, a small event (plugin name, event name, plugin version or command name) is sent to the author's trace server so it is known which plugins are actually in use. Nothing about players or the server is included: no player names, UUIDs, IPs, world names or server addresses. Sending happens off the main thread, never blocks a tick, and is dropped silently if the trace server cannot be reached.
 
-This reporting is **on by default** and can be turned off. It is separate from the [DPC Community API](#dpc-community-api) integration, which shares faction data and is opt-in.
+This reporting is **on by default** and can be turned off. It is separate from the [DPC Community API](#dpc-community-api) integration, which shares faction data and is opt-in. The plugin says on every startup whether reporting is on, and why it is off. Two switches outside this file win over `usage-reporting.enabled`: `enabled: false` in `plugins/trace/config.yml` turns reporting off for every plugin on the server that reports to trace (the file is written by the first such plugin to start), and the environment variables `TRACE_USAGE_REPORTING=off` and `DO_NOT_TRACK=1` turn it off for the whole process. Details: https://github.com/Stephenson-Software/trace#usage-reporting.
 
 ### `usage-reporting.enabled`
 **Type:** Boolean  

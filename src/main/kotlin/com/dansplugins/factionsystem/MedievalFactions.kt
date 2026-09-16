@@ -222,19 +222,21 @@ class MedievalFactions : JavaPlugin() {
         )
 
         // usage reporting: one event now, one per command; see config.yml.
-        // The one-argument getters, deliberately. saveDefaultConfig() never touches a
-        // config.yml that already exists, so a server upgraded from a version before
-        // usage reporting has no usage-reporting block on disk until copyDefaults
-        // above has written it. Bukkit registers the jar's config.yml as the defaults
-        // for that file, and the one-argument getters fall through to them -- but the
-        // two-argument getters return their explicit fallback instead, which for the
-        // key would be "" and would turn reporting off on every existing
-        // installation. Verified against YamlConfiguration, not assumed.
+        // The settings are read with the one-argument getters. Bukkit registers the
+        // jar's config.yml as the defaults for the server's config.yml, and the
+        // one-argument getters fall through to those defaults for any key the file on
+        // disk lacks, whereas the two-argument getters return their explicit fallback
+        // instead. The copyDefaults(true) + saveConfig() at the top of onEnable() writes
+        // every missing default into config.yml on each start, so the block is on disk
+        // and editable by the time this runs; the fall-through only matters for a value
+        // an operator has removed by hand. Verified against YamlConfiguration, not assumed.
         trace = TraceClient.builder(config.getString("usage-reporting.endpoint") ?: "https://trace.danielstephenson.dev", name)
             .key(config.getString("usage-reporting.key") ?: "")
             .enabled(config.getBoolean("usage-reporting.enabled"))
+            .serverWideConfig(dataFolder.parentFile)
             .logger(logger)
             .build()
+        logUsageReportingState()
         trace.report("startup", null, mapOf("version" to description.version))
         metrics.addCustomChart(
             SimplePie("average_claims") {
@@ -662,6 +664,22 @@ class MedievalFactions : JavaPlugin() {
                 ds.close()
                 logger.info("Database connection closed")
             }
+        }
+    }
+
+    // Said on every startup so an operator can see reporting is on, and why it is off,
+    // from the console alone. The wording is shared by every plugin that reports to trace.
+    private fun logUsageReportingState() {
+        if (trace.isEnabled) {
+            val endpoint = config.getString("usage-reporting.endpoint") ?: "https://trace.danielstephenson.dev"
+            logger.info(
+                "Usage reporting is on: $name sends its name, version and command names to $endpoint" +
+                    " - nothing about players or the server. Turn it off with usage-reporting.enabled: false" +
+                    " in this plugin's config.yml, or for every plugin with enabled: false in" +
+                    " plugins/trace/config.yml. Details: https://github.com/Stephenson-Software/trace#usage-reporting"
+            )
+        } else {
+            logger.info("Usage reporting is off (${trace.disabledReason()}).")
         }
     }
 
