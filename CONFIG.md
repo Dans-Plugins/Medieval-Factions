@@ -18,6 +18,8 @@ This document provides detailed information about all configuration options avai
 - [Dynmap Integration](#dynmap-integration)
 - [Gates](#gates)
 - [Developer Options](#developer-options)
+- [DPC Community API](#dpc-community-api)
+- [Usage Reporting](#usage-reporting)
 
 ## General Settings
 
@@ -723,6 +725,31 @@ cycle), that's the ratio guard at work — it's intentional and self-corrects
 within one or two sync cycles. See the
 [dpc-api README](https://github.com/Dans-Plugins/dansplugins-dot-com/blob/main/dpc-api/README.md#sync-safety-guards)
 for the full server-side semantics.
+
+---
+
+## Usage Reporting
+
+When the plugin is enabled, and each time one of its commands is used, a small event (plugin name, event name, plugin version or command name) is sent to the author's trace server so it is known which plugins are actually in use. Nothing about players or the server is included: no player names, UUIDs, IPs, world names or server addresses. Sending happens off the main thread, never blocks a tick, and is dropped silently if the trace server cannot be reached.
+
+This reporting is **on by default** and can be turned off. It is separate from the [DPC Community API](#dpc-community-api) integration, which shares faction data and is opt-in. The plugin says on every startup whether reporting is on, and why it is off. Two switches outside this file win over `usage-reporting.enabled`: `enabled: false` in `plugins/trace/config.yml` turns reporting off for every plugin on the server that reports to trace (the file is written by the first such plugin to start), and the environment variables `TRACE_USAGE_REPORTING=off` and `DO_NOT_TRACK=1` turn it off for the whole process. Details: https://github.com/Stephenson-Software/trace#usage-reporting.
+
+### `usage-reporting.enabled`
+**Type:** Boolean  
+**Default:** `true`  
+**Description:** Whether usage events are sent. Set to `false` to turn reporting off entirely.
+
+### `usage-reporting.endpoint`
+**Type:** String  
+**Default:** `https://trace.danielstephenson.dev`  
+**Description:** The trace server events are sent to. There is no reason to change this unless you run your own trace server.
+
+### `usage-reporting.key`
+**Type:** String  
+**Default:** The plugin's own key, as shipped in `config.yml`  
+**Description:** Identifies this plugin to the trace server, so reports are attributed to MedievalFactions and can be revoked as a group if they are ever abused. It is not a secret -- it ships in the bundled `config.yml` on every server that runs the plugin -- and it cannot do anything except report as this plugin. An empty key turns reporting off regardless of `usage-reporting.enabled`.
+
+**Note:** A server upgraded from a version before this block existed still reports: the plugin reads the bundled defaults for any key its `config.yml` lacks, and copies them into the file on the next start.
 
 ---
 
