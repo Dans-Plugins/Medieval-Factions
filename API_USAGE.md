@@ -10,7 +10,7 @@ The API can be configured in the `config.yml` file:
 
 ```yaml
 api:
-  enabled: true         # Set to false to disable the API
+  enabled: false        # Off by default - set to true to start the API
   host: 127.0.0.1      # Bind address - use 127.0.0.1 (localhost) for local access only, or 0.0.0.0 for external access
   port: 8080           # Port the API server listens on (1-65535)
 ```
@@ -22,7 +22,7 @@ api:
 
 ## Base URL
 
-By default, the API is available at:
+Once enabled, with the default host and port, the API is available at:
 ```
 http://localhost:8080/api
 ```

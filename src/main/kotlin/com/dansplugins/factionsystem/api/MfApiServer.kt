@@ -23,7 +23,11 @@ class MfApiServer(private val plugin: MedievalFactions) {
     private lateinit var claimController: ClaimController
 
     fun start() {
-        if (!plugin.config.getBoolean("api.enabled", true)) {
+        // The fallback must agree with the shipped config.yml (false). Bukkit's explicit-default
+        // getters bypass the jar defaults, so on the first boot after an upgrade — before
+        // saveConfig() has written the new "api" section into the server's config.yml — a
+        // fallback of true would open the listening socket on every existing install.
+        if (!plugin.config.getBoolean("api.enabled", false)) {
             plugin.logger.info("REST API is disabled in configuration")
             return
         }
