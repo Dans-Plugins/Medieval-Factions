@@ -10,6 +10,7 @@ object MfJdbc {
 
     private const val H2_PREFIX = "jdbc:h2:"
     private const val CLOSE_ON_EXIT_SETTING = "DB_CLOSE_ON_EXIT"
+    private val AUTO_SERVER_ON = Regex(";\\s*AUTO_SERVER\\s*=\\s*TRUE\\s*(;|$)", RegexOption.IGNORE_CASE)
 
     /**
      * Returns the URL the datasource should actually be opened with.
@@ -23,11 +24,16 @@ object MfJdbc {
      * `onDisable`, which closes the database while the classloader is still alive; the hook adds
      * nothing on the happy path and is the thing that breaks on the unhappy one.
      *
-     * Every other URL is returned unchanged.
+     * H2 refuses the combination `AUTO_SERVER=TRUE && DB_CLOSE_ON_EXIT=FALSE` ("Feature not
+     * supported", 50100) — and the default URL runs in auto-server mode so that other
+     * plugins can share the file. Such a URL is therefore returned unchanged: the exit hook
+     * stays, and the explicit close in `onDisable` is what keeps it from ever having work
+     * to do. Every other URL is returned unchanged too.
      */
     fun hardenUrl(url: String): String {
         if (!url.startsWith(H2_PREFIX, ignoreCase = true)) return url
         if (url.contains(CLOSE_ON_EXIT_SETTING, ignoreCase = true)) return url
+        if (AUTO_SERVER_ON.containsMatchIn(url)) return url
         return "$url;$CLOSE_ON_EXIT_SETTING=FALSE"
     }
 
