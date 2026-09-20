@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
+import java.sql.DriverManager
 
 class MfJdbcTest {
 
@@ -64,5 +65,20 @@ class MfJdbcTest {
     fun parseDialect_unknownValue_namesTheAcceptedOnes() {
         val e = assertThrows(IllegalArgumentException::class.java) { MfJdbc.parseDialect("NotADatabase") }
         assertEquals("Unknown database.dialect 'NotADatabase'. Accepted values: H2, MYSQL, MARIADB, POSTGRES.", e.message)
+    }
+
+    @Test
+    fun hardenUrl_producesAUrlH2Accepts_alongsideTheDefaultSettings() {
+        // The default URL's settings plus the appended one, on an in-memory store: proves the
+        // bundled H2 parses the combination rather than rejecting an unknown setting at open.
+        val url = MfJdbc.hardenUrl("jdbc:h2:mem:mfjdbc;MODE=MYSQL;DATABASE_TO_UPPER=false")
+        DriverManager.getConnection(url, "sa", "").use { connection ->
+            connection.createStatement().use { statement ->
+                statement.executeQuery("SELECT 1").use { rs ->
+                    rs.next()
+                    assertEquals(1, rs.getInt(1))
+                }
+            }
+        }
     }
 }
