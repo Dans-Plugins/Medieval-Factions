@@ -13,7 +13,7 @@ This guide explains how to migrate data between storage backends in Medieval Fac
 ## Overview
 
 Medieval Factions supports two storage backends:
-1. **Database Storage** - Uses SQL databases (H2, MySQL, MariaDB, PostgreSQL)
+1. **Database Storage** - Uses a SQL database (embedded H2, or a MariaDB/MySQL server)
 2. **JSON Storage** - Uses JSON files stored on disk
 
 You may want to migrate between these backends for various reasons:
