@@ -10,10 +10,21 @@ import java.sql.DriverManager
 class MfJdbcTest {
 
     private val defaultUrl = "jdbc:h2:./medieval_factions_db;AUTO_SERVER=true;MODE=MYSQL;DATABASE_TO_UPPER=false"
+    private val embeddedUrl = "jdbc:h2:./medieval_factions_db;MODE=MYSQL;DATABASE_TO_UPPER=false"
 
     @Test
-    fun hardenUrl_appendsCloseOnExitFalse_toTheDefaultH2Url() {
-        assertEquals("$defaultUrl;DB_CLOSE_ON_EXIT=FALSE", MfJdbc.hardenUrl(defaultUrl))
+    fun hardenUrl_leavesTheDefaultAutoServerUrlAlone() {
+        // H2 2.1.214 refuses AUTO_SERVER=TRUE together with DB_CLOSE_ON_EXIT=FALSE (50100), and
+        // the release gate caught exactly that on the default config (run 35481312415).
+        assertEquals(defaultUrl, MfJdbc.hardenUrl(defaultUrl))
+        assertEquals("jdbc:h2:./db;auto_server = true", MfJdbc.hardenUrl("jdbc:h2:./db;auto_server = true"))
+        val explicitOff = "jdbc:h2:./db;AUTO_SERVER=FALSE"
+        assertEquals("$explicitOff;DB_CLOSE_ON_EXIT=FALSE", MfJdbc.hardenUrl(explicitOff))
+    }
+
+    @Test
+    fun hardenUrl_appendsCloseOnExitFalse_toAnEmbeddedH2Url() {
+        assertEquals("$embeddedUrl;DB_CLOSE_ON_EXIT=FALSE", MfJdbc.hardenUrl(embeddedUrl))
     }
 
     @Test
@@ -68,9 +79,33 @@ class MfJdbcTest {
     }
 
     @Test
+    fun hardenUrl_producesAUrlH2Accepts_forTheDefaultAndAnEmbeddedStore() {
+        // The bundled H2 opens both what the default config produces (auto-server, no
+        // setting appended) and an embedded URL with the setting appended. On file stores in
+        // a temp dir, not mem:, because AUTO_SERVER is what the rule turns on.
+        val dir = java.nio.file.Files.createTempDirectory("mfjdbc").toFile()
+        try {
+            val urls = listOf(
+                MfJdbc.hardenUrl("jdbc:h2:$dir/auto;AUTO_SERVER=true;MODE=MYSQL;DATABASE_TO_UPPER=false"),
+                MfJdbc.hardenUrl("jdbc:h2:$dir/embedded;MODE=MYSQL;DATABASE_TO_UPPER=false")
+            )
+            for (url in urls) {
+                DriverManager.getConnection(url, "sa", "").use { connection ->
+                    connection.createStatement().use { statement ->
+                        statement.executeQuery("SELECT 1").use { rs ->
+                            rs.next()
+                            assertEquals(1, rs.getInt(1))
+                        }
+                    }
+                }
+            }
+        } finally {
+            dir.deleteRecursively()
+        }
+    }
+
+    @Test
     fun hardenUrl_producesAUrlH2Accepts_alongsideTheDefaultSettings() {
-        // The default URL's settings plus the appended one, on an in-memory store: proves the
-        // bundled H2 parses the combination rather than rejecting an unknown setting at open.
         val url = MfJdbc.hardenUrl("jdbc:h2:mem:mfjdbc;MODE=MYSQL;DATABASE_TO_UPPER=false")
         DriverManager.getConnection(url, "sa", "").use { connection ->
             connection.createStatement().use { statement ->

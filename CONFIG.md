@@ -75,9 +75,11 @@ used for both MariaDB and MySQL servers, so the URL for either starts with `jdbc
 (that driver only accepts a `jdbc:mysql://` URL with `?permitMysqlScheme` appended). No PostgreSQL driver is bundled, so a
 `jdbc:postgresql://` URL fails at startup.
 
-For embedded H2 the plugin appends `;DB_CLOSE_ON_EXIT=FALSE` to the URL unless the setting is
-already present. The database is closed explicitly when the plugin disables; H2's own
-shutdown-hook close would otherwise run after the server has unloaded the plugin, and fail.
+The database is closed explicitly when the plugin disables. For an H2 URL that does not use
+`AUTO_SERVER=true` the plugin also appends `;DB_CLOSE_ON_EXIT=FALSE` (unless the setting is
+already present), so H2 registers no shutdown hook of its own — such a hook would run after
+the server has unloaded the plugin, and fail. H2 does not allow that setting together with
+`AUTO_SERVER=true`, so the default URL is left as it is.
 
 ### `database.dialect`
 **Type:** String  
