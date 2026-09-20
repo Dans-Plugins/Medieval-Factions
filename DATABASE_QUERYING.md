@@ -13,7 +13,7 @@ This guide explains how to query the Medieval Factions database directly, includ
   - [Option 1: Query from the Host via the Volume Mount](#option-1-query-from-the-host-via-the-volume-mount)
   - [Option 2: Query from Inside the Container](#option-2-query-from-inside-the-container)
 - [Querying on a Remote VM](#querying-on-a-remote-vm)
-- [Using MySQL or PostgreSQL Instead](#using-mysql-or-postgresql-instead)
+- [Using MariaDB or MySQL Instead](#using-mariadb-or-mysql-instead)
 - [Database Schema Reference](#database-schema-reference)
 - [Example Queries](#example-queries)
 
@@ -162,33 +162,25 @@ java -cp h2-2.1.214.jar org.h2.tools.Shell \
   -password ""
 ```
 
-### Option C: Use MySQL or PostgreSQL
+### Option C: Use a MariaDB or MySQL server
 
-For easier remote access, consider switching to MySQL or PostgreSQL, which natively support remote network connections. See [Using MySQL or PostgreSQL Instead](#using-mysql-or-postgresql-instead).
+For easier remote access, consider switching to a MariaDB or MySQL server, which natively supports remote network connections. See [Using MariaDB or MySQL Instead](#using-mariadb-or-mysql-instead).
 
-## Using MySQL or PostgreSQL Instead
+## Using MariaDB or MySQL Instead
 
-If you need frequent or remote database access, switching to MySQL or PostgreSQL may be more convenient than H2. Update your `config.yml`:
+If you need frequent or remote database access, a MariaDB or MySQL server may be more convenient than H2. The plugin bundles the MariaDB Connector/J, which serves both, so the URL starts with `jdbc:mariadb://` in either case. Update your `config.yml`:
 
-**MySQL:**
 ```yaml
 database:
-  url: 'jdbc:mysql://localhost:3306/medievalfactions'
-  dialect: 'MySQL'
+  url: 'jdbc:mariadb://localhost:3306/medievalfactions'
+  dialect: 'MARIADB'   # or MYSQL for a MySQL server
   username: 'your_username'
   password: 'your_password'
 ```
 
-**PostgreSQL:**
-```yaml
-database:
-  url: 'jdbc:postgresql://localhost:5432/medievalfactions'
-  dialect: 'PostgreSQL'
-  username: 'your_username'
-  password: 'your_password'
-```
+PostgreSQL is not supported: no PostgreSQL driver is bundled and the schema migrations are written for MySQL-family databases.
 
-When running in Docker, you can add a database service to your `compose.yml` and connect to it from the Minecraft server container using Docker networking (e.g., `jdbc:mysql://db:3306/medievalfactions`).
+When running in Docker, you can add a database service to your `compose.yml` and connect to it from the Minecraft server container using Docker networking (e.g., `jdbc:mariadb://db:3306/medievalfactions`).
 
 ## Database Schema Reference
 

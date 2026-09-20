@@ -16,7 +16,7 @@ The development of the fifth major version of MF was led by [alyphen](https://gi
 
 ### Storage Options
 Medieval Factions supports two data storage backends:
-- **Database Storage** (default) - Uses H2, MySQL, MariaDB, or PostgreSQL
+- **Database Storage** (default) - Uses embedded H2, or a MariaDB/MySQL server
 - **JSON Storage** - Stores data in JSON files for simpler setups
 
 See [Configuration Guide](CONFIG.md#storage-configuration) for details on choosing and configuring your storage backend.

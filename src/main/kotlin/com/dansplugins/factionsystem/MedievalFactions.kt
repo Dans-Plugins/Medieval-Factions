@@ -14,6 +14,7 @@ import com.dansplugins.factionsystem.command.gate.MfGateCommand
 import com.dansplugins.factionsystem.command.lock.MfLockCommand
 import com.dansplugins.factionsystem.command.power.MfPowerCommand
 import com.dansplugins.factionsystem.command.unlock.MfUnlockCommand
+import com.dansplugins.factionsystem.db.MfJdbc
 import com.dansplugins.factionsystem.dpc.MfDpcApiService
 import com.dansplugins.factionsystem.duel.JooqMfDuelInviteRepository
 import com.dansplugins.factionsystem.duel.JooqMfDuelRepository
@@ -107,7 +108,6 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import org.flywaydb.core.Flyway
-import org.jooq.SQLDialect
 import org.jooq.conf.Settings
 import org.jooq.impl.DSL
 import java.time.Duration
@@ -518,16 +518,8 @@ class MedievalFactions : JavaPlugin() {
     )
 
     private fun initializeDatabaseRepositories(gson: Gson): Repositories {
-        // Load appropriate database driver based on JDBC URL
-        val jdbcUrl = config.getString("database.url") ?: ""
-        val lowerUrl = jdbcUrl.lowercase()
-        when {
-            lowerUrl.startsWith("jdbc:h2:") -> Class.forName("org.h2.Driver")
-            lowerUrl.startsWith("jdbc:mysql:") -> Class.forName("com.mysql.cj.jdbc.Driver")
-            lowerUrl.startsWith("jdbc:mariadb:") -> Class.forName("org.mariadb.jdbc.Driver")
-            lowerUrl.startsWith("jdbc:postgresql:") -> Class.forName("org.postgresql.Driver")
-            // For other JDBC URLs, rely on JDBC 4.0+ auto-loading via SPI
-        }
+        val jdbcUrl = MfJdbc.hardenUrl(config.getString("database.url") ?: "")
+        MfJdbc.preloadDriver(jdbcUrl)
         val hikariConfig = HikariConfig()
         hikariConfig.jdbcUrl = jdbcUrl
         val databaseUsername = config.getString("database.username")
@@ -555,7 +547,7 @@ class MedievalFactions : JavaPlugin() {
         System.setProperty("org.jooq.no-logo", "true")
         System.setProperty("org.jooq.no-tips", "true")
 
-        val dialect = config.getString("database.dialect")?.let(SQLDialect::valueOf)
+        val dialect = MfJdbc.parseDialect(config.getString("database.dialect"))
         val jooqSettings = Settings().withRenderSchema(false)
         val dsl = DSL.using(
             dataSource,
