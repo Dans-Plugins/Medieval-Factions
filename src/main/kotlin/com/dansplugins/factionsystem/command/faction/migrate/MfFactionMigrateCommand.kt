@@ -3,6 +3,7 @@ package com.dansplugins.factionsystem.command.faction.migrate
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.chat.JooqMfChatChannelMessageRepository
 import com.dansplugins.factionsystem.claim.JooqMfClaimedChunkRepository
+import com.dansplugins.factionsystem.db.MfJdbc
 import com.dansplugins.factionsystem.duel.JooqMfDuelInviteRepository
 import com.dansplugins.factionsystem.duel.JooqMfDuelRepository
 import com.dansplugins.factionsystem.faction.JooqMfFactionRepository
@@ -39,7 +40,6 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.flywaydb.core.Flyway
-import org.jooq.SQLDialect
 import org.jooq.conf.Settings
 import org.jooq.impl.DSL
 
@@ -104,17 +104,10 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
 
                     // Initialize database repositories
                     plugin.logger.info("Initializing database repositories...")
-                    // Load appropriate database driver based on JDBC URL
-                    val lowerUrl = databaseUrl.lowercase()
-                    when {
-                        lowerUrl.startsWith("jdbc:h2:") -> Class.forName("org.h2.Driver")
-                        lowerUrl.startsWith("jdbc:mysql:") -> Class.forName("com.mysql.cj.jdbc.Driver")
-                        lowerUrl.startsWith("jdbc:mariadb:") -> Class.forName("org.mariadb.jdbc.Driver")
-                        lowerUrl.startsWith("jdbc:postgresql:") -> Class.forName("org.postgresql.Driver")
-                        // For other JDBC URLs, rely on JDBC 4.0+ auto-loading via SPI
-                    }
+                    val jdbcUrl = MfJdbc.hardenUrl(databaseUrl)
+                    MfJdbc.preloadDriver(jdbcUrl)
                     val hikariConfig = HikariConfig()
-                    hikariConfig.jdbcUrl = databaseUrl
+                    hikariConfig.jdbcUrl = jdbcUrl
                     val databaseUsername = plugin.config.getString("database.username")
                     if (databaseUsername != null) {
                         hikariConfig.username = databaseUsername
@@ -139,7 +132,7 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
                         flyway.migrate()
                         Thread.currentThread().contextClassLoader = oldClassLoader
 
-                        val dialect = plugin.config.getString("database.dialect")?.let(SQLDialect::valueOf)
+                        val dialect = MfJdbc.parseDialect(plugin.config.getString("database.dialect"))
                         val jooqSettings = Settings().withRenderSchema(false)
                         val dsl = DSL.using(dataSource, dialect, jooqSettings)
 
@@ -269,17 +262,10 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
 
                     // Initialize database repositories
                     plugin.logger.info("Initializing database repositories...")
-                    // Load appropriate database driver based on JDBC URL
-                    val lowerUrl = databaseUrl.lowercase()
-                    when {
-                        lowerUrl.startsWith("jdbc:h2:") -> Class.forName("org.h2.Driver")
-                        lowerUrl.startsWith("jdbc:mysql:") -> Class.forName("com.mysql.cj.jdbc.Driver")
-                        lowerUrl.startsWith("jdbc:mariadb:") -> Class.forName("org.mariadb.jdbc.Driver")
-                        lowerUrl.startsWith("jdbc:postgresql:") -> Class.forName("org.postgresql.Driver")
-                        // For other JDBC URLs, rely on JDBC 4.0+ auto-loading via SPI
-                    }
+                    val jdbcUrl = MfJdbc.hardenUrl(databaseUrl)
+                    MfJdbc.preloadDriver(jdbcUrl)
                     val hikariConfig = HikariConfig()
-                    hikariConfig.jdbcUrl = databaseUrl
+                    hikariConfig.jdbcUrl = jdbcUrl
                     val databaseUsername = plugin.config.getString("database.username")
                     if (databaseUsername != null) {
                         hikariConfig.username = databaseUsername
@@ -304,7 +290,7 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
                         flyway.migrate()
                         Thread.currentThread().contextClassLoader = oldClassLoader
 
-                        val dialect = plugin.config.getString("database.dialect")?.let(SQLDialect::valueOf)
+                        val dialect = MfJdbc.parseDialect(plugin.config.getString("database.dialect"))
                         val jooqSettings = Settings().withRenderSchema(false)
                         val dsl = DSL.using(dataSource, dialect, jooqSettings)
 

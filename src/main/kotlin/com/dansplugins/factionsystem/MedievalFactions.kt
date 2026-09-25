@@ -14,6 +14,7 @@ import com.dansplugins.factionsystem.command.gate.MfGateCommand
 import com.dansplugins.factionsystem.command.lock.MfLockCommand
 import com.dansplugins.factionsystem.command.power.MfPowerCommand
 import com.dansplugins.factionsystem.command.unlock.MfUnlockCommand
+import com.dansplugins.factionsystem.db.MfJdbc
 import com.dansplugins.factionsystem.dpc.MfDpcApiService
 import com.dansplugins.factionsystem.duel.JooqMfDuelInviteRepository
 import com.dansplugins.factionsystem.duel.JooqMfDuelRepository
@@ -89,6 +90,7 @@ import com.dansplugins.factionsystem.relationship.MfFactionRelationshipRepositor
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
 import com.dansplugins.factionsystem.service.Services
 import com.dansplugins.factionsystem.teleport.MfTeleportService
+import com.dansplugins.factionsystem.trace.TraceClient
 import com.google.gson.Gson
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -101,10 +103,11 @@ import org.bstats.bukkit.Metrics
 import org.bstats.charts.SimplePie
 import org.bukkit.NamespacedKey
 import org.bukkit.boss.KeyedBossBar
+import org.bukkit.command.CommandExecutor
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import org.flywaydb.core.Flyway
-import org.jooq.SQLDialect
 import org.jooq.conf.Settings
 import org.jooq.impl.DSL
 import java.time.Duration
@@ -123,6 +126,10 @@ class MedievalFactions : JavaPlugin() {
     lateinit var factionPermissions: MfFactionPermissions
     lateinit var services: Services
     lateinit var language: Language
+
+    // A no-op until the config has been read, so a command arriving before
+    // onEnable() finishes has something safe to report to.
+    private var trace: TraceClient = TraceClient.disabled()
 
     override fun onEnable() {
         val migrator = MfLegacyDataMigrator(this)
@@ -213,6 +220,24 @@ class MedievalFactions : JavaPlugin() {
                 config.getString("database.dialect")
             }
         )
+
+        // usage reporting: one event now, one per command; see config.yml.
+        // The settings are read with the one-argument getters. Bukkit registers the
+        // jar's config.yml as the defaults for the server's config.yml, and the
+        // one-argument getters fall through to those defaults for any key the file on
+        // disk lacks, whereas the two-argument getters return their explicit fallback
+        // instead. The copyDefaults(true) + saveConfig() at the top of onEnable() writes
+        // every missing default into config.yml on each start, so the block is on disk
+        // and editable by the time this runs; the fall-through only matters for a value
+        // an operator has removed by hand. Verified against YamlConfiguration, not assumed.
+        trace = TraceClient.builder(config.getString("usage-reporting.endpoint") ?: "https://trace.danielstephenson.dev", name)
+            .key(config.getString("usage-reporting.key") ?: "")
+            .enabled(config.getBoolean("usage-reporting.enabled"))
+            .serverWideConfig(dataFolder.parentFile)
+            .logger(logger)
+            .build()
+        logUsageReportingState()
+        trace.report("startup", null, mapOf("version" to description.version))
         metrics.addCustomChart(
             SimplePie("average_claims") {
                 factionService.factions
@@ -333,13 +358,13 @@ class MedievalFactions : JavaPlugin() {
             PotionSplashListener(this)
         ).forEach { server.pluginManager.registerEvents(it, this) }
 
-        getCommand("faction")?.setExecutor(MfFactionCommand(this))
-        getCommand("lock")?.setExecutor(MfLockCommand(this))
-        getCommand("unlock")?.setExecutor(MfUnlockCommand(this))
-        getCommand("accessors")?.setExecutor(MfAccessorsCommand(this))
-        getCommand("power")?.setExecutor(MfPowerCommand(this))
-        getCommand("gate")?.setExecutor(MfGateCommand(this))
-        getCommand("duel")?.setExecutor(MfDuelCommand(this))
+        registerCommand("faction", MfFactionCommand(this))
+        registerCommand("lock", MfLockCommand(this))
+        registerCommand("unlock", MfUnlockCommand(this))
+        registerCommand("accessors", MfAccessorsCommand(this))
+        registerCommand("power", MfPowerCommand(this))
+        registerCommand("gate", MfGateCommand(this))
+        registerCommand("duel", MfDuelCommand(this))
 
         server.scheduler.scheduleSyncRepeatingTask(this, {
             val onlinePlayers = server.onlinePlayers
@@ -493,16 +518,8 @@ class MedievalFactions : JavaPlugin() {
     )
 
     private fun initializeDatabaseRepositories(gson: Gson): Repositories {
-        // Load appropriate database driver based on JDBC URL
-        val jdbcUrl = config.getString("database.url") ?: ""
-        val lowerUrl = jdbcUrl.lowercase()
-        when {
-            lowerUrl.startsWith("jdbc:h2:") -> Class.forName("org.h2.Driver")
-            lowerUrl.startsWith("jdbc:mysql:") -> Class.forName("com.mysql.cj.jdbc.Driver")
-            lowerUrl.startsWith("jdbc:mariadb:") -> Class.forName("org.mariadb.jdbc.Driver")
-            lowerUrl.startsWith("jdbc:postgresql:") -> Class.forName("org.postgresql.Driver")
-            // For other JDBC URLs, rely on JDBC 4.0+ auto-loading via SPI
-        }
+        val jdbcUrl = MfJdbc.hardenUrl(config.getString("database.url") ?: "")
+        MfJdbc.preloadDriver(jdbcUrl)
         val hikariConfig = HikariConfig()
         hikariConfig.jdbcUrl = jdbcUrl
         val databaseUsername = config.getString("database.username")
@@ -530,7 +547,7 @@ class MedievalFactions : JavaPlugin() {
         System.setProperty("org.jooq.no-logo", "true")
         System.setProperty("org.jooq.no-tips", "true")
 
-        val dialect = config.getString("database.dialect")?.let(SQLDialect::valueOf)
+        val dialect = MfJdbc.parseDialect(config.getString("database.dialect"))
         val jooqSettings = Settings().withRenderSchema(false)
         val dsl = DSL.using(
             dataSource,
@@ -630,6 +647,8 @@ class MedievalFactions : JavaPlugin() {
     }
 
     override fun onDisable() {
+        trace.close()
+
         // Close database connection if it was initialized
         dataSource?.let { ds ->
             if (ds is HikariDataSource) {
@@ -638,6 +657,36 @@ class MedievalFactions : JavaPlugin() {
                 logger.info("Database connection closed")
             }
         }
+    }
+
+    // Said on every startup so an operator can see reporting is on, and why it is off,
+    // from the console alone. The wording is shared by every plugin that reports to trace.
+    private fun logUsageReportingState() {
+        if (trace.isEnabled) {
+            val endpoint = config.getString("usage-reporting.endpoint") ?: "https://trace.danielstephenson.dev"
+            logger.info(
+                "Usage reporting is on: $name sends its name, version and command names to $endpoint" +
+                    " - nothing about players or the server. Turn it off with usage-reporting.enabled: false" +
+                    " in this plugin's config.yml, or for every plugin with enabled: false in" +
+                    " plugins/trace/config.yml. Details: https://github.com/Stephenson-Software/trace#usage-reporting"
+            )
+        } else {
+            logger.info("Usage reporting is off (${trace.disabledReason()}).")
+        }
+    }
+
+    // Every top-level command goes through here so that one usage event is reported
+    // per use. The event carries the command's declared name (so "/mf" and "/f"
+    // both report as "faction"), never the sender or the arguments. Tab completion
+    // is wired to the executor explicitly because wrapping it hides the fact that
+    // it is also a TabCompleter from PluginCommand's fallback.
+    private fun <T> registerCommand(name: String, executor: T) where T : CommandExecutor, T : TabCompleter {
+        val command = getCommand(name) ?: return
+        command.setExecutor { sender, cmd, label, args ->
+            trace.report("command", null, mapOf("name" to cmd.name))
+            executor.onCommand(sender, cmd, label, args)
+        }
+        command.tabCompleter = executor
     }
 
     private fun setupRpkLockService() {

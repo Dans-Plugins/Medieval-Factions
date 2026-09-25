@@ -18,6 +18,8 @@ This document provides detailed information about all configuration options avai
 - [Dynmap Integration](#dynmap-integration)
 - [Gates](#gates)
 - [Developer Options](#developer-options)
+- [DPC Community API](#dpc-community-api)
+- [Usage Reporting](#usage-reporting)
 
 ## General Settings
 
@@ -41,7 +43,7 @@ Medieval Factions supports two storage backends: **Database** (default) and **JS
 **Default:** `database`  
 **Description:** Determines which storage backend to use for persisting faction data.  
 **Available Values:**
-- `database` - Uses a SQL database (H2, MySQL, MariaDB, PostgreSQL)
+- `database` - Uses a SQL database (embedded H2 by default, or a MariaDB/MySQL server)
 - `json` - Uses JSON files stored on disk
 
 **When to use JSON:**
@@ -53,7 +55,7 @@ Medieval Factions supports two storage backends: **Database** (default) and **JS
 **When to use Database:**
 - Larger servers with many players and factions
 - Better performance for complex queries
-- Concurrent access from multiple servers (with MySQL/PostgreSQL)
+- Concurrent access from multiple servers (with a MariaDB/MySQL server)
 - Professional production environments
 
 ### Database Storage
@@ -66,14 +68,24 @@ When `storage.type` is set to `database`, the following options apply:
 **Description:** JDBC connection URL for the database.  
 **Examples:**
 - H2 (default): `jdbc:h2:./medieval_factions_db;AUTO_SERVER=true;MODE=MYSQL;DATABASE_TO_UPPER=false`
-- MySQL: `jdbc:mysql://localhost:3306/medievalfactions`
-- PostgreSQL: `jdbc:postgresql://localhost:5432/medievalfactions`
+- MariaDB or MySQL server: `jdbc:mariadb://localhost:3306/medievalfactions`
+
+The plugin bundles two JDBC drivers: H2 and the MariaDB Connector/J. The MariaDB driver is
+used for both MariaDB and MySQL servers, so the URL for either starts with `jdbc:mariadb://`
+(that driver only accepts a `jdbc:mysql://` URL with `?permitMysqlScheme` appended). No PostgreSQL driver is bundled, so a
+`jdbc:postgresql://` URL fails at startup.
+
+The database is closed explicitly when the plugin disables. For an H2 URL that does not use
+`AUTO_SERVER=true` the plugin also appends `;DB_CLOSE_ON_EXIT=FALSE` (unless the setting is
+already present), so H2 registers no shutdown hook of its own — such a hook would run after
+the server has unloaded the plugin, and fail. H2 does not allow that setting together with
+`AUTO_SERVER=true`, so the default URL is left as it is.
 
 ### `database.dialect`
 **Type:** String  
 **Default:** `H2`  
-**Description:** Database dialect to use. Must match your database type.  
-**Available Values:** `H2`, `MySQL`, `PostgreSQL`
+**Description:** SQL dialect to use. Must match your database type.  
+**Available Values:** `H2`, `MYSQL`, `MARIADB` (case-insensitive; `MySQL` and `MariaDB` are accepted spellings)
 
 ### `database.username`
 **Type:** String  
@@ -723,6 +735,31 @@ cycle), that's the ratio guard at work — it's intentional and self-corrects
 within one or two sync cycles. See the
 [dpc-api README](https://github.com/Dans-Plugins/dansplugins-dot-com/blob/main/dpc-api/README.md#sync-safety-guards)
 for the full server-side semantics.
+
+---
+
+## Usage Reporting
+
+When the plugin is enabled, and each time one of its commands is used, a small event (plugin name, event name, plugin version or command name) is sent to the author's trace server so it is known which plugins are actually in use. Nothing about players or the server is included: no player names, UUIDs, IPs, world names or server addresses. Sending happens off the main thread, never blocks a tick, and is dropped silently if the trace server cannot be reached.
+
+This reporting is **on by default** and can be turned off. It is separate from the [DPC Community API](#dpc-community-api) integration, which shares faction data and is opt-in. The plugin says on every startup whether reporting is on, and why it is off. Two switches outside this file win over `usage-reporting.enabled`: `enabled: false` in `plugins/trace/config.yml` turns reporting off for every plugin on the server that reports to trace (the file is written by the first such plugin to start), and the environment variables `TRACE_USAGE_REPORTING=off` and `DO_NOT_TRACK=1` turn it off for the whole process. Details: https://github.com/Stephenson-Software/trace#usage-reporting.
+
+### `usage-reporting.enabled`
+**Type:** Boolean  
+**Default:** `true`  
+**Description:** Whether usage events are sent. Set to `false` to turn reporting off entirely.
+
+### `usage-reporting.endpoint`
+**Type:** String  
+**Default:** `https://trace.danielstephenson.dev`  
+**Description:** The trace server events are sent to. There is no reason to change this unless you run your own trace server.
+
+### `usage-reporting.key`
+**Type:** String  
+**Default:** The plugin's own key, as shipped in `config.yml`  
+**Description:** Identifies this plugin to the trace server, so reports are attributed to MedievalFactions and can be revoked as a group if they are ever abused. It is not a secret -- it ships in the bundled `config.yml` on every server that runs the plugin -- and it cannot do anything except report as this plugin. An empty key turns reporting off regardless of `usage-reporting.enabled`.
+
+**Note:** A server upgraded from a version before this block existed still reports: the plugin reads the bundled defaults for any key its `config.yml` lacks, and copies them into the file on the next start.
 
 ---
 
