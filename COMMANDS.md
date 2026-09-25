@@ -162,6 +162,14 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 - `/f unclaim` - Unclaims the current chunk
 - `/f unclaim 2` - Unclaims chunks in a 2-chunk radius
 
+### `/faction unclaim auto` or `/f unclaim auto`
+**Permission:** `mf.unclaim.auto` or `mf.autounclaim` (default: true)  
+**Description:** Toggles automatic unclaiming. When enabled, chunks claimed by your faction are automatically unclaimed as you walk through them.  
+**Usage:** `/f unclaim auto`  
+**Notes:** 
+- Requires the `TOGGLE_AUTOUNCLAIM` faction role permission to toggle.
+- While enabled, a chunk is only unclaimed for a member whose role has the `UNCLAIM` faction permission and who holds `mf.unclaim`.
+
 ### `/faction unclaimall` or `/f unclaimall`
 **Permission:** `mf.unclaimall` (default: true)  
 **Description:** Unclaims all land owned by your faction.  

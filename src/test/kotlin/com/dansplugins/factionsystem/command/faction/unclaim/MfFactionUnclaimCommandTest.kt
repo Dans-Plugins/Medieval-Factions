@@ -167,6 +167,27 @@ class MfFactionUnclaimCommandTest {
         verify(player).sendMessage("${ChatColor.GREEN}Unclaimed 1 chunk")
     }
 
+    @Test
+    fun testOnCommand_autoArgumentIsDispatchedToAutounclaimRatherThanUnclaimingTheCurrentChunk() {
+        // prepare — the sender may unclaim, and stands in their own claim, but may not toggle autounclaim
+        val player = fixture.player
+        val command = fixture.command
+        val worldId = UUID.randomUUID()
+        stubMembershipOf(player)
+        stubSenderChunk(player, worldId, 0, 0)
+        val claim = stubOwnClaim(worldId, 0, 0)
+        `when`(language["CommandFactionAutounclaimNoPermission"]).thenReturn("No autounclaim permission")
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf("auto"))
+        runPendingTasks()
+
+        // verify
+        assertTrue(result)
+        verify(player).sendMessage("${ChatColor.RED}No autounclaim permission")
+        verify(claimService, never()).delete(claim)
+    }
+
     // Helper functions
 
     private fun stubOwnClaim(worldId: UUID, chunkX: Int, chunkZ: Int) = stubClaimOwnedBy(worldId, chunkX, chunkZ, factionId)
