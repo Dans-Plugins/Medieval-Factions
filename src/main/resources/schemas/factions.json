@@ -74,6 +74,10 @@
           "type": "boolean",
           "description": "Whether autoclaim is enabled"
         },
+        "autounclaim": {
+          "type": "boolean",
+          "description": "Whether autounclaim is enabled"
+        },
         "roles": {
           "$ref": "#/definitions/roles"
         },
