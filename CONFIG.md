@@ -44,7 +44,7 @@ Medieval Factions supports two storage backends: **Database** (default) and **JS
 **Default:** `database`  
 **Description:** Determines which storage backend to use for persisting faction data.  
 **Available Values:**
-- `database` - Uses a SQL database (H2, MySQL, MariaDB, PostgreSQL)
+- `database` - Uses a SQL database (embedded H2 by default, or a MariaDB/MySQL server)
 - `json` - Uses JSON files stored on disk
 
 **When to use JSON:**
@@ -56,7 +56,7 @@ Medieval Factions supports two storage backends: **Database** (default) and **JS
 **When to use Database:**
 - Larger servers with many players and factions
 - Better performance for complex queries
-- Concurrent access from multiple servers (with MySQL/PostgreSQL)
+- Concurrent access from multiple servers (with a MariaDB/MySQL server)
 - Professional production environments
 
 ### Database Storage
@@ -69,14 +69,24 @@ When `storage.type` is set to `database`, the following options apply:
 **Description:** JDBC connection URL for the database.  
 **Examples:**
 - H2 (default): `jdbc:h2:./medieval_factions_db;AUTO_SERVER=true;MODE=MYSQL;DATABASE_TO_UPPER=false`
-- MySQL: `jdbc:mysql://localhost:3306/medievalfactions`
-- PostgreSQL: `jdbc:postgresql://localhost:5432/medievalfactions`
+- MariaDB or MySQL server: `jdbc:mariadb://localhost:3306/medievalfactions`
+
+The plugin bundles two JDBC drivers: H2 and the MariaDB Connector/J. The MariaDB driver is
+used for both MariaDB and MySQL servers, so the URL for either starts with `jdbc:mariadb://`
+(that driver only accepts a `jdbc:mysql://` URL with `?permitMysqlScheme` appended). No PostgreSQL driver is bundled, so a
+`jdbc:postgresql://` URL fails at startup.
+
+The database is closed explicitly when the plugin disables. For an H2 URL that does not use
+`AUTO_SERVER=true` the plugin also appends `;DB_CLOSE_ON_EXIT=FALSE` (unless the setting is
+already present), so H2 registers no shutdown hook of its own — such a hook would run after
+the server has unloaded the plugin, and fail. H2 does not allow that setting together with
+`AUTO_SERVER=true`, so the default URL is left as it is.
 
 ### `database.dialect`
 **Type:** String  
 **Default:** `H2`  
-**Description:** Database dialect to use. Must match your database type.  
-**Available Values:** `H2`, `MySQL`, `PostgreSQL`
+**Description:** SQL dialect to use. Must match your database type.  
+**Available Values:** `H2`, `MYSQL`, `MARIADB` (case-insensitive; `MySQL` and `MariaDB` are accepted spellings)
 
 ### `database.username`
 **Type:** String  
