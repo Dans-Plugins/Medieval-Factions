@@ -1,5 +1,6 @@
 package com.dansplugins.factionsystem
 
+import com.dansplugins.factionsystem.api.MfApiServer
 import com.dansplugins.factionsystem.approval.MfApprovalRequestService
 import com.dansplugins.factionsystem.chat.JooqMfChatChannelMessageRepository
 import com.dansplugins.factionsystem.chat.MfChatChannelMessageRepository
@@ -121,6 +122,7 @@ import kotlin.math.roundToInt
 class MedievalFactions : JavaPlugin() {
 
     private var dataSource: DataSource? = null
+    private var apiServer: MfApiServer? = null
 
     lateinit var flags: MfFlags
     lateinit var factionPermissions: MfFactionPermissions
@@ -500,6 +502,9 @@ class MedievalFactions : JavaPlugin() {
             syncIntervalTicks,
             syncIntervalTicks
         )
+
+        apiServer = MfApiServer(this)
+        apiServer?.start()
     }
 
     private data class Repositories(
@@ -647,6 +652,7 @@ class MedievalFactions : JavaPlugin() {
     }
 
     override fun onDisable() {
+        apiServer?.stop()
         trace.close()
 
         // Close database connection if it was initialized

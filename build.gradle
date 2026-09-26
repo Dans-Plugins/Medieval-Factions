@@ -55,12 +55,24 @@ dependencies {
     implementation 'com.zaxxer:HikariCP:5.0.1'
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation 'com.github.everit-org.json-schema:org.everit.json.schema:1.14.2' // JSON schema validation
-    implementation 'org.slf4j:slf4j-api:1.8.0-beta4'
+    // 2.0.7 is what the build actually resolves: Javalin/Jetty pull slf4j-api 2.0.x
+    // and it wins over the 1.8.0-beta4 that used to be declared here. Declaring it
+    // explicitly keeps the file honest about the version MfSlf4jServiceProvider is
+    // written against.
+    implementation 'org.slf4j:slf4j-api:2.0.7'
     implementation 'com.github.Dans-Plugins:Mailboxes:v1.1'
     implementation 'com.rpkit:rpk-core-bukkit:2.3.2:all'
     implementation 'com.rpkit:rpk-player-lib-bukkit:2.3.2:all'
     implementation 'com.rpkit:rpk-notification-lib-bukkit:2.3.2:all'
     implementation 'com.rpkit:rpk-lock-lib-bukkit:2.3.2:all'
+    implementation 'io.javalin:javalin:5.6.3'
+    // No SLF4J binding is added here on purpose. Javalin logs through SLF4J, and
+    // MfSlf4jServiceProvider already routes SLF4J into the Bukkit plugin logger.
+    // Adding slf4j-simple would both duplicate the binding and pull slf4j-api 2.0.x,
+    // whose SLF4JServiceProvider renamed getRequesteApiVersion (a typo in 1.8.0-beta4)
+    // to getRequestedApiVersion, which breaks that provider.
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.15.3'
     jooqGenerator 'org.jooq:jooq-meta-extensions:3.17.4'
 
     // Use the Kotlin JUnit 5 integration.
@@ -134,6 +146,13 @@ processResources {
 }
 
 shadowJar {
+    // jackson-core 2.15.x is a multi-release jar carrying Java 19 (class file major
+    // version 63) copies of its FastDoubleParser under META-INF/versions/19. Shadow
+    // 7.1.2 bundles an ASM that cannot read them and fails the task outright. The
+    // versioned copies are a parsing optimisation only; the base implementation under
+    // the normal package is kept, so excluding them costs nothing at runtime.
+    exclude 'META-INF/versions/**'
+
     archiveClassifier.set('all')
     mergeServiceFiles()
     dependencies {
@@ -156,6 +175,16 @@ shadowJar {
         include(dependency('com.h2database:h2'))
         include(dependency('com.zaxxer:HikariCP'))
         include(dependency('com.google.code.gson:gson'))
+        include(dependency('io.javalin:javalin'))
+        include(dependency('org.eclipse.jetty:jetty-server'))
+        include(dependency('org.eclipse.jetty:jetty-webapp'))
+        include(dependency('org.eclipse.jetty.websocket:websocket-jetty-server'))
+        include(dependency('org.eclipse.jetty.websocket:websocket-jetty-api'))
+        include(dependency('org.eclipse.jetty.websocket:websocket-servlet'))
+        include(dependency('com.fasterxml.jackson.core:jackson-databind'))
+        include(dependency('com.fasterxml.jackson.core:jackson-core'))
+        include(dependency('com.fasterxml.jackson.core:jackson-annotations'))
+        include(dependency('com.fasterxml.jackson.module:jackson-module-kotlin'))
         // everit's own transitive dependencies (commons-validator, handy-uri-templates) are deliberately
         // not shaded in: they are only reached by the "format" keyword validators for email/hostname/ip/
         // uri-template, which the schemas under src/main/resources/schemas do not use. Adding one of those
@@ -183,6 +212,9 @@ shadowJar {
     relocate 'org.reactivestreams', 'com.dansplugins.factionsystem.shadow.org.reactivestreams'
     relocate 'org.everit', 'com.dansplugins.factionsystem.shadow.org.everit'
     relocate 'org.json', 'com.dansplugins.factionsystem.shadow.org.json'
+    relocate 'io.javalin', 'com.dansplugins.factionsystem.shadow.io.javalin'
+    relocate 'org.eclipse.jetty', 'com.dansplugins.factionsystem.shadow.org.eclipse.jetty'
+    relocate 'com.fasterxml.jackson', 'com.dansplugins.factionsystem.shadow.com.fasterxml.jackson'
 }
 
 artifacts {

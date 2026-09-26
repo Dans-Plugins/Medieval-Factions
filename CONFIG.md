@@ -18,6 +18,7 @@ This document provides detailed information about all configuration options avai
 - [Dynmap Integration](#dynmap-integration)
 - [Gates](#gates)
 - [Developer Options](#developer-options)
+- [REST API](#rest-api)
 - [DPC Community API](#dpc-community-api)
 - [Usage Reporting](#usage-reporting)
 
@@ -657,6 +658,28 @@ Gates are structures that can be toggled open and closed by faction members.
 **Default:** `false`  
 **Description:** Enables developer commands for testing and debugging.  
 **Note:** Should only be enabled in development environments.
+
+---
+
+## REST API
+
+Settings for the plugin's embedded, read-only HTTP API, which exposes faction, player, relationship and claim data to other plugins and external tools (web dashboards, Discord bots, map renderers). Endpoints, response shapes and integration examples are documented in [API_USAGE.md](API_USAGE.md).
+This API is **opt-in** and carries **no authentication**: access control is expected to come from the bind address and the host's firewall.
+
+### `api.enabled`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** Whether the plugin starts its HTTP server on enable. When `false`, no socket is opened and the other `api.*` settings are ignored. A server upgraded from a version without this section behaves as if it were `false` until the key is set.
+
+### `api.host`
+**Type:** String  
+**Default:** `127.0.0.1`  
+**Description:** The address the HTTP server binds to. The default accepts connections from the same machine only, which is the right setting for a local plugin, script or reverse proxy. Set `0.0.0.0` to listen on every interface — only do this behind a firewall or proxy, since the API itself does not authenticate callers.
+
+### `api.port`
+**Type:** Integer  
+**Default:** `8080`  
+**Description:** The TCP port the HTTP server listens on (`1`–`65535`). A value outside that range is logged as an error and the API is not started. Pick a port that nothing else on the host uses — `8080` is a common default for other services.
 
 ---
 

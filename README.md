@@ -37,6 +37,7 @@ Dynmap has been integrated with this plugin. In order to be able to view claimed
 - [Configuration Guide](CONFIG.md) - Detailed config options
 - [Faction Flags](FACTION_FLAGS.md) - Faction flag reference
 - [Database Querying Guide](DATABASE_QUERYING.md) - How to query the database directly
+- [REST API Usage Guide](API_USAGE.md) - The opt-in HTTP API for integrating other plugins and tools
 
 ### Wiki & Additional Resources
 - [Wiki Guide](https://github.com/Dans-Plugins/Medieval-Factions/wiki/Guide)
