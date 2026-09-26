@@ -54,6 +54,7 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
         return isClaimingBlockedInWorld(world.name)
     }
 
+    @JvmName("getClaimsByFactionId")
     fun getClaims(factionId: MfFactionId): List<MfClaimedChunk> = claims.filter { it.factionId == factionId }
 
     @JvmName("isInteractionAllowedForPlayerInChunk")
