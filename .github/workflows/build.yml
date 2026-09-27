@@ -105,7 +105,7 @@ jobs:
         if: needs.changes.outputs.docs_only != 'true'
         run: |
           curl -fsSL -o /tmp/check_api_compat.py \
-            https://raw.githubusercontent.com/Dans-Plugins/release-gates/v11/gates/check_api_compat.py
+            https://raw.githubusercontent.com/Dans-Plugins/release-gates/v12/gates/check_api_compat.py
           python3 /tmp/check_api_compat.py --versions minecraft-versions.json build/libs
 
       # The check above only protects anything while it can still see the problem it was
