@@ -98,10 +98,15 @@ jobs:
       # The jar is compiled against one spigot-api but runs on every version in
       # minecraft-versions.json. This fails when it references a Bukkit class, field or
       # method that one of those versions does not have (#2042: PotionType.LONG_POISON
-      # does not exist before 1.20.5, so the plugin failed to enable on 1.19.4).
+      # does not exist before 1.20.5, so the plugin failed to enable on 1.19.4), or is
+      # compiled for a newer Java than one of them runs on.
+      # See https://github.com/Dans-Plugins/release-gates#api-compatibility-check
       - name: Check Bukkit API use against every supported Minecraft version
         if: needs.changes.outputs.docs_only != 'true'
-        run: python3 scripts/check_api_compat.py build/libs/*-all.jar minecraft-versions.json
+        run: |
+          curl -fsSL -o /tmp/check_api_compat.py \
+            https://raw.githubusercontent.com/Dans-Plugins/release-gates/v11/gates/check_api_compat.py
+          python3 /tmp/check_api_compat.py --versions minecraft-versions.json build/libs
 
       # The check above only protects anything while it can still see the problem it was
       # written for: 6.0.0 is the release that broke 1.19.4, so the check must reject it.
@@ -110,7 +115,7 @@ jobs:
         run: |
           curl -fsSL -o /tmp/mf-6.0.0.jar \
             https://github.com/Dans-Plugins/Medieval-Factions/releases/download/v6.0.0/medieval-factions-6.0.0-all.jar
-          if python3 scripts/check_api_compat.py /tmp/mf-6.0.0.jar minecraft-versions.json > /tmp/check.out; then
+          if python3 /tmp/check_api_compat.py --versions minecraft-versions.json /tmp/mf-6.0.0.jar > /tmp/check.out; then
             cat /tmp/check.out
             echo "::error::the API check accepted 6.0.0, which does not enable on 1.19.4"
             exit 1
