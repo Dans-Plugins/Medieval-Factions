@@ -11,18 +11,13 @@ import org.bukkit.potion.PotionType
 
 class AreaEffectCloudApplyListener(private val plugin: MedievalFactions) : Listener {
 
-    internal val harmfulPotionTypes: List<PotionType> = listOf(
-        PotionType.POISON,
-        PotionType.LONG_POISON,
-        PotionType.STRONG_POISON,
-        PotionType.HARMING,
-        PotionType.STRONG_HARMING,
-        PotionType.SLOWNESS,
-        PotionType.LONG_SLOWNESS,
-        PotionType.STRONG_SLOWNESS,
-        PotionType.WEAKNESS,
-        PotionType.LONG_WEAKNESS
-    )
+    // Resolved by name so that constants missing from the running server's API are skipped
+    // rather than failing plugin enable. The LONG_/STRONG_ variants and the HARMING name only
+    // exist from 1.20.5; older servers call it INSTANT_DAMAGE and encode the variants in
+    // PotionData flags, so the base type alone matches there.
+    internal val harmfulPotionTypes: Set<PotionType> = PotionType.values()
+        .filter { it.name in HARMFUL_POTION_TYPE_NAMES }
+        .toSet()
 
     @EventHandler
     fun onAreaEffectCloudApply(event: AreaEffectCloudApplyEvent) {
@@ -65,5 +60,21 @@ class AreaEffectCloudApplyListener(private val plugin: MedievalFactions) : Liste
                 return
             }
         }
+    }
+
+    companion object {
+        internal val HARMFUL_POTION_TYPE_NAMES = setOf(
+            "POISON",
+            "LONG_POISON",
+            "STRONG_POISON",
+            "HARMING",
+            "INSTANT_DAMAGE",
+            "STRONG_HARMING",
+            "SLOWNESS",
+            "LONG_SLOWNESS",
+            "STRONG_SLOWNESS",
+            "WEAKNESS",
+            "LONG_WEAKNESS"
+        )
     }
 }

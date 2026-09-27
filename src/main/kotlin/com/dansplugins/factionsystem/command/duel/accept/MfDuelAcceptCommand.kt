@@ -105,13 +105,11 @@ class MfDuelAcceptCommand(private val plugin: MedievalFactions) : CommandExecuto
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
-                        val maxHealthAttr = try {
-                            Attribute.valueOf("MAX_HEALTH")
-                        } catch (e: IllegalArgumentException) {
-                            Attribute.valueOf("GENERIC_MAX_HEALTH")
+                        val maxHealthAttr = maxHealthAttribute()
+                        if (maxHealthAttr != null) {
+                            sender.health = sender.getAttribute(maxHealthAttr)?.value ?: sender.health
+                            target.health = target.getAttribute(maxHealthAttr)?.value ?: target.health
                         }
-                        sender.health = sender.getAttribute(maxHealthAttr)?.value ?: sender.health
-                        target.health = target.getAttribute(maxHealthAttr)?.value ?: target.health
 
                         val bar = plugin.server.createBossBar(
                             NamespacedKey(plugin, "duel_${duel.id.value}"),
@@ -164,6 +162,16 @@ class MfDuelAcceptCommand(private val plugin: MedievalFactions) : CommandExecuto
                 }
             }.map(Player::getName)
             else -> emptyList()
+        }
+    }
+
+    // Attribute is an enum before 1.21.3 and an interface after, so a compiled call to
+    // Attribute.valueOf fails with IncompatibleClassChangeError on older servers. Looking the
+    // method up reflectively works on both; the constant was renamed from GENERIC_MAX_HEALTH.
+    private fun maxHealthAttribute(): Attribute? {
+        val valueOf = Attribute::class.java.getMethod("valueOf", String::class.java)
+        return listOf("MAX_HEALTH", "GENERIC_MAX_HEALTH").firstNotNullOfOrNull { name ->
+            runCatching { valueOf.invoke(null, name) as Attribute }.getOrNull()
         }
     }
 }
