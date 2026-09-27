@@ -95,6 +95,29 @@ jobs:
         if: needs.changes.outputs.docs_only != 'true'
         run: ./gradlew clean build
 
+      # The jar is compiled against one spigot-api but runs on every version in
+      # minecraft-versions.json. This fails when it references a Bukkit class, field or
+      # method that one of those versions does not have (#2042: PotionType.LONG_POISON
+      # does not exist before 1.20.5, so the plugin failed to enable on 1.19.4).
+      - name: Check Bukkit API use against every supported Minecraft version
+        if: needs.changes.outputs.docs_only != 'true'
+        run: python3 scripts/check_api_compat.py build/libs/*-all.jar minecraft-versions.json
+
+      # The check above only protects anything while it can still see the problem it was
+      # written for: 6.0.0 is the release that broke 1.19.4, so the check must reject it.
+      - name: Confirm the API check still rejects 6.0.0 (#2042)
+        if: needs.changes.outputs.docs_only != 'true'
+        run: |
+          curl -fsSL -o /tmp/mf-6.0.0.jar \
+            https://github.com/Dans-Plugins/Medieval-Factions/releases/download/v6.0.0/medieval-factions-6.0.0-all.jar
+          if python3 scripts/check_api_compat.py /tmp/mf-6.0.0.jar minecraft-versions.json > /tmp/check.out; then
+            cat /tmp/check.out
+            echo "::error::the API check accepted 6.0.0, which does not enable on 1.19.4"
+            exit 1
+          fi
+          grep -q "PotionType.LONG_POISON does not exist" /tmp/check.out
+          echo "6.0.0 rejected as expected"
+
   docker-build:
     runs-on: ubuntu-latest
     needs: changes
