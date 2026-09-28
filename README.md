@@ -15,7 +15,7 @@ The development of the fifth major version of MF was led by [alyphen](https://gi
 4) (Optional) Configure your preferred storage backend in `config.yml` (database or JSON).
 
 ### Supported Minecraft Versions
-Medieval Factions is supported on the Minecraft versions listed in [`minecraft-versions.json`](minecraft-versions.json): currently **1.19.4**, **1.21.11** and **26.2** (Spigot and its forks). Every stable release is booted on a real server of each of these versions before it is published, and every build checks that the plugin only uses Bukkit API that exists on all of them (`scripts/check_api_compat.py`). Other versions from 1.19.4 onwards are expected to work but are not tested. To support another version, add it to the file: both checks pick it up.
+Medieval Factions is supported on the Minecraft versions listed in [`minecraft-versions.json`](minecraft-versions.json): currently **1.19.4**, **1.21.11** and **26.2** (Spigot and its forks). Every stable release is booted on a real server of each of these versions before it is published, and every build checks that the plugin only uses Bukkit API that exists on all of them ([API-compatibility check](https://github.com/Dans-Plugins/release-gates#api-compatibility-check)). Other versions from 1.19.4 onwards are expected to work but are not tested. To support another version, add it to the file: both checks pick it up.
 
 ### Storage Options
 Medieval Factions supports two data storage backends:
