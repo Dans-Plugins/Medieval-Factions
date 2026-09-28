@@ -15,9 +15,9 @@ class AreaEffectCloudApplyListener(private val plugin: MedievalFactions) : Liste
     // rather than failing plugin enable. The LONG_/STRONG_ variants and the HARMING name only
     // exist from 1.20.5; older servers call it INSTANT_DAMAGE and encode the variants in
     // PotionData flags, so the base type alone matches there.
-    internal val harmfulPotionTypes: Set<PotionType> = PotionType.values()
+    // A List, as in 6.0.0, so the compiled signature stays the same between 6.x releases.
+    internal val harmfulPotionTypes: List<PotionType> = PotionType.values()
         .filter { it.name in HARMFUL_POTION_TYPE_NAMES }
-        .toSet()
 
     @EventHandler
     fun onAreaEffectCloudApply(event: AreaEffectCloudApplyEvent) {

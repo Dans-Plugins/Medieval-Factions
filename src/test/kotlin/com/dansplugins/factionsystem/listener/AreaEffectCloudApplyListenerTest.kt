@@ -78,7 +78,7 @@ class AreaEffectCloudApplyListenerTest {
 
     @Test
     fun harmfulPotionTypes_ResolvesEveryNamePresentInTheServerApi() {
-        val expected = PotionType.values().filter { it.name in AreaEffectCloudApplyListener.HARMFUL_POTION_TYPE_NAMES }.toSet()
+        val expected = PotionType.values().filter { it.name in AreaEffectCloudApplyListener.HARMFUL_POTION_TYPE_NAMES }
 
         assertEquals(expected, uut.harmfulPotionTypes)
         assertTrue(PotionType.LONG_POISON in uut.harmfulPotionTypes)
