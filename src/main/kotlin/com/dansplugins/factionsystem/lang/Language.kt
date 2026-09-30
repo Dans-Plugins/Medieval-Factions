@@ -17,7 +17,7 @@ class Language(plugin: MedievalFactions, private val language: String) {
             languageFolder.mkdirs()
         }
 
-        val filenames = listOf("lang_en_US", "lang_en_GB", "lang_fr_FR", "lang_de_DE")
+        val filenames = listOf("lang_en_US", "lang_en_GB", "lang_fr_FR", "lang_de_DE", "lang_pt_BR")
 
         filenames.forEach { filename ->
             val filepath = "lang/$filename.properties"
@@ -36,9 +36,11 @@ class Language(plugin: MedievalFactions, private val language: String) {
         )
 
         resourceBundles = try {
+            // The jar keeps its language files under lang/, so the base name must include that folder
             val internalResourceBundle = ResourceBundle.getBundle(
-                "lang",
-                locale
+                "lang.lang",
+                locale,
+                javaClass.classLoader
             )
             listOf(externalResourceBundle, internalResourceBundle)
         } catch (e: MissingResourceException) {
