@@ -32,8 +32,8 @@ This document provides detailed information about all configuration options avai
 ### `language`
 **Type:** String  
 **Default:** `en-US`  
-**Description:** Sets the default language for the plugin. Available languages depend on installed language files.  
-**Available Values:** `en-US`, `es-ES`, `ru-RU`, `pt-BR`, `de-DE`, `nl-NL`, etc.
+**Description:** Sets the default language for the plugin. The bundled language files are copied to `plugins/MedievalFactions/lang/` on first run and can be edited there; they are not overwritten on upgrade, so any message missing from an on-disk file is taken from the translation bundled in the plugin jar.  
+**Available Values:** `en-US`, `en-GB`, `fr-FR`, `de-DE`, `pt-BR` (bundled); other locales work if a matching `lang_<locale>.properties` file is added to the `lang` folder.
 
 ## Storage Configuration
 
