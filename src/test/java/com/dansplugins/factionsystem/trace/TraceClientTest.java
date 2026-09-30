@@ -108,7 +108,7 @@ class TraceClientTest {
     @Test
     void report_postsTheEventToTheMetricsEndpointWithTheKey() throws Exception {
         // Arrange
-        TraceClient client = TraceClient.builder(baseUrl() + "/", "MyPlugin").key("k-123").build();
+        TraceClient client = TraceClient.builder(baseUrl() + "/", "MyPlugin", "1.2.3").key("k-123").build();
 
         // Act
         client.report("startup");
@@ -120,14 +120,14 @@ class TraceClientTest {
         assertEquals("/api/metrics", request.path, "a trailing slash on the base URL must not double up");
         assertEquals("Bearer k-123", request.authorization);
         assertTrue(request.contentType.startsWith("application/json"), request.contentType);
-        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\"}", request.body);
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\"}}", request.body);
         client.close();
     }
 
     @Test
     void report_carriesValueAndTagsWhenGiven() throws Exception {
         // Arrange
-        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin").key("k").build();
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build();
         Map<String, String> tags = new LinkedHashMap<>();
         tags.put("command", "home");
         tags.put("world", "the \"end\"");
@@ -139,7 +139,7 @@ class TraceClientTest {
         assertTrue(arrived.await(5, TimeUnit.SECONDS));
         assertEquals(
                 "{\"application\":\"MyPlugin\",\"name\":\"command\",\"value\":2.5,"
-                        + "\"tags\":{\"command\":\"home\",\"world\":\"the \\\"end\\\"\"}}",
+                        + "\"tags\":{\"command\":\"home\",\"world\":\"the \\\"end\\\"\",\"version\":\"1.2.3\"}}",
                 received.get(0).body);
         client.close();
     }
@@ -162,7 +162,7 @@ class TraceClientTest {
             exchange.close();
         });
         slow.start();
-        TraceClient client = TraceClient.builder("http://127.0.0.1:" + slow.getAddress().getPort(), "MyPlugin")
+        TraceClient client = TraceClient.builder("http://127.0.0.1:" + slow.getAddress().getPort(), "MyPlugin", "1.2.3")
                 .key("k").build();
 
         // Act
@@ -188,7 +188,7 @@ class TraceClientTest {
         Logger logger = Logger.getLogger("TraceClientTest.dead");
         logger.setLevel(Level.ALL);
         logger.addHandler(log);
-        TraceClient client = TraceClient.builder("http://127.0.0.1:" + deadPort, "MyPlugin")
+        TraceClient client = TraceClient.builder("http://127.0.0.1:" + deadPort, "MyPlugin", "1.2.3")
                 .key("k").logger(logger).build();
 
         // Act
@@ -209,7 +209,7 @@ class TraceClientTest {
         Logger logger = Logger.getLogger("TraceClientTest.rejected");
         logger.setLevel(Level.ALL);
         logger.addHandler(log);
-        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin").key("revoked").logger(logger).build();
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("revoked").logger(logger).build();
 
         // Act
         assertDoesNotThrow(() -> client.report("startup"));
@@ -223,9 +223,9 @@ class TraceClientTest {
     @Test
     void disabledClient_sendsNothing() throws Exception {
         // Arrange
-        TraceClient byFlag = TraceClient.builder(baseUrl(), "MyPlugin").key("k").enabled(false).build();
-        TraceClient byMissingKey = TraceClient.builder(baseUrl(), "MyPlugin").build();
-        TraceClient byBlankKey = TraceClient.builder(baseUrl(), "MyPlugin").key("  ").build();
+        TraceClient byFlag = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").enabled(false).build();
+        TraceClient byMissingKey = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").build();
+        TraceClient byBlankKey = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("  ").build();
         TraceClient explicit = TraceClient.disabled();
 
         // Act
@@ -243,7 +243,7 @@ class TraceClientTest {
     @Test
     void report_ignoresABlankName() throws Exception {
         // Arrange
-        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin").key("k").build();
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build();
 
         // Act
         client.report(null);
@@ -257,10 +257,66 @@ class TraceClientTest {
 
     @Test
     void builder_rejectsAMissingBaseUrlOrApplication() {
-        assertThrows(IllegalArgumentException.class, () -> TraceClient.builder(null, "MyPlugin"));
-        assertThrows(IllegalArgumentException.class, () -> TraceClient.builder(" ", "MyPlugin"));
-        assertThrows(IllegalArgumentException.class, () -> TraceClient.builder("http://x", null));
-        assertThrows(IllegalArgumentException.class, () -> TraceClient.builder("http://x", ""));
+        assertThrows(IllegalArgumentException.class, () -> TraceClient.builder(null, "MyPlugin", "1.2.3"));
+        assertThrows(IllegalArgumentException.class, () -> TraceClient.builder(" ", "MyPlugin", "1.2.3"));
+        assertThrows(IllegalArgumentException.class, () -> TraceClient.builder("http://x", null, "1.2.3"));
+        assertThrows(IllegalArgumentException.class, () -> TraceClient.builder("http://x", "", "1.2.3"));
+    }
+
+    @Test
+    void builder_rejectsAMissingOrOverlongVersion() {
+        assertThrows(IllegalArgumentException.class, () -> TraceClient.builder("http://x", "MyPlugin", null));
+        assertThrows(IllegalArgumentException.class, () -> TraceClient.builder("http://x", "MyPlugin", "  "));
+        StringBuilder overlong = new StringBuilder();
+        for (int i = 0; i <= TraceClient.MAX_TAG_LENGTH; i++) {
+            overlong.append('9');
+        }
+        assertThrows(IllegalArgumentException.class, () -> TraceClient.builder("http://x", "MyPlugin", overlong.toString()));
+    }
+
+    @Test
+    void report_tagsACommandWithTheProgramVersionTrimmed() throws Exception {
+        // Arrange
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", " 2.0.0-SNAPSHOT ").key("k").build();
+
+        // Act
+        client.report("command", null, Collections.singletonMap("name", "home"));
+
+        // Assert
+        assertTrue(arrived.await(5, TimeUnit.SECONDS));
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"command\","
+                + "\"tags\":{\"name\":\"home\",\"version\":\"2.0.0-SNAPSHOT\"}}", received.get(0).body);
+        client.close();
+    }
+
+    @Test
+    void report_anEventsOwnVersionTagWinsOverTheProgramVersion() throws Exception {
+        // Arrange
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build();
+        Map<String, String> tags = new LinkedHashMap<>();
+        tags.put("version", "9.9.9");
+
+        // Act
+        client.report("startup", null, tags);
+
+        // Assert
+        assertTrue(arrived.await(5, TimeUnit.SECONDS));
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"9.9.9\"}}",
+                received.get(0).body);
+        assertEquals(Collections.singletonMap("version", "9.9.9"), tags, "the caller's map is not modified");
+        client.close();
+    }
+
+    @Test
+    void withVersion_neverModifiesTheCallersMap() {
+        Map<String, String> tags = new LinkedHashMap<>();
+        tags.put("name", "home");
+
+        Map<String, String> merged = TraceClient.withVersion(tags, "1.2.3");
+
+        assertEquals(Collections.singletonMap("name", "home"), tags);
+        assertEquals("1.2.3", merged.get("version"));
+        assertEquals("1.2.3", TraceClient.withVersion(null, "1.2.3").get("version"));
     }
 
     @Test
@@ -353,7 +409,7 @@ class TraceClientTest {
             exchange.close();
         });
         slow.start();
-        TraceClient client = TraceClient.builder("http://127.0.0.1:" + slow.getAddress().getPort(), "MyPlugin")
+        TraceClient client = TraceClient.builder("http://127.0.0.1:" + slow.getAddress().getPort(), "MyPlugin", "1.2.3")
                 .key("k").build();
         int flood = TraceClient.QUEUE_CAPACITY * 3;
 
@@ -388,7 +444,7 @@ class TraceClientTest {
         // races the sender thread and is lost a good fraction of the time; 30
         // back-to-back report()+close() pairs make that fraction visible.
         for (int i = 0; i < 30; i++) {
-            TraceClient client = TraceClient.builder(baseUrl(), "MyCli").key("k").build();
+            TraceClient client = TraceClient.builder(baseUrl(), "MyCli", "1.2.3").key("k").build();
             client.report("startup", null, Collections.singletonMap("run", String.valueOf(i)));
             client.close();
         }
@@ -405,7 +461,7 @@ class TraceClientTest {
             exchange.close();
         });
         slow.start();
-        TraceClient client = TraceClient.builder("http://127.0.0.1:" + slow.getAddress().getPort(), "MyCli").key("k").build();
+        TraceClient client = TraceClient.builder("http://127.0.0.1:" + slow.getAddress().getPort(), "MyCli", "1.2.3").key("k").build();
         client.report("startup");
 
         long before = System.nanoTime();
@@ -420,7 +476,7 @@ class TraceClientTest {
     @Test
     void close_isSafeToCallTwice() throws Exception {
         // Arrange
-        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin").key("k").build();
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build();
         client.report("startup");
 
         // Act
@@ -434,7 +490,7 @@ class TraceClientTest {
     @Test
     void report_afterCloseIsDroppedWithoutThrowing() throws Exception {
         // Arrange
-        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin").key("k").build();
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build();
         client.close();
 
         // Act
@@ -448,7 +504,7 @@ class TraceClientTest {
     @Test
     void report_sendsAUserAgentNamingTheClientAndTheApplication() throws Exception {
         // Arrange
-        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin").key("k").build();
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build();
 
         // Act
         client.report("startup");
@@ -472,7 +528,7 @@ class TraceClientTest {
         Logger logger = Logger.getLogger("TraceClientTest.status200");
         logger.setLevel(Level.ALL);
         logger.addHandler(log);
-        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin").key("k").logger(logger).build();
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").logger(logger).build();
 
         // Act
         assertDoesNotThrow(() -> client.report("startup"));
@@ -488,7 +544,7 @@ class TraceClientTest {
     @Test
     void builder_trimsTheBaseUrlAndApplicationAndDropsEveryTrailingSlash() throws Exception {
         // Arrange
-        TraceClient client = TraceClient.builder("  " + baseUrl() + "///  ", "  MyPlugin  ").key("k").build();
+        TraceClient client = TraceClient.builder("  " + baseUrl() + "///  ", "  MyPlugin  ", "1.2.3").key("k").build();
 
         // Act
         client.report("startup");
@@ -496,16 +552,16 @@ class TraceClientTest {
         // Assert
         assertTrue(arrived.await(5, TimeUnit.SECONDS));
         assertEquals("/api/metrics", received.get(0).path);
-        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\"}", received.get(0).body);
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\"}}", received.get(0).body);
         client.close();
     }
 
     @Test
     void disabledClient_saysWhy() {
-        assertEquals(TraceClient.REASON_CONFIG, TraceClient.builder(baseUrl(), "MyPlugin").key("k").enabled(false).build().disabledReason());
-        assertEquals(TraceClient.REASON_NO_KEY, TraceClient.builder(baseUrl(), "MyPlugin").build().disabledReason());
-        assertEquals(TraceClient.REASON_NO_KEY, TraceClient.builder(baseUrl(), "MyPlugin").key("  ").build().disabledReason());
-        assertNull(TraceClient.builder(baseUrl(), "MyPlugin").key("k").build().disabledReason(), "an enabled client has no reason");
+        assertEquals(TraceClient.REASON_CONFIG, TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").enabled(false).build().disabledReason());
+        assertEquals(TraceClient.REASON_NO_KEY, TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").build().disabledReason());
+        assertEquals(TraceClient.REASON_NO_KEY, TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("  ").build().disabledReason());
+        assertNull(TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build().disabledReason(), "an enabled client has no reason");
     }
 
     @Test
@@ -516,7 +572,7 @@ class TraceClientTest {
         assertFalse(Files.exists(file));
 
         // Act
-        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin").key("k")
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k")
                 .serverWideConfig(pluginsDirectory).build();
 
         // Assert
@@ -548,7 +604,7 @@ class TraceClientTest {
         Files.write(file, operatorsFile.getBytes(StandardCharsets.UTF_8));
 
         // Act
-        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin").key("k").enabled(true)
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").enabled(true)
                 .serverWideConfig(plugins.toFile()).build();
         client.report("startup");
         client.close();
@@ -568,16 +624,16 @@ class TraceClientTest {
         for (String off : new String[] {"false", "no", "0", "off", "OFF", "No"}) {
             Files.write(file, ("enabled: " + off + "\n").getBytes(StandardCharsets.UTF_8));
             assertEquals(TraceClient.REASON_SERVER_WIDE,
-                    TraceClient.builder(baseUrl(), "MyPlugin").key("k").serverWideConfig(plugins.toFile()).build().disabledReason(),
+                    TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build().disabledReason(),
                     "enabled: " + off + " should disable");
         }
         for (String on : new String[] {"true", "yes", "1", "on", "anything-else"}) {
             Files.write(file, ("enabled: " + on + "\n").getBytes(StandardCharsets.UTF_8));
-            assertNull(TraceClient.builder(baseUrl(), "MyPlugin").key("k").serverWideConfig(plugins.toFile()).build().disabledReason(),
+            assertNull(TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build().disabledReason(),
                     "enabled: " + on + " should not disable");
         }
         Files.write(file, "# nothing here\n".getBytes(StandardCharsets.UTF_8));
-        assertNull(TraceClient.builder(baseUrl(), "MyPlugin").key("k").serverWideConfig(plugins.toFile()).build().disabledReason(),
+        assertNull(TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build().disabledReason(),
                 "a file without an enabled: line means enabled");
     }
 
@@ -586,13 +642,13 @@ class TraceClientTest {
         // Arrange
         // The file says on; the environment says off. The environment wins,
         // and is the reason given.
-        TraceClient.builder(baseUrl(), "MyPlugin").key("k").serverWideConfig(plugins.toFile()).build().close();
+        TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build().close();
         assertTrue(Files.readAllLines(plugins.resolve("trace").resolve("config.yml"), StandardCharsets.UTF_8).contains("enabled: true"));
 
         for (String off : new String[] {"off", "OFF", "false", "0", "no", " No "}) {
             environment.clear();
             environment.put("TRACE_USAGE_REPORTING", off);
-            TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin").key("k").serverWideConfig(plugins.toFile()).build();
+            TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build();
             assertFalse(client.isEnabled(), "TRACE_USAGE_REPORTING=" + off + " should disable");
             assertEquals("environment", client.disabledReason());
             client.report("startup");
@@ -601,7 +657,7 @@ class TraceClientTest {
         for (String yes : new String[] {"1", "true", "TRUE", "yes"}) {
             environment.clear();
             environment.put("DO_NOT_TRACK", yes);
-            TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin").key("k").serverWideConfig(plugins.toFile()).build();
+            TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build();
             assertFalse(client.isEnabled(), "DO_NOT_TRACK=" + yes + " should disable");
             assertEquals("environment", client.disabledReason());
             client.report("startup");
@@ -613,7 +669,7 @@ class TraceClientTest {
         environment.clear();
         environment.put("TRACE_USAGE_REPORTING", "on");
         environment.put("DO_NOT_TRACK", "0");
-        assertNull(TraceClient.builder(baseUrl(), "MyPlugin").key("k").serverWideConfig(plugins.toFile()).build().disabledReason());
+        assertNull(TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build().disabledReason());
     }
 
     @Test
@@ -627,16 +683,16 @@ class TraceClientTest {
 
         // Act + Assert: peel the reasons off one at a time, in order.
         assertEquals("environment",
-                TraceClient.builder(baseUrl(), "MyPlugin").enabled(false).serverWideConfig(pluginsDirectory).build().disabledReason());
+                TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").enabled(false).serverWideConfig(pluginsDirectory).build().disabledReason());
         environment.clear();
         assertEquals("server-wide config: plugins/trace/config.yml",
-                TraceClient.builder(baseUrl(), "MyPlugin").enabled(false).serverWideConfig(pluginsDirectory).build().disabledReason());
+                TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").enabled(false).serverWideConfig(pluginsDirectory).build().disabledReason());
         Files.write(file, "enabled: true\n".getBytes(StandardCharsets.UTF_8));
         assertEquals("config.yml",
-                TraceClient.builder(baseUrl(), "MyPlugin").enabled(false).serverWideConfig(pluginsDirectory).build().disabledReason());
+                TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").enabled(false).serverWideConfig(pluginsDirectory).build().disabledReason());
         assertEquals("no key",
-                TraceClient.builder(baseUrl(), "MyPlugin").enabled(true).serverWideConfig(pluginsDirectory).build().disabledReason());
-        TraceClient enabled = TraceClient.builder(baseUrl(), "MyPlugin").key("k").enabled(true).serverWideConfig(pluginsDirectory).build();
+                TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").enabled(true).serverWideConfig(pluginsDirectory).build().disabledReason());
+        TraceClient enabled = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").enabled(true).serverWideConfig(pluginsDirectory).build();
         assertNull(enabled.disabledReason());
         assertTrue(enabled.isEnabled());
         enabled.close();
@@ -660,7 +716,7 @@ class TraceClientTest {
     void serverWideTags_areAddedToAnEventWithNoTagsOfItsOwn(@TempDir Path plugins) throws Exception {
         writeServerWideConfig(plugins, "tags:\n  ci: \"true\"\n");
 
-        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"ci\":\"true\"}}",
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\",\"ci\":\"true\"}}",
                 reportedBody(plugins, "startup", null));
     }
 
@@ -792,15 +848,16 @@ class TraceClientTest {
 
         // Assert
         int pairs = body.split("\":\"v\"", -1).length - 1;
-        assertEquals(TraceClient.MAX_TAGS, pairs, body);
-        assertTrue(body.contains("\"e29\":\"v\"") && body.contains("\"s1\":\"v\"") && !body.contains("\"s2\""), body);
+        assertEquals(TraceClient.MAX_TAGS - 1, pairs, "30 event tags + version + 1 server-wide: " + body);
+        assertTrue(body.contains("\"e29\":\"v\"") && body.contains("\"version\":\"1.2.3\"")
+                && body.contains("\"s0\":\"v\"") && !body.contains("\"s1\""), body);
     }
 
     @Test
     void serverWideTags_doNotResurrectADisabledClient(@TempDir Path plugins) throws Exception {
         writeServerWideConfig(plugins, "enabled: false\ntags:\n  ci: \"true\"\n");
 
-        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin").key("k").serverWideConfig(plugins.toFile()).build();
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build();
         client.report("startup");
         client.close();
 
@@ -812,16 +869,16 @@ class TraceClientTest {
     @Test
     void serverWideTags_areNoneWithoutAServerWideConfigOrAFileThatHasNone(@TempDir Path plugins) throws Exception {
         // No serverWideConfig(...) at all.
-        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin").key("k").build();
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build();
         client.report("startup");
         assertTrue(arrived.await(5, TimeUnit.SECONDS));
         client.close();
-        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\"}", received.get(0).body);
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\"}}", received.get(0).body);
 
         // A file with only the switch in it.
         arrived = new CountDownLatch(1);
         writeServerWideConfig(plugins, "enabled: true\n");
-        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\"}", reportedBody(plugins, "startup", null));
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\"}}", reportedBody(plugins, "startup", null));
     }
 
     @Test
@@ -831,7 +888,7 @@ class TraceClientTest {
 
         // ... and nothing in it is live: the example is commented out.
         assertTrue(Files.exists(plugins.resolve("trace").resolve("config.yml")));
-        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\"}", body);
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\"}}", body);
         TraceClient.ServerWideConfig config = TraceClient.parseServerWideConfig(
                 Arrays.asList(TraceClient.SERVER_WIDE_CONFIG_CONTENT.split("\n")));
         assertTrue(config.tags.isEmpty());
@@ -853,7 +910,7 @@ class TraceClientTest {
             arrived = new CountDownLatch(1);
             writeServerWideConfig(plugins, content);
             String body = assertDoesNotThrow(() -> reportedBody(plugins, "startup", null), content);
-            assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\"}", body, content);
+            assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\"}}", body, content);
         }
 
         // Bytes that are not UTF-8 at all.
@@ -861,7 +918,7 @@ class TraceClientTest {
         arrived = new CountDownLatch(1);
         Path file = plugins.resolve("trace").resolve("config.yml");
         Files.write(file, new byte[] {'t', 'a', 'g', 's', ':', '\n', ' ', ' ', 'c', 'i', ':', ' ', (byte) 0xC3, (byte) 0x28, '\n'});
-        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\"}", reportedBody(plugins, "startup", null),
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\"}}", reportedBody(plugins, "startup", null),
                 "a file that is not UTF-8 counts as enabled with no tags");
     }
 
@@ -886,7 +943,7 @@ class TraceClientTest {
         logger.addHandler(log);
 
         // Act
-        TraceClient client = assertDoesNotThrow(() -> TraceClient.builder(baseUrl(), "MyPlugin").key("k")
+        TraceClient client = assertDoesNotThrow(() -> TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k")
                 .serverWideConfig(notADirectory.toFile()).logger(logger).build());
 
         // Assert
@@ -909,7 +966,7 @@ class TraceClientTest {
 
     /** Builds a client over {@code plugins}, reports one event, and returns the body the server got. */
     private String reportedBody(Path plugins, String name, Map<String, String> tags) throws Exception {
-        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin").key("k").serverWideConfig(plugins.toFile()).build();
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build();
         client.report(name, null, tags);
         assertTrue(arrived.await(5, TimeUnit.SECONDS), "the report should reach the server");
         client.close();

@@ -232,14 +232,14 @@ class MedievalFactions : JavaPlugin() {
         // every missing default into config.yml on each start, so the block is on disk
         // and editable by the time this runs; the fall-through only matters for a value
         // an operator has removed by hand. Verified against YamlConfiguration, not assumed.
-        trace = TraceClient.builder(config.getString("usage-reporting.endpoint") ?: "https://trace.danielstephenson.dev", name)
+        trace = TraceClient.builder(config.getString("usage-reporting.endpoint") ?: "https://trace.danielstephenson.dev", name, description.version)
             .key(config.getString("usage-reporting.key") ?: "")
             .enabled(config.getBoolean("usage-reporting.enabled"))
             .serverWideConfig(dataFolder.parentFile)
             .logger(logger)
             .build()
         logUsageReportingState()
-        trace.report("startup", null, mapOf("version" to description.version))
+        trace.report("startup")
         metrics.addCustomChart(
             SimplePie("average_claims") {
                 factionService.factions
