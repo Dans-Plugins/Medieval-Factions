@@ -9,6 +9,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import java.io.File
 import java.nio.file.Path
+import java.util.Properties
 
 /**
  * The on-disk language files are copied out of the jar on first run and never updated, so keys added
@@ -39,13 +40,9 @@ class LanguageTest {
 
         val language = Language(plugin, "en-US")
 
-        assertEquals(
-            "[Medieval Factions] Want to share your faction data with the DPC community? Get an API key at " +
-                "https://dansplugins.com, set dpc-api.key and dpc-api.server-id in config.yml, then run " +
-                "/mf dpc optin. Other options: /mf dpc shareip, /mf dpc discord, /mf dpc reminder off to hide " +
-                "this message.",
-            language["DpcLoginReminder"]
-        )
+        val bundled = Properties()
+        File("src/main/resources/lang/lang_en_US.properties").inputStream().use { bundled.load(it) }
+        assertEquals(bundled.getProperty("DpcLoginReminder"), language["DpcLoginReminder"])
     }
 
     @Test
