@@ -1,5 +1,5 @@
 /*
- * trace-client 0.3.0 -- https://github.com/Stephenson-Software/trace-client-java
+ * trace-client 0.4.0 -- https://github.com/Stephenson-Software/trace-client-java
  *
  * One call to report that a program was used. Copy this file into a project as
  * is, or depend on the artifact; either way there is nothing else to add.
@@ -72,12 +72,18 @@ import java.util.regex.Pattern;
  * event's own tag wins over a server-wide one of the same name. See
  * {@link Builder#serverWideConfig(File)}.
  *
+ * <p>Every event carries the program's own version as the tag
+ * {@code version} -- the third argument to {@link #builder}, required, so a
+ * {@code command} event can be tied to a release as well as a
+ * {@code startup} one. An event's own {@code version} tag wins over it.
+ *
  * <p>A disabled client is a no-op that costs nothing. Programs that run on
  * other people's machines should expose their own switch in their
  * configuration and say on startup whether reporting is on.
  *
  * <pre>{@code
- * TraceClient trace = TraceClient.builder("https://trace.example.org", "MyPlugin")
+ * TraceClient trace = TraceClient.builder("https://trace.example.org", "MyPlugin",
+ *                 getDescription().getVersion())
  *         .key(config.getString("usage-reporting.key"))
  *         .enabled(config.getBoolean("usage-reporting.enabled", true))
  *         .serverWideConfig(getDataFolder().getParentFile()) // plugins/
@@ -100,7 +106,7 @@ import java.util.regex.Pattern;
 public final class TraceClient {
 
     /** This client's version, as sent in the User-Agent. */
-    public static final String VERSION = "0.3.0";
+    public static final String VERSION = "0.4.0";
 
     /** How many reports may wait to be sent before new ones are dropped. */
     public static final int QUEUE_CAPACITY = 256;
@@ -158,6 +164,7 @@ public final class TraceClient {
     private final String endpoint;
     private final String key;
     private final String application;
+    private final String version;
     private final Logger logger;
     private final String disabledReason; // null when enabled
     private final Map<String, String> serverWideTags; // never null; read once, at build()
@@ -167,6 +174,7 @@ public final class TraceClient {
         this.endpoint = builder.baseUrl.replaceAll("/+$", "") + "/api/metrics";
         this.key = builder.key;
         this.application = builder.application;
+        this.version = builder.version;
         this.logger = builder.logger;
         ServerWideConfig serverWide = builder.pluginsDirectory == null || environmentDisables()
                 ? ServerWideConfig.NONE
@@ -191,15 +199,18 @@ public final class TraceClient {
 
     /**
      * Starts describing a client for the program named {@code application},
-     * reporting to the trace server at {@code baseUrl}.
+     * at {@code version}, reporting to the trace server at {@code baseUrl}.
+     * The version is sent as the tag {@code version} on every event; a blank
+     * one, or one longer than {@value #MAX_TAG_LENGTH} characters, is an
+     * {@link IllegalArgumentException}.
      */
-    public static Builder builder(String baseUrl, String application) {
-        return new Builder(baseUrl, application);
+    public static Builder builder(String baseUrl, String application, String version) {
+        return new Builder(baseUrl, application, version);
     }
 
     /** A client that reports nothing. Useful as a default before configuration is read. */
     public static TraceClient disabled() {
-        return new Builder("http://disabled.invalid", "disabled").enabled(false).build();
+        return new Builder("http://disabled.invalid", "disabled", "disabled").enabled(false).build();
     }
 
     /** Whether {@link #report} will actually send anything. */
@@ -460,6 +471,25 @@ public final class TraceClient {
         return merged;
     }
 
+    /**
+     * The event's own tags plus {@code version}, unless the event already
+     * carries one. A copy; the caller's map is never modified.
+     */
+    static Map<String, String> withVersion(Map<String, String> tags, String version) {
+        Map<String, String> merged = new LinkedHashMap<>();
+        if (tags != null) {
+            for (Map.Entry<String, String> tag : new LinkedHashMap<>(tags).entrySet()) {
+                if (tag.getKey() != null && tag.getValue() != null) {
+                    merged.put(tag.getKey(), tag.getValue());
+                }
+            }
+        }
+        if (!merged.containsKey("version")) {
+            merged.put("version", version);
+        }
+        return merged;
+    }
+
     /** Reports that {@code name} happened. */
     public void report(String name) {
         report(name, null, null);
@@ -473,7 +503,8 @@ public final class TraceClient {
         if (executor == null || name == null || name.trim().isEmpty()) {
             return;
         }
-        final String body = json(application, name, value, withServerWideTags(tags, serverWideTags));
+        final String body = json(application, name, value,
+                withServerWideTags(withVersion(tags, version), serverWideTags));
         executor.execute(() -> send(body));
     }
 
@@ -606,20 +637,28 @@ public final class TraceClient {
     public static final class Builder {
         private final String baseUrl;
         private final String application;
+        private final String version;
         private String key;
         private boolean enabled = true;
         private File pluginsDirectory;
         private Logger logger;
 
-        private Builder(String baseUrl, String application) {
+        private Builder(String baseUrl, String application, String version) {
             if (baseUrl == null || baseUrl.trim().isEmpty()) {
                 throw new IllegalArgumentException("baseUrl is required");
             }
             if (application == null || application.trim().isEmpty()) {
                 throw new IllegalArgumentException("application is required");
             }
+            if (version == null || version.trim().isEmpty()) {
+                throw new IllegalArgumentException("version is required");
+            }
+            if (version.trim().length() > MAX_TAG_LENGTH) {
+                throw new IllegalArgumentException("version is longer than " + MAX_TAG_LENGTH + " characters");
+            }
             this.baseUrl = baseUrl.trim();
             this.application = application.trim();
+            this.version = version.trim();
         }
 
         /** The program's write key. Without one the client is a no-op. */
