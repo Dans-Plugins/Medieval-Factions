@@ -18,6 +18,7 @@ This document provides detailed information about all configuration options avai
 - [Dynmap Integration](#dynmap-integration)
 - [Gates](#gates)
 - [Developer Options](#developer-options)
+- [REST API](#rest-api)
 - [DPC Community API](#dpc-community-api)
 - [Usage Reporting](#usage-reporting)
 
@@ -31,8 +32,8 @@ This document provides detailed information about all configuration options avai
 ### `language`
 **Type:** String  
 **Default:** `en-US`  
-**Description:** Sets the default language for the plugin. Available languages depend on installed language files.  
-**Available Values:** `en-US`, `es-ES`, `ru-RU`, `pt-BR`, `de-DE`, `nl-NL`, etc.
+**Description:** Sets the default language for the plugin. The bundled language files are copied to `plugins/MedievalFactions/lang/` on first run and can be edited there; they are not overwritten on upgrade, so any message missing from an on-disk file is taken from the translation bundled in the plugin jar.  
+**Available Values:** `en-US`, `en-GB`, `fr-FR`, `de-DE`, `pt-BR` (bundled); other locales work if a matching `lang_<locale>.properties` file is added to the `lang` folder.
 
 ## Storage Configuration
 
@@ -660,6 +661,28 @@ Gates are structures that can be toggled open and closed by faction members.
 
 ---
 
+## REST API
+
+Settings for the plugin's embedded, read-only HTTP API, which exposes faction, player, relationship and claim data to other plugins and external tools (web dashboards, Discord bots, map renderers). Endpoints, response shapes and integration examples are documented in [API_USAGE.md](API_USAGE.md).
+This API is **opt-in** and carries **no authentication**: access control is expected to come from the bind address and the host's firewall.
+
+### `api.enabled`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** Whether the plugin starts its HTTP server on enable. When `false`, no socket is opened and the other `api.*` settings are ignored. A server upgraded from a version without this section behaves as if it were `false` until the key is set.
+
+### `api.host`
+**Type:** String  
+**Default:** `127.0.0.1`  
+**Description:** The address the HTTP server binds to. The default accepts connections from the same machine only, which is the right setting for a local plugin, script or reverse proxy. Set `0.0.0.0` to listen on every interface — only do this behind a firewall or proxy, since the API itself does not authenticate callers.
+
+### `api.port`
+**Type:** Integer  
+**Default:** `8080`  
+**Description:** The TCP port the HTTP server listens on (`1`–`65535`). A value outside that range is logged as an error and the API is not started. Pick a port that nothing else on the host uses — `8080` is a common default for other services.
+
+---
+
 ## DPC Community API
 
 Settings for the DPC (Dans Plugins Community) API integration.
@@ -740,7 +763,7 @@ for the full server-side semantics.
 
 ## Usage Reporting
 
-When the plugin is enabled, and each time one of its commands is used, a small event (plugin name, event name, plugin version or command name) is sent to the author's trace server so it is known which plugins are actually in use. Nothing about players or the server is included: no player names, UUIDs, IPs, world names or server addresses. Sending happens off the main thread, never blocks a tick, and is dropped silently if the trace server cannot be reached.
+When the plugin is enabled, and each time one of its commands is used, a small event (plugin name, event name, plugin version and, for a command, its name) is sent to the author's trace server so it is known which plugins are actually in use. Nothing about players or the server is included: no player names, UUIDs, IPs, world names or server addresses. Sending happens off the main thread, never blocks a tick, and is dropped silently if the trace server cannot be reached.
 
 This reporting is **on by default** and can be turned off. It is separate from the [DPC Community API](#dpc-community-api) integration, which shares faction data and is opt-in. The plugin says on every startup whether reporting is on, and why it is off. Two switches outside this file win over `usage-reporting.enabled`: `enabled: false` in `plugins/trace/config.yml` turns reporting off for every plugin on the server that reports to trace (the file is written by the first such plugin to start), and the environment variables `TRACE_USAGE_REPORTING=off` and `DO_NOT_TRACK=1` turn it off for the whole process. Details: https://github.com/Stephenson-Software/trace#usage-reporting.
 

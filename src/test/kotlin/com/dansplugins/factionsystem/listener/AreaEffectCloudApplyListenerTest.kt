@@ -5,6 +5,9 @@ import org.bukkit.entity.AreaEffectCloud
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent
 import org.bukkit.potion.PotionData
 import org.bukkit.potion.PotionType
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
@@ -71,5 +74,15 @@ class AreaEffectCloudApplyListenerTest {
 
         verify(potionService).getLingeringPotionEffectThrower(areaEffectCloud)
         verify(event, never()).affectedEntities
+    }
+
+    @Test
+    fun harmfulPotionTypes_ResolvesEveryNamePresentInTheServerApi() {
+        val expected = PotionType.values().filter { it.name in AreaEffectCloudApplyListener.HARMFUL_POTION_TYPE_NAMES }
+
+        assertEquals(expected, uut.harmfulPotionTypes)
+        assertTrue(PotionType.LONG_POISON in uut.harmfulPotionTypes)
+        assertTrue(PotionType.STRONG_HARMING in uut.harmfulPotionTypes)
+        assertFalse(PotionType.WATER in uut.harmfulPotionTypes)
     }
 }

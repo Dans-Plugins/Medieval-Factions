@@ -1,5 +1,6 @@
 package com.dansplugins.factionsystem
 
+import com.dansplugins.factionsystem.api.MfApiServer
 import com.dansplugins.factionsystem.approval.MfApprovalRequestService
 import com.dansplugins.factionsystem.chat.JooqMfChatChannelMessageRepository
 import com.dansplugins.factionsystem.chat.MfChatChannelMessageRepository
@@ -121,6 +122,7 @@ import kotlin.math.roundToInt
 class MedievalFactions : JavaPlugin() {
 
     private var dataSource: DataSource? = null
+    private var apiServer: MfApiServer? = null
 
     lateinit var flags: MfFlags
     lateinit var factionPermissions: MfFactionPermissions
@@ -230,14 +232,14 @@ class MedievalFactions : JavaPlugin() {
         // every missing default into config.yml on each start, so the block is on disk
         // and editable by the time this runs; the fall-through only matters for a value
         // an operator has removed by hand. Verified against YamlConfiguration, not assumed.
-        trace = TraceClient.builder(config.getString("usage-reporting.endpoint") ?: "https://trace.danielstephenson.dev", name)
+        trace = TraceClient.builder(config.getString("usage-reporting.endpoint") ?: "https://trace.danielstephenson.dev", name, description.version)
             .key(config.getString("usage-reporting.key") ?: "")
             .enabled(config.getBoolean("usage-reporting.enabled"))
             .serverWideConfig(dataFolder.parentFile)
             .logger(logger)
             .build()
         logUsageReportingState()
-        trace.report("startup", null, mapOf("version" to description.version))
+        trace.report("startup")
         metrics.addCustomChart(
             SimplePie("average_claims") {
                 factionService.factions
@@ -500,6 +502,9 @@ class MedievalFactions : JavaPlugin() {
             syncIntervalTicks,
             syncIntervalTicks
         )
+
+        apiServer = MfApiServer(this)
+        apiServer?.start()
     }
 
     private data class Repositories(
@@ -647,6 +652,7 @@ class MedievalFactions : JavaPlugin() {
     }
 
     override fun onDisable() {
+        apiServer?.stop()
         trace.close()
 
         // Close database connection if it was initialized

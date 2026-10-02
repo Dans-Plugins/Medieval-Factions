@@ -1,5 +1,5 @@
 /*
- * trace-client 0.2.0 -- https://github.com/Stephenson-Software/trace-client-java
+ * trace-client 0.4.0 -- https://github.com/Stephenson-Software/trace-client-java
  *
  * One call to report that a program was used. Copy this file into a project as
  * is, or depend on the artifact; either way there is nothing else to add.
@@ -66,12 +66,24 @@ import java.util.regex.Pattern;
  *   <li>no key -- reason {@code no key}.</li>
  * </ol>
  *
+ * <p>The same server-wide file can also carry a {@code tags:} block, merged
+ * into every event every plugin on the server reports -- {@code ci: "true"}
+ * on a test server keeps its events out of real-installation figures. An
+ * event's own tag wins over a server-wide one of the same name. See
+ * {@link Builder#serverWideConfig(File)}.
+ *
+ * <p>Every event carries the program's own version as the tag
+ * {@code version} -- the third argument to {@link #builder}, required, so a
+ * {@code command} event can be tied to a release as well as a
+ * {@code startup} one. An event's own {@code version} tag wins over it.
+ *
  * <p>A disabled client is a no-op that costs nothing. Programs that run on
  * other people's machines should expose their own switch in their
  * configuration and say on startup whether reporting is on.
  *
  * <pre>{@code
- * TraceClient trace = TraceClient.builder("https://trace.example.org", "MyPlugin")
+ * TraceClient trace = TraceClient.builder("https://trace.example.org", "MyPlugin",
+ *                 getDescription().getVersion())
  *         .key(config.getString("usage-reporting.key"))
  *         .enabled(config.getBoolean("usage-reporting.enabled", true))
  *         .serverWideConfig(getDataFolder().getParentFile()) // plugins/
@@ -92,6 +104,9 @@ import java.util.regex.Pattern;
  * }</pre>
  */
 public final class TraceClient {
+
+    /** This client's version, as sent in the User-Agent. */
+    public static final String VERSION = "0.4.0";
 
     /** How many reports may wait to be sent before new ones are dropped. */
     public static final int QUEUE_CAPACITY = 256;
@@ -123,9 +138,24 @@ public final class TraceClient {
             + "# Set enabled to false and every such plugin on this server stops reporting,\n"
             + "# regardless of its own usage-reporting.enabled setting. Plugins never turn\n"
             + "# this back on.\n"
-            + "enabled: true\n";
+            + "enabled: true\n"
+            + "#\n"
+            + "# Tags added to every event such plugins on this server report. A plugin's\n"
+            + "# own tag of the same name wins. On a test or CI server, uncomment the two\n"
+            + "# lines below so its events are left out of real-installation figures.\n"
+            + "# tags:\n"
+            + "#   ci: \"true\"\n";
 
     private static final Pattern ENABLED_LINE = Pattern.compile("^\\s*enabled\\s*:\\s*(\\S+)");
+    private static final Pattern TAGS_LINE = Pattern.compile("^tags\\s*:\\s*(#.*)?$");
+
+    // What the trace server accepts in a report's tags (MetricDto): at most
+    // MAX_TAGS pairs, keys not blank, keys and values at most MAX_TAG_LENGTH
+    // characters. Server-wide tags are held to that and to a stricter key
+    // alphabet, so a typo in the file can never turn every report into a 400.
+    static final int MAX_TAGS = 32;
+    static final int MAX_TAG_LENGTH = 255;
+    private static final Pattern TAG_KEY = Pattern.compile("[A-Za-z0-9][A-Za-z0-9_.\\-]*");
 
     // Where environment variables come from. A seam rather than System.getenv
     // directly, so tests can point it at a map; nothing else should touch it.
@@ -134,16 +164,23 @@ public final class TraceClient {
     private final String endpoint;
     private final String key;
     private final String application;
+    private final String version;
     private final Logger logger;
     private final String disabledReason; // null when enabled
+    private final Map<String, String> serverWideTags; // never null; read once, at build()
     private final ThreadPoolExecutor executor; // null when disabled
 
     private TraceClient(Builder builder) {
         this.endpoint = builder.baseUrl.replaceAll("/+$", "") + "/api/metrics";
         this.key = builder.key;
         this.application = builder.application;
+        this.version = builder.version;
         this.logger = builder.logger;
-        this.disabledReason = disabledReason(builder);
+        ServerWideConfig serverWide = builder.pluginsDirectory == null || environmentDisables()
+                ? ServerWideConfig.NONE
+                : readServerWideConfig(builder.pluginsDirectory);
+        this.disabledReason = disabledReason(builder, serverWide);
+        this.serverWideTags = serverWide.tags;
         if (disabledReason == null) {
             this.executor = new ThreadPoolExecutor(
                     1, 1, 30, TimeUnit.SECONDS,
@@ -162,15 +199,18 @@ public final class TraceClient {
 
     /**
      * Starts describing a client for the program named {@code application},
-     * reporting to the trace server at {@code baseUrl}.
+     * at {@code version}, reporting to the trace server at {@code baseUrl}.
+     * The version is sent as the tag {@code version} on every event; a blank
+     * one, or one longer than {@value #MAX_TAG_LENGTH} characters, is an
+     * {@link IllegalArgumentException}.
      */
-    public static Builder builder(String baseUrl, String application) {
-        return new Builder(baseUrl, application);
+    public static Builder builder(String baseUrl, String application, String version) {
+        return new Builder(baseUrl, application, version);
     }
 
     /** A client that reports nothing. Useful as a default before configuration is read. */
     public static TraceClient disabled() {
-        return new Builder("http://disabled.invalid", "disabled").enabled(false).build();
+        return new Builder("http://disabled.invalid", "disabled", "disabled").enabled(false).build();
     }
 
     /** Whether {@link #report} will actually send anything. */
@@ -188,11 +228,11 @@ public final class TraceClient {
         return disabledReason;
     }
 
-    private String disabledReason(Builder builder) {
+    private static String disabledReason(Builder builder, ServerWideConfig serverWide) {
         if (environmentDisables()) {
             return REASON_ENVIRONMENT;
         }
-        if (builder.pluginsDirectory != null && serverWideConfigDisables(builder.pluginsDirectory)) {
+        if (serverWide.disables) {
             return REASON_SERVER_WIDE;
         }
         if (!builder.enabled) {
@@ -224,33 +264,230 @@ public final class TraceClient {
         return v.equals("1") || v.equals("true") || v.equals("yes");
     }
 
+    /** What {@code plugins/trace/config.yml} says: the switch and the server-wide tags. */
+    static final class ServerWideConfig {
+        static final ServerWideConfig NONE = new ServerWideConfig(false, Collections.<String, String>emptyMap());
+
+        final boolean disables;
+        final Map<String, String> tags;
+
+        ServerWideConfig(boolean disables, Map<String, String> tags) {
+            this.disables = disables;
+            this.tags = tags;
+        }
+    }
+
     /**
      * Ensures {@code <pluginsDirectory>/trace/config.yml} exists and reads its
-     * {@code enabled:} line. No YAML library: the file is ours, one key deep,
-     * and a line regex is enough. Anything going wrong on disk is logged at
-     * FINE and counts as enabled -- a read-only plugins directory must not
-     * silently switch reporting off, nor stop the host program.
+     * {@code enabled:} line and {@code tags:} block. No YAML library: the file
+     * is ours, shallow, and a line scan is enough. Anything going wrong on
+     * disk is logged at FINE and counts as enabled with no tags -- a
+     * read-only plugins directory must not silently switch reporting off,
+     * nor stop the host program.
      */
-    private boolean serverWideConfigDisables(File pluginsDirectory) {
+    private ServerWideConfig readServerWideConfig(File pluginsDirectory) {
         Path file = new File(pluginsDirectory, SERVER_WIDE_CONFIG_PATH).toPath();
         try {
             if (!Files.exists(file)) {
                 Files.createDirectories(file.getParent());
                 Files.write(file, SERVER_WIDE_CONFIG_CONTENT.getBytes(StandardCharsets.UTF_8));
-                return false; // just written with enabled: true
+                // just written: enabled: true, and the tags example commented out
             }
-            List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
-            for (String line : lines) {
-                Matcher matcher = ENABLED_LINE.matcher(line);
-                if (matcher.find()) {
-                    return isOff(matcher.group(1));
-                }
-            }
-            return false; // no enabled: line at all
+            return parseServerWideConfig(Files.readAllLines(file, StandardCharsets.UTF_8));
         } catch (IOException | RuntimeException failure) {
             log("could not read server-wide config " + file + ": " + failure);
-            return false;
+            return ServerWideConfig.NONE;
         }
+    }
+
+    /**
+     * Reads the switch and the tags from the lines of the server-wide file.
+     * The first {@code enabled:} line outside a {@code tags:} block is the
+     * switch. A {@code tags:} line at column 0 opens a block of indented
+     * {@code key: value} lines, which ends at the next non-blank line that is
+     * not indented; blank and {@code #} lines inside it are skipped, as are
+     * lines indented differently from its first entry. Values may be bare,
+     * double- or single-quoted. Entries the trace server would reject -- and
+     * anything this reader does not understand -- are dropped, one by one,
+     * and at most {@link #MAX_TAGS} are kept; nothing here throws.
+     */
+    static ServerWideConfig parseServerWideConfig(List<String> lines) {
+        Boolean disables = null;
+        Map<String, String> tags = new LinkedHashMap<>();
+        boolean inTags = false;
+        int entryIndent = -1;
+        for (String line : lines) {
+            String trimmed = line.trim();
+            if (trimmed.isEmpty() || trimmed.startsWith("#")) {
+                continue;
+            }
+            int indent = 0;
+            while (indent < line.length() && (line.charAt(indent) == ' ' || line.charAt(indent) == '\t')) {
+                indent++;
+            }
+            if (inTags) {
+                if (indent > 0) {
+                    if (entryIndent < 0) {
+                        entryIndent = indent;
+                    }
+                    if (indent == entryIndent) {
+                        addServerWideTag(tags, trimmed);
+                    }
+                    continue;
+                }
+                inTags = false;
+            }
+            if (TAGS_LINE.matcher(line).matches()) {
+                inTags = true;
+                entryIndent = -1;
+                continue;
+            }
+            if (disables == null) {
+                Matcher matcher = ENABLED_LINE.matcher(line);
+                if (matcher.find()) {
+                    disables = isOff(matcher.group(1));
+                }
+            }
+        }
+        return new ServerWideConfig(disables != null && disables,
+                tags.isEmpty() ? Collections.<String, String>emptyMap() : Collections.unmodifiableMap(tags));
+    }
+
+    private static void addServerWideTag(Map<String, String> tags, String entry) {
+        if (tags.size() >= MAX_TAGS) {
+            return;
+        }
+        int colon = entry.indexOf(':');
+        if (colon <= 0) {
+            return;
+        }
+        String key = unquote(entry.substring(0, colon).trim());
+        String rest = entry.substring(colon + 1);
+        if (key == null || !rest.isEmpty() && rest.charAt(0) != ' ' && rest.charAt(0) != '\t') {
+            return; // "a:b" is a string in YAML, not a pair
+        }
+        String value = scalar(rest.trim());
+        if (value == null
+                || key.length() > MAX_TAG_LENGTH || !TAG_KEY.matcher(key).matches()
+                || value.length() > MAX_TAG_LENGTH) {
+            return;
+        }
+        if (!tags.containsKey(key)) {
+            tags.put(key, value);
+        }
+    }
+
+    /** A key, quoted or not; null when the quoting is broken. */
+    private static String unquote(String key) {
+        if (key.startsWith("\"") || key.startsWith("'")) {
+            return key.length() >= 2 && key.charAt(key.length() - 1) == key.charAt(0)
+                    ? key.substring(1, key.length() - 1)
+                    : null;
+        }
+        return key;
+    }
+
+    /**
+     * A YAML scalar value, with any trailing comment removed; null for an
+     * empty (YAML null) value, a broken quote, or anything that is not a
+     * plain one-line scalar.
+     */
+    private static String scalar(String text) {
+        if (text.isEmpty() || text.startsWith("#")) {
+            return null;
+        }
+        char first = text.charAt(0);
+        if (first == '"' || first == '\'') {
+            StringBuilder out = new StringBuilder();
+            int i = 1;
+            for (; i < text.length(); i++) {
+                char c = text.charAt(i);
+                if (first == '"' && c == '\\' && i + 1 < text.length()) {
+                    char next = text.charAt(++i);
+                    switch (next) {
+                        case 'n': out.append('\n'); break;
+                        case 't': out.append('\t'); break;
+                        case 'r': out.append('\r'); break;
+                        default: out.append(next); // \" \\ \/ and anything else, literally
+                    }
+                } else if (c == first) {
+                    if (first == '\'' && i + 1 < text.length() && text.charAt(i + 1) == '\'') {
+                        out.append('\'');
+                        i++;
+                    } else {
+                        break;
+                    }
+                } else {
+                    out.append(c);
+                }
+            }
+            if (i >= text.length()) {
+                return null; // never closed
+            }
+            String after = text.substring(i + 1).trim();
+            return after.isEmpty() || after.startsWith("#") ? out.toString() : null;
+        }
+        if ("[{|>&*!%@`".indexOf(first) >= 0) {
+            return null; // flow collections, block scalars, anchors, tags: not ours
+        }
+        int comment = -1;
+        for (int i = 1; i < text.length(); i++) {
+            if (text.charAt(i) == '#' && (text.charAt(i - 1) == ' ' || text.charAt(i - 1) == '\t')) {
+                comment = i;
+                break;
+            }
+        }
+        String value = (comment < 0 ? text : text.substring(0, comment)).trim();
+        return value.isEmpty() ? null : value;
+    }
+
+    /**
+     * The event's tags with the server-wide ones added: an event's own tag
+     * wins on a key conflict, and server-wide tags stop being added once
+     * {@link #MAX_TAGS} is reached, so the merge never makes a report the
+     * server would reject. A tag with a null key or value counts as absent,
+     * as it does in {@link #json}.
+     */
+    static Map<String, String> withServerWideTags(Map<String, String> tags, Map<String, String> serverWide) {
+        if (serverWide.isEmpty()) {
+            return tags;
+        }
+        Map<String, String> merged = new LinkedHashMap<>();
+        if (tags != null) {
+            for (Map.Entry<String, String> tag : new LinkedHashMap<>(tags).entrySet()) {
+                if (tag.getKey() != null && tag.getValue() != null) {
+                    merged.put(tag.getKey(), tag.getValue());
+                }
+            }
+        }
+        for (Map.Entry<String, String> tag : serverWide.entrySet()) {
+            if (merged.size() >= MAX_TAGS) {
+                break;
+            }
+            if (!merged.containsKey(tag.getKey())) {
+                merged.put(tag.getKey(), tag.getValue());
+            }
+        }
+        return merged;
+    }
+
+    /**
+     * The event's own tags plus {@code version}, unless the event already
+     * carries one. A copy; the caller's map is never modified.
+     */
+    static Map<String, String> withVersion(Map<String, String> tags, String version) {
+        Map<String, String> merged = new LinkedHashMap<>();
+        if (tags != null) {
+            for (Map.Entry<String, String> tag : new LinkedHashMap<>(tags).entrySet()) {
+                if (tag.getKey() != null && tag.getValue() != null) {
+                    merged.put(tag.getKey(), tag.getValue());
+                }
+            }
+        }
+        if (!merged.containsKey("version")) {
+            merged.put("version", version);
+        }
+        return merged;
     }
 
     /** Reports that {@code name} happened. */
@@ -266,7 +503,8 @@ public final class TraceClient {
         if (executor == null || name == null || name.trim().isEmpty()) {
             return;
         }
-        final String body = json(application, name, value, tags);
+        final String body = json(application, name, value,
+                withServerWideTags(withVersion(tags, version), serverWideTags));
         executor.execute(() -> send(body));
     }
 
@@ -303,7 +541,7 @@ public final class TraceClient {
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
             connection.setRequestProperty("Authorization", "Bearer " + key);
-            connection.setRequestProperty("User-Agent", "trace-client/0.2.0 (" + application + ")");
+            connection.setRequestProperty("User-Agent", "trace-client/" + VERSION + " (" + application + ")");
             connection.setDoOutput(true);
             byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
             connection.setFixedLengthStreamingMode(bytes.length);
@@ -399,20 +637,28 @@ public final class TraceClient {
     public static final class Builder {
         private final String baseUrl;
         private final String application;
+        private final String version;
         private String key;
         private boolean enabled = true;
         private File pluginsDirectory;
         private Logger logger;
 
-        private Builder(String baseUrl, String application) {
+        private Builder(String baseUrl, String application, String version) {
             if (baseUrl == null || baseUrl.trim().isEmpty()) {
                 throw new IllegalArgumentException("baseUrl is required");
             }
             if (application == null || application.trim().isEmpty()) {
                 throw new IllegalArgumentException("application is required");
             }
+            if (version == null || version.trim().isEmpty()) {
+                throw new IllegalArgumentException("version is required");
+            }
+            if (version.trim().length() > MAX_TAG_LENGTH) {
+                throw new IllegalArgumentException("version is longer than " + MAX_TAG_LENGTH + " characters");
+            }
             this.baseUrl = baseUrl.trim();
             this.application = application.trim();
+            this.version = version.trim();
         }
 
         /** The program's write key. Without one the client is a no-op. */
@@ -434,7 +680,17 @@ public final class TraceClient {
          * {@code plugins/trace/config.yml} exists -- creating it with
          * {@code enabled: true} if it is missing -- and honours
          * {@code enabled: false} in it. The file is never rewritten once it
-         * exists. Optional; programs that are not plugins leave it unset.
+         * exists. Its optional {@code tags:} block is added to every event
+         * this client reports, below the event's own tags:
+         *
+         * <pre>
+         * enabled: true
+         * tags:
+         *   ci: "true"
+         * </pre>
+         *
+         * <p>Both are read once, here. Optional; programs that are not
+         * plugins leave it unset.
          */
         public Builder serverWideConfig(File pluginsDirectory) {
             this.pluginsDirectory = pluginsDirectory;
