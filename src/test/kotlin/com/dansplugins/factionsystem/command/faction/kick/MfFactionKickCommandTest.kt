@@ -57,6 +57,7 @@ class MfFactionKickCommandTest {
     private lateinit var playerService: MfPlayerService
     private lateinit var language: Language
     private lateinit var rivals: MfFaction
+    private lateinit var target: OfflinePlayer
     private lateinit var uut: MfFactionKickCommand
 
     @BeforeEach
@@ -150,6 +151,58 @@ class MfFactionKickCommandTest {
         verify(player).sendMessage("${ChatColor.RED}Must be in a faction")
     }
 
+    @Test
+    fun testOnCommand_anOnlineKickedPlayerIsToldWhichFactionRemovedThem() {
+        // prepare — see https://github.com/Dans-Plugins/Medieval-Factions/issues/2072
+        val player = fixture.player
+        stubSender(player, forceKick = true)
+        val onlineTarget = mock(Player::class.java)
+        `when`(target.player).thenReturn(onlineTarget)
+        `when`(language["CommandFactionKickSuccess", "Target", "Rivals"]).thenReturn("Kicked")
+        `when`(language["CommandFactionKickKickedNotification", "Rivals"]).thenReturn("You were kicked from Rivals")
+
+        // execute
+        uut.onCommand(player, fixture.command, "label", arrayOf("Rivals", "Target"))
+
+        // verify
+        verify(factionService).save(anyFaction())
+        verify(onlineTarget).sendMessage("${ChatColor.RED}You were kicked from Rivals")
+    }
+
+    @Test
+    fun testOnCommand_anOfflineKickedPlayerIsStillKicked() {
+        // prepare — OfflinePlayer.getPlayer() is null when the player is offline, so there is no one to tell
+        val player = fixture.player
+        stubSender(player, forceKick = true)
+        `when`(target.player).thenReturn(null)
+        `when`(language["CommandFactionKickSuccess", "Target", "Rivals"]).thenReturn("Kicked")
+
+        // execute
+        uut.onCommand(player, fixture.command, "label", arrayOf("Rivals", "Target"))
+
+        // verify
+        verify(factionService).save(anyFaction())
+        verify(player).sendMessage("${ChatColor.GREEN}Kicked")
+    }
+
+    @Test
+    fun testOnCommand_aRefusedKickDoesNotNotifyTheTarget() {
+        // prepare
+        val player = fixture.player
+        stubSender(player, forceKick = false)
+        stubSenderRoleInRivals(canKick = false)
+        val onlineTarget = mock(Player::class.java)
+        `when`(target.player).thenReturn(onlineTarget)
+        `when`(language["CommandFactionKickNoFactionPermission"]).thenReturn("No faction permission")
+
+        // execute
+        uut.onCommand(player, fixture.command, "label", arrayOf("Target"))
+
+        // verify
+        verify(factionService, never()).save(anyFaction())
+        verify(onlineTarget, never()).sendMessage(ArgumentMatchers.anyString())
+    }
+
     // Helper functions
 
     /**
@@ -201,7 +254,7 @@ class MfFactionKickCommandTest {
         `when`(factionPermissions.kick).thenReturn(kickPermission)
         `when`(factionPermissions.setMemberRole(targetRoleId)).thenReturn(setTargetRole)
 
-        val target = mock(OfflinePlayer::class.java)
+        target = mock(OfflinePlayer::class.java)
         `when`(target.isOnline).thenReturn(true)
         `when`(target.name).thenReturn("Target")
         `when`(server.getOfflinePlayer("Target")).thenReturn(target)
