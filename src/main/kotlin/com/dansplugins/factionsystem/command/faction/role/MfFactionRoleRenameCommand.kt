@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.command.faction.role
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.command.unquote
+import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.faction.role.MfFactionRole
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.player.MfPlayer
@@ -43,12 +44,19 @@ class MfFactionRoleRenameCommand(private val plugin: MedievalFactions) : Command
             if (conversable !is Player) return END_OF_CONVERSATION
             if (input == null) return END_OF_CONVERSATION
             val targetRole = context.getSessionData("role") as? MfFactionRole ?: return END_OF_CONVERSATION
-            renameRole(conversable, targetRole, input, context.getSessionData("page") as? Int)
+            renameRole(conversable, targetRole, input, context.getSessionData("page") as? Int, context.getSessionData("faction") as? MfFactionId)
             return END_OF_CONVERSATION
         }
     }
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean =
+        execute(sender, args, null)
+
+    /**
+     * @param forcedFactionId a faction named with mf.force.role (see [MfFactionRoleCommand]). It replaces the sender's own
+     * faction, and its role-permission checks are skipped.
+     */
+    fun execute(sender: CommandSender, args: Array<out String>, forcedFactionId: MfFactionId?): Boolean {
         if (!sender.hasPermission("mf.role.rename")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRoleRenameNoPermission"]}")
             return true
@@ -80,10 +88,16 @@ class MfFactionRoleRenameCommand(private val plugin: MedievalFactions) : Command
                         return@Runnable
                     }
                 val factionService = plugin.services.factionService
-                val faction = factionService.getFaction(mfPlayer.id)
-                if (faction == null) {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionRoleRenameMustBeInAFaction"]}")
-                    return@Runnable
+                val faction = if (forcedFactionId != null) {
+                    factionService.getFaction(forcedFactionId) ?: run {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionRoleInvalidFaction", forcedFactionId.value]}")
+                        return@Runnable
+                    }
+                } else {
+                    factionService.getFaction(mfPlayer.id) ?: run {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionRoleRenameMustBeInAFaction"]}")
+                        return@Runnable
+                    }
                 }
                 val targetRole = faction.roles.getRole(MfFactionRoleId(unquotedArgs[0])) ?: faction.roles.getRole(unquotedArgs[0])
                 if (targetRole == null) {
@@ -97,18 +111,19 @@ class MfFactionRoleRenameCommand(private val plugin: MedievalFactions) : Command
                             val conversation = conversationFactory.buildConversation(sender)
                             conversation.context.setSessionData("role", targetRole)
                             conversation.context.setSessionData("page", returnPage)
+                            conversation.context.setSessionData("faction", forcedFactionId)
                             conversation.begin()
                         }
                     )
                     return@Runnable
                 }
-                renameRole(sender, targetRole, unquotedArgs.drop(1).joinToString(" "), returnPage)
+                renameRole(sender, targetRole, unquotedArgs.drop(1).joinToString(" "), returnPage, forcedFactionId)
             }
         )
         return true
     }
 
-    private fun renameRole(player: Player, targetRole: MfFactionRole, name: String, returnPage: Int?) {
+    private fun renameRole(player: Player, targetRole: MfFactionRole, name: String, returnPage: Int?, forcedFactionId: MfFactionId?) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
@@ -120,15 +135,23 @@ class MfFactionRoleRenameCommand(private val plugin: MedievalFactions) : Command
                         return@Runnable
                     }
                 val factionService = plugin.services.factionService
-                val faction = factionService.getFaction(mfPlayer.id)
-                if (faction == null) {
-                    player.sendMessage("$RED${plugin.language["CommandFactionRoleRenameMustBeInAFaction"]}")
-                    return@Runnable
+                val faction = if (forcedFactionId != null) {
+                    factionService.getFaction(forcedFactionId) ?: run {
+                        player.sendMessage("$RED${plugin.language["CommandFactionRoleInvalidFaction", forcedFactionId.value]}")
+                        return@Runnable
+                    }
+                } else {
+                    factionService.getFaction(mfPlayer.id) ?: run {
+                        player.sendMessage("$RED${plugin.language["CommandFactionRoleRenameMustBeInAFaction"]}")
+                        return@Runnable
+                    }
                 }
-                val role = faction.getRole(mfPlayer.id)
-                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.modifyRole(targetRole.id))) {
-                    player.sendMessage("$RED${plugin.language["CommandFactionRoleRenameNoFactionPermission"]}")
-                    return@Runnable
+                if (forcedFactionId == null) {
+                    val role = faction.getRole(mfPlayer.id)
+                    if (role == null || !role.hasPermission(faction, plugin.factionPermissions.modifyRole(targetRole.id))) {
+                        player.sendMessage("$RED${plugin.language["CommandFactionRoleRenameNoFactionPermission"]}")
+                        return@Runnable
+                    }
                 }
                 if (faction.roles.any { it.name.equals(name, ignoreCase = true) }) {
                     player.sendMessage("$RED${plugin.language["CommandFactionRoleRenameRoleWithNameAlreadyExists"]}")
@@ -156,7 +179,7 @@ class MfFactionRoleRenameCommand(private val plugin: MedievalFactions) : Command
                     plugin.server.scheduler.runTask(
                         plugin,
                         Runnable {
-                            player.performCommand("faction role list $returnPage")
+                            player.performCommand("${roleCommandPrefix(forcedFactionId)} list $returnPage")
                         }
                     )
                 }

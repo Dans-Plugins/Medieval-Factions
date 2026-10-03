@@ -1,8 +1,10 @@
 package com.dansplugins.factionsystem.command.faction.role
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.faction.role.MfFactionRole
 import com.dansplugins.factionsystem.faction.role.MfFactionRoles
+import com.dansplugins.factionsystem.faction.role.MfFactionRoles.Companion.OWNER_ROLE_NAME
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
@@ -41,12 +43,19 @@ class MfFactionRoleCreateCommand(private val plugin: MedievalFactions) : Command
             val conversable = context.forWhom
             if (conversable !is Player) return END_OF_CONVERSATION
             if (input == null) return END_OF_CONVERSATION
-            createRole(conversable, input, context.getSessionData("page") as? Int)
+            createRole(conversable, input, context.getSessionData("page") as? Int, context.getSessionData("faction") as? MfFactionId)
             return END_OF_CONVERSATION
         }
     }
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean =
+        execute(sender, args, null)
+
+    /**
+     * @param forcedFactionId a faction named with mf.force.role (see [MfFactionRoleCommand]). It replaces the sender's own
+     * faction, and its role-permission checks are skipped.
+     */
+    fun execute(sender: CommandSender, args: Array<out String>, forcedFactionId: MfFactionId?): Boolean {
         if (!sender.hasPermission("mf.role.create")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRoleCreateNoPermission"]}")
             return true
@@ -65,14 +74,15 @@ class MfFactionRoleCreateCommand(private val plugin: MedievalFactions) : Command
         if (args.dropLast(lastArgOffset).isEmpty()) {
             val conversation = conversationFactory.buildConversation(sender)
             conversation.context.setSessionData("page", returnPage)
+            conversation.context.setSessionData("faction", forcedFactionId)
             conversation.begin()
             return true
         }
-        createRole(sender, args.dropLast(lastArgOffset).joinToString(" "), returnPage)
+        createRole(sender, args.dropLast(lastArgOffset).joinToString(" "), returnPage, forcedFactionId)
         return true
     }
 
-    private fun createRole(player: Player, name: String, returnPage: Int?) {
+    private fun createRole(player: Player, name: String, returnPage: Int?, forcedFactionId: MfFactionId?) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
@@ -84,15 +94,29 @@ class MfFactionRoleCreateCommand(private val plugin: MedievalFactions) : Command
                         return@Runnable
                     }
                 val factionService = plugin.services.factionService
-                val faction = factionService.getFaction(mfPlayer.id)
-                if (faction == null) {
-                    player.sendMessage("$RED${plugin.language["CommandFactionRoleCreateMustBeInAFaction"]}")
-                    return@Runnable
+                val faction = if (forcedFactionId != null) {
+                    factionService.getFaction(forcedFactionId) ?: run {
+                        player.sendMessage("$RED${plugin.language["CommandFactionRoleInvalidFaction", forcedFactionId.value]}")
+                        return@Runnable
+                    }
+                } else {
+                    factionService.getFaction(mfPlayer.id) ?: run {
+                        player.sendMessage("$RED${plugin.language["CommandFactionRoleCreateMustBeInAFaction"]}")
+                        return@Runnable
+                    }
                 }
-                val role = faction.getRole(mfPlayer.id)
-                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.createRole)) {
-                    player.sendMessage("$RED${plugin.language["CommandFactionRoleCreateNoFactionPermission"]}")
-                    return@Runnable
+                // Existing roles get the same access to the new role as they have to a reference role: normally the
+                // creator's own role. With mf.force.role the creator has no role in the faction and no role check is
+                // made, so the faction's Owner role is the reference instead; if it has none, no grants are added.
+                val role = if (forcedFactionId != null) {
+                    faction.roles.find { it.name.equals(OWNER_ROLE_NAME, ignoreCase = true) }
+                } else {
+                    val playerRole = faction.getRole(mfPlayer.id)
+                    if (playerRole == null || !playerRole.hasPermission(faction, plugin.factionPermissions.createRole)) {
+                        player.sendMessage("$RED${plugin.language["CommandFactionRoleCreateNoFactionPermission"]}")
+                        return@Runnable
+                    }
+                    playerRole
                 }
                 if (faction.roles.any { it.name.equals(name, ignoreCase = true) }) {
                     player.sendMessage("$RED${plugin.language["CommandFactionRoleCreateRoleWithNameAlreadyExists"]}")
@@ -104,6 +128,7 @@ class MfFactionRoleCreateCommand(private val plugin: MedievalFactions) : Command
                         roles = MfFactionRoles(
                             faction.roles.defaultRoleId,
                             faction.roles.map { existingRole ->
+                                if (role == null) return@map existingRole
                                 existingRole.copy(
                                     permissionsByName = existingRole.permissionsByName + buildMap {
                                         if (existingRole.hasPermission(faction, plugin.factionPermissions.viewRole(role.id))) {
@@ -133,7 +158,7 @@ class MfFactionRoleCreateCommand(private val plugin: MedievalFactions) : Command
                     plugin.server.scheduler.runTask(
                         plugin,
                         Runnable {
-                            player.performCommand("faction role list $returnPage")
+                            player.performCommand("${roleCommandPrefix(forcedFactionId)} list $returnPage")
                         }
                     )
                 }

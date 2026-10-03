@@ -386,6 +386,9 @@ permissions:
   mf.force.addmember:
     description: Allows forcefully adding a member to a faction.
     default: op
+  mf.force.role:
+    description: Allows managing another faction's roles (/f role <faction> <view|list|setpermission|create|delete|rename|set|setdefault> ...), bypassing that faction's role permissions
+    default: op
   mf.force.*:
     description: Allows all force commands
     default: op
@@ -400,6 +403,7 @@ permissions:
     - mf.force.unclaim
     - mf.force.flag
     - mf.force.addmember
+    - mf.force.role
   mf.approve:
     description: Allows approving and denying pending faction actions (war declarations, alliances, vassalizations)
     default: op

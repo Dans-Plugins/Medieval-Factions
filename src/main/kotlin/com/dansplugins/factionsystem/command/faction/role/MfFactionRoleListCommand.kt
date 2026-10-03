@@ -1,6 +1,8 @@
 package com.dansplugins.factionsystem.command.faction.role
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.faction.MfFactionId
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
 import com.dansplugins.factionsystem.pagination.PaginatedView
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
@@ -21,7 +23,14 @@ import org.bukkit.ChatColor as BukkitChatColor
 
 class MfFactionRoleListCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean =
+        execute(sender, args, null)
+
+    /**
+     * @param forcedFactionId a faction named with mf.force.role (see [MfFactionRoleCommand]). It replaces the sender's own
+     * faction, and its role-permission checks are skipped.
+     */
+    fun execute(sender: CommandSender, args: Array<out String>, forcedFactionId: MfFactionId?): Boolean {
         if (!sender.hasPermission("mf.role.list")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleListNoPermission"]}")
             return true
@@ -41,16 +50,27 @@ class MfFactionRoleListCommand(private val plugin: MedievalFactions) : CommandEx
                         return@Runnable
                     }
                 val factionService = plugin.services.factionService
-                val faction = factionService.getFaction(mfPlayer.id)
-                if (faction == null) {
-                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleListMustBeInAFaction"]}")
-                    return@Runnable
+                val faction = if (forcedFactionId != null) {
+                    factionService.getFaction(forcedFactionId) ?: run {
+                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleInvalidFaction", forcedFactionId.value]}")
+                        return@Runnable
+                    }
+                } else {
+                    factionService.getFaction(mfPlayer.id) ?: run {
+                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleListMustBeInAFaction"]}")
+                        return@Runnable
+                    }
                 }
+                // With mf.force.role every check passes, so the admin sees every button.
                 val playerRole = faction.getRole(mfPlayer.id)
-                if (playerRole == null || !playerRole.hasPermission(faction, plugin.factionPermissions.listRoles)) {
+                val can = { permission: MfFactionPermission ->
+                    forcedFactionId != null || playerRole?.hasPermission(faction, permission) == true
+                }
+                if (!can(plugin.factionPermissions.listRoles)) {
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleListNoFactionPermission"]}")
                     return@Runnable
                 }
+                val prefix = "/${roleCommandPrefix(forcedFactionId)}"
                 val pageNumber = args.lastOrNull()?.toIntOrNull()?.minus(1) ?: 0
                 val view = PaginatedView(
                     plugin.language,
@@ -70,7 +90,7 @@ class MfFactionRoleListCommand(private val plugin: MedievalFactions) : CommandEx
                                         plugin.language["CommandFactionRoleListItem", role.name]
                                     ).apply {
                                         color = SpigotChatColor.GRAY
-                                        clickEvent = ClickEvent(RUN_COMMAND, "/faction role view ${role.id.value}")
+                                        clickEvent = ClickEvent(RUN_COMMAND, "$prefix view ${role.id.value}")
                                         hoverEvent = HoverEvent(
                                             SHOW_TEXT,
                                             Text(plugin.language["CommandFactionRoleListItemHover", role.name])
@@ -87,14 +107,14 @@ class MfFactionRoleListCommand(private val plugin: MedievalFactions) : CommandEx
                                         }
                                     )
                                 }
-                                if (playerRole.hasPermission(faction, plugin.factionPermissions.modifyRole(role.id))) {
+                                if (can(plugin.factionPermissions.modifyRole(role.id))) {
                                     add(TextComponent(" "))
                                     add(
                                         TextComponent(
                                             plugin.language["CommandFactionRoleListRenameButton", role.name]
                                         ).apply {
                                             color = SpigotChatColor.GREEN
-                                            clickEvent = ClickEvent(RUN_COMMAND, "/faction role rename ${role.id.value} p=${pageNumber + 1}")
+                                            clickEvent = ClickEvent(RUN_COMMAND, "$prefix rename ${role.id.value} p=${pageNumber + 1}")
                                             hoverEvent = HoverEvent(
                                                 SHOW_TEXT,
                                                 Text(plugin.language["CommandFactionRoleListRenameButtonHover", role.name])
@@ -102,14 +122,14 @@ class MfFactionRoleListCommand(private val plugin: MedievalFactions) : CommandEx
                                         }
                                     )
                                 }
-                                if (playerRole.hasPermission(faction, plugin.factionPermissions.deleteRole(role.id))) {
+                                if (can(plugin.factionPermissions.deleteRole(role.id))) {
                                     add(TextComponent(" "))
                                     add(
                                         TextComponent(
                                             plugin.language["CommandFactionRoleListDeleteButton", role.name]
                                         ).apply {
                                             color = SpigotChatColor.RED
-                                            clickEvent = ClickEvent(RUN_COMMAND, "/faction role delete ${role.id.value} p=${pageNumber + 1}")
+                                            clickEvent = ClickEvent(RUN_COMMAND, "$prefix delete ${role.id.value} p=${pageNumber + 1}")
                                             hoverEvent = HoverEvent(
                                                 SHOW_TEXT,
                                                 Text(plugin.language["CommandFactionRoleListDeleteButtonHover", role.name])
@@ -117,14 +137,14 @@ class MfFactionRoleListCommand(private val plugin: MedievalFactions) : CommandEx
                                         }
                                     )
                                 }
-                                if (playerRole.hasPermission(faction, plugin.factionPermissions.setDefaultRole) && playerRole.hasPermission(faction, plugin.factionPermissions.setMemberRole(role.id))) {
+                                if (can(plugin.factionPermissions.setDefaultRole) && can(plugin.factionPermissions.setMemberRole(role.id))) {
                                     add(TextComponent(" "))
                                     add(
                                         TextComponent(
                                             plugin.language["CommandFactionRoleListSetDefaultRoleButton"]
                                         ).apply {
                                             color = SpigotChatColor.YELLOW
-                                            clickEvent = ClickEvent(RUN_COMMAND, "/faction role setdefault ${role.id.value} p=${pageNumber + 1}")
+                                            clickEvent = ClickEvent(RUN_COMMAND, "$prefix setdefault ${role.id.value} p=${pageNumber + 1}")
                                             hoverEvent = HoverEvent(
                                                 SHOW_TEXT,
                                                 Text(plugin.language["CommandFactionRoleListSetDefaultRoleButtonHover", role.name])
@@ -135,20 +155,20 @@ class MfFactionRoleListCommand(private val plugin: MedievalFactions) : CommandEx
                             }.toTypedArray()
                         }
                     }
-                ) { page -> "/faction role list ${page + 1}" }
+                ) { page -> "$prefix list ${page + 1}" }
                 if (pageNumber !in view.pages.indices) {
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleListInvalidPageNumber"]}")
                     return@Runnable
                 }
                 view.sendPage(sender, pageNumber)
-                if (playerRole.hasPermission(faction, plugin.factionPermissions.createRole)) {
+                if (can(plugin.factionPermissions.createRole)) {
                     sender.spigot().sendMessage(
                         *arrayOf(
                             TextComponent(
                                 plugin.language["CommandFactionRoleListCreateButton"]
                             ).apply {
                                 color = SpigotChatColor.GREEN
-                                clickEvent = ClickEvent(RUN_COMMAND, "/faction role create")
+                                clickEvent = ClickEvent(RUN_COMMAND, "$prefix create")
                                 hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionRoleListCreateButtonHover"]))
                             }
                         )

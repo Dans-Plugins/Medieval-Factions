@@ -277,6 +277,8 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 
 ## Roles & Permissions
 
+**Managing another faction's roles:** with `mf.force.role` (default: op), any role subcommand below can be run against another faction by naming it, by name or ID, between `role` and the subcommand: `/f role FactionName <subcommand> ...`, for example `/f role FactionName setpermission Member invite allow` or `/f role FactionName set PlayerName Owner`. When a faction is named this way, that faction's own role-permission checks are not made — the force permission replaces them, as with the other `mf.force.*` nodes — so an admin does not need to be a member. The subcommand's base node (`mf.role.view`, `mf.role.setpermission`, ...) is still required. Quote a multi-word faction name (`/f role "My Faction" list`); a faction whose name is also a subcommand (such as `list`) must be quoted or given by ID. A name that matches no faction is refused; it never falls back to your own faction. The clickable buttons in `/f role FactionName list` and `/f role FactionName view` keep acting on the named faction. With `create`, existing roles get the same access to the new role as they have to the faction's `Owner` role (normally they get it from the creator's own role); without an `Owner` role, no such grants are added. With `set`, the player must be a member of the named faction.
+
 ### `/faction role list` or `/f role list`
 **Permission:** `mf.role.list` (default: true)  
 **Description:** Lists all roles in your faction.  
@@ -315,7 +317,7 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 ### `/faction role setpermission [role] [permission] [value]` or `/f role setpermission [role] [permission] [value]`
 **Permission:** `mf.role.setpermission` (default: true)  
 **Description:** Sets a permission for a role.  
-**Usage:** `/f role setpermission Officer claim true`
+**Usage:** `/f role setpermission Officer claim allow` (value: `allow`, `deny` or `default`)
 
 ## Laws
 
@@ -508,9 +510,9 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 
 ### `/faction admin setleader [player] [faction]` or `/f admin setleader [player] [faction]`
 **Permission:** `mf.admin.setleader` (default: op)  
-**Description:** Adds a player who is not in any faction to a faction with its Owner role.  
+**Description:** Makes a player the leader of a faction by giving them its Owner role. A player in no faction is added to the faction; a current member of the faction is moved into the Owner role. A player who belongs to a different faction is refused.  
 **Usage:** `/f admin setleader PlayerName FactionName`  
-**Notes:** If the faction has no role named `Owner` (for example because its members deleted it), the role is recreated from the default Owner template — with permissions over the faction's existing roles — before the player is assigned to it. The sender is told, and the recreation is written to the server log.
+**Notes:** If the faction has no role named `Owner` (for example because its members deleted it), the role is recreated from the default Owner template — with permissions over the faction's existing roles — before the player is assigned to it. The sender is told, and the recreation is written to the server log. Promoting a current member does not count against `factions.maxMembers`; a member who already holds the Owner role is reported as already the leader and nothing is changed.
 
 ### `/faction addmember [faction] [player]` or `/f addmember [faction] [player]`
 **Permission:** `mf.force.addmember` or `mf.force.join` (default: op)  
@@ -609,11 +611,12 @@ The `mf.force.*` nodes (all `default: op`) do not add new commands — each one 
 | `mf.force.join` | [`/f join`](#faction-join-faction-or-f-join-faction), [`/f addmember`](#faction-addmember-faction-player-or-f-addmember-faction-player) | Joins a faction without an invite (confirmation prompt, or `-f` to skip it). Also grants `/f addmember`. |
 | `mf.force.kick` | [`/f kick`](#faction-kick-player-or-f-kick-player) | Kicks a member from another faction, bypassing its role permissions. |
 | `mf.force.power` | [`/power set`](#power-set-player-amount) | Sets a player's power (alternative to `mf.power.set`). |
+| `mf.force.role` | [`/f role`](#roles--permissions) | Views and edits another faction's roles, role permissions and member roles (`/f role FactionName <subcommand> ...`), bypassing its role permissions. |
 | `mf.force.rename` | [`/f set name`](#faction-set-namedescriptionprefix-value-or-f-set-namedescriptionprefix-value) | Renames another faction, bypassing its role permissions. |
 | `mf.force.unclaim` | [`/f unclaim`](#faction-unclaim-radius-or-f-unclaim-radius), [`/f unclaimall`](#faction-unclaimall-or-f-unclaimall) | Unclaims another faction's land (around you, or all of it), bypassing its role permissions. |
 | `mf.force.unlock` | [`/unlock`](#unlock-cancel), block breaking | Unlocks blocks locked by another player. |
 
-Every `mf.force.*` node that lets a faction be named follows the same rule: when a faction is named, the force permission replaces that faction's own role-permission check, so an admin does not need to be a member. The command's base node (`mf.kick`, `mf.rename`, `mf.claim`, `mf.unclaim`, `mf.unclaimall`, `mf.flag.*`) is still required.
+Every `mf.force.*` node that lets a faction be named follows the same rule: when a faction is named, the force permission replaces that faction's own role-permission check, so an admin does not need to be a member. The command's base node (`mf.kick`, `mf.rename`, `mf.claim`, `mf.unclaim`, `mf.unclaimall`, `mf.flag.*`, `mf.role.*`) is still required.
 
 ## Notes
 
