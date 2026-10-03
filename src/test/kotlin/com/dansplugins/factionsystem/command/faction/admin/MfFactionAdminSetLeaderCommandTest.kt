@@ -4,6 +4,7 @@ import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.TestUtils
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionId
+import com.dansplugins.factionsystem.faction.MfFactionMember
 import com.dansplugins.factionsystem.faction.MfFactionService
 import com.dansplugins.factionsystem.faction.flag.MfFlags
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermissions
@@ -161,6 +162,106 @@ class MfFactionAdminSetLeaderCommandTest {
         assertEquals(2, saved.roles.size)
         assertEquals(lowerOwner.id, saved.getRole(targetMfPlayer.id)?.id)
         assertFalse(saved.roles.any { it.name == "Owner" })
+    }
+
+    @Test
+    fun testOnCommand_promotesAnExistingMemberIntoTheOwnerRole() {
+        // prepare — a leaderless faction at its member limit whose only member holds the Member role
+        `when`(plugin.config.getInt("factions.maxMembers")).thenReturn(1)
+        val factionId = MfFactionId.generate()
+        val roles = MfFactionRoles.defaults(plugin, factionId)
+        val owner = roles.single { it.name == "Owner" }
+        val member = roles.single { it.name == "Member" }
+        val faction = MfFaction(
+            plugin,
+            id = factionId,
+            name = "Leaderless",
+            roles = roles,
+            members = listOf(MfFactionMember(targetMfPlayer.id, member))
+        )
+        `when`(factionService.getFaction("Leaderless")).thenReturn(faction)
+        `when`(factionService.getFaction(targetMfPlayer.id)).thenReturn(faction)
+
+        // execute
+        uut.onCommand(fixture.sender, fixture.command, "label", arrayOf("Target", "Leaderless"))
+
+        // verify — the member is moved into the Owner role in place: not added twice, not refused as "in a faction"
+        // and not refused as "full"
+        val saved = savedFaction()
+        assertEquals(1, saved.members.size)
+        assertEquals(owner.id, saved.getRole(targetMfPlayer.id)?.id)
+        assertEquals(roles, saved.roles)
+        verify(fixture.sender).sendMessage("${ChatColor.GREEN}CommandFactionAdminSetLeaderSuccess")
+        verify(fixture.sender, never()).sendMessage("${ChatColor.RED}CommandFactionAdminSetLeaderTargetPlayerAlreadyInFaction")
+        verify(fixture.sender, never()).sendMessage("${ChatColor.RED}CommandFactionAdminSetLeaderTargetFactionFull")
+    }
+
+    @Test
+    fun testOnCommand_recreatesTheOwnerRoleForAnExistingMember() {
+        // prepare — the faction from #1797: Owner and Officer deleted, the remaining player holds Member
+        val factionId = MfFactionId.generate()
+        val member = MfFactionRole(plugin, name = "Member")
+        val faction = MfFaction(
+            plugin,
+            id = factionId,
+            name = "Leaderless",
+            roles = MfFactionRoles(member.id, listOf(member)),
+            members = listOf(MfFactionMember(targetMfPlayer.id, member))
+        )
+        `when`(factionService.getFaction("Leaderless")).thenReturn(faction)
+        `when`(factionService.getFaction(targetMfPlayer.id)).thenReturn(faction)
+
+        // execute
+        uut.onCommand(fixture.sender, fixture.command, "label", arrayOf("Target", "Leaderless"))
+
+        // verify
+        val saved = savedFaction()
+        val owner = saved.roles.single { it.name == "Owner" }
+        assertEquals(1, saved.members.size)
+        assertEquals(owner.id, saved.getRole(targetMfPlayer.id)?.id)
+        verify(fixture.sender).sendMessage("${ChatColor.GREEN}CommandFactionAdminSetLeaderRecreatedOwnerRole")
+    }
+
+    @Test
+    fun testOnCommand_refusesAPlayerInADifferentFaction() {
+        // prepare
+        val other = MfFaction(plugin, name = "Other")
+        val target = MfFaction(plugin, name = "Leaderless")
+        `when`(factionService.getFaction("Leaderless")).thenReturn(target)
+        `when`(factionService.getFaction(targetMfPlayer.id)).thenReturn(other)
+
+        // execute
+        uut.onCommand(fixture.sender, fixture.command, "label", arrayOf("Target", "Leaderless"))
+
+        // verify
+        verify(fixture.sender).sendMessage("${ChatColor.RED}CommandFactionAdminSetLeaderTargetPlayerAlreadyInFaction")
+        val placeholder = dummyFaction()
+        verify(factionService, never()).save(any(MfFaction::class.java) ?: placeholder)
+    }
+
+    @Test
+    fun testOnCommand_reportsAMemberWhoIsAlreadyTheOwner() {
+        // prepare
+        val factionId = MfFactionId.generate()
+        val roles = MfFactionRoles.defaults(plugin, factionId)
+        val owner = roles.single { it.name == "Owner" }
+        val faction = MfFaction(
+            plugin,
+            id = factionId,
+            name = "Led",
+            roles = roles,
+            members = listOf(MfFactionMember(targetMfPlayer.id, owner))
+        )
+        `when`(factionService.getFaction("Led")).thenReturn(faction)
+        `when`(factionService.getFaction(targetMfPlayer.id)).thenReturn(faction)
+
+        // execute
+        uut.onCommand(fixture.sender, fixture.command, "label", arrayOf("Target", "Led"))
+
+        // verify
+        verify(fixture.sender).sendMessage("${ChatColor.RED}CommandFactionAdminSetLeaderAlreadyLeader")
+        val placeholder = dummyFaction()
+        verify(factionService, never()).save(any(MfFaction::class.java) ?: placeholder)
     }
 
     // Helper functions

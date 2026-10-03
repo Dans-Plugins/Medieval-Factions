@@ -1,6 +1,8 @@
 package com.dansplugins.factionsystem.command.faction.role
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.faction.MfFactionId
+import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
 import com.dansplugins.factionsystem.pagination.PaginatedView
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
@@ -22,7 +24,14 @@ import org.bukkit.ChatColor as BukkitChatColor
 
 class MfFactionRoleViewCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean =
+        execute(sender, args, null)
+
+    /**
+     * @param forcedFactionId a faction named with mf.force.role (see [MfFactionRoleCommand]). It replaces the sender's own
+     * faction, and its role-permission checks are skipped.
+     */
+    fun execute(sender: CommandSender, args: Array<out String>, forcedFactionId: MfFactionId?): Boolean {
         if (!sender.hasPermission("mf.role.view")) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleViewNoPermission"]}")
             return true
@@ -46,10 +55,16 @@ class MfFactionRoleViewCommand(private val plugin: MedievalFactions) : CommandEx
                         return@Runnable
                     }
                 val factionService = plugin.services.factionService
-                val faction = factionService.getFaction(mfPlayer.id)
-                if (faction == null) {
-                    sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleViewMustBeInAFaction"]}")
-                    return@Runnable
+                val faction = if (forcedFactionId != null) {
+                    factionService.getFaction(forcedFactionId) ?: run {
+                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleInvalidFaction", forcedFactionId.value]}")
+                        return@Runnable
+                    }
+                } else {
+                    factionService.getFaction(mfPlayer.id) ?: run {
+                        sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleViewMustBeInAFaction"]}")
+                        return@Runnable
+                    }
                 }
                 var pageNumber = args.last().toIntOrNull()?.minus(1)
                 var pageSpecified = true
@@ -62,8 +77,13 @@ class MfFactionRoleViewCommand(private val plugin: MedievalFactions) : CommandEx
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleViewInvalidTargetRole"]}")
                     return@Runnable
                 }
+                // With mf.force.role every check passes, so the admin can view and edit every permission.
                 val playerRole = faction.getRole(mfPlayer.id)
-                if (playerRole == null || !playerRole.hasPermission(faction, plugin.factionPermissions.viewRole(targetRole.id))) {
+                val can = { permission: MfFactionPermission ->
+                    forcedFactionId != null || playerRole?.hasPermission(faction, permission) == true
+                }
+                val prefix = "/${roleCommandPrefix(forcedFactionId)}"
+                if (!can(plugin.factionPermissions.viewRole(targetRole.id))) {
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleViewNoFactionPermission"]}")
                     return@Runnable
                 }
@@ -80,8 +100,8 @@ class MfFactionRoleViewCommand(private val plugin: MedievalFactions) : CommandEx
                     plugin.factionPermissions.permissionsFor(faction).map { permission ->
                         lazy {
                             val permissionValue = targetRole.getPermissionValue(permission)
-                            if (playerRole.hasPermission(faction, plugin.factionPermissions.modifyRole(targetRole.id)) &&
-                                playerRole.hasPermission(faction, plugin.factionPermissions.setRolePermission(permission))
+                            if (can(plugin.factionPermissions.modifyRole(targetRole.id)) &&
+                                can(plugin.factionPermissions.setRolePermission(permission))
                             ) {
                                 arrayOf(
                                     TextComponent(
@@ -98,7 +118,7 @@ class MfFactionRoleViewCommand(private val plugin: MedievalFactions) : CommandEx
                                     ).apply {
                                         color = if (permissionValue == true) SpigotChatColor.GREEN else SpigotChatColor.DARK_GREEN
                                         isBold = permissionValue == true
-                                        clickEvent = ClickEvent(RUN_COMMAND, "/faction role setpermission ${targetRole.id.value} ${permission.name} allow p=${pageNumber + 1}")
+                                        clickEvent = ClickEvent(RUN_COMMAND, "$prefix setpermission ${targetRole.id.value} ${permission.name} allow p=${pageNumber + 1}")
                                         hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionRoleViewAllowHover", targetRole.name, permission.name]))
                                     },
                                     TextComponent(" / ").apply { color = SpigotChatColor.GRAY },
@@ -107,7 +127,7 @@ class MfFactionRoleViewCommand(private val plugin: MedievalFactions) : CommandEx
                                     ).apply {
                                         color = if (permissionValue == false) SpigotChatColor.RED else SpigotChatColor.DARK_RED
                                         isBold = permissionValue == false
-                                        clickEvent = ClickEvent(RUN_COMMAND, "/faction role setpermission ${targetRole.id.value} ${permission.name} deny p=${pageNumber + 1}")
+                                        clickEvent = ClickEvent(RUN_COMMAND, "$prefix setpermission ${targetRole.id.value} ${permission.name} deny p=${pageNumber + 1}")
                                         hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionRoleViewDenyHover", targetRole.name, permission.name]))
                                     },
                                     TextComponent(" / ").apply { color = SpigotChatColor.GRAY },
@@ -116,7 +136,7 @@ class MfFactionRoleViewCommand(private val plugin: MedievalFactions) : CommandEx
                                     ).apply {
                                         color = if (permissionValue == null) SpigotChatColor.GRAY else SpigotChatColor.DARK_GRAY
                                         isBold = permissionValue == null
-                                        clickEvent = ClickEvent(RUN_COMMAND, "/faction role setpermission ${targetRole.id.value} ${permission.name} default p=${pageNumber + 1}")
+                                        clickEvent = ClickEvent(RUN_COMMAND, "$prefix setpermission ${targetRole.id.value} ${permission.name} default p=${pageNumber + 1}")
                                         hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionRoleViewDefaultHover", targetRole.name, permission.name]))
                                     }
                                 )
@@ -149,7 +169,7 @@ class MfFactionRoleViewCommand(private val plugin: MedievalFactions) : CommandEx
                             }
                         }
                     }
-                ) { page -> "/faction role view ${targetRole.id.value} ${page + 1}" }
+                ) { page -> "$prefix view ${targetRole.id.value} ${page + 1}" }
                 if (pageNumber !in view.pages.indices) {
                     sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandFactionRoleViewInvalidPageNumber"]}")
                     return@Runnable

@@ -48,12 +48,6 @@ class MfFactionAdminSetLeaderCommand(private val plugin: MedievalFactions) : Com
 
                 val factionService = plugin.services.factionService
 
-                // Check if target player is already in a faction
-                if (factionService.getFaction(targetMfPlayer.id) != null) {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionAdminSetLeaderTargetPlayerAlreadyInFaction"]}")
-                    return@Runnable
-                }
-
                 // Get target faction
                 val targetFaction = factionService.getFaction(args.dropFirst().joinToString(" "))
                 if (targetFaction == null) {
@@ -61,8 +55,17 @@ class MfFactionAdminSetLeaderCommand(private val plugin: MedievalFactions) : Com
                     return@Runnable
                 }
 
+                // A player in another faction is refused. A current member of the target faction is promoted in
+                // place, so a leaderless faction can be given a leader from its own members.
+                val currentFaction = factionService.getFaction(targetMfPlayer.id)
+                if (currentFaction != null && currentFaction.id != targetFaction.id) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionAdminSetLeaderTargetPlayerAlreadyInFaction"]}")
+                    return@Runnable
+                }
+                val existingMember = targetFaction.members.singleOrNull { it.playerId == targetMfPlayer.id }
+
                 val maxMembers = plugin.config.getInt("factions.maxMembers")
-                if (maxMembers > 0 && targetFaction.members.size >= maxMembers) {
+                if (existingMember == null && maxMembers > 0 && targetFaction.members.size >= maxMembers) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionAdminSetLeaderTargetFactionFull"]}")
                     return@Runnable
                 }
@@ -79,11 +82,21 @@ class MfFactionAdminSetLeaderCommand(private val plugin: MedievalFactions) : Com
                     targetFaction.roles
                 }
 
-                // Add player as the owner
+                if (existingMember != null && existingMember.role.id == ownerRole.id) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionAdminSetLeaderAlreadyLeader", targetMfPlayer.name ?: plugin.language["CommandFactionAdminSetLeaderUnknownPlayer"], targetFaction.name]}")
+                    return@Runnable
+                }
+                val members = if (existingMember != null) {
+                    targetFaction.members.map { if (it.playerId == targetMfPlayer.id) it.copy(role = ownerRole) else it }
+                } else {
+                    targetFaction.members + MfFactionMember(targetMfPlayer.id, ownerRole)
+                }
+
+                // Add the player as the owner, or move an existing member into the Owner role
                 val updatedFaction = factionService.save(
                     targetFaction.copy(
                         roles = roles,
-                        members = targetFaction.members + MfFactionMember(targetMfPlayer.id, ownerRole),
+                        members = members,
                         invites = targetFaction.invites.filter { it.playerId != targetMfPlayer.id }
                     )
                 ).onFailure {

@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.role
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.onFailure
@@ -14,7 +15,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionRoleSetPermissionCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean =
+        execute(sender, args, null)
+
+    /**
+     * @param forcedFactionId a faction named with mf.force.role (see [MfFactionRoleCommand]). It replaces the sender's own
+     * faction, and its role-permission checks are skipped.
+     */
+    fun execute(sender: CommandSender, args: Array<out String>, forcedFactionId: MfFactionId?): Boolean {
         if (!sender.hasPermission("mf.role.setpermission")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetPermissionNoPermission"]}")
             return true
@@ -38,10 +46,16 @@ class MfFactionRoleSetPermissionCommand(private val plugin: MedievalFactions) : 
                         return@Runnable
                     }
                 val factionService = plugin.services.factionService
-                val faction = factionService.getFaction(mfPlayer.id)
-                if (faction == null) {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetPermissionMustBeInAFaction"]}")
-                    return@Runnable
+                val faction = if (forcedFactionId != null) {
+                    factionService.getFaction(forcedFactionId) ?: run {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionRoleInvalidFaction", forcedFactionId.value]}")
+                        return@Runnable
+                    }
+                } else {
+                    factionService.getFaction(mfPlayer.id) ?: run {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetPermissionMustBeInAFaction"]}")
+                        return@Runnable
+                    }
                 }
                 var lastArgOffset = 0
                 val returnPage = if (args.last().startsWith("p=")) {
@@ -66,19 +80,23 @@ class MfFactionRoleSetPermissionCommand(private val plugin: MedievalFactions) : 
                     sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetPermissionInvalidTargetRole"]}")
                     return@Runnable
                 }
-                val playerRole = faction.getRole(mfPlayer.id)
-                if (playerRole == null || !playerRole.hasPermission(
-                        faction,
-                        plugin.factionPermissions.setRolePermission(permission)
-                    ) || !playerRole.hasPermission(faction, plugin.factionPermissions.modifyRole(targetRole.id))
-                ) {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetPermissionNoFactionPermission"]}")
-                    return@Runnable
-                }
+                // With mf.force.role the admin is not acting through a role in the faction, so neither the role check
+                // nor the guard against removing one's own ability to modify one's own role applies.
+                if (forcedFactionId == null) {
+                    val playerRole = faction.getRole(mfPlayer.id)
+                    if (playerRole == null || !playerRole.hasPermission(
+                            faction,
+                            plugin.factionPermissions.setRolePermission(permission)
+                        ) || !playerRole.hasPermission(faction, plugin.factionPermissions.modifyRole(targetRole.id))
+                    ) {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetPermissionNoFactionPermission"]}")
+                        return@Runnable
+                    }
 
-                if (permission == plugin.factionPermissions.modifyRole(playerRole.id)) {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetPermissionCannotModifyRolePermissionToModifyOwnRolePermission"]}")
-                    return@Runnable
+                    if (permission == plugin.factionPermissions.modifyRole(playerRole.id)) {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetPermissionCannotModifyRolePermissionToModifyOwnRolePermission"]}")
+                        return@Runnable
+                    }
                 }
                 val updatedFaction =
                     factionService.save(
@@ -115,7 +133,7 @@ class MfFactionRoleSetPermissionCommand(private val plugin: MedievalFactions) : 
                     plugin.server.scheduler.runTask(
                         plugin,
                         Runnable {
-                            sender.performCommand("faction role view ${targetRole.id.value} $returnPage")
+                            sender.performCommand("${roleCommandPrefix(forcedFactionId)} view ${targetRole.id.value} $returnPage")
                         }
                     )
                 }

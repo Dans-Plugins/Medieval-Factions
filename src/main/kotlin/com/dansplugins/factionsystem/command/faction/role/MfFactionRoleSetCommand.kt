@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.role
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.onFailure
@@ -14,7 +15,14 @@ import org.bukkit.entity.Player
 import java.util.logging.Level.SEVERE
 
 class MfFactionRoleSetCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean =
+        execute(sender, args, null)
+
+    /**
+     * @param forcedFactionId a faction named with mf.force.role (see [MfFactionRoleCommand]). It replaces the sender's own
+     * faction, and its role-permission checks are skipped.
+     */
+    fun execute(sender: CommandSender, args: Array<out String>, forcedFactionId: MfFactionId?): Boolean {
         if (!sender.hasPermission("mf.role.set")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetNoPermission"]}")
             return true
@@ -43,17 +51,25 @@ class MfFactionRoleSetCommand(private val plugin: MedievalFactions) : CommandExe
                         return@Runnable
                     }
                 val targetMfPlayer = playerService.getPlayer(target)
-                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                    ?: playerService.save(MfPlayer(plugin, target)).onFailure {
                         sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetFailedToSaveTargetPlayer"]}")
                         plugin.logger.log(SEVERE, "Failed to save target player: ${it.reason.message}", it.reason.cause)
                         return@Runnable
                     }
-                if (mfPlayer.id.value == targetMfPlayer.id.value && !mfPlayer.isBypassEnabled) {
+                if (mfPlayer.id.value == targetMfPlayer.id.value && !mfPlayer.isBypassEnabled && forcedFactionId == null) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetCannotSetOwnRole"]}")
                     return@Runnable
                 }
                 val factionService = plugin.services.factionService
-                val faction = factionService.getFaction(targetMfPlayer.id)
+                val faction = if (forcedFactionId != null) {
+                    // With mf.force.role the named faction is used, and the target must be one of its members.
+                    factionService.getFaction(forcedFactionId) ?: run {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionRoleInvalidFaction", forcedFactionId.value]}")
+                        return@Runnable
+                    }
+                } else {
+                    factionService.getFaction(targetMfPlayer.id)
+                }
                 if (faction == null) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetMustBeInAFaction"]}")
                     sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetTargetMustBeInAFaction"]}")
@@ -69,7 +85,7 @@ class MfFactionRoleSetCommand(private val plugin: MedievalFactions) : CommandExe
                     sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetInvalidTargetRole"]}")
                     return@Runnable
                 }
-                if (!mfPlayer.isBypassEnabled) {
+                if (!mfPlayer.isBypassEnabled && forcedFactionId == null) {
                     if (role == null || !role.hasPermission(
                             faction,
                             plugin.factionPermissions.setMemberRole(targetRole.id)

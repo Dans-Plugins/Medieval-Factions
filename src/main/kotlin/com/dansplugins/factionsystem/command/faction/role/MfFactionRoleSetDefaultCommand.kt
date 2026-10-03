@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.role
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
@@ -16,7 +17,14 @@ import java.util.logging.Level.SEVERE
 
 class MfFactionRoleSetDefaultCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean =
+        execute(sender, args, null)
+
+    /**
+     * @param forcedFactionId a faction named with mf.force.role (see [MfFactionRoleCommand]). It replaces the sender's own
+     * faction, and its role-permission checks are skipped.
+     */
+    fun execute(sender: CommandSender, args: Array<out String>, forcedFactionId: MfFactionId?): Boolean {
         if (!sender.hasPermission("mf.role.setdefault")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetDefaultNoPermission"]}")
             return true
@@ -47,10 +55,16 @@ class MfFactionRoleSetDefaultCommand(private val plugin: MedievalFactions) : Com
                         return@Runnable
                     }
                 val factionService = plugin.services.factionService
-                val faction = factionService.getFaction(mfPlayer.id)
-                if (faction == null) {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetDefaultMustBeInAFaction"]}")
-                    return@Runnable
+                val faction = if (forcedFactionId != null) {
+                    factionService.getFaction(forcedFactionId) ?: run {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionRoleInvalidFaction", forcedFactionId.value]}")
+                        return@Runnable
+                    }
+                } else {
+                    factionService.getFaction(mfPlayer.id) ?: run {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetDefaultMustBeInAFaction"]}")
+                        return@Runnable
+                    }
                 }
                 val targetRoleName = args.dropLast(lastArgOffset).joinToString(" ")
                 val targetRole =
@@ -59,13 +73,15 @@ class MfFactionRoleSetDefaultCommand(private val plugin: MedievalFactions) : Com
                     sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetDefaultInvalidTargetRole"]}")
                     return@Runnable
                 }
-                val role = faction.getRole(mfPlayer.id)
-                if (role == null ||
-                    !role.hasPermission(faction, plugin.factionPermissions.setDefaultRole) ||
-                    !role.hasPermission(faction, plugin.factionPermissions.setMemberRole(targetRole.id))
-                ) {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetDefaultNoFactionPermission"]}")
-                    return@Runnable
+                if (forcedFactionId == null) {
+                    val role = faction.getRole(mfPlayer.id)
+                    if (role == null ||
+                        !role.hasPermission(faction, plugin.factionPermissions.setDefaultRole) ||
+                        !role.hasPermission(faction, plugin.factionPermissions.setMemberRole(targetRole.id))
+                    ) {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionRoleSetDefaultNoFactionPermission"]}")
+                        return@Runnable
+                    }
                 }
                 factionService.save(
                     faction.copy(
@@ -81,7 +97,7 @@ class MfFactionRoleSetDefaultCommand(private val plugin: MedievalFactions) : Com
                     plugin.server.scheduler.runTask(
                         plugin,
                         Runnable {
-                            sender.performCommand("faction role list $returnPage")
+                            sender.performCommand("${roleCommandPrefix(forcedFactionId)} list $returnPage")
                         }
                     )
                 }
