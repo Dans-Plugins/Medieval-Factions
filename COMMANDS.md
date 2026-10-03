@@ -168,9 +168,9 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 ### `/faction unclaimall` or `/f unclaimall`
 **Permission:** `mf.unclaimall` (default: true)  
 **Description:** Unclaims all land owned by your faction.  
-**Usage:** `/f unclaimall`  
+**Usage:** `/f unclaimall`, then `/f unclaimall confirm` (or click **[Confirm]**)  
 **Admin usage:** with `mf.force.unclaim` (default: op), `/f unclaimall FactionName` unclaims all land owned by the named faction (name or ID), without disbanding it and without checking that faction's role permissions. A name that matches no faction is refused; it never falls back to your own faction.  
-**Notes:** This action requires confirmation and cannot be undone.
+**Notes:** This action requires confirmation and cannot be undone. Run without `confirm`, the command removes nothing: it reports how many chunks the faction holds and offers a **[Confirm]** button, which re-runs it with `confirm` appended (for the admin form, the button names the faction by ID). Adding `confirm` as the last argument yourself (`/f unclaimall confirm`, `/f unclaimall FactionName confirm`) unclaims immediately.
 
 ### `/faction checkclaim` or `/f checkclaim`
 **Permission:** `mf.checkclaim` or `mf.claim.check` (default: true)  
@@ -498,10 +498,11 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Usage:** `/f admin create FactionName`  
 **Notes:** Requires `allowLeaderlessFactions` to be enabled in config.
 
-### `/faction admin setleader [faction] [player]` or `/f admin setleader [faction] [player]`
+### `/faction admin setleader [player] [faction]` or `/f admin setleader [player] [faction]`
 **Permission:** `mf.admin.setleader` (default: op)  
-**Description:** Sets a player as the leader of a faction.  
-**Usage:** `/f admin setleader FactionName PlayerName`
+**Description:** Adds a player who is not in any faction to a faction with its Owner role.  
+**Usage:** `/f admin setleader PlayerName FactionName`  
+**Notes:** If the faction has no role named `Owner` (for example because its members deleted it), the role is recreated from the default Owner template — with permissions over the faction's existing roles — before the player is assigned to it. The sender is told, and the recreation is written to the server log.
 
 ### `/faction addmember [faction] [player]` or `/f addmember [faction] [player]`
 **Permission:** `mf.force.addmember` or `mf.force.join` (default: op)  

@@ -223,16 +223,41 @@ class MfFactionUnclaimCommandTest {
         stubSenderChunk(player, worldId, 0, 0)
         val rivalClaim = stubClaimOwnedBy(worldId, 1, 0, rivals.id)
         val bystanderClaim = stubClaimOwnedBy(worldId, 0, 1, MfFactionId.generate())
-        `when`(language["CommandFactionUnclaimSuccess", "5"]).thenReturn("Unclaimed 5 chunks")
+        `when`(language["CommandFactionUnclaimSuccess", "1"]).thenReturn("Unclaimed 1 chunk")
 
         // execute
         val result = uut.onCommand(player, command, "label", arrayOf("Rivals", "1"))
         runPendingTasks()
 
-        // verify
+        // verify — the message counts the one claim removed, not the five chunks in the radius
         assertTrue(result)
         verify(claimService).delete(rivalClaim)
         verify(claimService, never()).delete(bystanderClaim)
+        verify(player).sendMessage("${ChatColor.GREEN}Unclaimed 1 chunk")
+    }
+
+    @Test
+    fun testOnCommand_successMessageCountsTheClaimsRemovedRatherThanTheChunksInTheRadius() {
+        // prepare — a radius of 2 covers 13 chunks, of which the sender's faction holds only two
+        val player = fixture.player
+        val command = fixture.command
+        val worldId = UUID.randomUUID()
+        stubMembershipOf(player)
+        stubSenderChunk(player, worldId, 0, 0)
+        val firstClaim = stubOwnClaim(worldId, 0, 0)
+        val secondClaim = stubOwnClaim(worldId, 2, 0)
+        `when`(language["CommandFactionUnclaimSuccess", "2"]).thenReturn("Unclaimed 2 chunks")
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf("2"))
+        runPendingTasks()
+
+        // verify
+        assertTrue(result)
+        verify(claimService).delete(firstClaim)
+        verify(claimService).delete(secondClaim)
+        verify(player).sendMessage("${ChatColor.GREEN}Unclaimed 2 chunks")
+        verify(language, never()).get("CommandFactionUnclaimSuccess", "13")
     }
 
     @Test

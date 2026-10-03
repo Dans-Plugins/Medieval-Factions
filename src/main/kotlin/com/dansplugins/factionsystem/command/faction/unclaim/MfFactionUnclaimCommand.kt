@@ -109,6 +109,9 @@ class MfFactionUnclaimCommand(private val plugin: MedievalFactions) : CommandExe
                     sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimNoUnclaimableChunks"]}")
                     return@Runnable
                 }
+                // Count the claims actually removed: the radius covers every chunk in range, most of which may be
+                // unclaimed or held by another faction.
+                var removedClaimCount = 0
                 claims.forEach { claim ->
                     claimService.delete(claim)
                         .onFailure {
@@ -116,8 +119,9 @@ class MfFactionUnclaimCommand(private val plugin: MedievalFactions) : CommandExe
                             plugin.logger.log(SEVERE, "Failed to delete claimed chunk: ${it.reason.message}", it.reason.cause)
                             return@Runnable
                         }
+                    removedClaimCount++
                 }
-                sender.sendMessage("$GREEN${plugin.language["CommandFactionUnclaimSuccess", chunks.size.toString()]}")
+                sender.sendMessage("$GREEN${plugin.language["CommandFactionUnclaimSuccess", removedClaimCount.toString()]}")
             }
         )
         return true

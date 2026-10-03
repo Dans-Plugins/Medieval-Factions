@@ -3,6 +3,7 @@ package com.dansplugins.factionsystem.command.faction.unclaimall
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.TestUtils
 import com.dansplugins.factionsystem.claim.MfClaimService
+import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.faction.MfFactionService
@@ -15,15 +16,19 @@ import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerService
 import com.dansplugins.factionsystem.service.Services
 import dev.forkhandles.result4k.Success
+import net.md_5.bungee.api.chat.BaseComponent
+import net.md_5.bungee.api.chat.ClickEvent
 import org.bukkit.ChatColor
 import org.bukkit.Server
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitScheduler
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.mock
@@ -52,11 +57,14 @@ class MfFactionUnclaimAllCommandTest {
     private lateinit var claimService: MfClaimService
     private lateinit var language: Language
     private lateinit var ownFaction: MfFaction
+    private lateinit var spigot: Player.Spigot
     private lateinit var uut: MfFactionUnclaimAllCommand
 
     @BeforeEach
     fun setUp() {
         fixture = testUtils.createCommandTestFixture()
+        spigot = mock(Player.Spigot::class.java)
+        `when`(fixture.player.spigot()).thenReturn(spigot)
         plugin = mock(MedievalFactions::class.java)
         mockServices()
         mockLanguageSystem()
@@ -75,7 +83,7 @@ class MfFactionUnclaimAllCommandTest {
         `when`(language["CommandFactionUnclaimAllSuccess"]).thenReturn("Unclaimed all")
 
         // execute
-        val result = uut.onCommand(player, fixture.command, "label", arrayOf("Rivals"))
+        val result = uut.onCommand(player, fixture.command, "label", arrayOf("Rivals", "confirm"))
 
         // verify
         assertTrue(result)
@@ -91,7 +99,7 @@ class MfFactionUnclaimAllCommandTest {
         stubSender(player, forceUnclaim = true, member = false)
 
         // execute
-        uut.onCommand(player, fixture.command, "label", arrayOf("\"The", "Rivals\""))
+        uut.onCommand(player, fixture.command, "label", arrayOf("\"The", "Rivals\"", "confirm"))
 
         // verify
         verify(claimService).deleteAllClaims(rivals.id)
@@ -105,7 +113,7 @@ class MfFactionUnclaimAllCommandTest {
         stubSender(player, forceUnclaim = false, member = true)
 
         // execute
-        uut.onCommand(player, fixture.command, "label", arrayOf("Rivals"))
+        uut.onCommand(player, fixture.command, "label", arrayOf("Rivals", "confirm"))
 
         // verify
         verify(claimService).deleteAllClaims(ownFactionId)
@@ -121,7 +129,7 @@ class MfFactionUnclaimAllCommandTest {
         `when`(language["CommandFactionUnclaimAllMustBeInAFaction"]).thenReturn("Must be in a faction")
 
         // execute
-        uut.onCommand(player, fixture.command, "label", arrayOf("Rivals"))
+        uut.onCommand(player, fixture.command, "label", arrayOf("Rivals", "confirm"))
 
         // verify
         verify(claimService, never()).deleteAllClaims(rivals.id)
@@ -136,7 +144,7 @@ class MfFactionUnclaimAllCommandTest {
         `when`(language["CommandFactionUnclaimAllInvalidFaction", "Nobody"]).thenReturn("No such faction")
 
         // execute
-        uut.onCommand(player, fixture.command, "label", arrayOf("Nobody"))
+        uut.onCommand(player, fixture.command, "label", arrayOf("Nobody", "confirm"))
 
         // verify
         verify(claimService, never()).deleteAllClaims(ownFactionId)
@@ -150,13 +158,112 @@ class MfFactionUnclaimAllCommandTest {
         stubSender(player, forceUnclaim = true, member = true)
 
         // execute
-        uut.onCommand(player, fixture.command, "label", arrayOf())
+        uut.onCommand(player, fixture.command, "label", arrayOf("confirm"))
 
         // verify
         verify(claimService).deleteAllClaims(ownFactionId)
     }
 
+    @Test
+    fun testOnCommand_withoutConfirmReportsWhatWouldBeRemovedAndRemovesNothing() {
+        // prepare — COMMANDS.md promises that /f unclaimall requires confirmation
+        val player = fixture.player
+        stubSender(player, forceUnclaim = false, member = true)
+        stubClaimCount(ownFactionId, 3)
+        `when`(ownFaction.name).thenReturn("Home")
+        `when`(language["CommandFactionUnclaimAllConfirm", "3", "Home", "/faction unclaimall confirm"]).thenReturn("Unclaim 3 from Home?")
+
+        // execute
+        val result = uut.onCommand(player, fixture.command, "label", arrayOf())
+
+        // verify
+        assertTrue(result)
+        verify(claimService, never()).deleteAllClaims(ownFactionId)
+        verify(player).sendMessage("${ChatColor.RED}Unclaim 3 from Home?")
+        val button = confirmButton(player)
+        assertEquals(ClickEvent.Action.RUN_COMMAND, button.clickEvent.action)
+        assertEquals("/faction unclaimall confirm", button.clickEvent.value)
+    }
+
+    @Test
+    fun testOnCommand_forceUnclaimAllWithoutConfirmLeavesTheNamedFactionsLandAndConfirmsByFactionId() {
+        // prepare — the admin form names another faction; the confirmation must point at that same faction
+        val player = fixture.player
+        val rivals = stubNamedFaction("The Rivals")
+        stubSender(player, forceUnclaim = true, member = false)
+        stubClaimCount(rivals.id, 7)
+        val confirmCommand = "/faction unclaimall ${rivals.id.value} confirm"
+        `when`(language["CommandFactionUnclaimAllConfirm", "7", "The Rivals", confirmCommand]).thenReturn("Unclaim 7 from The Rivals?")
+
+        // execute
+        uut.onCommand(player, fixture.command, "label", arrayOf("\"The", "Rivals\""))
+
+        // verify
+        verify(claimService, never()).deleteAllClaims(rivals.id)
+        verify(player).sendMessage("${ChatColor.RED}Unclaim 7 from The Rivals?")
+        assertEquals(confirmCommand, confirmButton(player).clickEvent.value)
+    }
+
+    @Test
+    fun testOnCommand_confirmByFactionIdUnclaimsTheNamedFaction() {
+        // prepare — the [Confirm] button of the admin form re-runs the command with the faction's ID
+        val player = fixture.player
+        val rivals = stubNamedFaction("The Rivals")
+        `when`(factionService.getFaction(rivals.id)).thenReturn(rivals)
+        stubSender(player, forceUnclaim = true, member = false)
+
+        // execute
+        uut.onCommand(player, fixture.command, "label", arrayOf(rivals.id.value, "confirm"))
+
+        // verify
+        verify(claimService).deleteAllClaims(rivals.id)
+    }
+
+    @Test
+    fun testOnCommand_confirmIsCaseInsensitive() {
+        // prepare
+        val player = fixture.player
+        stubSender(player, forceUnclaim = false, member = true)
+
+        // execute
+        uut.onCommand(player, fixture.command, "label", arrayOf("CONFIRM"))
+
+        // verify
+        verify(claimService).deleteAllClaims(ownFactionId)
+    }
+
+    @Test
+    fun testOnCommand_withoutConfirmAndNoClaimsSaysSoInsteadOfAskingForConfirmation() {
+        // prepare
+        val player = fixture.player
+        stubSender(player, forceUnclaim = false, member = true)
+        stubClaimCount(ownFactionId, 0)
+        `when`(ownFaction.name).thenReturn("Home")
+        `when`(language["CommandFactionUnclaimAllNoClaims", "Home"]).thenReturn("Home has no claims")
+
+        // execute
+        uut.onCommand(player, fixture.command, "label", arrayOf())
+
+        // verify
+        verify(claimService, never()).deleteAllClaims(ownFactionId)
+        verify(player).sendMessage("${ChatColor.RED}Home has no claims")
+        verify(player, never()).spigot()
+    }
+
     // Helper functions
+
+    private fun stubClaimCount(factionId: MfFactionId, count: Int) {
+        val claims = (0 until count).map { x -> MfClaimedChunk(UUID.randomUUID(), x, 0, factionId) }
+        `when`(claimService.getClaims(factionId)).thenReturn(claims)
+    }
+
+    /** Returns the clickable [Confirm] component the command sent to [player]. */
+    private fun confirmButton(player: Player): BaseComponent {
+        val captor = ArgumentCaptor.forClass(BaseComponent::class.java)
+        verify(spigot).sendMessage(captor.capture())
+        verify(player).spigot()
+        return captor.value
+    }
 
     private fun stubNamedFaction(name: String): MfFaction {
         val namedFaction = mock(MfFaction::class.java)
