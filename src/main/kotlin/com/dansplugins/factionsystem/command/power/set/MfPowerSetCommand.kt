@@ -51,7 +51,7 @@ class MfPowerSetCommand(private val plugin: MedievalFactions) : CommandExecutor,
             Runnable {
                 val playerService = plugin.services.playerService
                 val targetMfPlayer = playerService.getPlayer(target) ?: MfPlayer(plugin, target)
-                playerService.save(targetMfPlayer.copy(power = power)).onFailure {
+                playerService.update(targetMfPlayer) { it.copy(power = power) }.onFailure {
                     sender.sendMessage("$RED${plugin.language["CommandPowerSetFailedToSaveTargetPlayer"]}")
                     plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                     return@Runnable

@@ -24,7 +24,6 @@ class PlayerQuitListener(
         // The player is snapshotted on the server thread: the Bukkit player is unloaded once this
         // listener returns, and powerAtLogout has to record the power held at the moment of the quit.
         val player = playerService.getPlayer(event.player) ?: MfPlayer(plugin, event.player)
-        val playerToSave = player.copy(powerAtLogout = player.power)
 
         // Unloading is kept on the server thread. It only evicts an in-memory entry, so it does not
         // depend on the save, and doing it here keeps it ordered before the loadInteractionStatus
@@ -35,7 +34,10 @@ class PlayerQuitListener(
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
-                playerService.save(playerToSave).onFailure {
+                // powerAtLogout records the power snapshotted at the quit. If the row changed after
+                // the snapshot was taken (e.g. the scheduled power task ran), the current row is
+                // re-read and only powerAtLogout is applied to it, so the other change is kept.
+                playerService.update(player) { it.copy(powerAtLogout = player.power) }.onFailure {
                     plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                     return@Runnable
                 }
