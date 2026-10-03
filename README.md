@@ -17,6 +17,14 @@ The development of the fifth major version of MF was led by [alyphen](https://gi
 ### Supported Minecraft Versions
 Medieval Factions is supported on the Minecraft versions listed in [`minecraft-versions.json`](minecraft-versions.json): currently **1.19.4**, **1.21.11** and **26.2** (Spigot and its forks). Every stable release is booted on a real server of each of these versions before it is published, and every build checks that the plugin only uses Bukkit API that exists on all of them ([API-compatibility check](https://github.com/Dans-Plugins/release-gates#api-compatibility-check)). Other versions from 1.19.4 onwards are expected to work but are not tested. To support another version, add it to the file: both checks pick it up.
 
+### Upgrading from 5.8.x
+**If you run 5.8.x, please upgrade.** Medieval Factions 5.8.x does not close its embedded H2 database cleanly when the server stops. Each restart can leave `medieval_factions_db.mv.db` a little more damaged, until the plugin no longer loads with `MVStoreException: Unable to read the page` ([#1975](https://github.com/Dans-Plugins/Medieval-Factions/issues/1975)). Servers that restart often, such as hosts that stop empty servers, hit this sooner. From 6.0.0 onward, Medieval Factions closes the database explicitly on shutdown.
+
+1. Stop the server and back up `plugins/MedievalFactions/` (in particular `medieval_factions_db.mv.db`).
+2. Replace the jar with the [latest release](https://github.com/Dans-Plugins/Medieval-Factions/releases/latest) and start the server.
+
+Before each release, the release gates checked that it loads data written by the previous one: 6.0.0 loads 5.8.1 data, 6.1.0 loads 6.0.0 data, and 7.0.0 loads 6.1.0 data, on both the H2 and JSON backends. A direct jump from 5.8.1 to 7.0.0 has not been gated, which is one more reason to keep the backup. If the plugin already fails with the error above, keep a copy of the damaged file before removing anything. It can sometimes be recovered; ask in [#1975](https://github.com/Dans-Plugins/Medieval-Factions/issues/1975) or on Discord.
+
 ### Storage Options
 Medieval Factions supports two data storage backends:
 - **Database Storage** (default) - Uses embedded H2, or a MariaDB/MySQL server
