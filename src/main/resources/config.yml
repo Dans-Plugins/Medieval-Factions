@@ -140,6 +140,10 @@ gates:
   maxBlocks: 64
   maxPerFaction: 5
   maxRemoveDistance: 12
+  # restrictedBlocks: blocks a new gate cannot be made of. Checked only when a gate
+  # is created (not for its trigger). Existing gates made of a listed block are kept
+  # and named in a startup warning; they are never changed or deleted. Entries may
+  # be grouped into nested lists (as below, with YAML anchors); groups are flattened.
   restrictedBlocks:
     # Direct block entries
     - &simple_blocks
