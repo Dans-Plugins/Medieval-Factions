@@ -21,6 +21,7 @@ This document provides detailed information about all configuration options avai
 - [REST API](#rest-api)
 - [DPC Community API](#dpc-community-api)
 - [Usage Reporting](#usage-reporting)
+- [Update Check](#update-check)
 
 ## General Settings
 
@@ -783,6 +784,17 @@ This reporting is **on by default** and can be turned off. It is separate from t
 **Description:** Identifies this plugin to the trace server, so reports are attributed to MedievalFactions and can be revoked as a group if they are ever abused. It is not a secret -- it ships in the bundled `config.yml` on every server that runs the plugin -- and it cannot do anything except report as this plugin. An empty key turns reporting off regardless of `usage-reporting.enabled`.
 
 **Note:** A server upgraded from a version before this block existed still reports: the plugin reads the bundled defaults for any key its `config.yml` lacks, and copies them into the file on the next start.
+
+---
+
+## Update Check
+
+Once per startup, off the main thread, the plugin makes one unauthenticated request to `https://api.github.com/repos/Dans-Plugins/Medieval-Factions/releases/latest`. If the latest published release is newer than the running version, one line goes to the console and to players with the `mf.updatenotice` permission (default: op) when they join, naming the new version, the release link and a short reason. Nothing about the server or its players is sent, and nothing is downloaded or installed. Failures (offline, timeout, rate limit) are silent and never delay startup. The environment variables `TRACE_USAGE_REPORTING=off` and `DO_NOT_TRACK=1` also turn the check off, and win over the setting below.
+
+### `update-check.enabled`
+**Type:** Boolean  
+**Default:** `true`  
+**Description:** Whether the plugin checks for a newer release on startup. Set to `false` to turn the check off. A server whose `config.yml` predates this key still checks: the plugin reads the bundled default and writes it into the file on the next start.
 
 ---
 

@@ -17,6 +17,14 @@ The development of the fifth major version of MF was led by [alyphen](https://gi
 ### Supported Minecraft Versions
 Medieval Factions is supported on the Minecraft versions listed in [`minecraft-versions.json`](minecraft-versions.json): currently **1.19.4**, **1.21.11** and **26.2** (Spigot and its forks). Every stable release is booted on a real server of each of these versions before it is published, and every build checks that the plugin only uses Bukkit API that exists on all of them ([API-compatibility check](https://github.com/Dans-Plugins/release-gates#api-compatibility-check)). Other versions from 1.19.4 onwards are expected to work but are not tested. To support another version, add it to the file: both checks pick it up.
 
+### Upgrading from 5.8.x
+**If you run 5.8.x, please upgrade.** Medieval Factions 5.8.x does not close its embedded H2 database cleanly when the server stops. Each restart can leave `medieval_factions_db.mv.db` a little more damaged, until the plugin no longer loads with `MVStoreException: Unable to read the page` ([#1975](https://github.com/Dans-Plugins/Medieval-Factions/issues/1975)). Servers that restart often, such as hosts that stop empty servers, hit this sooner. From 6.0.0 onward, Medieval Factions closes the database explicitly on shutdown.
+
+1. Stop the server and back up `plugins/MedievalFactions/` (in particular `medieval_factions_db.mv.db`).
+2. Replace the jar with the [latest release](https://github.com/Dans-Plugins/Medieval-Factions/releases/latest) and start the server.
+
+Before each release, the release gates checked that it loads data written by the previous one: 6.0.0 loads 5.8.1 data, 6.1.0 loads 6.0.0 data, and 7.0.0 loads 6.1.0 data, on both the H2 and JSON backends. A direct jump from 5.8.1 to 7.0.0 has not been gated, which is one more reason to keep the backup. If the plugin already fails with the error above, keep a copy of the damaged file before removing anything. It can sometimes be recovered; ask in [#1975](https://github.com/Dans-Plugins/Medieval-Factions/issues/1975) or on Discord.
+
 ### Storage Options
 Medieval Factions supports two data storage backends:
 - **Database Storage** (default) - Uses embedded H2, or a MariaDB/MySQL server
@@ -24,12 +32,28 @@ Medieval Factions supports two data storage backends:
 
 See [Configuration Guide](CONFIG.md#storage-configuration) for details on choosing and configuring your storage backend.
 
-### Dynmap Integration
-Dynmap has been integrated with this plugin. In order to be able to view claimed land on a dynamic map, download and install the plugin [here](https://www.spigotmc.org/resources/dynmap.274/).
+### Web Maps
+- **Dynmap**: built in. Install [Dynmap](https://www.spigotmc.org/resources/dynmap.274/) and claimed land appears on its map.
+- **BlueMap**: install [BlueMap](https://bluemap.bluecolored.de/) together with the [Bluemap_MedievalFactions](https://github.com/Dans-Plugins/Bluemap_MedievalFactions) add-on, and faction claims are drawn as overlays on the BlueMap web map.
 
 ### Expansions
-1) [Fiefs](https://github.com/Dans-Plugins/Fiefs)
-2) [Currencies](https://github.com/Dans-Plugins/Currencies)
+Each of these add-ons requires Medieval Factions and adds something to it. The current stable release of every one was enabled against Medieval Factions 7.0.0 by the [dependents gate](https://github.com/Dans-Plugins/release-gates/actions/runs/36957984824) before 7.0.0 was published.
+
+| Expansion | What it adds | Verified with MF 7.0.0 |
+|---|---|---|
+| [Currencies](https://github.com/Dans-Plugins/Currencies) ([SpigotMC](https://www.spigotmc.org/resources/96381/)) | Factions mint their own currencies, for local economies | v3.0.0 |
+| [Fiefs](https://github.com/Dans-Plugins/Fiefs) ([SpigotMC](https://www.spigotmc.org/resources/98559/)) | Sub-factions (fiefs) inside a faction | v0.12.1 |
+| [Democracy](https://github.com/Dans-Plugins/Democracy) ([SpigotMC](https://www.spigotmc.org/resources/139167/)) | Elections for faction leadership | v0.3.0 |
+| [Bluemap_MedievalFactions](https://github.com/Dans-Plugins/Bluemap_MedievalFactions) | Faction claims on a [BlueMap](https://bluemap.bluecolored.de/) web map | v1.0 |
+
+Currencies 2.x does not enable on Medieval Factions 5.8 or newer. Use Currencies 3.0.0 or later.
+
+### Works Well With
+- [Medieval Roleplay Engine](https://github.com/Dans-Plugins/Medieval-Roleplay-Engine) ([SpigotMC](https://www.spigotmc.org/resources/79993/)): character cards, local chat, emotes and messenger birds. It is a companion plugin for faction roleplay and runs alongside Medieval Factions.
+- [Mailboxes](https://github.com/Dans-Plugins/Mailboxes) ([SpigotMC](https://www.spigotmc.org/resources/96611/)): persistent messages. When it is installed, Medieval Factions delivers faction notifications through it.
+- [Medieval Economy](https://github.com/Dans-Plugins/Medieval-Economy) ([SpigotMC](https://www.spigotmc.org/resources/81836/)): a coinpurse and a physical currency item.
+
+Every plugin is listed on [dansplugins.com](https://dansplugins.com), and [Dan's Plugin Manager](https://github.com/Dans-Plugins/Dans-Plugin-Manager) can install them in game with `/dpm get <plugin>`.
 
 ## Usage
 
@@ -77,7 +101,7 @@ If you see BUILD SUCCESSFUL, then the tests have passed.
 ### Looking to create an add-on plugin?
 I recommend using [FactionsBridge](https://www.spigotmc.org/resources/factionsbridge.89716/) by [Retrix_Solutions](https://www.spigotmc.org/resources/authors/retrix_solutions.491191/). It would make your add-on plugin usable across a number of factions implementations.
 
-Alternatively, you can use the External API, the documentation for which can be found [here](https://github.com/Dans-Plugins/Medieval-Factions/wiki/External-API-Documentation).
+To build directly on Medieval Factions, the [expansions above](#expansions) are working examples. Their source shows how each one hooks into Medieval Factions' services, events and permissions. A clearer API for expansion permissions is tracked in [#1683](https://github.com/Dans-Plugins/Medieval-Factions/issues/1683).
 
 ## Development
 ### Test Server with Plugin Hot-Reloading
@@ -180,3 +204,14 @@ Usage reporting is on by default: when the plugin is enabled, and each time one 
 - the environment variable `TRACE_USAGE_REPORTING=off` or `DO_NOT_TRACK=1`
 
 Details: https://github.com/Stephenson-Software/trace#usage-reporting
+
+## Update check
+
+Once per startup, off the main thread, the plugin asks GitHub for the latest published Medieval Factions release: one unauthenticated `GET https://api.github.com/repos/Dans-Plugins/Medieval-Factions/releases/latest`, which returns the release's tag and link. If that release is newer than the version the server runs, one line goes to the console, and players with the `mf.updatenotice` permission (ops by default) see it when they join. The line names the new version, links the release, and gives a reason: a server on a version before 6.0.0 is told that the release fixes database corruption on shutdown (H2); otherwise it points at the release notes. Development builds such as `7.0.1-SNAPSHOT` are never told to "upgrade" to an older release, and pre-releases are never offered.
+
+Nothing about the server or its players is sent (the request carries only a `User-Agent` naming the plugin and its version, which GitHub requires), and nothing is downloaded or installed. A failed check (offline, timeout, rate limit) is silent and never delays startup.
+
+The check is on by default. To turn it off:
+
+- `update-check.enabled: false` in this plugin's `config.yml`
+- the environment variable `TRACE_USAGE_REPORTING=off` or `DO_NOT_TRACK=1`, the same switches that turn off usage reporting
