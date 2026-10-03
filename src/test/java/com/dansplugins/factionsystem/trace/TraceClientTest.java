@@ -37,6 +37,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class TraceClientTest {
 
+    private static final String UUID_PATTERN = "[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
+
     private HttpServer server;
     private final List<Received> received = new CopyOnWriteArrayList<>();
     private volatile int replyStatus = 201;
@@ -588,8 +590,16 @@ class TraceClientTest {
                 + "# own tag of the same name wins. On a test or CI server, uncomment the two\n"
                 + "# lines below so its events are left out of real-installation figures.\n"
                 + "# tags:\n"
-                + "#   ci: \"true\"\n";
-        assertEquals(expected, new String(Files.readAllBytes(file), StandardCharsets.UTF_8));
+                + "#   ci: \"true\"\n"
+                + "#\n"
+                + "# server-id: a random ID made on first run and sent as the tag \"install\", so\n"
+                + "# trace can count servers, not events. It identifies no person and no IP\n"
+                + "# address. Delete the server-id line to get a new one.\n";
+        String actual = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+        assertTrue(actual.startsWith(expected), actual);
+        String idLine = actual.substring(expected.length());
+        assertTrue(idLine.matches("server-id: " + UUID_PATTERN + "\n"), "the template is followed by one server-id line: " + idLine);
+        assertEquals(idLine.substring("server-id: ".length()).trim(), client.installId());
         assertTrue(client.isEnabled(), "a freshly created switch file means enabled");
         assertNull(client.disabledReason());
         client.close();
@@ -709,14 +719,14 @@ class TraceClientTest {
         String body = reportedBody(plugins, "startup", tags);
 
         // Assert
-        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\",\"ci\":\"true\"}}", body);
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\",\"install\":\"test-server\",\"ci\":\"true\"}}", body);
     }
 
     @Test
     void serverWideTags_areAddedToAnEventWithNoTagsOfItsOwn(@TempDir Path plugins) throws Exception {
         writeServerWideConfig(plugins, "tags:\n  ci: \"true\"\n");
 
-        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\",\"ci\":\"true\"}}",
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\",\"install\":\"test-server\",\"ci\":\"true\"}}",
                 reportedBody(plugins, "startup", null));
     }
 
@@ -733,7 +743,7 @@ class TraceClientTest {
 
         // Assert
         assertEquals("{\"application\":\"MyPlugin\",\"name\":\"command\",\"tags\":"
-                + "{\"version\":\"1.2.3\",\"name\":\"home\",\"ci\":\"true\"}}", body);
+                + "{\"version\":\"1.2.3\",\"name\":\"home\",\"install\":\"test-server\",\"ci\":\"true\"}}", body);
     }
 
     @Test
@@ -831,7 +841,7 @@ class TraceClientTest {
 
     @Test
     void serverWideTags_areCappedSoTheEventStaysWithinTheServersTagLimit(@TempDir Path plugins) throws Exception {
-        // Arrange: 40 server-wide tags, 30 event tags.
+        // Arrange: 40 server-wide tags, 29 event tags.
         StringBuilder file = new StringBuilder("tags:\n");
         for (int i = 0; i < 40; i++) {
             file.append("  s").append(i).append(": v\n");
@@ -839,7 +849,7 @@ class TraceClientTest {
         assertEquals(TraceClient.MAX_TAGS, tagsOf(file.toString()).size(), "at most MAX_TAGS are read");
         writeServerWideConfig(plugins, file.toString());
         Map<String, String> tags = new LinkedHashMap<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 29; i++) {
             tags.put("e" + i, "v");
         }
 
@@ -848,8 +858,9 @@ class TraceClientTest {
 
         // Assert
         int pairs = body.split("\":\"v\"", -1).length - 1;
-        assertEquals(TraceClient.MAX_TAGS - 1, pairs, "30 event tags + version + 1 server-wide: " + body);
-        assertTrue(body.contains("\"e29\":\"v\"") && body.contains("\"version\":\"1.2.3\"")
+        assertEquals(TraceClient.MAX_TAGS - 2, pairs, "29 event tags + version + install + 1 server-wide: " + body);
+        assertTrue(body.contains("\"e28\":\"v\"") && body.contains("\"version\":\"1.2.3\"")
+                && body.contains("\"install\":\"test-server\"")
                 && body.contains("\"s0\":\"v\"") && !body.contains("\"s1\""), body);
     }
 
@@ -878,7 +889,7 @@ class TraceClientTest {
         // A file with only the switch in it.
         arrived = new CountDownLatch(1);
         writeServerWideConfig(plugins, "enabled: true\n");
-        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\"}}", reportedBody(plugins, "startup", null));
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\",\"install\":\"test-server\"}}", reportedBody(plugins, "startup", null));
     }
 
     @Test
@@ -887,12 +898,15 @@ class TraceClientTest {
         String body = reportedBody(plugins, "startup", null);
 
         // ... and nothing in it is live: the example is commented out.
+        // (The install tag is the server-id build() appended, not a tags: entry.)
         assertTrue(Files.exists(plugins.resolve("trace").resolve("config.yml")));
-        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\"}}", body);
+        assertTrue(body.matches("\\{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":"
+                + "\\{\"version\":\"1\\.2\\.3\",\"install\":\"" + UUID_PATTERN + "\"}}"), body);
         TraceClient.ServerWideConfig config = TraceClient.parseServerWideConfig(
                 Arrays.asList(TraceClient.SERVER_WIDE_CONFIG_CONTENT.split("\n")));
         assertTrue(config.tags.isEmpty());
         assertFalse(config.disables);
+        assertNull(config.serverId, "the template's server-id explanation is a comment, not a value");
     }
 
     @Test
@@ -910,7 +924,7 @@ class TraceClientTest {
             arrived = new CountDownLatch(1);
             writeServerWideConfig(plugins, content);
             String body = assertDoesNotThrow(() -> reportedBody(plugins, "startup", null), content);
-            assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\"}}", body, content);
+            assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\",\"install\":\"test-server\"}}", body, content);
         }
 
         // Bytes that are not UTF-8 at all.
@@ -918,8 +932,12 @@ class TraceClientTest {
         arrived = new CountDownLatch(1);
         Path file = plugins.resolve("trace").resolve("config.yml");
         Files.write(file, new byte[] {'t', 'a', 'g', 's', ':', '\n', ' ', ' ', 'c', 'i', ':', ' ', (byte) 0xC3, (byte) 0x28, '\n'});
-        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\"}}", reportedBody(plugins, "startup", null),
-                "a file that is not UTF-8 counts as enabled with no tags");
+        byte[] notUtf8 = Files.readAllBytes(file);
+        String body = reportedBody(plugins, "startup", null);
+        assertTrue(body.matches("\\{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":"
+                        + "\\{\"version\":\"1\\.2\\.3\",\"install\":\"" + UUID_PATTERN + "\"}}"),
+                "a file that is not UTF-8 counts as enabled with no tags, and an in-memory install ID: " + body);
+        assertArrayEquals(notUtf8, Files.readAllBytes(file), "a file that cannot be read is never appended to");
     }
 
     @Test
@@ -957,7 +975,213 @@ class TraceClientTest {
         client.close();
     }
 
+    @Test
+    void serverWideConfig_aPathThatCannotBeConvertedIsLoggedFineAndTreatedAsEnabled() throws Exception {
+        // Arrange
+        // A NUL in the name makes File.toPath() throw InvalidPathException --
+        // a RuntimeException that build() must not let out.
+        File unconvertible = new File("plugins\u0000");
+        RecordingHandler log = new RecordingHandler();
+        Logger logger = Logger.getLogger("TraceClientTest.serverWideInvalidPath");
+        logger.setLevel(Level.ALL);
+        logger.addHandler(log);
+
+        // Act
+        TraceClient client = assertDoesNotThrow(() -> TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k")
+                .serverWideConfig(unconvertible).logger(logger).build());
+
+        // Assert
+        assertTrue(client.isEnabled(), "a switch file that cannot be located must not turn reporting off");
+        assertTrue(log.await(1, TimeUnit.SECONDS), "the failure should be mentioned at FINE");
+        assertEquals(Level.FINE, log.records.get(0).getLevel());
+        assertTrue(log.records.get(0).getMessage().contains("server-wide config"), log.records.get(0).getMessage());
+        client.close();
+    }
+
+    @Test
+    void installId_isGeneratedPersistedOnceAndReusedAcrossBuilds(@TempDir Path plugins) throws Exception {
+        // Arrange
+        Path file = plugins.resolve("trace").resolve("config.yml");
+
+        // Act: two starts of the same server, two plugins each time.
+        TraceClient first = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build();
+        String afterFirst = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+        TraceClient second = TraceClient.builder(baseUrl(), "OtherPlugin", "4.5.6").key("k").serverWideConfig(plugins.toFile()).build();
+        TraceClient third = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build();
+        first.report("startup");
+        assertTrue(arrived.await(5, TimeUnit.SECONDS));
+        first.close();
+        second.close();
+        third.close();
+
+        // Assert
+        String id = first.installId();
+        assertNotNull(id);
+        assertTrue(id.matches(UUID_PATTERN), id);
+        assertEquals(id, second.installId(), "every plugin on the server shares the one ID");
+        assertEquals(id, third.installId(), "and it survives a restart");
+        assertEquals(afterFirst, new String(Files.readAllBytes(file), StandardCharsets.UTF_8), "only the first build writes");
+        assertEquals(1, afterFirst.split("\nserver-id: ", -1).length - 1, afterFirst);
+        assertTrue(afterFirst.endsWith("\nserver-id: " + id + "\n"), afterFirst);
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\",\"install\":\"" + id + "\"}}",
+                received.get(0).body);
+    }
+
+    @Test
+    void installId_isAppendedWithoutDisturbingTheOperatorsFile(@TempDir Path plugins) throws Exception {
+        // Arrange: hand-edited, comments everywhere, no trailing newline.
+        String operatorsFile = "# my notes -- keep me\nenabled: true   # on, for now\ntags:\n  ci: \"true\"  # test box\n# the end";
+        Path file = writeServerWideConfigExactly(plugins, operatorsFile);
+
+        // Act
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build();
+        client.close();
+
+        // Assert
+        String after = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+        assertEquals(operatorsFile + "\n" + TraceClient.SERVER_ID_COMMENT + "server-id: " + client.installId() + "\n", after,
+                "the operator's text is kept byte for byte; one commented block is appended");
+        TraceClient.ServerWideConfig reread = TraceClient.parseServerWideConfig(Arrays.asList(after.split("\n", -1)));
+        assertEquals(Collections.singletonMap("ci", "true"), reread.tags, "the appended line does not join the tags block");
+        assertEquals(client.installId(), reread.serverId);
+    }
+
+    @Test
+    void installId_anExistingServerIdIsUsedAndAnUnusableOneIsIgnored() {
+        assertEquals("abc-123", TraceClient.parseServerWideConfig(Arrays.asList("server-id: \"abc-123\"  # mine")).serverId);
+        assertEquals("first", TraceClient.parseServerWideConfig(Arrays.asList("server-id: first", "server-id: second")).serverId);
+        assertEquals("good", TraceClient.parseServerWideConfig(Arrays.asList("server-id:", "server-id: has space", "server-id: good")).serverId);
+        assertNull(TraceClient.parseServerWideConfig(Arrays.asList("  server-id: indented")).serverId, "column 0 only");
+        assertNull(TraceClient.parseServerWideConfig(Arrays.asList("# server-id: commented")).serverId);
+        TraceClient.ServerWideConfig inTags = TraceClient.parseServerWideConfig(Arrays.asList("tags:", "  server-id: x"));
+        assertNull(inTags.serverId, "inside tags: it is a tag");
+        assertEquals(Collections.singletonMap("server-id", "x"), inTags.tags);
+    }
+
+    @Test
+    void installId_unwritableConfigFallsBackToAnInMemoryIdWithoutThrowing(@TempDir Path scratch) throws Exception {
+        // Arrange: a "plugins directory" that is a regular file, so nothing
+        // under it can be created (permission bits are no use as root).
+        Path notADirectory = scratch.resolve("plugins");
+        Files.write(notADirectory, "not a directory".getBytes(StandardCharsets.UTF_8));
+
+        // Act
+        TraceClient first = assertDoesNotThrow(() -> TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k")
+                .serverWideConfig(notADirectory.toFile()).build());
+        TraceClient second = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(notADirectory.toFile()).build();
+        first.report("startup");
+        assertTrue(arrived.await(5, TimeUnit.SECONDS));
+        first.close();
+        second.close();
+
+        // Assert
+        assertTrue(first.isEnabled());
+        assertTrue(first.installId().matches(UUID_PATTERN), first.installId());
+        assertNotEquals(first.installId(), second.installId(), "nothing persisted: each process gets its own");
+        assertTrue(received.get(0).body.contains("\"install\":\"" + first.installId() + "\""), received.get(0).body);
+        assertEquals("not a directory", new String(Files.readAllBytes(notADirectory), StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void installId_aDisabledClientNeitherGeneratesNorWritesOne(@TempDir Path plugins) throws Exception {
+        Path file = plugins.resolve("trace").resolve("config.yml");
+
+        // Environment: the file is not even created.
+        environment.put("DO_NOT_TRACK", "1");
+        TraceClient byEnvironment = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build();
+        assertNull(byEnvironment.installId());
+        assertFalse(Files.exists(file), "an environment opt-out touches nothing on disk");
+        environment.clear();
+        environment.put("TRACE_USAGE_REPORTING", "off");
+        assertNull(TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build().installId());
+        assertFalse(Files.exists(file));
+        environment.clear();
+
+        // The server-wide switch.
+        writeServerWideConfigExactly(plugins, "enabled: false\n");
+        assertNull(TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build().installId());
+        assertEquals("enabled: false\n", new String(Files.readAllBytes(file), StandardCharsets.UTF_8));
+
+        // The plugin's own switch, and no key.
+        writeServerWideConfigExactly(plugins, "enabled: true\n");
+        assertNull(TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").enabled(false).serverWideConfig(plugins.toFile()).build().installId());
+        assertNull(TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").serverWideConfig(plugins.toFile()).build().installId());
+        assertEquals("enabled: true\n", new String(Files.readAllBytes(file), StandardCharsets.UTF_8));
+
+        // A file created by a disabled client has no server-id line in it.
+        Files.delete(file);
+        TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").enabled(false).serverWideConfig(plugins.toFile()).build();
+        assertEquals(TraceClient.SERVER_WIDE_CONFIG_CONTENT, new String(Files.readAllBytes(file), StandardCharsets.UTF_8));
+
+        // An explicit ID is not sent either.
+        assertNull(TraceClient.builder(baseUrl(), "MyCli", "1.2.3").key("k").enabled(false).installId("abc").build().installId());
+    }
+
+    @Test
+    void installId_canBeGivenExplicitlyByAProgramThatIsNotAPlugin(@TempDir Path plugins) throws Exception {
+        // Arrange
+        TraceClient client = TraceClient.builder(baseUrl(), "MyCli", "1.2.3").key("k").installId("  cli-install-1  ").build();
+
+        // Act
+        client.report("startup");
+
+        // Assert
+        assertTrue(arrived.await(5, TimeUnit.SECONDS));
+        client.close();
+        assertEquals("cli-install-1", client.installId());
+        assertEquals("{\"application\":\"MyCli\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\",\"install\":\"cli-install-1\"}}",
+                received.get(0).body);
+
+        // None given, none sent; blank is none.
+        assertNull(TraceClient.builder(baseUrl(), "MyCli", "1.2.3").key("k").build().installId());
+        assertNull(TraceClient.builder(baseUrl(), "MyCli", "1.2.3").key("k").installId("   ").build().installId());
+        assertNull(TraceClient.builder(baseUrl(), "MyCli", "1.2.3").key("k").installId(null).build().installId());
+        StringBuilder overlong = new StringBuilder();
+        for (int i = 0; i <= TraceClient.MAX_TAG_LENGTH; i++) {
+            overlong.append('x');
+        }
+        assertThrows(IllegalArgumentException.class,
+                () -> TraceClient.builder(baseUrl(), "MyCli", "1.2.3").installId(overlong.toString()));
+
+        // An explicit ID wins over the server-wide file, which then gains no server-id.
+        TraceClient both = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").installId("explicit")
+                .serverWideConfig(plugins.toFile()).build();
+        both.close();
+        assertEquals("explicit", both.installId());
+        assertEquals(TraceClient.SERVER_WIDE_CONFIG_CONTENT,
+                new String(Files.readAllBytes(plugins.resolve("trace").resolve("config.yml")), StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void installId_anEventsOwnInstallTagWins(@TempDir Path plugins) throws Exception {
+        // Arrange
+        writeServerWideConfig(plugins, "tags:\n  install: from-tags-block\n");
+        Map<String, String> tags = new LinkedHashMap<>();
+        tags.put("install", "the-plugins-own");
+
+        // Act
+        String body = reportedBody(plugins, "startup", tags);
+
+        // Assert
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"install\":\"the-plugins-own\",\"version\":\"1.2.3\"}}", body);
+        assertEquals(Collections.singletonMap("install", "the-plugins-own"), tags, "the caller's map is not modified");
+
+        // Without its own, the event gets the server-id, not the tags: block's entry.
+        arrived = new CountDownLatch(1);
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\",\"install\":\"test-server\"}}",
+                reportedBody(plugins, "startup", null));
+    }
+
+    /**
+     * Writes {@code content} as the server-wide file, followed by a fixed
+     * {@code server-id: test-server} line so the tag tests get a predictable
+     * {@code install} tag rather than a random one.
+     */
     private static Path writeServerWideConfig(Path plugins, String content) throws java.io.IOException {
+        return writeServerWideConfigExactly(plugins, content + "\nserver-id: test-server\n");
+    }
+
+    private static Path writeServerWideConfigExactly(Path plugins, String content) throws java.io.IOException {
         Path file = plugins.resolve("trace").resolve("config.yml");
         Files.createDirectories(file.getParent());
         Files.write(file, content.getBytes(StandardCharsets.UTF_8));
