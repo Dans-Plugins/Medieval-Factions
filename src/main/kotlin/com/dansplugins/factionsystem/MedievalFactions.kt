@@ -96,7 +96,6 @@ import com.dansplugins.factionsystem.teleport.MfTeleportService
 import com.dansplugins.factionsystem.trace.TraceClient
 import com.dansplugins.factionsystem.update.MfUpdateNotifier
 import com.google.gson.Gson
-import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import dev.forkhandles.result4k.onFailure
 import net.md_5.bungee.api.ChatColor
@@ -545,19 +544,12 @@ class MedievalFactions : JavaPlugin() {
     )
 
     private fun initializeDatabaseRepositories(gson: Gson): Repositories {
-        val jdbcUrl = MfJdbc.hardenUrl(config.getString("database.url") ?: "")
-        MfJdbc.preloadDriver(jdbcUrl)
-        val hikariConfig = HikariConfig()
-        hikariConfig.jdbcUrl = jdbcUrl
-        val databaseUsername = config.getString("database.username")
-        if (databaseUsername != null) {
-            hikariConfig.username = databaseUsername
-        }
-        val databasePassword = config.getString("database.password")
-        if (databasePassword != null) {
-            hikariConfig.password = databasePassword
-        }
-        dataSource = HikariDataSource(hikariConfig)
+        dataSource = MfJdbc.openDataSource(
+            config.getString("database.url") ?: "",
+            config.getString("database.username"),
+            config.getString("database.password"),
+            logger
+        )
         val oldClassLoader = Thread.currentThread().contextClassLoader
         Thread.currentThread().contextClassLoader = classLoader
         val flyway = Flyway.configure()
