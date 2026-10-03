@@ -95,7 +95,7 @@ The main faction command can be accessed using any of the following aliases:
 **Permission:** `mf.kick` (default: true)  
 **Description:** Kicks a player from your faction.  
 **Usage:** `/f kick PlayerName`  
-**Notes:** With `mf.force.kick` (default: op), a faction name can be given before the player (`/f kick FactionName PlayerName`) to target a faction other than the one you are in. The faction-role check is still applied against the target faction, so you must also hold that faction's kick role permission — the permission selects which faction is acted on, it does not by itself override the faction's own permissions.
+**Notes:** With `mf.force.kick` (default: op), a faction name can be given before the player (`/f kick FactionName PlayerName`) to kick a member from any faction, including one you are not in. When a faction is named this way, the target faction's own kick role permission is not checked — the force permission replaces it, as with `mf.force.flag`. The base `mf.kick` node is still required, and a player whose role no remaining member is able to manage (typically the faction owner) still cannot be kicked.
 
 ### `/faction set [name|description|prefix] [value]` or `/f set [name|description|prefix] [value]`
 **Permissions:** 
@@ -109,7 +109,7 @@ The main faction command can be accessed using any of the following aliases:
 - `/f set description "Our faction description"` - Sets faction description
 - `/f set prefix [TAG]` - Sets faction prefix
 
-**Notes:** With `mf.force.rename` (default: op), a faction name or ID can be given before the new name (`/f set name FactionName NewName`) to rename a faction other than the one you are in. As with `mf.force.kick`, the faction-role check still runs against the target faction, so you must also hold that faction's change-name role permission.
+**Notes:** With `mf.force.rename` (default: op), a faction name or ID can be given before the new name (`/f set name FactionName NewName`) to rename any faction, including one you are not in. When a faction is named this way, the target faction's own change-name role permission is not checked — the force permission replaces it, as with `mf.force.flag`. The base `mf.rename` node is still required. Quote a multi-word faction name (`/f set name "Old Name" NewName`).
 
 ### `/faction flag [list|set]` or `/f flag [list|set]`
 **Permissions:** 
@@ -123,7 +123,7 @@ The main faction command can be accessed using any of the following aliases:
 
 **Example:** `/f flag set color #FF0000`
 
-**Notes:** With `mf.force.flag` (default: op), a faction name or ID can be given as the first argument to list or set flags on a faction other than your own (`/f flag list FactionName [page]`, `/f flag set FactionName [flag] [value]`). Unlike `mf.force.kick` and `mf.force.rename`, this genuinely bypasses the target faction's role permissions; the base `mf.flag.list` / `mf.flag.set` node is still required. The permission also enables faction-name tab completion for both subcommands.
+**Notes:** With `mf.force.flag` (default: op), a faction name or ID can be given as the first argument to list or set flags on a faction other than your own (`/f flag list FactionName [page]`, `/f flag set FactionName [flag] [value]`). Like `mf.force.kick`, `mf.force.rename`, `mf.force.claim` and `mf.force.unclaim`, this bypasses the target faction's role permissions; the base `mf.flag.list` / `mf.flag.set` node is still required. The permission also enables faction-name tab completion for both subcommands.
 
 See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 
@@ -141,6 +141,7 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 - Each chunk claimed requires power. Your faction must have enough power to claim land.
 - Maximum claim radius is configurable (default: 3).
 - The claimed area is a circle (chunks within the given radius of your current chunk), not a square.
+- With `mf.force.claim` (default: op), a faction name or ID can be given before the radius (`/f claim FactionName [radius]`, or `/f claim circle FactionName [radius]`) to claim land on behalf of any faction, including one you are not in. The target faction's own claim role permission is not checked; its power limit, contiguity and contested-chunk rules still apply. A lone number is always read as a radius. Quote a multi-word faction name (`/f claim "My Faction" 2`). `/f claim auto` and `/f claim fill` do not take a faction.
 
 ### `/faction claim auto` or `/f claim auto`
 **Permission:** `mf.claim.auto` or `mf.autoclaim` (default: true)  
@@ -162,10 +163,13 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 - `/f unclaim` - Unclaims the current chunk
 - `/f unclaim 2` - Unclaims chunks in a 2-chunk radius
 
+**Notes:** With `mf.force.unclaim` (default: op), a faction name or ID can be given before the radius (`/f unclaim FactionName [radius]`) to unclaim that faction's land around you, whether or not you are a member. Only chunks held by the named faction are removed — even with bypass mode on — and the target faction's own unclaim role permission is not checked. A lone number is always read as a radius. Quote a multi-word faction name.
+
 ### `/faction unclaimall` or `/f unclaimall`
 **Permission:** `mf.unclaimall` (default: true)  
 **Description:** Unclaims all land owned by your faction.  
 **Usage:** `/f unclaimall`  
+**Admin usage:** with `mf.force.unclaim` (default: op), `/f unclaimall FactionName` unclaims all land owned by the named faction (name or ID), without disbanding it and without checking that faction's role permissions. A name that matches no faction is refused; it never falls back to your own faction.  
 **Notes:** This action requires confirmation and cannot be undone.
 
 ### `/faction checkclaim` or `/f checkclaim`
@@ -591,16 +595,16 @@ The `mf.force.*` nodes (all `default: op`) do not add new commands — each one 
 |------------|---------|--------|
 | `mf.force.addmember` | [`/f addmember`](#faction-addmember-faction-player-or-f-addmember-faction-player) | Forcefully adds a player to a faction. |
 | `mf.force.bonuspower` | [`/f bonuspower`](#faction-bonuspower-faction-amount-or-f-bonuspower-faction-amount) | Sets a faction's bonus power. |
+| `mf.force.claim` | [`/f claim`](#faction-claim-radius-or-f-claim-radius) | Claims land on behalf of another faction, bypassing its role permissions. |
 | `mf.force.flag` | [`/f flag list`, `/f flag set`](#faction-flag-listset-or-f-flag-listset) | Lists/sets flags on another faction, bypassing its role permissions. |
 | `mf.force.join` | [`/f join`](#faction-join-faction-or-f-join-faction), [`/f addmember`](#faction-addmember-faction-player-or-f-addmember-faction-player) | Joins a faction without an invite (confirmation prompt, or `-f` to skip it). Also grants `/f addmember`. |
-| `mf.force.kick` | [`/f kick`](#faction-kick-player-or-f-kick-player) | Targets a faction other than your own; the target faction's role check still applies. |
+| `mf.force.kick` | [`/f kick`](#faction-kick-player-or-f-kick-player) | Kicks a member from another faction, bypassing its role permissions. |
 | `mf.force.power` | [`/power set`](#power-set-player-amount) | Sets a player's power (alternative to `mf.power.set`). |
-| `mf.force.rename` | [`/f set name`](#faction-set-namedescriptionprefix-value-or-f-set-namedescriptionprefix-value) | Targets a faction other than your own; the target faction's role check still applies. |
+| `mf.force.rename` | [`/f set name`](#faction-set-namedescriptionprefix-value-or-f-set-namedescriptionprefix-value) | Renames another faction, bypassing its role permissions. |
+| `mf.force.unclaim` | [`/f unclaim`](#faction-unclaim-radius-or-f-unclaim-radius), [`/f unclaimall`](#faction-unclaimall-or-f-unclaimall) | Unclaims another faction's land (around you, or all of it), bypassing its role permissions. |
 | `mf.force.unlock` | [`/unlock`](#unlock-cancel), block breaking | Unlocks blocks locked by another player. |
 
-`mf.force.claim` and `mf.force.unclaim` are declared in `plugin.yml` and granted by `mf.force.*`, but nothing in the plugin currently reads them — granting them has no effect. See issue [#1987](https://github.com/Dans-Plugins/Medieval-Factions/issues/1987).
-
-`mf.force.kick` and `mf.force.rename` only widen which faction the command targets; the target faction's own role check still applies. `mf.force.flag` behaves differently and does bypass it. See issue [#1988](https://github.com/Dans-Plugins/Medieval-Factions/issues/1988).
+Every `mf.force.*` node that lets a faction be named follows the same rule: when a faction is named, the force permission replaces that faction's own role-permission check, so an admin does not need to be a member. The command's base node (`mf.kick`, `mf.rename`, `mf.claim`, `mf.unclaim`, `mf.unclaimall`, `mf.flag.*`) is still required.
 
 ## Notes
 
