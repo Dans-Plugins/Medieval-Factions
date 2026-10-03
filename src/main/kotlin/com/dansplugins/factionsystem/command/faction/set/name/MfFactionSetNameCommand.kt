@@ -84,11 +84,13 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions) : CommandExe
                 val factionService = plugin.services.factionService
                 var faction: MfFaction? = null
                 var name = ""
+                var isForced = false
                 if (hasForcePermission) {
                     val unquotedArgs = args.unquote()
                     if (unquotedArgs.size > 1) {
                         faction = factionService.getFaction(MfFactionId(unquotedArgs[0])) ?: factionService.getFaction(unquotedArgs[0])
                         name = unquotedArgs.drop(1).joinToString(" ")
+                        isForced = faction != null
                     }
                 }
                 if (faction == null) {
@@ -103,10 +105,14 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions) : CommandExe
                     player.sendMessage("$RED${plugin.language["CommandFactionSetNameMustBeInAFaction"]}")
                     return@Runnable
                 }
-                val role = faction.getRole(mfPlayer.id)
-                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.changeName)) {
-                    player.sendMessage("$RED${plugin.language["CommandFactionSetNameNoFactionPermission"]}")
-                    return@Runnable
+                // An explicitly named faction is only reachable with mf.force.rename, which replaces the faction's own
+                // role check, matching how mf.force.flag is honoured.
+                if (!isForced) {
+                    val role = faction.getRole(mfPlayer.id)
+                    if (role == null || !role.hasPermission(faction, plugin.factionPermissions.changeName)) {
+                        player.sendMessage("$RED${plugin.language["CommandFactionSetNameNoFactionPermission"]}")
+                        return@Runnable
+                    }
                 }
                 if (factionService.getFaction(name) != null) {
                     player.sendMessage("$RED${plugin.language["CommandFactionSetNameFactionAlreadyExists"]}")

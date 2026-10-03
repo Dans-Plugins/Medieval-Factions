@@ -3,7 +3,9 @@ package com.dansplugins.factionsystem.command.faction.claim
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfChunkPosition
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
+import com.dansplugins.factionsystem.command.unquote
 import com.dansplugins.factionsystem.exception.WorldClaimBlockedException
+import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType
 import dev.forkhandles.result4k.onFailure
@@ -35,6 +37,16 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
         val senderChunk = sender.location.chunk
         val senderChunkX = senderChunk.x
         val senderChunkZ = senderChunk.z
+        // With mf.force.claim, a faction name or ID may be given before the radius to claim on that faction's behalf
+        // (/f claim <faction> [radius]). A lone integer is always read as a radius, so existing usage is unchanged.
+        val hasForcePermission = sender.hasPermission("mf.force.claim")
+        val unquotedArgs = args.unquote()
+        val targetFactionName = if (hasForcePermission && unquotedArgs.isNotEmpty() && unquotedArgs[0].toIntOrNull() == null) {
+            unquotedArgs[0]
+        } else {
+            null
+        }
+        val radiusArgs = if (targetFactionName != null) unquotedArgs.drop(1) else unquotedArgs.toList()
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
@@ -46,26 +58,32 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
                         return@Runnable
                     }
                 val factionService = plugin.services.factionService
-                val faction = factionService.getFaction(mfPlayer.id)
-                if (faction == null) {
-                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimMustBeInAFaction"]}")
-                    return@Runnable
-                }
-                val role = faction.getRole(mfPlayer.id)
-                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.claim)) {
-                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimNoFactionPermission"]}")
-                    return@Runnable
+                val faction = if (targetFactionName != null) {
+                    // An explicitly named faction is only reachable with mf.force.claim, which replaces the faction's
+                    // own role check, matching how mf.force.flag is honoured.
+                    factionService.getFaction(MfFactionId(targetFactionName)) ?: factionService.getFaction(targetFactionName) ?: run {
+                        sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimInvalidFaction", targetFactionName]}")
+                        return@Runnable
+                    }
+                } else {
+                    val ownFaction = factionService.getFaction(mfPlayer.id)
+                    if (ownFaction == null) {
+                        sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimMustBeInAFaction"]}")
+                        return@Runnable
+                    }
+                    val role = ownFaction.getRole(mfPlayer.id)
+                    if (role == null || !role.hasPermission(ownFaction, plugin.factionPermissions.claim)) {
+                        sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimNoFactionPermission"]}")
+                        return@Runnable
+                    }
+                    ownFaction
                 }
                 val claimService = plugin.services.claimService
                 if (claimService.isClaimingBlockedInWorld(senderWorld)) {
                     sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimWorldBlocked"]}")
                     return@Runnable
                 }
-                val radius = if (args.isNotEmpty()) {
-                    args[0].toIntOrNull()
-                } else {
-                    null
-                }
+                val radius = radiusArgs.firstOrNull()?.toIntOrNull()
                 val maxClaimRadius = plugin.config.getInt("factions.maxClaimRadius")
                 if (radius != null && (radius < 0 || radius > maxClaimRadius)) {
                     sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimMaxClaimRadius", maxClaimRadius.toString()]}")

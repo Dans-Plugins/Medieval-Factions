@@ -147,6 +147,89 @@ class MfFactionClaimCircleCommandTest {
         verify(player).sendMessage("${ChatColor.GREEN}Claimed 1 chunk")
     }
 
+    @Test
+    fun testOnCommand_forceClaimClaimsForANamedFactionWithoutMembership() {
+        // prepare — an admin who is in no faction names another faction; mf.force.claim replaces that faction's role
+        // check. See https://github.com/Dans-Plugins/Medieval-Factions/issues/1987.
+        val player = fixture.player
+        val command = fixture.command
+        val rivals = stubNamedFaction("Rivals")
+        stubAdminWithoutFaction(player, forceClaim = true)
+        stubSenderChunk(player, 0, 0)
+        val claim = stubClaimSave(0, 0, rivals.id)
+        `when`(language["CommandFactionClaimSuccess", "1"]).thenReturn("Claimed 1 chunk")
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf("Rivals"))
+        runPendingTasks()
+
+        // verify
+        assertTrue(result)
+        verify(claimService).save(claim)
+        verify(player).sendMessage("${ChatColor.GREEN}Claimed 1 chunk")
+    }
+
+    @Test
+    fun testOnCommand_namingAFactionWithoutForcePermissionClaimsForTheSendersOwnFaction() {
+        // prepare — without mf.force.claim the argument is not a faction, and the claim goes to the sender's faction
+        val player = fixture.player
+        val command = fixture.command
+        val rivals = stubNamedFaction("Rivals")
+        stubMembershipOf(player)
+        stubSenderChunk(player, 0, 0)
+        val ownClaim = stubClaimSave(0, 0)
+        val rivalClaim = stubClaimSave(0, 0, rivals.id)
+        `when`(language["CommandFactionClaimSuccess", "1"]).thenReturn("Claimed 1 chunk")
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf("Rivals"))
+        runPendingTasks()
+
+        // verify
+        assertTrue(result)
+        verify(claimService).save(ownClaim)
+        verify(claimService, never()).save(rivalClaim)
+    }
+
+    @Test
+    fun testOnCommand_namingAFactionWithoutForcePermissionStillRequiresMembership() {
+        // prepare — a sender in no faction without mf.force.claim cannot claim for anyone
+        val player = fixture.player
+        val command = fixture.command
+        val rivals = stubNamedFaction("Rivals")
+        stubAdminWithoutFaction(player, forceClaim = false)
+        stubSenderChunk(player, 0, 0)
+        val rivalClaim = stubClaimSave(0, 0, rivals.id)
+        `when`(language["CommandFactionClaimMustBeInAFaction"]).thenReturn("Must be in a faction")
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf("Rivals"))
+        runPendingTasks()
+
+        // verify
+        assertTrue(result)
+        verify(claimService, never()).save(rivalClaim)
+        verify(player).sendMessage("${ChatColor.RED}Must be in a faction")
+    }
+
+    @Test
+    fun testOnCommand_forceClaimRefusesAFactionThatDoesNotExist() {
+        // prepare
+        val player = fixture.player
+        val command = fixture.command
+        stubAdminWithoutFaction(player, forceClaim = true)
+        stubSenderChunk(player, 0, 0)
+        `when`(language["CommandFactionClaimInvalidFaction", "Nobody"]).thenReturn("No such faction")
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf("Nobody"))
+        runPendingTasks()
+
+        // verify
+        assertTrue(result)
+        verify(player).sendMessage("${ChatColor.RED}No such faction")
+    }
+
     // Helper functions
 
     /**
@@ -154,10 +237,28 @@ class MfFactionClaimCircleCommandTest {
      * the command was never meant to touch is therefore reported by the `never()` verification rather than by an
      * exception on an unstubbed call, which keeps the failure legible if this protection ever regresses.
      */
-    private fun stubClaimSave(chunkX: Int, chunkZ: Int): MfClaimedChunk {
-        val claim = MfClaimedChunk(worldId, chunkX, chunkZ, factionId)
+    private fun stubClaimSave(chunkX: Int, chunkZ: Int, owningFactionId: MfFactionId = factionId): MfClaimedChunk {
+        val claim = MfClaimedChunk(worldId, chunkX, chunkZ, owningFactionId)
         `when`(claimService.save(claim)).thenReturn(Success(claim))
         return claim
+    }
+
+    private fun stubNamedFaction(name: String): MfFaction {
+        val namedFaction = mock(MfFaction::class.java)
+        `when`(namedFaction.id).thenReturn(MfFactionId.generate())
+        `when`(namedFaction.name).thenReturn(name)
+        `when`(factionService.getFaction(name)).thenReturn(namedFaction)
+        return namedFaction
+    }
+
+    /**
+     * Stubs a sender who holds `mf.claim` (and, optionally, `mf.force.claim`) but belongs to no faction, so any
+     * faction they claim for can only have been reached through the force permission.
+     */
+    private fun stubAdminWithoutFaction(player: Player, forceClaim: Boolean) {
+        `when`(player.hasPermission("mf.claim")).thenReturn(true)
+        `when`(player.hasPermission("mf.force.claim")).thenReturn(forceClaim)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
     }
 
     private fun stubMembershipOf(player: Player) {

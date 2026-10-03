@@ -55,13 +55,14 @@ class MfFactionKickCommand(private val plugin: MedievalFactions) : CommandExecut
                         return@Runnable
                     }
                 val factionService = plugin.services.factionService
-                val faction = if (args.size > 1 && hasForcePermission) {
+                val isForced = args.size > 1 && hasForcePermission
+                val faction = if (isForced) {
                     factionService.getFaction(args.dropLast(1).joinToString(" "))
                 } else {
                     factionService.getFaction(mfPlayer.id)
                 }
                 if (faction == null) {
-                    if (args.size > 1 && hasForcePermission) {
+                    if (isForced) {
                         sender.sendMessage(
                             "$RED${plugin.language[
                                 "CommandFactionKickInvalidFaction",
@@ -73,10 +74,14 @@ class MfFactionKickCommand(private val plugin: MedievalFactions) : CommandExecut
                     }
                     return@Runnable
                 }
-                val role = faction.getRole(mfPlayer.id)
-                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.kick)) {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionKickNoFactionPermission"]}")
-                    return@Runnable
+                // An explicitly named faction is only reachable with mf.force.kick, which replaces the faction's own
+                // role check, matching how mf.force.flag is honoured.
+                if (!isForced) {
+                    val role = faction.getRole(mfPlayer.id)
+                    if (role == null || !role.hasPermission(faction, plugin.factionPermissions.kick)) {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionKickNoFactionPermission"]}")
+                        return@Runnable
+                    }
                 }
                 if (mfPlayer.id.value == targetMfPlayer.id.value) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionKickCannotKickSelf"]}")
