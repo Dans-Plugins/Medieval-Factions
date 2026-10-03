@@ -504,6 +504,11 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Description:** Forcefully adds a player to a faction (admin command). If the target player is already in another faction, you are prompted to confirm moving them (which removes them from their current faction first). Append the `-f` flag to skip the confirmation and move them immediately.  
 **Usage:** `/f addmember FactionName PlayerName` or `/f addmember FactionName PlayerName -f`
 
+### `/faction addons` or `/mf addons`
+**Permission:** `mf.addons` (default: op)  
+**Description:** Lists the known add-ons (Currencies, Fiefs, Democracy, Bluemap_MedievalFactions) and related plugins (Medieval Roleplay Engine, Mailboxes, Medieval Economy). For each one it shows whether it is installed, the installed version, a dansplugins.com link and, for the add-ons, the version verified with Medieval Factions 7.0.0. An installed version is called verified only when it equals that version; any other version is shown as not verified. Related plugins carry no compatibility data. The list ships inside the jar, so no network call is made. With [`addons.suggestions`](CONFIG.md#addonssuggestions) set to `false`, only installed entries are listed. Players without the permission see neither the command in tab completion nor its `/f help` entry.  
+**Usage:** `/mf addons`
+
 ---
 
 ## DPC Community API
@@ -577,6 +582,7 @@ The `mf.admin` permission grants access to all admin commands including:
 - `mf.migrate` - Migrate between storage backends
 - `mf.approve` - Approve/deny pending faction actions
 - `mf.dpc` - Manage DPC community API settings
+- `mf.addons` - List known add-ons and which are installed
 
 ### Force Permissions
 The `mf.force.*` nodes (all `default: op`) do not add new commands — each one changes the behavior of an existing command or listener. They are documented with the command they affect; this table is an index.

@@ -48,6 +48,8 @@ Each of these add-ons requires Medieval Factions and adds something to it. The c
 
 Currencies 2.x does not enable on Medieval Factions 5.8 or newer. Use Currencies 3.0.0 or later.
 
+In game, operators can run `/mf addons` to see which of these, and of the plugins below, are installed, and whether each installed version is the verified one. See [COMMANDS.md](COMMANDS.md#faction-addons-or-mf-addons).
+
 ### Works Well With
 - [Medieval Roleplay Engine](https://github.com/Dans-Plugins/Medieval-Roleplay-Engine) ([SpigotMC](https://www.spigotmc.org/resources/79993/)): character cards, local chat, emotes and messenger birds. It is a companion plugin for faction roleplay and runs alongside Medieval Factions.
 - [Mailboxes](https://github.com/Dans-Plugins/Mailboxes) ([SpigotMC](https://www.spigotmc.org/resources/96611/)): persistent messages. When it is installed, Medieval Factions delivers faction notifications through it.
@@ -204,3 +206,14 @@ Usage reporting is on by default: when the plugin is enabled, and each time one 
 - the environment variable `TRACE_USAGE_REPORTING=off` or `DO_NOT_TRACK=1`
 
 Details: https://github.com/Stephenson-Software/trace#usage-reporting
+
+## Update check
+
+Once per startup, off the main thread, the plugin asks GitHub for the latest published Medieval Factions release: one unauthenticated `GET https://api.github.com/repos/Dans-Plugins/Medieval-Factions/releases/latest`, which returns the release's tag and link. If that release is newer than the version the server runs, one line goes to the console, and players with the `mf.updatenotice` permission (ops by default) see it when they join. The line names the new version, links the release, and gives a reason: a server on a version before 6.0.0 is told that the release fixes database corruption on shutdown (H2); otherwise it points at the release notes. Development builds such as `7.0.1-SNAPSHOT` are never told to "upgrade" to an older release, and pre-releases are never offered.
+
+Nothing about the server or its players is sent (the request carries only a `User-Agent` naming the plugin and its version, which GitHub requires), and nothing is downloaded or installed. A failed check (offline, timeout, rate limit) is silent and never delays startup.
+
+The check is on by default. To turn it off:
+
+- `update-check.enabled: false` in this plugin's `config.yml`
+- the environment variable `TRACE_USAGE_REPORTING=off` or `DO_NOT_TRACK=1`, the same switches that turn off usage reporting
