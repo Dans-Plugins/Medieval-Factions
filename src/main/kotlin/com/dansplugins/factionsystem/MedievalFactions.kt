@@ -1,5 +1,7 @@
 package com.dansplugins.factionsystem
 
+import com.dansplugins.factionsystem.addon.MfAddonDetector
+import com.dansplugins.factionsystem.addon.startupAddonsLine
 import com.dansplugins.factionsystem.api.MfApiServer
 import com.dansplugins.factionsystem.approval.MfApprovalRequestService
 import com.dansplugins.factionsystem.chat.JooqMfChatChannelMessageRepository
@@ -92,6 +94,7 @@ import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
 import com.dansplugins.factionsystem.service.Services
 import com.dansplugins.factionsystem.teleport.MfTeleportService
 import com.dansplugins.factionsystem.trace.TraceClient
+import com.dansplugins.factionsystem.update.MfUpdateNotifier
 import com.google.gson.Gson
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -101,6 +104,7 @@ import net.md_5.bungee.api.ChatColor.GREEN
 import net.md_5.bungee.api.ChatMessageType.ACTION_BAR
 import net.md_5.bungee.api.chat.TextComponent
 import org.bstats.bukkit.Metrics
+import org.bstats.charts.AdvancedPie
 import org.bstats.charts.SimplePie
 import org.bukkit.NamespacedKey
 import org.bukkit.boss.KeyedBossBar
@@ -240,6 +244,8 @@ class MedievalFactions : JavaPlugin() {
             .build()
         logUsageReportingState()
         trace.report("startup")
+        // newer-release notice for operators: one async check; see update-check in config.yml
+        MfUpdateNotifier(this).start()
         metrics.addCustomChart(
             SimplePie("average_claims") {
                 factionService.factions
@@ -304,6 +310,22 @@ class MedievalFactions : JavaPlugin() {
         metrics.addCustomChart(
             SimplePie("dpc_api_discord_link_set") {
                 (config.getString("dpc-api.discord-link")?.isNotEmpty() == true).toString()
+            }
+        )
+        val addonDetector = MfAddonDetector.forPluginManager(server.pluginManager)
+        metrics.addCustomChart(
+            AdvancedPie("installed_addons") {
+                addonDetector.installedAddonsChartData()
+            }
+        )
+        // Runs on the first tick, after every plugin is enabled, so add-ons that load after MF
+        // are seen. One-argument getter so the jar default applies if the key is missing.
+        server.scheduler.runTask(
+            this,
+            Runnable {
+                if (config.getBoolean("addons.suggestions")) {
+                    logger.info(startupAddonsLine(addonDetector.detect(), language))
+                }
             }
         )
 
