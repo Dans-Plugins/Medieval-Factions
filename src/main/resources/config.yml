@@ -316,5 +316,18 @@ usage-reporting:
   # runs the plugin -- and it cannot do anything except report as this
   # plugin. Empty means reporting is off regardless of the switch above.
   key: "2TI4ChnyxT8Ar4E4Zsnl20MEXBvo3IYVvhqUWVPpQdQ"
+# Update check. Once per startup, off the main thread, the plugin asks GitHub
+# for the latest Medieval Factions release (one unauthenticated GET to
+# https://api.github.com/repos/Dans-Plugins/Medieval-Factions/releases/latest).
+# If it is newer than the running version, one line goes to the console and to
+# players with the mf.updatenotice permission (ops by default) when they join.
+# Nothing about the server or its players is sent, and nothing is downloaded or
+# installed. A failed check (offline, timeout, rate limit) is silent and never
+# delays startup. Set enabled to false to turn it off.
+#
+# The check is also off when the environment variable
+# TRACE_USAGE_REPORTING=off or DO_NOT_TRACK=1 is set, as for usage reporting.
+update-check:
+  enabled: true
 dev:
   enableDevCommands: false

@@ -412,11 +412,15 @@ permissions:
   mf.addons:
     description: Allows listing known add-ons and related plugins, and which are installed (/mf addons)
     default: op
+  mf.updatenotice:
+    description: Tells the player on join when a newer Medieval Factions release is available
+    default: op
   mf.admin:
     description: Admin permission
     default: op
     children:
     - mf.force.*
+    - mf.updatenotice
     - mf.bypass
     - mf.relationship.view
     - mf.relationship.add

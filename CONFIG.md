@@ -22,6 +22,7 @@ This document provides detailed information about all configuration options avai
 - [DPC Community API](#dpc-community-api)
 - [Usage Reporting](#usage-reporting)
 - [Add-ons](#add-ons)
+- [Update Check](#update-check)
 
 ## General Settings
 
@@ -795,6 +796,17 @@ At startup, once every plugin has been enabled, Medieval Factions logs one conso
 **Type:** Boolean  
 **Default:** `true`  
 **Description:** Set to `false` to turn off the startup line, and to make `/mf addons` list only the add-ons that are installed, without suggesting others. This setting does not affect the `installed_addons` bStats chart, which follows the usual bStats opt-out (`plugins/bStats/config.yml`).
+
+---
+
+## Update Check
+
+Once per startup, off the main thread, the plugin makes one unauthenticated request to `https://api.github.com/repos/Dans-Plugins/Medieval-Factions/releases/latest`. If the latest published release is newer than the running version, one line goes to the console and to players with the `mf.updatenotice` permission (default: op) when they join, naming the new version, the release link and a short reason. Nothing about the server or its players is sent, and nothing is downloaded or installed. Failures (offline, timeout, rate limit) are silent and never delay startup. The environment variables `TRACE_USAGE_REPORTING=off` and `DO_NOT_TRACK=1` also turn the check off, and win over the setting below.
+
+### `update-check.enabled`
+**Type:** Boolean  
+**Default:** `true`  
+**Description:** Whether the plugin checks for a newer release on startup. Set to `false` to turn the check off. A server whose `config.yml` predates this key still checks: the plugin reads the bundled default and writes it into the file on the next start.
 
 ---
 
