@@ -8,7 +8,6 @@ import com.dansplugins.factionsystem.failure.ServiceFailure
 import com.dansplugins.factionsystem.failure.ServiceFailureType
 import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.mapFailure
-import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.result4k.resultFrom
 import org.bukkit.Material
 import java.util.concurrent.ConcurrentHashMap
@@ -37,13 +36,13 @@ class MfGateService(
         restrictedBlockMaterials = loadRestrictedBlocksFromConfig()
         plugin.logger.info("Loaded ${restrictedBlockMaterials.size} restricted block materials.")
 
-        plugin.server.scheduler.runTaskAsynchronously(
+        plugin.server.scheduler.runTask(
             plugin,
             Runnable {
                 try {
-                    updateGatesWithRestrictedBlocks()
+                    warnAboutGatesWithRestrictedMaterials()
                 } catch (e: Exception) {
-                    plugin.logger.log(SEVERE, "Error during gate material review:", e)
+                    plugin.logger.log(SEVERE, "Error during gate restricted material review:", e)
                 }
             }
         )
@@ -155,20 +154,21 @@ class MfGateService(
         }
     }
 
-    private fun updateGatesWithRestrictedBlocks() {
-        val gateService = plugin.services.gateService
-
-        gates.forEach { gate ->
-            if (gate.material in restrictedBlockMaterials) {
-                plugin.logger.info("Deleting gate with ID: ${gate.id} as it uses a restricted block material: ${gate.material}")
-
-                gateService.delete(gate.id).onFailure {
-                    plugin.logger.log(SEVERE, "Failed to delete gate with ID: ${gate.id}.") as Nothing
-                }
-            }
+    /**
+     * `gates.restrictedBlocks` is enforced only when a gate is created (#2071). Gates that already exist and are made
+     * of a restricted material (for example, gates created while the list loaded empty) are loaded and kept, and are
+     * named here once at startup so that admins can rebuild them. No gate data is changed or deleted.
+     */
+    internal fun warnAboutGatesWithRestrictedMaterials(): List<MfGate> {
+        val affected = gates.filter { it.material in restrictedBlockMaterials }
+        affected.forEach { gate ->
+            plugin.logger.warning(
+                "Gate ${gate.id.value} (faction ${gate.factionId.value}) is made of ${gate.material}, which is listed " +
+                    "in gates.restrictedBlocks. New gates of this material are refused. Consider removing and " +
+                    "rebuilding it from a different block. The gate has not been changed."
+            )
         }
-
-        plugin.logger.info("Gate material review and deletion completed.")
+        return affected
     }
 
     /**
@@ -190,7 +190,7 @@ class MfGateService(
     }
 
     private fun loadRestrictedBlocksFromConfig(): Set<Material> {
-        val blockNames = plugin.config.getStringList("gates.restrictedBlocks")
+        val blockNames = flattenMaterialNames(plugin.config.getList("gates.restrictedBlocks"))
         return blockNames.mapNotNull { blockName ->
             try {
                 Material.valueOf(blockName)
@@ -199,5 +199,20 @@ class MfGateService(
                 null
             }
         }.toSet()
+    }
+
+    companion object {
+        /**
+         * Reads a material-name list that may be nested. The bundled config.yml groups `gates.restrictedBlocks` with
+         * YAML anchors and aliases, so the value is a list of lists; Bukkit's `getStringList` skips the nested
+         * entries, which made the list load empty (#2071). Nested lists are flattened in order, other entries are
+         * converted to strings, and nulls are dropped. Duplicates are kept here; callers collect into a set.
+         */
+        internal fun flattenMaterialNames(raw: Any?): List<String> = when (raw) {
+            null -> emptyList()
+            is Iterable<*> -> raw.flatMap { flattenMaterialNames(it) }
+            is Array<*> -> raw.flatMap { flattenMaterialNames(it) }
+            else -> listOf(raw.toString())
+        }
     }
 }
