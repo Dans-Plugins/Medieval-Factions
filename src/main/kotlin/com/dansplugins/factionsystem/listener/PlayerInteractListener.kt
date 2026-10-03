@@ -5,6 +5,7 @@ import com.dansplugins.factionsystem.area.MfBlockPosition
 import com.dansplugins.factionsystem.area.MfCuboidArea
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.gate.MfGate
+import com.dansplugins.factionsystem.gate.MfGateBlockSafety
 import com.dansplugins.factionsystem.gate.MfGateCreationContext
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.ADDING_ACCESSOR
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.CHECKING_ACCESS
@@ -733,6 +734,32 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
                             }
                         ]}"
                     )
+                    restartGateCreation(player, ctx)
+                    return@syncValidations
+                }
+
+                // Gates only store a material and restore blocks with their default block data, so refuse blocks
+                // whose contents or player-chosen state would be destroyed by opening/closing the gate (#1255).
+                val blockSafety = plugin.services.gateService.blockSafety
+                val blockProblem = blocks.firstNotNullOfOrNull { position ->
+                    position.toBukkitBlock()?.let { blockSafety.check(it) }
+                }
+                if (blockProblem != null) {
+                    when (blockProblem) {
+                        is MfGateBlockSafety.Problem.DataHoldingBlock -> player.sendMessage(
+                            "$RED${plugin.language[
+                                "GateCreateDataHoldingBlock",
+                                blockProblem.material.toString().lowercase().replace('_', ' ')
+                            ]}"
+                        )
+                        is MfGateBlockSafety.Problem.NonDefaultState -> player.sendMessage(
+                            "$RED${plugin.language[
+                                "GateCreateNonDefaultBlockState",
+                                blockProblem.material.toString().lowercase().replace('_', ' '),
+                                blockProblem.properties.entries.joinToString { (key, value) -> "$key=$value" }
+                            ]}"
+                        )
+                    }
                     restartGateCreation(player, ctx)
                     return@syncValidations
                 }

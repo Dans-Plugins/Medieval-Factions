@@ -332,6 +332,7 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 - Minimum height: 3 blocks (default, configurable)
 - Maximum blocks: 64 (default, configurable)
 - Maximum gates per faction: 5 (default, configurable)
+- A gate remembers only its block type, and puts its blocks back in their default orientation when it closes. So gates cannot be made of blocks that hold contents or data (chests, barrels, hoppers, furnaces, shulker boxes, signs, banners and other block entities), whose contents would be destroyed when the gate opens, nor of blocks placed in a non-default orientation or state (top or sideways stairs, top/double slabs, sideways logs, door tops, player-placed leaves). Connections that follow neighbouring blocks (iron bars, fences, panes, walls, stair corners) are fine.
 
 ### `/gate remove` or `/tor remove`
 **Permission:** `mf.gate` (default: true)  

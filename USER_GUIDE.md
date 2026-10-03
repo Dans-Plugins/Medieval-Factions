@@ -548,6 +548,8 @@ If enemy faction is disbanded or surrenders, war ends automatically.
    - Must be at least 3 blocks high (configurable)
    - Maximum 64 blocks (configurable)
    - Cannot use restricted blocks (sand, gravel, torches, etc.)
+   - Cannot use blocks that hold contents or data (chests, barrels, hoppers, furnaces, shulker boxes, signs, banners, etc.): opening the gate would destroy what they hold
+   - Blocks must be in their default orientation (for example bottom stairs facing north, bottom slabs, upright logs), because a gate puts its blocks back that way when it closes; iron bars, fences, panes and walls are fine, since their connections follow their neighbours
    - Can be any shape (wall, door, portcullis, etc.)
 
 2. **Start gate creation**:
