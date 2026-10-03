@@ -1,5 +1,5 @@
 /*
- * trace-client 0.4.0 -- https://github.com/Stephenson-Software/trace-client-java
+ * trace-client 0.5.0 -- https://github.com/Stephenson-Software/trace-client-java
  *
  * One call to report that a program was used. Copy this file into a project as
  * is, or depend on the artifact; either way there is nothing else to add.
@@ -17,10 +17,12 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -77,6 +79,17 @@ import java.util.regex.Pattern;
  * {@code command} event can be tied to a release as well as a
  * {@code startup} one. An event's own {@code version} tag wins over it.
  *
+ * <p>Every event also carries a random per-installation ID as the tag
+ * {@code install}, so the trace server can count distinct servers rather
+ * than raw events. On a Spigot server it is the {@code server-id:} line of
+ * {@code plugins/trace/config.yml}, generated with
+ * {@link UUID#randomUUID()} and appended to that file the first time an
+ * enabled client finds none -- the same idea as bStats' {@code serverUuid}.
+ * Anything else may pass one with {@link Builder#installId(String)};
+ * without either, no {@code install} tag is sent. The ID is random: it
+ * names no person, account or address. A disabled client never generates
+ * or writes one. An event's own {@code install} tag wins over it.
+ *
  * <p>A disabled client is a no-op that costs nothing. Programs that run on
  * other people's machines should expose their own switch in their
  * configuration and say on startup whether reporting is on.
@@ -106,7 +119,7 @@ import java.util.regex.Pattern;
 public final class TraceClient {
 
     /** This client's version, as sent in the User-Agent. */
-    public static final String VERSION = "0.4.0";
+    public static final String VERSION = "0.5.0";
 
     /** How many reports may wait to be sent before new ones are dropped. */
     public static final int QUEUE_CAPACITY = 256;
@@ -131,6 +144,16 @@ public final class TraceClient {
     /** The server-wide switch, relative to the plugins directory. */
     static final String SERVER_WIDE_CONFIG_PATH = "trace" + File.separator + "config.yml";
 
+    /**
+     * Explains the {@code server-id:} line. Part of a freshly created file,
+     * and written above the line when it is appended to an existing one.
+     */
+    static final String SERVER_ID_COMMENT =
+            "#\n"
+            + "# server-id: a random ID made on first run and sent as the tag \"install\", so\n"
+            + "# trace can count servers, not events. It identifies no person and no IP\n"
+            + "# address. Delete the server-id line to get a new one.\n";
+
     /** Exactly what a missing server-wide switch file is created with. */
     static final String SERVER_WIDE_CONFIG_CONTENT =
             "# Server-wide switch for usage reporting by plugins that report to trace\n"
@@ -144,10 +167,15 @@ public final class TraceClient {
             + "# own tag of the same name wins. On a test or CI server, uncomment the two\n"
             + "# lines below so its events are left out of real-installation figures.\n"
             + "# tags:\n"
-            + "#   ci: \"true\"\n";
+            + "#   ci: \"true\"\n"
+            + SERVER_ID_COMMENT;
+
+    /** The tag every event carries the installation's ID as. */
+    static final String INSTALL_TAG = "install";
 
     private static final Pattern ENABLED_LINE = Pattern.compile("^\\s*enabled\\s*:\\s*(\\S+)");
     private static final Pattern TAGS_LINE = Pattern.compile("^tags\\s*:\\s*(#.*)?$");
+    private static final Pattern SERVER_ID_LINE = Pattern.compile("^server-id\\s*:(.*)$");
 
     // What the trace server accepts in a report's tags (MetricDto): at most
     // MAX_TAGS pairs, keys not blank, keys and values at most MAX_TAG_LENGTH
@@ -168,6 +196,7 @@ public final class TraceClient {
     private final Logger logger;
     private final String disabledReason; // null when enabled
     private final Map<String, String> serverWideTags; // never null; read once, at build()
+    private final String installId; // null when disabled or when there is none
     private final ThreadPoolExecutor executor; // null when disabled
 
     private TraceClient(Builder builder) {
@@ -181,6 +210,9 @@ public final class TraceClient {
                 : readServerWideConfig(builder.pluginsDirectory);
         this.disabledReason = disabledReason(builder, serverWide);
         this.serverWideTags = serverWide.tags;
+        // After the opt-outs, never before: a disabled client neither makes
+        // up an ID nor writes one to disk.
+        this.installId = disabledReason == null ? resolveInstallId(builder, serverWide) : null;
         if (disabledReason == null) {
             this.executor = new ThreadPoolExecutor(
                     1, 1, 30, TimeUnit.SECONDS,
@@ -228,6 +260,62 @@ public final class TraceClient {
         return disabledReason;
     }
 
+    /**
+     * The random per-installation ID every event carries as the tag
+     * {@code install}, or {@code null} when the client is disabled or has
+     * none (no {@link Builder#serverWideConfig(File)} and no
+     * {@link Builder#installId(String)}).
+     */
+    public String installId() {
+        return installId;
+    }
+
+    /**
+     * The installation's ID: the builder's, else the server-wide file's
+     * {@code server-id:}, else a new random one appended to that file. If the
+     * file could not be read or written, the new ID lives in memory for this
+     * process only. Never throws.
+     */
+    private String resolveInstallId(Builder builder, ServerWideConfig serverWide) {
+        if (builder.installId != null) {
+            return builder.installId;
+        }
+        if (builder.pluginsDirectory == null) {
+            return null;
+        }
+        if (serverWide.serverId != null) {
+            return serverWide.serverId;
+        }
+        String fresh = UUID.randomUUID().toString();
+        if (!serverWide.read) {
+            // A file that could not be read is not appended to: one that is
+            // there but unreadable would otherwise gain a line every start.
+            log("using an in-memory server-id for this process: server-wide config was not readable");
+            return fresh;
+        }
+        File location = new File(builder.pluginsDirectory, SERVER_WIDE_CONFIG_PATH);
+        try {
+            Path file = location.toPath();
+            byte[] existing = Files.readAllBytes(file);
+            StringBuilder block = new StringBuilder();
+            if (existing.length > 0 && existing[existing.length - 1] != '\n') {
+                block.append('\n');
+            }
+            if (!serverWide.created) {
+                block.append(SERVER_ID_COMMENT); // a fresh file already has it
+            }
+            block.append("server-id: ").append(fresh).append('\n');
+            Files.write(file, block.toString().getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
+            // Read back, so two clients racing on one file agree on the first line.
+            String written = parseServerWideConfig(Files.readAllLines(file, StandardCharsets.UTF_8)).serverId;
+            return written != null ? written : fresh;
+        } catch (IOException | RuntimeException failure) {
+            log("could not write server-id to server-wide config " + location
+                    + ", using an in-memory one for this process: " + failure);
+            return fresh;
+        }
+    }
+
     private static String disabledReason(Builder builder, ServerWideConfig serverWide) {
         if (environmentDisables()) {
             return REASON_ENVIRONMENT;
@@ -264,16 +352,31 @@ public final class TraceClient {
         return v.equals("1") || v.equals("true") || v.equals("yes");
     }
 
-    /** What {@code plugins/trace/config.yml} says: the switch and the server-wide tags. */
+    /** What {@code plugins/trace/config.yml} says: the switch, the server-wide tags and the server-id. */
     static final class ServerWideConfig {
-        static final ServerWideConfig NONE = new ServerWideConfig(false, Collections.<String, String>emptyMap());
+        /** No file was read: none was asked for, or it could not be read. */
+        static final ServerWideConfig NONE = new ServerWideConfig(false, Collections.<String, String>emptyMap(), null);
 
         final boolean disables;
         final Map<String, String> tags;
+        final String serverId; // null when the file has no usable server-id: line
+        final boolean read; // the file was read successfully
+        final boolean created; // ... and build() had just created it
 
-        ServerWideConfig(boolean disables, Map<String, String> tags) {
+        ServerWideConfig(boolean disables, Map<String, String> tags, String serverId) {
+            this(disables, tags, serverId, false, false);
+        }
+
+        private ServerWideConfig(boolean disables, Map<String, String> tags, String serverId, boolean read, boolean created) {
             this.disables = disables;
             this.tags = tags;
+            this.serverId = serverId;
+            this.read = read;
+            this.created = created;
+        }
+
+        ServerWideConfig readFromDisk(boolean created) {
+            return new ServerWideConfig(disables, tags, serverId, true, created);
         }
     }
 
@@ -286,16 +389,21 @@ public final class TraceClient {
      * nor stop the host program.
      */
     private ServerWideConfig readServerWideConfig(File pluginsDirectory) {
-        Path file = new File(pluginsDirectory, SERVER_WIDE_CONFIG_PATH).toPath();
+        File location = new File(pluginsDirectory, SERVER_WIDE_CONFIG_PATH);
         try {
+            // Inside the try: toPath() throws InvalidPathException for a path
+            // the file system cannot represent, and build() never throws.
+            Path file = location.toPath();
+            boolean created = false;
             if (!Files.exists(file)) {
                 Files.createDirectories(file.getParent());
                 Files.write(file, SERVER_WIDE_CONFIG_CONTENT.getBytes(StandardCharsets.UTF_8));
                 // just written: enabled: true, and the tags example commented out
+                created = true;
             }
-            return parseServerWideConfig(Files.readAllLines(file, StandardCharsets.UTF_8));
+            return parseServerWideConfig(Files.readAllLines(file, StandardCharsets.UTF_8)).readFromDisk(created);
         } catch (IOException | RuntimeException failure) {
-            log("could not read server-wide config " + file + ": " + failure);
+            log("could not read server-wide config " + location + ": " + failure);
             return ServerWideConfig.NONE;
         }
     }
@@ -309,10 +417,14 @@ public final class TraceClient {
      * lines indented differently from its first entry. Values may be bare,
      * double- or single-quoted. Entries the trace server would reject -- and
      * anything this reader does not understand -- are dropped, one by one,
-     * and at most {@link #MAX_TAGS} are kept; nothing here throws.
+     * and at most {@link #MAX_TAGS} are kept. The first {@code server-id:}
+     * line at column 0, outside a {@code tags:} block, whose value is a valid
+     * tag value made of {@code [A-Za-z0-9_.-]} is the installation's ID; any
+     * other is ignored. Nothing here throws.
      */
     static ServerWideConfig parseServerWideConfig(List<String> lines) {
         Boolean disables = null;
+        String serverId = null;
         Map<String, String> tags = new LinkedHashMap<>();
         boolean inTags = false;
         int entryIndent = -1;
@@ -342,6 +454,16 @@ public final class TraceClient {
                 entryIndent = -1;
                 continue;
             }
+            if (serverId == null) {
+                Matcher matcher = SERVER_ID_LINE.matcher(line);
+                if (matcher.matches()) {
+                    String value = scalar(matcher.group(1).trim());
+                    if (value != null && value.length() <= MAX_TAG_LENGTH && TAG_KEY.matcher(value).matches()) {
+                        serverId = value;
+                    }
+                    continue;
+                }
+            }
             if (disables == null) {
                 Matcher matcher = ENABLED_LINE.matcher(line);
                 if (matcher.find()) {
@@ -350,7 +472,8 @@ public final class TraceClient {
             }
         }
         return new ServerWideConfig(disables != null && disables,
-                tags.isEmpty() ? Collections.<String, String>emptyMap() : Collections.unmodifiableMap(tags));
+                tags.isEmpty() ? Collections.<String, String>emptyMap() : Collections.unmodifiableMap(tags),
+                serverId);
     }
 
     private static void addServerWideTag(Map<String, String> tags, String entry) {
@@ -490,6 +613,19 @@ public final class TraceClient {
         return merged;
     }
 
+    /**
+     * The tags plus {@code install}, unless they already carry one, there is
+     * no ID, or adding it would pass {@link #MAX_TAGS}. A copy when it adds.
+     */
+    static Map<String, String> withInstall(Map<String, String> tags, String installId) {
+        if (installId == null || tags.containsKey(INSTALL_TAG) || tags.size() >= MAX_TAGS) {
+            return tags;
+        }
+        Map<String, String> merged = new LinkedHashMap<>(tags);
+        merged.put(INSTALL_TAG, installId);
+        return merged;
+    }
+
     /** Reports that {@code name} happened. */
     public void report(String name) {
         report(name, null, null);
@@ -504,7 +640,7 @@ public final class TraceClient {
             return;
         }
         final String body = json(application, name, value,
-                withServerWideTags(withVersion(tags, version), serverWideTags));
+                withServerWideTags(withInstall(withVersion(tags, version), installId), serverWideTags));
         executor.execute(() -> send(body));
     }
 
@@ -641,6 +777,7 @@ public final class TraceClient {
         private String key;
         private boolean enabled = true;
         private File pluginsDirectory;
+        private String installId;
         private Logger logger;
 
         private Builder(String baseUrl, String application, String version) {
@@ -679,14 +816,19 @@ public final class TraceClient {
          * in a Bukkit plugin), {@link #build()} makes sure
          * {@code plugins/trace/config.yml} exists -- creating it with
          * {@code enabled: true} if it is missing -- and honours
-         * {@code enabled: false} in it. The file is never rewritten once it
-         * exists. Its optional {@code tags:} block is added to every event
-         * this client reports, below the event's own tags:
+         * {@code enabled: false} in it. Its optional {@code tags:} block is
+         * added to every event this client reports, below the event's own
+         * tags. Its {@code server-id:} line is sent as the tag
+         * {@code install}; when an enabled client finds none, it appends one
+         * -- a random UUID under a comment saying what it is -- and otherwise
+         * never changes the file. If that write fails, the ID is kept in
+         * memory for this process only:
          *
          * <pre>
          * enabled: true
          * tags:
          *   ci: "true"
+         * server-id: 0f8b6c1e-...
          * </pre>
          *
          * <p>Both are read once, here. Optional; programs that are not
@@ -694,6 +836,27 @@ public final class TraceClient {
          */
         public Builder serverWideConfig(File pluginsDirectory) {
             this.pluginsDirectory = pluginsDirectory;
+            return this;
+        }
+
+        /**
+         * The installation's ID, for programs that are not Spigot plugins:
+         * sent as the tag {@code install} on every event, so the trace
+         * server can count installations. It should be random -- e.g. a
+         * {@link UUID#randomUUID()} the program stores in its own
+         * configuration -- and never derived from a person, account or
+         * address. Takes precedence over the server-wide {@code server-id:}.
+         * Trimmed; {@code null} or blank means none. Without it, and without
+         * {@link #serverWideConfig(File)}, no {@code install} tag is sent.
+         *
+         * @throws IllegalArgumentException when longer than {@value TraceClient#MAX_TAG_LENGTH} characters
+         */
+        public Builder installId(String installId) {
+            String trimmed = installId == null ? null : installId.trim();
+            if (trimmed != null && trimmed.length() > MAX_TAG_LENGTH) {
+                throw new IllegalArgumentException("installId is longer than " + MAX_TAG_LENGTH + " characters");
+            }
+            this.installId = trimmed == null || trimmed.isEmpty() ? null : trimmed;
             return this;
         }
 
