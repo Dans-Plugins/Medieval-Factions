@@ -97,6 +97,10 @@ class PlayerMoveListener(private val plugin: MedievalFactions) : Listener {
                             plugin.logger.log(SEVERE, "Failed to delete chunk claim: ${it.reason.message}", it.reason.cause)
                             return@Runnable
                         }
+                        // The chunk is wilderness now, and claimService.delete has already shown the wilderness
+                        // indicator to players standing in it. Falling through would follow that with the faction's
+                        // own (stale) territory title, telling the player they are still on their own land.
+                        return@Runnable
                     }
                 }
                 if (newChunkClaim?.factionId?.value == oldChunkClaim?.factionId?.value) return@Runnable
