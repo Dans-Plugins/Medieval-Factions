@@ -114,6 +114,8 @@ class MfFactionKickCommand(private val plugin: MedievalFactions) : CommandExecut
                     return@Runnable
                 }
                 sender.sendMessage("$GREEN${plugin.language["CommandFactionKickSuccess", target.name ?: plugin.language["UnknownPlayer"], faction.name]}")
+                // Tell the removed player, if they are online, so the kick does not go unnoticed (#2072).
+                target.player?.sendMessage("$RED${plugin.language["CommandFactionKickKickedNotification", faction.name]}")
             }
         )
         return true

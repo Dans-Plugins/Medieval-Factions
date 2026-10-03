@@ -109,7 +109,12 @@ The main faction command can be accessed using any of the following aliases:
 - `/f set description "Our faction description"` - Sets faction description
 - `/f set prefix [TAG]` - Sets faction prefix
 
-**Notes:** With `mf.force.rename` (default: op), a faction name or ID can be given before the new name (`/f set name FactionName NewName`) to rename any faction, including one you are not in. When a faction is named this way, the target faction's own change-name role permission is not checked — the force permission replaces it, as with `mf.force.flag`. The base `mf.rename` node is still required. Quote a multi-word faction name (`/f set name "Old Name" NewName`).
+**Notes:** Without `mf.force.rename`, everything after `name` is the new name of your own faction, so `/f set name New Name` renames it to "New Name".
+
+With `mf.force.rename` (default: op), a faction name or ID can be given before the new name (`/f set name FactionName NewName`) to rename any faction, including one you are not in. When a faction is named this way, the target faction's own change-name role permission is not checked — the force permission replaces it, as with `mf.force.flag`. The base `mf.rename` node is still required. For holders of `mf.force.rename`, the arguments are read by their shape alone, never by whether a faction happens to exist:
+- One argument renames your own faction. To give your own faction a name with spaces, quote it: `/f set name "New Name"`.
+- Two or more arguments are always a target faction followed by the new name: `/f set name FactionName New Name`. Quote a multi-word faction name (`/f set name "Old Name" NewName`), or give its ID.
+- A target that matches no faction is refused with a hint; it never falls back to renaming your own faction (as with `/f kick` and `/f unclaimall`). For example, `/f set name Xlnd NewName` with no faction called "Xlnd" changes nothing.
 
 ### `/faction flag [list|set]` or `/f flag [list|set]`
 **Permissions:** 
@@ -180,10 +185,11 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Admin usage:** with `mf.force.unclaim` (default: op), `/f unclaimall FactionName` unclaims all land owned by the named faction (name or ID), without disbanding it and without checking that faction's role permissions. A name that matches no faction is refused; it never falls back to your own faction.  
 **Notes:** This action requires confirmation and cannot be undone. Run without `confirm`, the command removes nothing: it reports how many chunks the faction holds and offers a **[Confirm]** button, which re-runs it with `confirm` appended (for the admin form, the button names the faction by ID). Adding `confirm` as the last argument yourself (`/f unclaimall confirm`, `/f unclaimall FactionName confirm`) unclaims immediately.
 
-### `/faction checkclaim` or `/f checkclaim`
-**Permission:** `mf.checkclaim` or `mf.claim.check` (default: true)  
+### `/faction claim check` or `/f claim check`
+**Permission:** `mf.claim.check` or `mf.checkclaim` (default: true)  
 **Description:** Displays information about who owns the chunk you are standing in.  
-**Usage:** `/f checkclaim`
+**Usage:** `/f claim check`  
+**Notes:** There is no top-level `/f checkclaim` command; `mf.checkclaim` is only an alternative permission node for `/f claim check`.
 
 ### `/faction map [normal|diplomatic]` or `/f map [normal|diplomatic]`
 **Permission:** `mf.map` (default: true)  

@@ -51,6 +51,7 @@ class MfFactionSetNameCommandTest {
     private lateinit var playerService: MfPlayerService
     private lateinit var language: Language
     private lateinit var rivals: MfFaction
+    private lateinit var adminCo: MfFaction
     private lateinit var uut: MfFactionSetNameCommand
 
     @BeforeEach
@@ -63,6 +64,7 @@ class MfFactionSetNameCommandTest {
         mockLanguageSystem()
         mockConfig()
         mockRivals()
+        mockAdminCo()
         uut = MfFactionSetNameCommand(plugin)
     }
 
@@ -130,6 +132,112 @@ class MfFactionSetNameCommandTest {
         verify(player).sendMessage("${ChatColor.RED}No faction permission")
     }
 
+    // #2070: with mf.force.rename, two or more arguments always name a target faction, and an unknown one is refused
+    // instead of falling back to renaming the sender's own faction to the whole argument string.
+
+    @Test
+    fun testOnCommand_forceRenameNamingAnUnknownFactionIsRefusedAndDoesNotRenameTheSendersOwnFaction() {
+        // prepare — the exact repro from #2070: an op who leads AdminCo runs /f set name Xlnd NewName, no faction Xlnd
+        val player = fixture.player
+        stubSender(player, forceRename = true)
+        stubSenderLeadsAdminCo()
+        `when`(language["CommandFactionSetNameInvalidFaction", "Xlnd", "Xlnd NewName"]).thenReturn("No faction Xlnd")
+
+        // execute
+        val result = uut.onCommand(player, fixture.command, "label", arrayOf("Xlnd", "NewName"))
+
+        // verify
+        assertTrue(result)
+        verify(factionService, never()).save(anyFaction())
+        verify(adminCo, never()).getRole(senderMfPlayer.id)
+        verify(player).sendMessage("${ChatColor.RED}No faction Xlnd")
+    }
+
+    @Test
+    fun testOnCommand_forceRenameNamingAnUnknownQuotedFactionIsRefused() {
+        // prepare
+        val player = fixture.player
+        stubSender(player, forceRename = true)
+        stubSenderLeadsAdminCo()
+        `when`(language["CommandFactionSetNameInvalidFaction", "No Such", "No Such NewName"]).thenReturn("No faction No Such")
+
+        // execute
+        uut.onCommand(player, fixture.command, "label", arrayOf("\"No", "Such\"", "NewName"))
+
+        // verify
+        verify(factionService, never()).save(anyFaction())
+        verify(player).sendMessage("${ChatColor.RED}No faction No Such")
+    }
+
+    @Test
+    fun testOnCommand_forceRenameCanNameTheTargetFactionByItsId() {
+        // prepare
+        val player = fixture.player
+        stubSender(player, forceRename = true)
+        stubSenderLeadsAdminCo()
+        `when`(factionService.getFaction(rivalsId)).thenReturn(rivals)
+        `when`(language["CommandFactionSetNameSuccess", "New Name"]).thenReturn("Renamed")
+
+        // execute
+        uut.onCommand(player, fixture.command, "label", arrayOf(rivalsId.value, "New", "Name"))
+
+        // verify — the named faction is renamed under the force permission; the sender's own is not consulted
+        verify(factionService).save(anyFaction())
+        verify(adminCo, never()).getRole(senderMfPlayer.id)
+        verify(player).sendMessage("${ChatColor.GREEN}Renamed")
+    }
+
+    @Test
+    fun testOnCommand_forcePermissionHolderRenamesTheirOwnFactionToAQuotedMultiWordName() {
+        // prepare — /f set name "Xlnd NewName" is the force holder's way to give their own faction a name with spaces
+        val player = fixture.player
+        stubSender(player, forceRename = true)
+        stubSenderLeadsAdminCo()
+        `when`(language["CommandFactionSetNameSuccess", "Xlnd NewName"]).thenReturn("Renamed")
+
+        // execute
+        uut.onCommand(player, fixture.command, "label", arrayOf("\"Xlnd", "NewName\""))
+
+        // verify — the own-faction path, with its role check, is taken
+        verify(adminCo).getRole(senderMfPlayer.id)
+        verify(factionService).save(anyFaction())
+        verify(player).sendMessage("${ChatColor.GREEN}Renamed")
+    }
+
+    @Test
+    fun testOnCommand_withoutForcePermissionAPlainMultiWordRenameOfTheOwnFactionStillWorks() {
+        // prepare — the same words as the #2070 repro, from a member without mf.force.rename: the whole text is the
+        // new name of their own faction, as before
+        val player = fixture.player
+        stubSender(player, forceRename = false)
+        stubSenderLeadsAdminCo()
+        `when`(language["CommandFactionSetNameSuccess", "Xlnd NewName"]).thenReturn("Renamed")
+
+        // execute
+        uut.onCommand(player, fixture.command, "label", arrayOf("Xlnd", "NewName"))
+
+        // verify
+        verify(adminCo).getRole(senderMfPlayer.id)
+        verify(factionService).save(anyFaction())
+        verify(player).sendMessage("${ChatColor.GREEN}Renamed")
+    }
+
+    @Test
+    fun testOnCommand_withoutForcePermissionAnExistingFactionNameIsPartOfTheNewNameNotATarget() {
+        // prepare — "Rivals Reborn" from a member of AdminCo without mf.force.rename never touches Rivals
+        val player = fixture.player
+        stubSender(player, forceRename = false)
+        stubSenderLeadsAdminCo()
+        `when`(language["CommandFactionSetNameSuccess", "Rivals Reborn"]).thenReturn("Renamed")
+
+        // execute
+        uut.onCommand(player, fixture.command, "label", arrayOf("Rivals", "Reborn"))
+
+        // verify
+        verify(adminCo).getRole(senderMfPlayer.id)
+        verify(player).sendMessage("${ChatColor.GREEN}Renamed")
+    }
+
     // Helper functions
 
     /**
@@ -153,6 +261,20 @@ class MfFactionSetNameCommandTest {
         `when`(senderRole.hasPermission(rivals, changeNamePermission)).thenReturn(canRename)
         `when`(factionService.getFaction(senderMfPlayer.id)).thenReturn(rivals)
         `when`(rivals.getRole(senderMfPlayer.id)).thenReturn(senderRole)
+    }
+
+    private fun stubSenderLeadsAdminCo() {
+        val senderRole = mock(MfFactionRole::class.java)
+        `when`(senderRole.hasPermission(adminCo, changeNamePermission)).thenReturn(true)
+        `when`(factionService.getFaction(senderMfPlayer.id)).thenReturn(adminCo)
+        `when`(adminCo.getRole(senderMfPlayer.id)).thenReturn(senderRole)
+    }
+
+    private fun mockAdminCo() {
+        adminCo = mock(MfFaction::class.java)
+        `when`(adminCo.id).thenReturn(MfFactionId.generate())
+        `when`(adminCo.name).thenReturn("AdminCo")
+        `when`(factionService.getFaction("AdminCo")).thenReturn(adminCo)
     }
 
     private fun mockRivals() {

@@ -82,20 +82,36 @@ class MfFactionSetNameCommand(private val plugin: MedievalFactions) : CommandExe
                         return@Runnable
                     }
                 val factionService = plugin.services.factionService
-                var faction: MfFaction? = null
-                var name = ""
-                var isForced = false
-                if (hasForcePermission) {
-                    val unquotedArgs = args.unquote()
-                    if (unquotedArgs.size > 1) {
-                        faction = factionService.getFaction(MfFactionId(unquotedArgs[0])) ?: factionService.getFaction(unquotedArgs[0])
-                        name = unquotedArgs.drop(1).joinToString(" ")
-                        isForced = faction != null
+                val faction: MfFaction?
+                val name: String
+                val isForced: Boolean
+                // With mf.force.rename the shape of the arguments alone decides the target, never whether a faction
+                // happens to exist: one (possibly quoted) argument renames the sender's own faction, while two or more
+                // name a target faction (by ID or name, quoted if it has spaces) followed by the new name. A target
+                // that does not resolve is refused rather than falling back to the sender's own faction, which would
+                // rename it to the whole argument string (#2070), matching how /f kick and /f unclaimall treat an
+                // unknown faction. Without the permission, every argument is the new name of the sender's own faction.
+                val unquotedArgs = if (hasForcePermission) args.unquote() else emptyArray()
+                if (unquotedArgs.size > 1) {
+                    val targetFactionName = unquotedArgs[0]
+                    faction = factionService.getFaction(MfFactionId(targetFactionName)) ?: factionService.getFaction(targetFactionName)
+                    if (faction == null) {
+                        player.sendMessage(
+                            "$RED${plugin.language[
+                                "CommandFactionSetNameInvalidFaction",
+                                targetFactionName,
+                                unquotedArgs.joinToString(" ")
+                            ]}"
+                        )
+                        return@Runnable
                     }
-                }
-                if (faction == null) {
+                    name = unquotedArgs.drop(1).joinToString(" ")
+                    isForced = true
+                } else {
                     faction = factionService.getFaction(mfPlayer.id)
-                    name = args.joinToString(" ")
+                    // A single quoted argument (/f set name "New Name") is unquoted; anything else keeps the raw text.
+                    name = unquotedArgs.singleOrNull()?.takeIf { it.isNotBlank() } ?: args.joinToString(" ")
+                    isForced = false
                 }
                 if (name.length > maxFactionNameLength) {
                     player.sendMessage("$RED${plugin.language["CommandFactionSetNameNameTooLong", maxFactionNameLength.toString()]}")
