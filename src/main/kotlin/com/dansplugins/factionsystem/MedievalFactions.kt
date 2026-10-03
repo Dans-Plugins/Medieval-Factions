@@ -92,6 +92,7 @@ import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
 import com.dansplugins.factionsystem.service.Services
 import com.dansplugins.factionsystem.teleport.MfTeleportService
 import com.dansplugins.factionsystem.trace.TraceClient
+import com.dansplugins.factionsystem.update.MfUpdateNotifier
 import com.google.gson.Gson
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -240,6 +241,8 @@ class MedievalFactions : JavaPlugin() {
             .build()
         logUsageReportingState()
         trace.report("startup")
+        // newer-release notice for operators: one async check; see update-check in config.yml
+        MfUpdateNotifier(this).start()
         metrics.addCustomChart(
             SimplePie("average_claims") {
                 factionService.factions
