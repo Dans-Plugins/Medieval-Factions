@@ -30,8 +30,6 @@ import com.dansplugins.factionsystem.storage.json.JsonStorageManager
 import com.dansplugins.factionsystem.storage.migration.DatabaseToJsonMigrator
 import com.dansplugins.factionsystem.storage.migration.JsonToDatabaseMigrator
 import com.google.gson.Gson
-import com.zaxxer.hikari.HikariConfig
-import com.zaxxer.hikari.HikariDataSource
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
 import org.bukkit.ChatColor.YELLOW
@@ -104,19 +102,12 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
 
                     // Initialize database repositories
                     plugin.logger.info("Initializing database repositories...")
-                    val jdbcUrl = MfJdbc.hardenUrl(databaseUrl)
-                    MfJdbc.preloadDriver(jdbcUrl)
-                    val hikariConfig = HikariConfig()
-                    hikariConfig.jdbcUrl = jdbcUrl
-                    val databaseUsername = plugin.config.getString("database.username")
-                    if (databaseUsername != null) {
-                        hikariConfig.username = databaseUsername
-                    }
-                    val databasePassword = plugin.config.getString("database.password")
-                    if (databasePassword != null) {
-                        hikariConfig.password = databasePassword
-                    }
-                    val dataSource = HikariDataSource(hikariConfig)
+                    val dataSource = MfJdbc.openDataSource(
+                        databaseUrl,
+                        plugin.config.getString("database.username"),
+                        plugin.config.getString("database.password"),
+                        plugin.logger
+                    )
 
                     try {
                         val oldClassLoader = Thread.currentThread().contextClassLoader
@@ -262,19 +253,12 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
 
                     // Initialize database repositories
                     plugin.logger.info("Initializing database repositories...")
-                    val jdbcUrl = MfJdbc.hardenUrl(databaseUrl)
-                    MfJdbc.preloadDriver(jdbcUrl)
-                    val hikariConfig = HikariConfig()
-                    hikariConfig.jdbcUrl = jdbcUrl
-                    val databaseUsername = plugin.config.getString("database.username")
-                    if (databaseUsername != null) {
-                        hikariConfig.username = databaseUsername
-                    }
-                    val databasePassword = plugin.config.getString("database.password")
-                    if (databasePassword != null) {
-                        hikariConfig.password = databasePassword
-                    }
-                    val dataSource = HikariDataSource(hikariConfig)
+                    val dataSource = MfJdbc.openDataSource(
+                        databaseUrl,
+                        plugin.config.getString("database.username"),
+                        plugin.config.getString("database.password"),
+                        plugin.logger
+                    )
 
                     try {
                         val oldClassLoader = Thread.currentThread().contextClassLoader
