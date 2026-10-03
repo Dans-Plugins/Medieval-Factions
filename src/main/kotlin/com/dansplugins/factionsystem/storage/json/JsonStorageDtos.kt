@@ -87,6 +87,7 @@ internal data class JsonFactionDto(
     val home: JsonPositionDto? = null,
     val bonusPower: Double = 0.0,
     val autoclaim: Boolean = false,
+    val autounclaim: Boolean = false,
     val roles: JsonFactionRolesDto,
     val defaultPermissionsByName: Map<String, Boolean> = emptyMap(),
     val applications: List<JsonFactionApplicationDto> = emptyList()
@@ -126,6 +127,7 @@ internal fun MfFaction.toDto() = JsonFactionDto(
     home = home?.toDto(),
     bonusPower = bonusPower,
     autoclaim = autoclaim,
+    autounclaim = autounclaim,
     roles = roles.toDto(),
     defaultPermissionsByName = defaultPermissionsByName,
     applications = applications.map { JsonFactionApplicationDto(it.applicantId.value) }
@@ -194,6 +196,7 @@ internal fun JsonFactionDto.toDomain(plugin: MedievalFactions): MfFaction {
         home = home?.toDomain(),
         bonusPower = bonusPower,
         autoclaim = autoclaim,
+        autounclaim = autounclaim,
         roles = factionRoles,
         defaultPermissionsByName = defaultPermissionsByName,
         applications = applications.map { MfFactionApplication(factionId, MfPlayerId(it.playerId)) }

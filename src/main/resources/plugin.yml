@@ -224,6 +224,12 @@ permissions:
   mf.unclaim:
     description: Allows unclaiming land
     default: true
+  mf.unclaim.auto:
+    description: Allows toggling autounclaim for your faction
+    default: true
+  mf.autounclaim:
+    description: Allows toggling autounclaim for your faction
+    default: true
   mf.unclaimall:
     description: Allows unclaiming all land
     default: true

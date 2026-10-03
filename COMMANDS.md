@@ -163,7 +163,15 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 - `/f unclaim` - Unclaims the current chunk
 - `/f unclaim 2` - Unclaims chunks in a 2-chunk radius
 
-**Notes:** With `mf.force.unclaim` (default: op), a faction name or ID can be given before the radius (`/f unclaim FactionName [radius]`) to unclaim that faction's land around you, whether or not you are a member. Only chunks held by the named faction are removed — even with bypass mode on — and the target faction's own unclaim role permission is not checked. A lone number is always read as a radius. Quote a multi-word faction name.
+**Notes:** With `mf.force.unclaim` (default: op), a faction name or ID can be given before the radius (`/f unclaim FactionName [radius]`) to unclaim that faction's land around you, whether or not you are a member. Only chunks held by the named faction are removed — even with bypass mode on — and the target faction's own unclaim role permission is not checked. A lone number is always read as a radius. Quote a multi-word faction name. A faction named `auto` must be given by its ID, because `/f unclaim auto` toggles automatic unclaiming.
+
+### `/faction unclaim auto` or `/f unclaim auto`
+**Permission:** `mf.unclaim.auto` or `mf.autounclaim` (default: true)  
+**Description:** Toggles automatic unclaiming. When enabled, chunks claimed by your faction are automatically unclaimed as you walk through them.  
+**Usage:** `/f unclaim auto`  
+**Notes:** 
+- Requires the `TOGGLE_AUTOUNCLAIM` faction role permission to toggle.
+- While enabled, a chunk is only unclaimed for a member whose role has the `UNCLAIM` faction permission and who holds `mf.unclaim`.
 
 ### `/faction unclaimall` or `/f unclaimall`
 **Permission:** `mf.unclaimall` (default: true)  

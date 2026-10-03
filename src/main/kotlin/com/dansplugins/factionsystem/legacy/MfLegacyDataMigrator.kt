@@ -205,6 +205,7 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
                     },
                     bonusPower,
                     false,
+                    false,
                     roles
                 )
             ).onFailure {
