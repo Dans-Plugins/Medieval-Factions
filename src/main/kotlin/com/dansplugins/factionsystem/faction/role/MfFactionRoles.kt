@@ -57,7 +57,7 @@ data class MfFactionRoles(
             val owner = MfFactionRole(
                 plugin,
                 id = ownerId,
-                name = "Owner",
+                name = OWNER_ROLE_NAME,
                 permissionsByName = buildMap {
                     put(plugin.factionPermissions.addLaw.name, true)
                     put(plugin.factionPermissions.editLaw.name, true)
@@ -120,6 +120,49 @@ data class MfFactionRoles(
             )
             return MfFactionRoles(member.id, listOf(owner, officer, member))
         }
+
+        /**
+         * Builds a replacement for the default "Owner" role, for a faction that no longer has one (for example because
+         * its members deleted it, see https://github.com/Dans-Plugins/Medieval-Factions/issues/1797).
+         *
+         * The permissions come from the Owner role in [defaults], so a recreated owner can do exactly what a new
+         * faction's owner can. The template's role-scoped permissions (viewing, modifying, assigning and deleting a
+         * role, and setting permissions that name a role) refer to the template's own Member and Officer roles, which
+         * do not exist in [existingRoles], so they are dropped and re-granted over the faction's actual roles plus the
+         * new owner role itself, in the same way [defaults] grants them.
+         */
+        fun recreateOwner(plugin: MedievalFactions, factionId: MfFactionId, existingRoles: List<MfFactionRole>): MfFactionRole {
+            val template = defaults(plugin, factionId)
+            val templateOwner = template.single { it.name == OWNER_ROLE_NAME }
+            val templateRoleIds = template.map { it.id.value }
+            val ownerId = MfFactionRoleId.generate()
+            val roleIds = existingRoles.map { it.id } + ownerId
+            val permissions = plugin.factionPermissions
+            return MfFactionRole(
+                plugin,
+                id = ownerId,
+                name = OWNER_ROLE_NAME,
+                permissionsByName = buildMap {
+                    putAll(
+                        templateOwner.permissionsByName.filterKeys { permissionName ->
+                            templateRoleIds.none { templateRoleId -> permissionName.contains(templateRoleId) }
+                        }
+                    )
+                    roleIds.forEach { roleId ->
+                        put(permissions.viewRole(roleId).name, true)
+                        put(permissions.modifyRole(roleId).name, true)
+                        put(permissions.setMemberRole(roleId).name, true)
+                        put(permissions.deleteRole(roleId).name, true)
+                    }
+                    putAll(
+                        permissions.permissionsFor(factionId, roleIds)
+                            .map { permission -> permissions.setRolePermission(permission).name to true }
+                    )
+                }
+            )
+        }
+
+        const val OWNER_ROLE_NAME = "Owner"
     }
 
     @JvmName("getRoleByRoleId")
