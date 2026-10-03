@@ -23,7 +23,15 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
             .map { it.toDomain() }
 
     override fun upsert(player: MfPlayer): MfPlayer {
-        val rowCount = dsl.insertInto(MF_PLAYER)
+        // The conflict is signalled with null rather than thrown inside the transaction: jOOQ
+        // wraps a checked exception thrown there in a DataAccessException, which would hide the
+        // OptimisticLockingFailureException from MfPlayerService's CONFLICT mapping.
+        return upsertIfCurrent(player) ?: throw OptimisticLockingFailureException("Invalid version: ${player.version}")
+    }
+
+    private fun upsertIfCurrent(player: MfPlayer): MfPlayer? = dsl.transactionResult { config ->
+        val transactionalDsl = config.dsl()
+        val rowCount = transactionalDsl.insertInto(MF_PLAYER)
             .set(MF_PLAYER.ID, player.id.value)
             .set(MF_PLAYER.VERSION, 1)
             .set(MF_PLAYER.NAME, player.name)
@@ -39,11 +47,29 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
             .set(MF_PLAYER.CHAT_CHANNEL, player.chatChannel?.name)
             .set(MF_PLAYER.VERSION, player.version + 1)
             .where(MF_PLAYER.ID.eq(player.id.value))
-            .and(MF_PLAYER.VERSION.eq(MF_PLAYER.VERSION))
+            .and(MF_PLAYER.VERSION.eq(player.version))
             .execute()
-        if (rowCount == 0) throw OptimisticLockingFailureException("Invalid version: ${player.version}")
-        return getPlayer(player.id).let(::requireNotNull)
+        if (rowCount == 0) return@transactionResult null
+        val stored = transactionalDsl.selectFrom(MF_PLAYER)
+            .where(MF_PLAYER.ID.eq(player.id.value))
+            .fetchOne()
+            .let(::requireNotNull)
+            .toDomain()
+        // On MySQL and MariaDB, jOOQ emulates the guarded update with CASE expressions, and the
+        // driver's default found-rows reporting counts a skipped update as one row, so rowCount
+        // alone does not reveal a stale write there. The row is read back inside the same
+        // transaction (the write holds its row lock), so a row that does not hold what was just
+        // written means the write was skipped. The name is left out of the comparison: it is
+        // display data refreshed on every login, and a database that truncates an over-long
+        // name (`name` is varchar(16)) must not turn every save of that player into a conflict.
+        return@transactionResult stored.takeIf { it.holdsValuesOf(player) }
     }
+
+    private fun MfPlayer.holdsValuesOf(written: MfPlayer) =
+        power == written.power &&
+            powerAtLogout == written.powerAtLogout &&
+            isBypassEnabled == written.isBypassEnabled &&
+            chatChannel == written.chatChannel
 
     override fun increaseOnlinePlayerPower(onlinePlayerIds: List<MfPlayerId>) {
         val minPower = plugin.config.getDouble("players.minPower")
