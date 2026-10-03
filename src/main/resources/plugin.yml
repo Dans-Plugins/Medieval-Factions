@@ -360,7 +360,7 @@ permissions:
     description: Allows joining a faction without being invited
     default: op
   mf.force.kick:
-    description: Allows kicking a member from another faction
+    description: Allows kicking a member from another faction (/f kick <faction> <player>), bypassing that faction's role permissions
     default: op
   mf.force.bonuspower:
     description: Allows setting faction bonus power
@@ -369,16 +369,16 @@ permissions:
     description: Allows setting player power
     default: op
   mf.force.rename:
-    description: Allows forcing faction renames
+    description: Allows renaming another faction (/f set name <faction> <name>), bypassing that faction's role permissions
     default: op
   mf.force.unlock:
     description: Allows unlocking other players' locked blocks
     default: op
   mf.force.claim:
-    description: Allows claiming land for other factions
+    description: Allows claiming land for other factions (/f claim <faction> [radius]), bypassing their role permissions
     default: op
   mf.force.unclaim:
-    description: Allows unclaiming land for other factions
+    description: Allows unclaiming land of other factions (/f unclaim <faction> [radius], /f unclaimall <faction>), bypassing their role permissions
     default: op
   mf.force.flag:
     description: Allows setting flags for other factions
@@ -415,6 +415,9 @@ permissions:
   mf.migrate:
     description: Allows migrating faction data between the database and JSON storage backends
     default: op
+  mf.addons:
+    description: Allows listing known add-ons and related plugins, and which are installed (/mf addons)
+    default: op
   mf.updatenotice:
     description: Tells the player on join when a newer Medieval Factions release is available
     default: op
@@ -433,3 +436,4 @@ permissions:
     - mf.admin.setleader
     - mf.approve
     - mf.migrate
+    - mf.addons

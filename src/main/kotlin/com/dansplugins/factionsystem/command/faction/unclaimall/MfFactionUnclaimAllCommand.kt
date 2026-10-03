@@ -1,6 +1,8 @@
 package com.dansplugins.factionsystem.command.faction.unclaimall
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.command.unquote
+import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
@@ -22,6 +24,10 @@ class MfFactionUnclaimAllCommand(private val plugin: MedievalFactions) : Command
             sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimAllNotAPlayer"]}")
             return true
         }
+        // With mf.force.unclaim, a faction name or ID may be given to unclaim all of that faction's land
+        // (/f unclaimall <faction>). Without the permission, any arguments are ignored, as before.
+        val hasForcePermission = sender.hasPermission("mf.force.unclaim")
+        val targetFactionName = if (hasForcePermission && args.isNotEmpty()) args.unquote().joinToString(" ") else null
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
@@ -33,15 +39,26 @@ class MfFactionUnclaimAllCommand(private val plugin: MedievalFactions) : Command
                         return@Runnable
                     }
                 val factionService = plugin.services.factionService
-                val faction = factionService.getFaction(mfPlayer.id)
-                if (faction == null) {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimAllMustBeInAFaction"]}")
-                    return@Runnable
-                }
-                val role = faction.getRole(mfPlayer.id)
-                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.unclaim)) {
-                    sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimAllNoFactionPermission"]}")
-                    return@Runnable
+                val faction = if (targetFactionName != null) {
+                    // An explicitly named faction is only reachable with mf.force.unclaim, which replaces the
+                    // faction's own role check, matching how mf.force.flag is honoured. A name that does not resolve
+                    // is refused rather than falling back to the sender's own faction.
+                    factionService.getFaction(MfFactionId(targetFactionName)) ?: factionService.getFaction(targetFactionName) ?: run {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimAllInvalidFaction", targetFactionName]}")
+                        return@Runnable
+                    }
+                } else {
+                    val ownFaction = factionService.getFaction(mfPlayer.id)
+                    if (ownFaction == null) {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimAllMustBeInAFaction"]}")
+                        return@Runnable
+                    }
+                    val role = ownFaction.getRole(mfPlayer.id)
+                    if (role == null || !role.hasPermission(ownFaction, plugin.factionPermissions.unclaim)) {
+                        sender.sendMessage("$RED${plugin.language["CommandFactionUnclaimAllNoFactionPermission"]}")
+                        return@Runnable
+                    }
+                    ownFaction
                 }
                 val claimService = plugin.services.claimService
                 claimService.deleteAllClaims(faction.id).onFailure {

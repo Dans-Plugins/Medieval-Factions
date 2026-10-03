@@ -17,7 +17,8 @@ import java.util.logging.Level.SEVERE
 class MfGateService(
     private val plugin: MedievalFactions,
     private val gateRepo: MfGateRepository,
-    private val gateCreationContextRepo: MfGateCreationContextRepository
+    private val gateCreationContextRepo: MfGateCreationContextRepository,
+    val blockSafety: MfGateBlockSafety = MfGateBlockSafety()
 ) {
 
     private val gatesById: MutableMap<MfGateId, MfGate> = ConcurrentHashMap()
@@ -43,6 +44,17 @@ class MfGateService(
                     updateGatesWithRestrictedBlocks()
                 } catch (e: Exception) {
                     plugin.logger.log(SEVERE, "Error during gate material review:", e)
+                }
+            }
+        )
+
+        plugin.server.scheduler.runTask(
+            plugin,
+            Runnable {
+                try {
+                    warnAboutGatesWithDataHoldingMaterials()
+                } catch (e: Exception) {
+                    plugin.logger.log(SEVERE, "Error during gate data-holding material review:", e)
                 }
             }
         )
@@ -157,6 +169,24 @@ class MfGateService(
         }
 
         plugin.logger.info("Gate material review and deletion completed.")
+    }
+
+    /**
+     * Gates made of block-entity materials (chests, barrels, hoppers, ...) lose the blocks' contents whenever
+     * they open, because a gate only stores a material (#1255). New gates of such materials are refused at
+     * creation; gates created before that check are still loaded and work as before, but are named here once at
+     * startup so that admins can rebuild them. No gate data is changed.
+     */
+    internal fun warnAboutGatesWithDataHoldingMaterials(): List<MfGate> {
+        val affected = gates.filter { blockSafety.isDataHoldingMaterial(it.material) == true }
+        affected.forEach { gate ->
+            plugin.logger.warning(
+                "Gate ${gate.id.value} (faction ${gate.factionId.value}) is made of ${gate.material}, which holds " +
+                    "contents or data that is lost every time the gate opens. Consider removing and rebuilding it " +
+                    "from a different block. The gate has not been changed."
+            )
+        }
+        return affected
     }
 
     private fun loadRestrictedBlocksFromConfig(): Set<Material> {

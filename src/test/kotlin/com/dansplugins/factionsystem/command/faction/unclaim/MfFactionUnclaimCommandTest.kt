@@ -168,6 +168,141 @@ class MfFactionUnclaimCommandTest {
     }
 
     @Test
+    fun testOnCommand_forceUnclaimRemovesANamedFactionsClaimWithoutMembership() {
+        // prepare — an admin who is in no faction names another faction; mf.force.unclaim replaces that faction's
+        // role check. See https://github.com/Dans-Plugins/Medieval-Factions/issues/1987.
+        val player = fixture.player
+        val command = fixture.command
+        val worldId = UUID.randomUUID()
+        val rivals = stubNamedFaction("Rivals")
+        stubAdminWithoutFaction(player, forceUnclaim = true)
+        stubSenderChunk(player, worldId, 0, 0)
+        val claim = stubClaimOwnedBy(worldId, 0, 0, rivals.id)
+        `when`(language["CommandFactionUnclaimSuccess", "1"]).thenReturn("Unclaimed 1 chunk")
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf("Rivals"))
+        runPendingTasks()
+
+        // verify
+        assertTrue(result)
+        verify(claimService).delete(claim)
+        verify(player).sendMessage("${ChatColor.GREEN}Unclaimed 1 chunk")
+    }
+
+    @Test
+    fun testOnCommand_namingAFactionWithoutForcePermissionLeavesItsClaimAlone() {
+        // prepare — the same command without mf.force.unclaim keeps acting on the sender's own faction only
+        val player = fixture.player
+        val command = fixture.command
+        val worldId = UUID.randomUUID()
+        val rivals = stubNamedFaction("Rivals")
+        stubMembershipOf(player)
+        stubSenderChunk(player, worldId, 0, 0)
+        val claim = stubClaimOwnedBy(worldId, 0, 0, rivals.id)
+        `when`(language["CommandFactionUnclaimNoUnclaimableChunks"]).thenReturn("Nothing to unclaim")
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf("Rivals"))
+        runPendingTasks()
+
+        // verify
+        assertTrue(result)
+        verify(claimService, never()).delete(claim)
+        verify(player).sendMessage("${ChatColor.RED}Nothing to unclaim")
+    }
+
+    @Test
+    fun testOnCommand_forceUnclaimWithARadiusOnlyRemovesTheNamedFactionsClaims() {
+        // prepare — two factions hold land within the radius; only the named one loses it
+        val player = fixture.player
+        val command = fixture.command
+        val worldId = UUID.randomUUID()
+        val rivals = stubNamedFaction("Rivals")
+        stubAdminWithoutFaction(player, forceUnclaim = true)
+        stubSenderChunk(player, worldId, 0, 0)
+        val rivalClaim = stubClaimOwnedBy(worldId, 1, 0, rivals.id)
+        val bystanderClaim = stubClaimOwnedBy(worldId, 0, 1, MfFactionId.generate())
+        `when`(language["CommandFactionUnclaimSuccess", "5"]).thenReturn("Unclaimed 5 chunks")
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf("Rivals", "1"))
+        runPendingTasks()
+
+        // verify
+        assertTrue(result)
+        verify(claimService).delete(rivalClaim)
+        verify(claimService, never()).delete(bystanderClaim)
+    }
+
+    @Test
+    fun testOnCommand_forceUnclaimOnlyRemovesTheNamedFactionsClaimsEvenInBypassMode() {
+        // prepare — bypass mode on its own unclaims every faction's land in range; naming a faction narrows it
+        val player = fixture.player
+        val command = fixture.command
+        val worldId = UUID.randomUUID()
+        val rivals = stubNamedFaction("Rivals")
+        stubAdminWithoutFaction(player, forceUnclaim = true, bypassEnabled = true)
+        stubSenderChunk(player, worldId, 0, 0)
+        val rivalClaim = stubClaimOwnedBy(worldId, 1, 0, rivals.id)
+        val bystanderClaim = stubClaimOwnedBy(worldId, 0, 1, MfFactionId.generate())
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf("Rivals", "1"))
+        runPendingTasks()
+
+        // verify
+        assertTrue(result)
+        verify(claimService).delete(rivalClaim)
+        verify(claimService, never()).delete(bystanderClaim)
+    }
+
+    @Test
+    fun testOnCommand_forceUnclaimRefusesAFactionThatDoesNotExist() {
+        // prepare
+        val player = fixture.player
+        val command = fixture.command
+        val worldId = UUID.randomUUID()
+        stubAdminWithoutFaction(player, forceUnclaim = true)
+        stubSenderChunk(player, worldId, 0, 0)
+        val claim = stubClaimOwnedBy(worldId, 0, 0, MfFactionId.generate())
+        `when`(language["CommandFactionUnclaimInvalidFaction", "Nobody"]).thenReturn("No such faction")
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf("Nobody"))
+        runPendingTasks()
+
+        // verify
+        assertTrue(result)
+        verify(claimService, never()).delete(claim)
+        verify(player).sendMessage("${ChatColor.RED}No such faction")
+    }
+
+    @Test
+    fun testOnCommand_aLoneNumberIsStillARadiusWithForcePermission() {
+        // prepare — `/f unclaim 0` from a force-permission holder still unclaims around them for their own faction
+        val player = fixture.player
+        val command = fixture.command
+        val worldId = UUID.randomUUID()
+        stubMembershipOf(player)
+        `when`(player.hasPermission("mf.force.unclaim")).thenReturn(true)
+        stubSenderChunk(player, worldId, 0, 0)
+        val claim = stubOwnClaim(worldId, 0, 0)
+        `when`(language["CommandFactionUnclaimSuccess", "1"]).thenReturn("Unclaimed 1 chunk")
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf("0"))
+        runPendingTasks()
+
+        // verify
+        assertTrue(result)
+        verify(claimService).delete(claim)
+        verify(player).sendMessage("${ChatColor.GREEN}Unclaimed 1 chunk")
+    }
+
+    // Helper functions
+
+    @Test
     fun testOnCommand_autoArgumentIsDispatchedToAutounclaimRatherThanUnclaimingTheCurrentChunk() {
         // prepare — the sender may unclaim, and stands in their own claim, but may not toggle autounclaim
         val player = fixture.player
@@ -206,6 +341,26 @@ class MfFactionUnclaimCommandTest {
         `when`(claimService.getClaim(MfChunkPosition(worldId, chunkX, chunkZ))).thenReturn(claim)
         `when`(claimService.delete(claim)).thenReturn(Success(Unit))
         return claim
+    }
+
+    private fun stubNamedFaction(name: String): MfFaction {
+        val namedFaction = mock(MfFaction::class.java)
+        `when`(namedFaction.id).thenReturn(MfFactionId.generate())
+        `when`(namedFaction.name).thenReturn(name)
+        `when`(factionService.getFaction(name)).thenReturn(namedFaction)
+        return namedFaction
+    }
+
+    /**
+     * Stubs a sender who holds `mf.unclaim` (and, optionally, `mf.force.unclaim`) but belongs to no faction, so any
+     * faction they act on can only have been reached through the force permission.
+     */
+    private fun stubAdminWithoutFaction(player: Player, forceUnclaim: Boolean, bypassEnabled: Boolean = false) {
+        val mfPlayer = mock(MfPlayer::class.java)
+        `when`(mfPlayer.isBypassEnabled).thenReturn(bypassEnabled)
+        `when`(player.hasPermission("mf.unclaim")).thenReturn(true)
+        `when`(player.hasPermission("mf.force.unclaim")).thenReturn(forceUnclaim)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
     }
 
     private fun stubMembershipOf(player: Player) {
