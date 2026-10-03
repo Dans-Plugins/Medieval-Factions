@@ -648,9 +648,9 @@ Gates are structures that can be toggled open and closed by faction members.
 **Description:** Maximum distance (in blocks) from which a gate can be removed.
 
 ### `gates.restrictedBlocks`
-**Type:** List of Strings  
+**Type:** List of Strings (entries may be grouped into nested lists, which are flattened)  
 **Default:** See config.yml for full list  
-**Description:** List of block types that cannot be used in gates (typically gravity-affected or fragile blocks).  
+**Description:** List of block types that new gates cannot be made of (typically gravity-affected or fragile blocks). The list is checked only when a gate is created, for the gate's corner selections and every block in its area; the trigger block is not checked, so buttons, signs and tripwire hooks can still be triggers. Gates that already exist and are made of a listed block are loaded and kept as they are; one warning per gate (gate ID, faction ID, material) is logged at startup so that they can be rebuilt. No gate is changed or deleted because of this list.  
 **Examples:** `SAND`, `GRAVEL`, `TORCH`, `LADDER`, etc.
 
 ## Developer Options

@@ -637,10 +637,8 @@ class PlayerInteractListener(private val plugin: MedievalFactions) : Listener {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
-                if (block.type in plugin.services.gateService.restrictedBlockMaterials) {
-                    player.sendMessage("$RED${plugin.language["GateCreateRestrictedBlock"]}")
-                    return@Runnable
-                }
+                // gates.restrictedBlocks applies to the blocks a gate is made of, not to its trigger: the default list
+                // includes buttons, signs and tripwire hooks, which are ordinary triggers and are never moved (#2071).
                 val playerService = plugin.services.playerService
                 val mfPlayer = playerService.getPlayer(player) ?: playerService.save(MfPlayer(plugin, player)).onFailure {
                     player.sendMessage("$RED${plugin.language["GateCreateSelectTriggerFailedToSavePlayer"]}")
