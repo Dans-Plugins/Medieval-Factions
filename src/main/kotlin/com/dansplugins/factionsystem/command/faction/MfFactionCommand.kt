@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.command.faction
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.command.faction.addmember.MfFactionAddMemberCommand
+import com.dansplugins.factionsystem.command.faction.addons.MfFactionAddonsCommand
 import com.dansplugins.factionsystem.command.faction.admin.MfFactionAdminCommand
 import com.dansplugins.factionsystem.command.faction.ally.MfFactionAllyCommand
 import com.dansplugins.factionsystem.command.faction.apply.MfFactionApplyCommand
@@ -100,6 +101,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val factionAddMemberCommand = MfFactionAddMemberCommand(plugin)
     private val factionDevCommand = MfFactionDevCommand(plugin)
     private val factionDpcCommand = MfFactionDpcCommand(plugin)
+    private val factionAddonsCommand = MfFactionAddonsCommand(plugin)
     private val factionApplyCommand = MfFactionApplyCommand(plugin)
     private val factionShowAppsCommand = MfShowAppsCommand(plugin)
     private val factionApproveAppCommand = MfFactionApproveAppCommand(plugin)
@@ -150,6 +152,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val addMemberAliases = listOf("addmember", plugin.language["CmdFactionAddMember"])
     private val devAliases = if (plugin.config.getBoolean("dev.enableDevCommands")) listOf("dev") else emptyList()
     private val dpcAliases = listOf("dpc", plugin.language["CmdFactionDpc"])
+    private val addonsAliases = listOf("addons", plugin.language["CmdFactionAddons"])
     private val applyAliases = listOf("apply", plugin.language["CmdFactionApply"])
     private val showAppsAliases = listOf("showapps", plugin.language["CmdFactionShowApps"])
     private val approveAppAliases = listOf("approveapp", plugin.language["CmdFactionApproveApp"])
@@ -200,6 +203,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
         addMemberAliases +
         devAliases +
         dpcAliases +
+        addonsAliases +
         applyAliases +
         showAppsAliases +
         approveAppAliases +
@@ -251,6 +255,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in relationshipAliases -> factionRelationshipCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in addMemberAliases -> factionAddMemberCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in devAliases -> factionDevCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in addonsAliases -> factionAddonsCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in dpcAliases -> factionDpcCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in applyAliases -> factionApplyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in showAppsAliases -> factionShowAppsCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -272,14 +277,18 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
         }
     }
 
+    // /mf addons is not suggested to players without its permission (it defaults to op).
+    private fun visibleSubcommands(sender: CommandSender) =
+        if (sender.hasPermission(MfFactionAddonsCommand.PERMISSION)) subcommands else subcommands - addonsAliases.toSet()
+
     override fun onTabComplete(
         sender: CommandSender,
         command: Command,
         label: String,
         args: Array<out String>
     ) = when {
-        args.isEmpty() -> subcommands
-        args.size == 1 -> subcommands.filter { it.startsWith(args[0].lowercase()) }
+        args.isEmpty() -> visibleSubcommands(sender)
+        args.size == 1 -> visibleSubcommands(sender).filter { it.startsWith(args[0].lowercase()) }
         else -> when (args.first().lowercase()) {
             in helpAliases -> factionHelpCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in createAliases -> factionCreateCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
@@ -320,6 +329,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in relationshipAliases -> factionRelationshipCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in addMemberAliases -> factionAddMemberCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in devAliases -> factionDevCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in addonsAliases -> factionAddonsCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in dpcAliases -> factionDpcCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in applyAliases -> factionApplyCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in approveAppAliases -> factionApproveAppCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())

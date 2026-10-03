@@ -409,6 +409,9 @@ permissions:
   mf.migrate:
     description: Allows migrating faction data between the database and JSON storage backends
     default: op
+  mf.addons:
+    description: Allows listing known add-ons and related plugins, and which are installed (/mf addons)
+    default: op
   mf.admin:
     description: Admin permission
     default: op
@@ -423,3 +426,4 @@ permissions:
     - mf.admin.setleader
     - mf.approve
     - mf.migrate
+    - mf.addons
