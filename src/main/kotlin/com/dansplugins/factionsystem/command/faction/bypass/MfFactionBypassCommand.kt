@@ -27,7 +27,7 @@ class MfFactionBypassCommand(private val plugin: MedievalFactions) : CommandExec
             Runnable {
                 val playerService = plugin.services.playerService
                 val mfPlayer = playerService.getPlayer(sender) ?: MfPlayer(plugin, sender)
-                val updatedMfPlayer = playerService.save(mfPlayer.copy(isBypassEnabled = !mfPlayer.isBypassEnabled)).onFailure {
+                val updatedMfPlayer = playerService.update(mfPlayer) { it.copy(isBypassEnabled = !it.isBypassEnabled) }.onFailure {
                     sender.sendMessage("$RED${plugin.language["CommandFactionBypassFailedToSavePlayer"]}")
                     plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                     return@Runnable

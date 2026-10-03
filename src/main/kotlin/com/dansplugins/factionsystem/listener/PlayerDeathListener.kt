@@ -98,9 +98,13 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
         if (abs(newPower - victimMfPlayer.power) < 0.00001) {
             return
         }
-        playerService.save(
-            victimMfPlayer.copy(power = newPower)
-        ).onFailure {
+        playerService.update(victimMfPlayer) { current ->
+            current.copy(
+                power = (current.power - powerLostOnDeath)
+                    .coerceAtLeast(0.0)
+                    .coerceAtMost(plugin.config.getDouble("players.maxPower"))
+            )
+        }.onFailure {
             plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
             return
         }
@@ -120,9 +124,13 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
         if (abs(newPower - killerMfPlayer.power) < 0.00001) {
             return
         }
-        playerService.save(
-            killerMfPlayer.copy(power = newPower)
-        ).onFailure {
+        playerService.update(killerMfPlayer) { current ->
+            current.copy(
+                power = (current.power + powerGainedOnKill)
+                    .coerceAtLeast(0.0)
+                    .coerceAtMost(plugin.config.getDouble("players.maxPower"))
+            )
+        }.onFailure {
             plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
             return
         }

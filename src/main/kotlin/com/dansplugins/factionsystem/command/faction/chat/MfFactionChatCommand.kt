@@ -53,15 +53,15 @@ class MfFactionChatCommand(private val plugin: MedievalFactions) : CommandExecut
                         return@Runnable
                     }
                 }
-                val updatedMfPlayer = playerService.save(
-                    mfPlayer.copy(
-                        chatChannel = if (mfPlayer.chatChannel != chatChannel) {
+                val updatedMfPlayer = playerService.update(mfPlayer) { current ->
+                    current.copy(
+                        chatChannel = if (current.chatChannel != chatChannel) {
                             chatChannel
                         } else {
                             null
                         }
                     )
-                ).onFailure {
+                }.onFailure {
                     sender.sendMessage("$RED${plugin.language["CommandFactionChatFailedToSavePlayer"]}")
                     plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                     return@Runnable

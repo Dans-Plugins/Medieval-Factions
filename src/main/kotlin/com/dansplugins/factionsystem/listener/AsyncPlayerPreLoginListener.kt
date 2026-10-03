@@ -22,7 +22,7 @@ class AsyncPlayerPreLoginListener(private val plugin: MedievalFactions) : Listen
                     return
                 }
         if (player.name != event.name) {
-            playerService.save(player.copy(name = event.name)).onFailure {
+            playerService.update(player) { it.copy(name = event.name) }.onFailure {
                 plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                 return
             }
