@@ -56,6 +56,13 @@ class PlayerQuitListenerTest {
         mockLogger()
         mockScheduler()
         `when`(playerService.save(anyMfPlayer())).thenReturn(Success(fixture.mfPlayer))
+        // update() applies its transform to the snapshot and saves it; its conflict retry is covered
+        // against a real database in MfPlayerServiceOptimisticLockTest.
+        `when`(playerService.update(anyMfPlayer(), anyTransform())).thenAnswer { invocation ->
+            @Suppress("UNCHECKED_CAST")
+            val transform = invocation.arguments[1] as (MfPlayer) -> MfPlayer
+            playerService.save(transform(invocation.arguments[0] as MfPlayer))
+        }
         entityInteractionProtection = mock(EntityInteractionProtection::class.java)
         uut = PlayerQuitListener(plugin, entityInteractionProtection)
     }
@@ -259,6 +266,12 @@ class PlayerQuitListenerTest {
         val captor = org.mockito.ArgumentCaptor.forClass(MfPlayer::class.java)
         verify(playerService).save(captor.capture() ?: fixture.mfPlayer)
         return captor.value
+    }
+
+    private fun <T> anyTransform(): T {
+        ArgumentMatchers.any<(MfPlayer) -> MfPlayer>()
+        @Suppress("UNCHECKED_CAST")
+        return null as T
     }
 
     private fun <T> anyMfPlayer(): T {
