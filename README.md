@@ -48,6 +48,8 @@ Each of these add-ons requires Medieval Factions and adds something to it. The c
 
 Currencies 2.x does not enable on Medieval Factions 5.8 or newer. Use Currencies 3.0.0 or later.
 
+In game, operators can run `/mf addons` to see which of these, and of the plugins below, are installed, and whether each installed version is the verified one. See [COMMANDS.md](COMMANDS.md#faction-addons-or-mf-addons).
+
 ### Works Well With
 - [Medieval Roleplay Engine](https://github.com/Dans-Plugins/Medieval-Roleplay-Engine) ([SpigotMC](https://www.spigotmc.org/resources/79993/)): character cards, local chat, emotes and messenger birds. It is a companion plugin for faction roleplay and runs alongside Medieval Factions.
 - [Mailboxes](https://github.com/Dans-Plugins/Mailboxes) ([SpigotMC](https://www.spigotmc.org/resources/96611/)): persistent messages. When it is installed, Medieval Factions delivers faction notifications through it.

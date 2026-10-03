@@ -22,7 +22,7 @@ class MfFactionHelpCommand(private val plugin: MedievalFactions) : CommandExecut
         val view = PaginatedView.fromChatComponents(
             plugin.language,
             arrayOf(TextComponent(plugin.language["CommandFactionHelpTitle"]).apply { color = SpigotChatColor.AQUA }),
-            listOf(
+            listOfNotNull(
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpAccessors"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpAccessorsAdd"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpAccessorsList"]).apply { color = SpigotChatColor.GRAY }),
@@ -104,6 +104,8 @@ class MfFactionHelpCommand(private val plugin: MedievalFactions) : CommandExecut
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpApproveApp"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpDenyApp"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpDpc"]).apply { color = SpigotChatColor.GRAY }),
+                // Only listed for senders who can run it (mf.addons, default op).
+                if (sender.hasPermission("mf.addons")) arrayOf(TextComponent(plugin.language["CommandFactionHelpAddons"]).apply { color = SpigotChatColor.GRAY }) else null,
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpAdmin"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpAdminCreate"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpAdminSetLeader"]).apply { color = SpigotChatColor.GRAY }),
