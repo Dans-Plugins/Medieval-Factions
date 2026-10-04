@@ -290,7 +290,7 @@ Controls player vs player combat mechanics.
 ### `factions.wartimePlaceableBlocks`
 **Type:** List of Strings  
 **Default:** `[]` (empty)  
-**Description:** List of block types (by Material name) that become placeable in enemy faction territory during war. Blocks listed here can be placed by an attacker whose faction is at war with the territory owner. The list also accepts the items behind the world-changing actions that are not block placements: `FLINT_AND_STEEL` and `FIRE_CHARGE` (setting fire), `BONE_MEAL`, boats, minecarts, `ARMOR_STAND`, `END_CRYSTAL`, `ITEM_FRAME`, `GLOW_ITEM_FRAME` and `PAINTING`. An attacker at war may use a listed item on enemy territory.  
+**Description:** List of block types (by Material name) that become placeable in enemy faction territory during war. Blocks listed here can be placed by an attacker whose faction is at war with the territory owner. The list also accepts the items behind the world-changing actions that are not block placements: `FLINT_AND_STEEL` and `FIRE_CHARGE` (setting fire), `BONE_MEAL`, boats, minecarts, `ARMOR_STAND`, `END_CRYSTAL`, `ITEM_FRAME`, `GLOW_ITEM_FRAME` and `PAINTING`. An attacker at war may use a listed item on enemy territory, with one exception: setting fire also places a `FIRE` block, which is checked as a block placement, so fire at war needs `FIRE` in the list as well as `FLINT_AND_STEEL`. With only `FLINT_AND_STEEL` listed, the attacker is told they cannot place blocks there. This was checked in game on Spigot 1.21.1 with the plugin-fixtures behaviour table (`wartimeFire` and `wartime` groups), on 7.0.0 and on the current development build; a fire charge is expected to need `FIRE` the same way, but that was not checked.  
 **Example:**
 ```yaml
 factions:
