@@ -46,8 +46,12 @@ class MfDuelAcceptCommand(private val plugin: MedievalFactions) : CommandExecuto
             sender.sendMessage("$RED${plugin.language["CommandDuelAcceptCannotDuelSelf"]}")
             return true
         }
+        // Snapshot on the main thread, at command time: the duel restores both players to the health and
+        // position they held when the challenge was accepted, not after the async lookups below (#2006, #2021).
         val senderPosition = MfPosition.fromBukkitLocation(sender.location)
         val targetPosition = MfPosition.fromBukkitLocation(target.location)
+        val senderHealth = sender.health
+        val targetHealth = target.health
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
@@ -89,8 +93,8 @@ class MfDuelAcceptCommand(private val plugin: MedievalFactions) : CommandExecuto
                     MfDuel(
                         challengerId = invite.inviterId,
                         challengedId = invite.inviteeId,
-                        challengerHealth = target.health,
-                        challengedHealth = sender.health,
+                        challengerHealth = targetHealth,
+                        challengedHealth = senderHealth,
                         endTime = Instant.now().plus(Duration.parse(plugin.config.getString("duels.duration"))),
                         challengerLocation = targetPosition,
                         challengedLocation = senderPosition
