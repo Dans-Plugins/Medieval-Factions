@@ -63,6 +63,7 @@ import com.dansplugins.factionsystem.listener.EntityDamageListener
 import com.dansplugins.factionsystem.listener.EntityExplodeListener
 import com.dansplugins.factionsystem.listener.EntityInteractionProtection
 import com.dansplugins.factionsystem.listener.EntityPlaceListener
+import com.dansplugins.factionsystem.listener.GrowthBorderTrimmer
 import com.dansplugins.factionsystem.listener.HangingPlaceListener
 import com.dansplugins.factionsystem.listener.InventoryClickListener
 import com.dansplugins.factionsystem.listener.InventoryMoveItemListener
@@ -77,6 +78,7 @@ import com.dansplugins.factionsystem.listener.PlayerMoveListener
 import com.dansplugins.factionsystem.listener.PlayerQuitListener
 import com.dansplugins.factionsystem.listener.PlayerTeleportListener
 import com.dansplugins.factionsystem.listener.PotionSplashListener
+import com.dansplugins.factionsystem.listener.StructureGrowListener
 import com.dansplugins.factionsystem.listener.WorldActionProtection
 import com.dansplugins.factionsystem.locks.JooqMfLockRepository
 import com.dansplugins.factionsystem.locks.MfLockRepository
@@ -357,6 +359,7 @@ class MedievalFactions : JavaPlugin() {
         // only produces a single message.
         val entityInteractionProtection = EntityInteractionProtection(this)
         val worldActionProtection = WorldActionProtection(this)
+        val growthBorderTrimmer = GrowthBorderTrimmer(this)
 
         listOf(
             AreaEffectCloudApplyListener(this),
@@ -365,7 +368,7 @@ class MedievalFactions : JavaPlugin() {
             BlockBreakListener(this),
             BlockBurnListener(this),
             BlockExplodeListener(this),
-            BlockFertilizeListener(worldActionProtection),
+            BlockFertilizeListener(worldActionProtection, growthBorderTrimmer),
             BlockIgniteListener(worldActionProtection),
             BlockPistonExtendListener(this),
             BlockPistonRetractListener(this),
@@ -388,7 +391,8 @@ class MedievalFactions : JavaPlugin() {
             PlayerMoveListener(this),
             PlayerQuitListener(this, entityInteractionProtection),
             PlayerTeleportListener(this),
-            PotionSplashListener(this)
+            PotionSplashListener(this),
+            StructureGrowListener(growthBorderTrimmer)
         ).forEach { server.pluginManager.registerEvents(it, this) }
 
         registerCommand("faction", MfFactionCommand(this))
