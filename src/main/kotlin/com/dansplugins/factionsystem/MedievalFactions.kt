@@ -686,7 +686,7 @@ class MedievalFactions : JavaPlugin() {
             val endpoint = config.getString("usage-reporting.endpoint") ?: "https://trace.danielstephenson.dev"
             logger.info(
                 "Usage reporting is on: $name sends its name, version and command names to $endpoint" +
-                    " - nothing about players or the server. Turn it off with usage-reporting.enabled: false" +
+                    ", plus a random server ID (server-id in plugins/trace/config.yml) - nothing about players. Turn it off with usage-reporting.enabled: false" +
                     " in this plugin's config.yml, or for every plugin with enabled: false in" +
                     " plugins/trace/config.yml. Details: https://github.com/Stephenson-Software/trace#usage-reporting"
             )
