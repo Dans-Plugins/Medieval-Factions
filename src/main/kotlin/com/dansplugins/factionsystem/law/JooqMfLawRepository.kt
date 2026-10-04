@@ -1,5 +1,6 @@
 package com.dansplugins.factionsystem.law
 
+import com.dansplugins.factionsystem.db.MfVersionedWrite
 import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.jooq.Tables.MF_LAW
@@ -29,21 +30,33 @@ class JooqMfLawRepository(
             .map { it.toDomain() }
 
     override fun upsert(law: MfLaw): MfLaw {
-        val existingLaws = dsl.fetchCount(dsl.selectFrom(MF_LAW).where(MF_LAW.FACTION_ID.eq(law.factionId.value)))
-        val rowCount = dsl.insertInto(MF_LAW)
-            .set(MF_LAW.ID, law.id.value)
-            .set(MF_LAW.VERSION, 1)
-            .set(MF_LAW.FACTION_ID, law.factionId.value)
-            .set(MF_LAW.TEXT, law.text)
-            .set(MF_LAW.NUMBER, existingLaws + 1)
-            .onConflict(MF_LAW.ID).doUpdate()
-            .set(MF_LAW.VERSION, law.version + 1)
-            .set(MF_LAW.FACTION_ID, law.factionId.value)
-            .set(MF_LAW.TEXT, law.text)
-            .where(MF_LAW.ID.eq(law.id.value))
-            .and(MF_LAW.VERSION.eq(law.version))
-            .execute()
-        if (rowCount == 0) throw OptimisticLockingFailureException("Invalid version: ${law.version}")
+        // See MfVersionedWrite for why this is not a single guarded upsert (#2076). As before,
+        // an update leaves the law's number alone and a new law is numbered after the existing ones.
+        val written = MfVersionedWrite.write(
+            update = {
+                dsl.update(MF_LAW)
+                    .set(MF_LAW.VERSION, law.version + 1)
+                    .set(MF_LAW.FACTION_ID, law.factionId.value)
+                    .set(MF_LAW.TEXT, law.text)
+                    .where(MF_LAW.ID.eq(law.id.value))
+                    .and(MF_LAW.VERSION.eq(law.version))
+                    .execute()
+            },
+            rowExists = {
+                dsl.select(MF_LAW.ID).from(MF_LAW).where(MF_LAW.ID.eq(law.id.value)).forUpdate().fetchOne() != null
+            },
+            insert = {
+                val existingLaws = dsl.fetchCount(dsl.selectFrom(MF_LAW).where(MF_LAW.FACTION_ID.eq(law.factionId.value)))
+                dsl.insertInto(MF_LAW)
+                    .set(MF_LAW.ID, law.id.value)
+                    .set(MF_LAW.VERSION, 1)
+                    .set(MF_LAW.FACTION_ID, law.factionId.value)
+                    .set(MF_LAW.TEXT, law.text)
+                    .set(MF_LAW.NUMBER, existingLaws + 1)
+                    .execute()
+            }
+        )
+        if (!written) throw OptimisticLockingFailureException("Invalid version: ${law.version}")
         return getLaw(law.id).let(::requireNotNull)
     }
 

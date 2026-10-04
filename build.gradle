@@ -80,6 +80,9 @@ dependencies {
     testImplementation("org.mockito:mockito-core:4.0.0")
     testImplementation("org.mockito:mockito-inline:4.0.0")
     testImplementation("au.com.dius.pact.consumer:junit5:4.6.7")
+    // Runs the jOOQ repositories against a real MariaDB server in CI (#2076). The tests that use
+    // it are skipped, not failed, when no Docker daemon is available.
+    testImplementation("org.testcontainers:testcontainers-mariadb:2.0.5")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
@@ -256,4 +259,11 @@ tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
     systemProperty 'pact.rootDir', "${projectDir}/pacts"
+    // The MariaDB repository tests are skipped without Docker. Their outcome is printed so that a
+    // CI log shows whether they actually ran against MariaDB or were skipped (#2076).
+    afterTest { descriptor, result ->
+        if (descriptor.className?.contains('MariaDb')) {
+            logger.lifecycle("${descriptor.className} > ${descriptor.name}: ${result.resultType}")
+        }
+    }
 }

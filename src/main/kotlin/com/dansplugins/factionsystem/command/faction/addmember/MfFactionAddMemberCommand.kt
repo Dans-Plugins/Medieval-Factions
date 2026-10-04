@@ -117,11 +117,17 @@ class MfFactionAddMemberCommand(private val plugin: MedievalFactions) : CommandE
             }
         }
 
-        // add member to faction
+        // add member to faction. If the player was just removed from this same faction above, the
+        // copy read before that save is out of date, so the faction is read again (#2076).
+        val factionToJoin = if (currentFaction?.id == targetFaction.id) {
+            factionService.getFaction(targetFaction.id) ?: targetFaction
+        } else {
+            targetFaction
+        }
         val updatedFaction = factionService.save(
-            targetFaction.copy(
-                members = targetFaction.members + MfFactionMember(targetMfPlayer.id, targetFaction.roles.default),
-                invites = targetFaction.invites.filter { it.playerId != targetMfPlayer.id }
+            factionToJoin.copy(
+                members = factionToJoin.members + MfFactionMember(targetMfPlayer.id, factionToJoin.roles.default),
+                invites = factionToJoin.invites.filter { it.playerId != targetMfPlayer.id }
             )
         ).onFailure {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionAddMemberFailedToSaveFaction"]}")

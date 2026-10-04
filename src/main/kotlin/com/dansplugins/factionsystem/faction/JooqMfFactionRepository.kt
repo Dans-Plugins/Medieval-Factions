@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.faction
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfPosition
+import com.dansplugins.factionsystem.db.MfVersionedWrite
 import com.dansplugins.factionsystem.faction.flag.MfFlagValues
 import com.dansplugins.factionsystem.faction.role.MfFactionRole
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
@@ -98,9 +99,17 @@ class JooqMfFactionRepository(
     }
 
     override fun upsert(faction: MfFaction): MfFaction {
+        // The conflict is signalled with null rather than thrown inside the transaction: jOOQ
+        // wraps a checked exception thrown there in a DataAccessException, which would hide the
+        // OptimisticLockingFailureException from MfFactionService's CONFLICT mapping. Nothing has
+        // been written when null is returned.
+        return upsertIfCurrent(faction) ?: throw OptimisticLockingFailureException("Invalid version: ${faction.version}")
+    }
+
+    private fun upsertIfCurrent(faction: MfFaction): MfFaction? {
         return dsl.transactionResult { config ->
             val transactionalDsl = config.dsl()
-            val newState = upsertFaction(transactionalDsl, faction)
+            val newState = upsertFaction(transactionalDsl, faction) ?: return@transactionResult null
 
             deleteMembers(transactionalDsl, faction.id)
             val newMembers = faction.members.map { upsertMember(transactionalDsl, faction.id, it, newState.roles) }
@@ -117,63 +126,75 @@ class JooqMfFactionRepository(
         }
     }
 
-    private fun upsertFaction(dsl: DSLContext, faction: MfFaction): MfFaction {
-        val rowCount = dsl.insertInto(MF_FACTION)
-            .set(MF_FACTION.ID, faction.id.value)
-            .set(MF_FACTION.VERSION, 1)
-            .set(MF_FACTION.NAME, faction.name)
-            .set(MF_FACTION.DESCRIPTION, faction.description)
-            .set(MF_FACTION.FLAGS, JSON.valueOf(gson.toJson(faction.flags.valuesByName)))
-            .set(MF_FACTION.PREFIX, faction.prefix)
-            .set(MF_FACTION.HOME_WORLD_ID, faction.home?.worldId?.toString())
-            .set(MF_FACTION.HOME_X, faction.home?.x)
-            .set(MF_FACTION.HOME_Y, faction.home?.y)
-            .set(MF_FACTION.HOME_Z, faction.home?.z)
-            .set(MF_FACTION.HOME_YAW, faction.home?.yaw)
-            .set(MF_FACTION.HOME_PITCH, faction.home?.pitch)
-            .set(MF_FACTION.BONUS_POWER, faction.bonusPower)
-            .set(MF_FACTION.AUTOCLAIM, faction.autoclaim)
-            .set(MF_FACTION.AUTOUNCLAIM, faction.autounclaim)
-            .set(
-                MF_FACTION.ROLES,
-                JSON.valueOf(
-                    gson.toJson(faction.roles.map(MfFactionRole::serialize))
-                )
-            )
-            .set(MF_FACTION.DEFAULT_ROLE_ID, faction.roles.default.id.value)
-            .set(
-                MF_FACTION.DEFAULT_PERMISSIONS,
-                JSON.valueOf(
-                    gson.toJson(faction.defaultPermissions.mapKeys { it.key.name })
-                )
-            )
-            .onConflict(MF_FACTION.ID).doUpdate()
-            .set(MF_FACTION.NAME, faction.name)
-            .set(MF_FACTION.DESCRIPTION, faction.description)
-            .set(MF_FACTION.FLAGS, JSON.valueOf(gson.toJson(faction.flags.valuesByName)))
-            .set(MF_FACTION.PREFIX, faction.prefix)
-            .set(MF_FACTION.HOME_WORLD_ID, faction.home?.worldId?.toString())
-            .set(MF_FACTION.HOME_X, faction.home?.x)
-            .set(MF_FACTION.HOME_Y, faction.home?.y)
-            .set(MF_FACTION.HOME_Z, faction.home?.z)
-            .set(MF_FACTION.HOME_YAW, faction.home?.yaw)
-            .set(MF_FACTION.HOME_PITCH, faction.home?.pitch)
-            .set(MF_FACTION.BONUS_POWER, faction.bonusPower)
-            .set(MF_FACTION.AUTOCLAIM, faction.autoclaim)
-            .set(MF_FACTION.AUTOUNCLAIM, faction.autounclaim)
-            .set(MF_FACTION.ROLES, JSON.valueOf(gson.toJson(faction.roles.map(MfFactionRole::serialize))))
-            .set(MF_FACTION.DEFAULT_ROLE_ID, faction.roles.default.id.value)
-            .set(
-                MF_FACTION.DEFAULT_PERMISSIONS,
-                JSON.valueOf(
-                    gson.toJson(faction.defaultPermissions.mapKeys { it.key.name })
-                )
-            )
-            .set(MF_FACTION.VERSION, faction.version + 1)
-            .where(MF_FACTION.ID.eq(faction.id.value))
-            .and(MF_FACTION.VERSION.eq(faction.version))
-            .execute()
-        if (rowCount == 0) throw OptimisticLockingFailureException("Invalid version: ${faction.version}")
+    /** Writes the faction row, or returns null without writing if [faction] is stale. */
+    private fun upsertFaction(dsl: DSLContext, faction: MfFaction): MfFaction? {
+        // See MfVersionedWrite for why this is not a single guarded upsert (#2076).
+        val written = MfVersionedWrite.write(
+            update = {
+                dsl.update(MF_FACTION)
+                    .set(MF_FACTION.NAME, faction.name)
+                    .set(MF_FACTION.DESCRIPTION, faction.description)
+                    .set(MF_FACTION.FLAGS, JSON.valueOf(gson.toJson(faction.flags.valuesByName)))
+                    .set(MF_FACTION.PREFIX, faction.prefix)
+                    .set(MF_FACTION.HOME_WORLD_ID, faction.home?.worldId?.toString())
+                    .set(MF_FACTION.HOME_X, faction.home?.x)
+                    .set(MF_FACTION.HOME_Y, faction.home?.y)
+                    .set(MF_FACTION.HOME_Z, faction.home?.z)
+                    .set(MF_FACTION.HOME_YAW, faction.home?.yaw)
+                    .set(MF_FACTION.HOME_PITCH, faction.home?.pitch)
+                    .set(MF_FACTION.BONUS_POWER, faction.bonusPower)
+                    .set(MF_FACTION.AUTOCLAIM, faction.autoclaim)
+                    .set(MF_FACTION.AUTOUNCLAIM, faction.autounclaim)
+                    .set(MF_FACTION.ROLES, JSON.valueOf(gson.toJson(faction.roles.map(MfFactionRole::serialize))))
+                    .set(MF_FACTION.DEFAULT_ROLE_ID, faction.roles.default.id.value)
+                    .set(
+                        MF_FACTION.DEFAULT_PERMISSIONS,
+                        JSON.valueOf(
+                            gson.toJson(faction.defaultPermissions.mapKeys { it.key.name })
+                        )
+                    )
+                    .set(MF_FACTION.VERSION, faction.version + 1)
+                    .where(MF_FACTION.ID.eq(faction.id.value))
+                    .and(MF_FACTION.VERSION.eq(faction.version))
+                    .execute()
+            },
+            rowExists = {
+                dsl.select(MF_FACTION.ID).from(MF_FACTION).where(MF_FACTION.ID.eq(faction.id.value)).forUpdate().fetchOne() != null
+            },
+            insert = {
+                dsl.insertInto(MF_FACTION)
+                    .set(MF_FACTION.ID, faction.id.value)
+                    .set(MF_FACTION.VERSION, 1)
+                    .set(MF_FACTION.NAME, faction.name)
+                    .set(MF_FACTION.DESCRIPTION, faction.description)
+                    .set(MF_FACTION.FLAGS, JSON.valueOf(gson.toJson(faction.flags.valuesByName)))
+                    .set(MF_FACTION.PREFIX, faction.prefix)
+                    .set(MF_FACTION.HOME_WORLD_ID, faction.home?.worldId?.toString())
+                    .set(MF_FACTION.HOME_X, faction.home?.x)
+                    .set(MF_FACTION.HOME_Y, faction.home?.y)
+                    .set(MF_FACTION.HOME_Z, faction.home?.z)
+                    .set(MF_FACTION.HOME_YAW, faction.home?.yaw)
+                    .set(MF_FACTION.HOME_PITCH, faction.home?.pitch)
+                    .set(MF_FACTION.BONUS_POWER, faction.bonusPower)
+                    .set(MF_FACTION.AUTOCLAIM, faction.autoclaim)
+                    .set(MF_FACTION.AUTOUNCLAIM, faction.autounclaim)
+                    .set(
+                        MF_FACTION.ROLES,
+                        JSON.valueOf(
+                            gson.toJson(faction.roles.map(MfFactionRole::serialize))
+                        )
+                    )
+                    .set(MF_FACTION.DEFAULT_ROLE_ID, faction.roles.default.id.value)
+                    .set(
+                        MF_FACTION.DEFAULT_PERMISSIONS,
+                        JSON.valueOf(
+                            gson.toJson(faction.defaultPermissions.mapKeys { it.key.name })
+                        )
+                    )
+                    .execute()
+            }
+        )
+        if (!written) return null
         return dsl.selectFrom(MF_FACTION)
             .where(MF_FACTION.ID.eq(faction.id.value))
             .fetchOne()
