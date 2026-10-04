@@ -48,8 +48,8 @@ dependencies {
     implementation platform("dev.forkhandles:forkhandles-bom:2.2.0.0")
     implementation 'dev.forkhandles:result4k'
     implementation 'org.jooq:jooq:3.17.4'
-    implementation 'org.flywaydb:flyway-core:9.4.0'
-    implementation 'org.flywaydb:flyway-mysql:9.4.0'
+    implementation 'org.flywaydb:flyway-core:13.9.0'
+    implementation 'org.flywaydb:flyway-mysql:13.9.0'
     implementation 'org.mariadb.jdbc:mariadb-java-client:3.0.6'
     implementation 'com.h2database:h2:2.1.214'
     implementation 'com.zaxxer:HikariCP:5.0.1'
