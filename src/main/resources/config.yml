@@ -301,9 +301,12 @@ dpc-api:
 # Usage reporting. When the plugin is enabled, and each time one of its
 # commands is used, a small event (plugin name, event name, plugin version)
 # is sent to the author's trace server so it is known which plugins are
-# actually in use. Nothing about players or the server is included. Sending
-# happens off the main thread, never blocks a tick, and is dropped silently
-# if the server cannot be reached. Set enabled to false to turn it off.
+# actually in use. Each event also carries a random server ID (the server-id
+# line in plugins/trace/config.yml) so servers can be counted; it identifies
+# no person, account or IP address. Nothing about players is included.
+# Sending happens off the main thread, never blocks a tick, and is dropped
+# silently if the server cannot be reached. Set enabled to false to turn it
+# off.
 #
 # Other ways to turn it off, which win over the setting below:
 #   - for every plugin on this server that reports to trace: enabled: false in
