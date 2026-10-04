@@ -25,6 +25,11 @@ Medieval Factions is supported on the Minecraft versions listed in [`minecraft-v
 
 Before each release, the release gates checked that it loads data written by the previous one: 6.0.0 loads 5.8.1 data, 6.1.0 loads 6.0.0 data, and 7.0.0 loads 6.1.0 data, on both the H2 and JSON backends. A direct jump from 5.8.1 to 7.0.0 has not been gated, which is one more reason to keep the backup. If the plugin already fails with the error above, keep a copy of the damaged file before removing anything. It can sometimes be recovered; ask in [#1975](https://github.com/Dans-Plugins/Medieval-Factions/issues/1975) or on Discord.
 
+### Upgrading from 4.x
+Medieval Factions 5.0 was a full rewrite, and 4.x servers are still out there. Version 4.x sends no bStats data, so they don't show up in usage numbers. The current release still includes the 4.x data migrator. On first start it finds the 4.x data, copies it to `plugins/MedievalFactions/mf4_backup/`, writes the new config and stops the server. Configure the database if you use one (MariaDB and MySQL take a `jdbc:mariadb://` URL; see [CONFIG.md](CONFIG.md)), then start again and the 4.x factions, claims, power, locks and gates are imported. The steps are also on the [wiki](https://github.com/Dans-Plugins/Medieval-Factions/wiki/Upgrade-from-Medieval-Factions-4).
+
+**Try it on a copy first.** The release gates check upgrades between 5.x and later versions, not from 4.x, so this path is not tested before each release. Back up the whole server, run the upgrade on a copy, check `/f list`, `/f info` and a few claims, and only then upgrade the live server. Please report problems in a [GitHub issue](https://github.com/Dans-Plugins/Medieval-Factions/issues).
+
 ### Storage Options
 Medieval Factions supports two data storage backends:
 - **Database Storage** (default) - Uses embedded H2, or a MariaDB/MySQL server
