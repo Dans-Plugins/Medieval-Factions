@@ -1,13 +1,17 @@
 package com.dansplugins.factionsystem.listener
 
+import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.World
 import org.bukkit.block.Block
+import org.bukkit.block.BlockState
 import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockFertilizeEvent
 import org.bukkit.event.block.BlockIgniteEvent
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause
 import org.bukkit.event.entity.EntityPlaceEvent
 import org.bukkit.event.hanging.HangingPlaceEvent
+import org.bukkit.event.world.StructureGrowEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
@@ -17,6 +21,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.Mockito.`when`
+import java.util.UUID
 
 /**
  * Each listener only turns its event into a [WorldActionProtection.protect] call; the rules themselves
@@ -26,12 +31,18 @@ class WorldActionListenersTest {
     private lateinit var protection: WorldActionProtection
     private lateinit var player: Player
     private lateinit var block: Block
+    private lateinit var trimmer: GrowthBorderTrimmer
+    private lateinit var world: World
+    private val worldId: UUID = UUID.randomUUID()
+    private val grown: MutableList<BlockState> = mutableListOf()
 
     @BeforeEach
     fun setUp() {
         protection = mock(WorldActionProtection::class.java)
         player = mock(Player::class.java)
         block = mock(Block::class.java)
+        trimmer = mock(GrowthBorderTrimmer::class.java)
+        world = mock(World::class.java)
     }
 
     private fun ignite(cause: IgniteCause, player: Player?): BlockIgniteEvent {
@@ -68,21 +79,56 @@ class WorldActionListenersTest {
         verifyNoInteractions(protection)
     }
 
-    @Test
-    fun blockFertilize_ByPlayer_ShouldProtectWithBoneMeal() {
+    private fun fertilizeEvent(player: Player?): BlockFertilizeEvent {
         val event = mock(BlockFertilizeEvent::class.java)
         `when`(event.player).thenReturn(player)
         `when`(event.block).thenReturn(block)
-        BlockFertilizeListener(protection).onBlockFertilize(event)
-        verify(protection).protect(event, player, block, Material.BONE_MEAL)
+        `when`(block.world).thenReturn(world)
+        `when`(world.uid).thenReturn(worldId)
+        `when`(block.x).thenReturn(33)
+        `when`(block.z).thenReturn(-7)
+        `when`(event.blocks).thenReturn(grown)
+        return event
     }
 
     @Test
-    fun blockFertilize_ByDispenser_ShouldBeIgnored() {
-        val event = mock(BlockFertilizeEvent::class.java)
-        `when`(event.block).thenReturn(block)
-        BlockFertilizeListener(protection).onBlockFertilize(event)
+    fun blockFertilize_ByPlayer_Allowed_ShouldProtectWithBoneMealThenTrimTheGrowth() {
+        val event = fertilizeEvent(player)
+        BlockFertilizeListener(protection, trimmer).onBlockFertilize(event)
+        verify(protection).protect(event, player, block, Material.BONE_MEAL)
+        verify(trimmer).trim(worldId, 33, -7, grown)
+    }
+
+    @Test
+    fun blockFertilize_ByPlayer_Refused_ShouldNotTrim() {
+        val event = fertilizeEvent(player)
+        `when`(protection.protect(event, player, block, Material.BONE_MEAL)).thenReturn(true)
+        BlockFertilizeListener(protection, trimmer).onBlockFertilize(event)
+        verifyNoInteractions(trimmer)
+    }
+
+    @Test
+    fun blockFertilize_ByDispenser_ShouldOnlyTrimTheGrowth() {
+        val event = fertilizeEvent(null)
+        BlockFertilizeListener(protection, trimmer).onBlockFertilize(event)
         verifyNoInteractions(protection)
+        verify(trimmer).trim(worldId, 33, -7, grown)
+    }
+
+    @Test
+    fun structureGrow_ShouldTrimFromTheGrowthsOrigin() {
+        val event = mock(StructureGrowEvent::class.java)
+        val location = mock(Location::class.java)
+        `when`(location.world).thenReturn(world)
+        `when`(world.uid).thenReturn(worldId)
+        `when`(location.blockX).thenReturn(-17)
+        `when`(location.blockZ).thenReturn(40)
+        `when`(event.location).thenReturn(location)
+        `when`(event.blocks).thenReturn(grown)
+
+        StructureGrowListener(trimmer).onStructureGrow(event)
+
+        verify(trimmer).trim(worldId, -17, 40, grown)
     }
 
     @Test
