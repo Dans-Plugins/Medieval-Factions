@@ -60,10 +60,17 @@ class ApproveApplicationTask(
             }
         }
 
+        // If the applicant was just removed from this same faction above, the copy read before that
+        // save is out of date, so the faction is read again (#2076).
+        val factionToJoin = if (currentFaction?.id == faction.id) {
+            factionService.getFaction(faction.id) ?: faction
+        } else {
+            faction
+        }
         val updatedFaction = factionService.save(
-            faction.copy(
-                members = faction.members + MfFactionMember(targetMfPlayer.id, faction.roles.default),
-                applications = faction.applications.filter { it.applicantId != targetMfPlayer.id }
+            factionToJoin.copy(
+                members = factionToJoin.members + MfFactionMember(targetMfPlayer.id, factionToJoin.roles.default),
+                applications = factionToJoin.applications.filter { it.applicantId != targetMfPlayer.id }
             )
         ).onFailure {
             sender.sendMessage("${org.bukkit.ChatColor.RED}${plugin.language["CommandFactionApproveAppFailedToSaveFaction"]}")

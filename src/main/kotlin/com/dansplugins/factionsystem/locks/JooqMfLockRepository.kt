@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.locks
 
 import com.dansplugins.factionsystem.area.MfBlockPosition
+import com.dansplugins.factionsystem.db.MfVersionedWrite
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.jooq.Tables.MF_LOCKED_BLOCK
 import com.dansplugins.factionsystem.jooq.Tables.MF_LOCKED_BLOCK_ACCESSOR
@@ -49,9 +50,17 @@ class JooqMfLockRepository(private val dsl: DSLContext) : MfLockRepository {
     }
 
     override fun upsert(lockedBlock: DomainMfLockedBlock): DomainMfLockedBlock {
+        // The conflict is signalled with null rather than thrown inside the transaction: jOOQ
+        // wraps a checked exception thrown there in a DataAccessException, which would hide the
+        // OptimisticLockingFailureException from MfLockService's CONFLICT mapping. Nothing has
+        // been written when null is returned.
+        return upsertIfCurrent(lockedBlock) ?: throw OptimisticLockingFailureException("Invalid version: ${lockedBlock.version}")
+    }
+
+    private fun upsertIfCurrent(lockedBlock: DomainMfLockedBlock): DomainMfLockedBlock? {
         return dsl.transactionResult { config ->
             val transactionalDsl = config.dsl()
-            val newState = upsertLockedBlock(transactionalDsl, lockedBlock)
+            val newState = upsertLockedBlock(transactionalDsl, lockedBlock) ?: return@transactionResult null
 
             deleteAccessors(transactionalDsl, lockedBlock.id)
             val newAccessors = lockedBlock.accessors.map { upsertAccessor(transactionalDsl, lockedBlock.id, it) }
@@ -62,30 +71,42 @@ class JooqMfLockRepository(private val dsl: DSLContext) : MfLockRepository {
         }
     }
 
-    private fun upsertLockedBlock(dsl: DSLContext, lockedBlock: DomainMfLockedBlock): DomainMfLockedBlock {
-        val rowCount = dsl.insertInto(MF_LOCKED_BLOCK)
-            .set(MF_LOCKED_BLOCK.ID, lockedBlock.id.value)
-            .set(MF_LOCKED_BLOCK.WORLD_ID, lockedBlock.block.worldId.toString())
-            .set(MF_LOCKED_BLOCK.X, lockedBlock.block.x)
-            .set(MF_LOCKED_BLOCK.Y, lockedBlock.block.y)
-            .set(MF_LOCKED_BLOCK.Z, lockedBlock.block.z)
-            .set(MF_LOCKED_BLOCK.CHUNK_X, lockedBlock.chunkX)
-            .set(MF_LOCKED_BLOCK.CHUNK_Z, lockedBlock.chunkZ)
-            .set(MF_LOCKED_BLOCK.PLAYER_ID, lockedBlock.playerId.value)
-            .set(MF_LOCKED_BLOCK.VERSION, 1)
-            .onConflict(MF_LOCKED_BLOCK.ID).doUpdate()
-            .set(MF_LOCKED_BLOCK.WORLD_ID, lockedBlock.block.worldId.toString())
-            .set(MF_LOCKED_BLOCK.X, lockedBlock.block.x)
-            .set(MF_LOCKED_BLOCK.Y, lockedBlock.block.y)
-            .set(MF_LOCKED_BLOCK.Z, lockedBlock.block.z)
-            .set(MF_LOCKED_BLOCK.CHUNK_X, lockedBlock.chunkX)
-            .set(MF_LOCKED_BLOCK.CHUNK_Z, lockedBlock.chunkZ)
-            .set(MF_LOCKED_BLOCK.PLAYER_ID, lockedBlock.playerId.value)
-            .set(MF_LOCKED_BLOCK.VERSION, lockedBlock.version + 1)
-            .where(MF_LOCKED_BLOCK.ID.eq(lockedBlock.id.value))
-            .and(MF_LOCKED_BLOCK.VERSION.eq(lockedBlock.version))
-            .execute()
-        if (rowCount == 0) throw OptimisticLockingFailureException("Invalid version: ${lockedBlock.version}")
+    /** Writes the locked block row, or returns null without writing if [lockedBlock] is stale. */
+    private fun upsertLockedBlock(dsl: DSLContext, lockedBlock: DomainMfLockedBlock): DomainMfLockedBlock? {
+        // See MfVersionedWrite for why this is not a single guarded upsert (#2076).
+        val written = MfVersionedWrite.write(
+            update = {
+                dsl.update(MF_LOCKED_BLOCK)
+                    .set(MF_LOCKED_BLOCK.WORLD_ID, lockedBlock.block.worldId.toString())
+                    .set(MF_LOCKED_BLOCK.X, lockedBlock.block.x)
+                    .set(MF_LOCKED_BLOCK.Y, lockedBlock.block.y)
+                    .set(MF_LOCKED_BLOCK.Z, lockedBlock.block.z)
+                    .set(MF_LOCKED_BLOCK.CHUNK_X, lockedBlock.chunkX)
+                    .set(MF_LOCKED_BLOCK.CHUNK_Z, lockedBlock.chunkZ)
+                    .set(MF_LOCKED_BLOCK.PLAYER_ID, lockedBlock.playerId.value)
+                    .set(MF_LOCKED_BLOCK.VERSION, lockedBlock.version + 1)
+                    .where(MF_LOCKED_BLOCK.ID.eq(lockedBlock.id.value))
+                    .and(MF_LOCKED_BLOCK.VERSION.eq(lockedBlock.version))
+                    .execute()
+            },
+            rowExists = {
+                dsl.select(MF_LOCKED_BLOCK.ID).from(MF_LOCKED_BLOCK).where(MF_LOCKED_BLOCK.ID.eq(lockedBlock.id.value)).forUpdate().fetchOne() != null
+            },
+            insert = {
+                dsl.insertInto(MF_LOCKED_BLOCK)
+                    .set(MF_LOCKED_BLOCK.ID, lockedBlock.id.value)
+                    .set(MF_LOCKED_BLOCK.WORLD_ID, lockedBlock.block.worldId.toString())
+                    .set(MF_LOCKED_BLOCK.X, lockedBlock.block.x)
+                    .set(MF_LOCKED_BLOCK.Y, lockedBlock.block.y)
+                    .set(MF_LOCKED_BLOCK.Z, lockedBlock.block.z)
+                    .set(MF_LOCKED_BLOCK.CHUNK_X, lockedBlock.chunkX)
+                    .set(MF_LOCKED_BLOCK.CHUNK_Z, lockedBlock.chunkZ)
+                    .set(MF_LOCKED_BLOCK.PLAYER_ID, lockedBlock.playerId.value)
+                    .set(MF_LOCKED_BLOCK.VERSION, 1)
+                    .execute()
+            }
+        )
+        if (!written) return null
         return dsl.selectFrom(MF_LOCKED_BLOCK)
             .where(MF_LOCKED_BLOCK.ID.eq(lockedBlock.id.value))
             .fetchOne()

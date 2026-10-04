@@ -5,16 +5,19 @@ import com.dansplugins.factionsystem.TestUtils
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionMember
 import com.dansplugins.factionsystem.faction.MfFactionService
+import com.dansplugins.factionsystem.faction.flag.MfFlagValues
 import com.dansplugins.factionsystem.faction.role.MfFactionRole
 import com.dansplugins.factionsystem.faction.role.MfFactionRoles
 import com.dansplugins.factionsystem.lang.Language
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerService
 import com.dansplugins.factionsystem.service.Services
+import dev.forkhandles.result4k.Success
 import net.md_5.bungee.api.ChatColor
 import org.bukkit.OfflinePlayer
 import org.bukkit.Server
 import org.bukkit.configuration.file.FileConfiguration
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -177,6 +180,58 @@ class MfFactionAddMemberCommandTest {
         verify(factionService, never()).save(anyFaction())
     }
 
+    /**
+     * Forcibly adding a player to the faction they are already in first removes them from it,
+     * which saves the faction and bumps its version. The add must then start from the faction as
+     * stored after that removal, not the copy read before it, or the save is a stale write: an
+     * optimistic-lock conflict on H2, and on MariaDB (before #2076) a write dropped without error,
+     * leaving the player removed but told they were added.
+     */
+    @Test
+    fun testOnCommand_forceAddToOwnFaction_addsToTheFactionAsStoredAfterTheRemoval() {
+        // prepare
+        val player = fixture.player
+        val command = fixture.command
+        `when`(player.hasPermission("mf.force.addmember")).thenReturn(true)
+        `when`(config.getInt("factions.maxMembers")).thenReturn(0)
+
+        val targetPlayerId = testUtils.createPlayerId()
+        val targetPlayer = mockOfflinePlayer("targetPlayerName")
+        `when`(playerService.getPlayer(targetPlayer)).thenReturn(MfPlayer(targetPlayerId, name = "targetPlayerName"))
+
+        val memberRole = MfFactionRole(plugin, name = "Member")
+        val officerRole = MfFactionRole(plugin, name = "Officer")
+        val faction = MfFaction(
+            plugin = plugin,
+            version = 4,
+            name = "TargetFaction",
+            members = listOf(MfFactionMember(targetPlayerId, officerRole)),
+            flags = MfFlagValues(plugin, emptyMap()),
+            roles = MfFactionRoles(memberRole.id, listOf(memberRole, officerRole)),
+            defaultPermissionsByName = emptyMap()
+        )
+        val storedAfterRemoval = faction.copy(version = 5, members = emptyList())
+        `when`(factionService.getFaction("TargetFaction")).thenReturn(faction)
+        `when`(factionService.getFaction(targetPlayerId)).thenReturn(faction)
+        `when`(factionService.getFaction(faction.id)).thenReturn(storedAfterRemoval)
+        val saved = mutableListOf<MfFaction>()
+        `when`(factionService.save(anyFaction())).thenAnswer { invocation ->
+            saved += invocation.getArgument<MfFaction>(0)
+            Success(mock(MfFaction::class.java))
+        }
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf("targetPlayerName", "TargetFaction", "-f"))
+
+        // verify
+        assertTrue(result)
+        assertEquals(2, saved.size)
+        assertEquals(4, saved[0].version, "the removal saves the faction as read")
+        val add = saved[1]
+        assertEquals(5, add.version, "the add must be saved from the faction as stored after the removal")
+        assertEquals(listOf(MfFactionMember(targetPlayerId, memberRole)), add.members)
+    }
+
     // Helper functions
 
     /**
@@ -185,6 +240,7 @@ class MfFactionAddMemberCommandTest {
      * registered, corrupting Mockito's matcher stack for subsequent tests. This generic
      * indirection avoids the compiler inserting that check.
      */
+
     private fun <T> anyFaction(): T {
         ArgumentMatchers.any<MfFaction>()
         @Suppress("UNCHECKED_CAST")
