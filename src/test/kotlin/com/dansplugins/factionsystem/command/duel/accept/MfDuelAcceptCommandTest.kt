@@ -159,6 +159,32 @@ class MfDuelAcceptCommandTest {
         assertEquals(MfPosition(worldId, 10.0, 64.0, 10.0, 0.0f, 0.0f), savedDuel?.challengedLocation)
     }
 
+    @Test
+    fun testOnCommand_recordsTheHealthHeldWhenTheCommandWasRun() {
+        // prepare - both players take damage while the duel is still queued. The duel restores each player to the
+        // health they had when the challenge was accepted, so that is the value it must record.
+        // See https://github.com/Dans-Plugins/Medieval-Factions/issues/2021.
+        val player = fixture.player
+        val command = fixture.command
+        val target = stubTarget()
+        stubAcceptableInvite(player, target)
+        stubPosition(player, 10.0, 64.0, 10.0)
+        stubPosition(target, 20.0, 64.0, 20.0)
+        `when`(player.health).thenReturn(18.0)
+        `when`(target.health).thenReturn(14.0)
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf("Target"))
+        `when`(player.health).thenReturn(3.0)
+        `when`(target.health).thenReturn(5.0)
+        runPendingTasks()
+
+        // verify - the health held when the command was run is recorded, not the health after the damage
+        assertTrue(result)
+        assertEquals(14.0, savedDuel?.challengerHealth)
+        assertEquals(18.0, savedDuel?.challengedHealth)
+    }
+
     // Helper functions
 
     private fun stubTarget(): Player {
