@@ -1628,6 +1628,84 @@ class PlayerInteractListenerTest {
         verify(scheduler, org.mockito.Mockito.times(2)).runTaskAsynchronously(eq(medievalFactions), any(Runnable::class.java))
     }
 
+    // #2010: throwing the last item in the hand raises a second, empty-handed event on the same block.
+
+    @Test
+    fun onPlayerInteract_EmptyHandFollowUpOfLastPotionThrown_ShouldRefuseSilently() {
+        // Arrange - a splash potion thrown at a block in enemy territory, then the vanilla follow-up
+        // event, which arrives with the hand already empty because potions do not stack
+        var now = 1_000L
+        uut = PlayerInteractListener(medievalFactions) { now }
+        setupItemUseTestInEnemyTerritory(Material.SPLASH_POTION)
+        uut.onPlayerInteract(fixture.event)
+        `when`(fixture.event.item).thenReturn(null)
+        `when`(fixture.event.hasItem()).thenReturn(false)
+        now += 50
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - the follow-up is still refused in full, but the player is not told so
+        verifyEventCancelled()
+        verifyPlayerNotNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_EmptyHandClickLongAfterAThrow_ShouldRefuseAndNotify() {
+        // Arrange - the same two events, but too far apart to be one right-click
+        var now = 1_000L
+        uut = PlayerInteractListener(medievalFactions) { now }
+        setupItemUseTestInEnemyTerritory(Material.SPLASH_POTION)
+        uut.onPlayerInteract(fixture.event)
+        `when`(fixture.event.item).thenReturn(null)
+        `when`(fixture.event.hasItem()).thenReturn(false)
+        now += 1_000
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyEventCancelled()
+        verifyPlayerNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_EmptyHandClickWithoutAPriorThrow_ShouldRefuseAndNotify() {
+        // Arrange - an ordinary bare-hand click: nothing was thrown, so the refusal is real
+        uut = PlayerInteractListener(medievalFactions) { 1_000L }
+        setupItemUseTestInEnemyTerritory(Material.SPLASH_POTION)
+        `when`(fixture.event.item).thenReturn(null)
+        `when`(fixture.event.hasItem()).thenReturn(false)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyEventCancelled()
+        verifyPlayerNotified()
+    }
+
+    @Test
+    fun onPlayerInteract_SecondEmptyHandClickAfterAFollowUp_ShouldNotifyAgain() {
+        // Arrange - the follow-up consumes the recorded throw, so a further bare-hand click straight
+        // after it is a separate click and is reported as usual
+        var now = 1_000L
+        uut = PlayerInteractListener(medievalFactions) { now }
+        setupItemUseTestInEnemyTerritory(Material.SPLASH_POTION)
+        uut.onPlayerInteract(fixture.event)
+        `when`(fixture.event.item).thenReturn(null)
+        `when`(fixture.event.hasItem()).thenReturn(false)
+        now += 20
+        uut.onPlayerInteract(fixture.event)
+        now += 20
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - exactly one message, from the third event
+        verify(fixture.player, org.mockito.Mockito.times(1)).sendMessage(any(String::class.java))
+    }
+
     // Helper functions
 
     /**
