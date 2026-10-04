@@ -52,6 +52,8 @@ import com.dansplugins.factionsystem.listener.AsyncPlayerPreLoginListener
 import com.dansplugins.factionsystem.listener.BlockBreakListener
 import com.dansplugins.factionsystem.listener.BlockBurnListener
 import com.dansplugins.factionsystem.listener.BlockExplodeListener
+import com.dansplugins.factionsystem.listener.BlockFertilizeListener
+import com.dansplugins.factionsystem.listener.BlockIgniteListener
 import com.dansplugins.factionsystem.listener.BlockPistonExtendListener
 import com.dansplugins.factionsystem.listener.BlockPistonRetractListener
 import com.dansplugins.factionsystem.listener.BlockPlaceListener
@@ -60,6 +62,8 @@ import com.dansplugins.factionsystem.listener.EntityDamageByEntityListener
 import com.dansplugins.factionsystem.listener.EntityDamageListener
 import com.dansplugins.factionsystem.listener.EntityExplodeListener
 import com.dansplugins.factionsystem.listener.EntityInteractionProtection
+import com.dansplugins.factionsystem.listener.EntityPlaceListener
+import com.dansplugins.factionsystem.listener.HangingPlaceListener
 import com.dansplugins.factionsystem.listener.InventoryClickListener
 import com.dansplugins.factionsystem.listener.InventoryMoveItemListener
 import com.dansplugins.factionsystem.listener.LingeringPotionSplashListener
@@ -73,6 +77,7 @@ import com.dansplugins.factionsystem.listener.PlayerMoveListener
 import com.dansplugins.factionsystem.listener.PlayerQuitListener
 import com.dansplugins.factionsystem.listener.PlayerTeleportListener
 import com.dansplugins.factionsystem.listener.PotionSplashListener
+import com.dansplugins.factionsystem.listener.WorldActionProtection
 import com.dansplugins.factionsystem.locks.JooqMfLockRepository
 import com.dansplugins.factionsystem.locks.MfLockRepository
 import com.dansplugins.factionsystem.locks.MfLockService
@@ -351,6 +356,7 @@ class MedievalFactions : JavaPlugin() {
         // Shared between the two entity interaction listeners so that a right-click raising both events
         // only produces a single message.
         val entityInteractionProtection = EntityInteractionProtection(this)
+        val worldActionProtection = WorldActionProtection(this)
 
         listOf(
             AreaEffectCloudApplyListener(this),
@@ -359,6 +365,8 @@ class MedievalFactions : JavaPlugin() {
             BlockBreakListener(this),
             BlockBurnListener(this),
             BlockExplodeListener(this),
+            BlockFertilizeListener(worldActionProtection),
+            BlockIgniteListener(worldActionProtection),
             BlockPistonExtendListener(this),
             BlockPistonRetractListener(this),
             BlockPlaceListener(this),
@@ -366,6 +374,8 @@ class MedievalFactions : JavaPlugin() {
             EntityDamageByEntityListener(this),
             EntityDamageListener(this),
             EntityExplodeListener(this),
+            EntityPlaceListener(worldActionProtection),
+            HangingPlaceListener(worldActionProtection),
             InventoryClickListener(this),
             InventoryMoveItemListener(this),
             LingeringPotionSplashListener(this),
