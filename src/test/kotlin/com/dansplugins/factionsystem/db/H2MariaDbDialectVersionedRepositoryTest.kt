@@ -15,7 +15,7 @@ import javax.sql.DataSource
  * the same contract on a real MariaDB server in CI.
  *
  * H2 runs the SQL that jOOQ renders for MariaDB (in MySQL mode, the mode of the default
- * `database.url`, because Flyway 9.4 does not recognise H2's MariaDB mode). H2 alone would hide
+ * `database.url`, chosen when Flyway 9.4 did not recognise H2's MariaDB mode). H2 alone would hide
  * the bug, though: it reports 0 rows for an `INSERT … ON DUPLICATE KEY UPDATE` that matched a
  * row and left it unchanged, whereas the MariaDB driver, in its default found-rows mode, reports
  * 1. The data source below reports such statements the way the MariaDB driver does.
