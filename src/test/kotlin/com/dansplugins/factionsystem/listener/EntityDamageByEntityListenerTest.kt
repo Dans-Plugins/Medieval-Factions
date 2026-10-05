@@ -187,7 +187,7 @@ class EntityDamageByEntityListenerTest {
         `when`(config.getBoolean("pvp.enabledForFactionlessPlayers")).thenReturn(false)
 
         uut.onEntityDamageByEntity(event)
-        now += EntityDamageByEntityListener.REFUSAL_MESSAGE_INTERVAL_MILLIS - 1
+        now += EntityDamageByEntityListener.REFUSAL_MESSAGE_INTERVAL_NANOS - 1
         uut.onEntityDamageByEntity(event)
         verify(damager, times(1)).sendMessage("${ChatColor.RED}CannotAttackPlayerFactionless")
 

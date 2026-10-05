@@ -14,7 +14,7 @@ import java.util.WeakHashMap
 
 class EntityDamageByEntityListener(
     private val plugin: MedievalFactions,
-    private val clock: () -> Long = System::currentTimeMillis
+    private val nanoClock: () -> Long = System::nanoTime
 ) : Listener {
 
     // A held attack button or a volley of arrows is refused once per hit, so tell each player at most
@@ -90,15 +90,15 @@ class EntityDamageByEntityListener(
     }
 
     private fun tellRefused(player: Player, key: String, vararg params: String) {
-        val now = clock()
+        val now = nanoClock()
         val last = lastRefusalMessage[player]
-        if (last != null && now - last < REFUSAL_MESSAGE_INTERVAL_MILLIS) return
+        if (last != null && now - last < REFUSAL_MESSAGE_INTERVAL_NANOS) return
         lastRefusalMessage[player] = now
         val message = plugin.language.get(key, *params)
         player.sendMessage("${ChatColor.RED}$message")
     }
 
     companion object {
-        const val REFUSAL_MESSAGE_INTERVAL_MILLIS = 2000L
+        const val REFUSAL_MESSAGE_INTERVAL_NANOS = 2_000_000_000L
     }
 }
