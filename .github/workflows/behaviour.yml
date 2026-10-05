@@ -95,11 +95,12 @@ jobs:
   behaviour:
     needs: [decide, build]
     if: needs.decide.outputs.run == 'true'
-    uses: Dans-Plugins/release-gates/.github/workflows/behaviour-gate.yml@v18
+    uses: Dans-Plugins/release-gates/.github/workflows/behaviour-gate.yml@v19
     with:
       repository: ${{ github.repository }}
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
       candidate_artifact: mf-candidate
+      gates_ref: v19   # keep equal to the tag in `uses:` above
       baseline_jar_url: ${{ needs.decide.outputs.baseline_url }}
       rows_url: ${{ needs.decide.outputs.fixtures }}/medieval-factions-behaviour.json
       setup_url: ${{ needs.decide.outputs.fixtures }}/medieval-factions-behaviour-setup.js
