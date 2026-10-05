@@ -18,7 +18,7 @@ This page was generated from release-gates run [37257995448](https://github.com/
 
 **Arenas:** `ownerClaim` is a chunk Alpha claims; `lockArena` is a second Alpha chunk with a chest Alpha's owner has locked and given the ally access to; `wilderness` is unclaimed.
 
-✅ took effect · ❌ refused · ✅⚠ took effect but the player was told it was refused · · not observed.
+✅ took effect · ❌ refused · ✅⚠ took effect but the player was told it was refused · · not observed (the bot could not decide it) · blank: no row for that role and action (not tested).
 
 ## ownerClaim (claimed by Alpha) — default config
 
