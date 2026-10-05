@@ -47,7 +47,7 @@ jobs:
           set -euo pipefail
           # The behaviour table, its setup and the driver, pinned to a plugin-fixtures commit (the
           # same pin quartermaster gates releases with; move both together).
-          echo "fixtures=https://raw.githubusercontent.com/Dans-Plugins/plugin-fixtures/a51d57f005e7b618e4fc712cc02bc3f5f33bc761/scenarios" >> "$GITHUB_OUTPUT"
+          echo "fixtures=https://raw.githubusercontent.com/Dans-Plugins/plugin-fixtures/55112d378ef9f4b0ee34120ad20c50291a6ea508/scenarios" >> "$GITHUB_OUTPUT"
 
           run=false
           if [ "$EVENT" = "workflow_dispatch" ]; then
@@ -95,12 +95,12 @@ jobs:
   behaviour:
     needs: [decide, build]
     if: needs.decide.outputs.run == 'true'
-    uses: Dans-Plugins/release-gates/.github/workflows/behaviour-gate.yml@v21
+    uses: Dans-Plugins/release-gates/.github/workflows/behaviour-gate.yml@v22
     with:
       repository: ${{ github.repository }}
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
       candidate_artifact: mf-candidate
-      gates_ref: v21   # keep equal to the tag in `uses:` above
+      gates_ref: v22   # keep equal to the tag in `uses:` above
       baseline_jar_url: ${{ needs.decide.outputs.baseline_url }}
       rows_url: ${{ needs.decide.outputs.fixtures }}/medieval-factions-behaviour.json
       setup_url: ${{ needs.decide.outputs.fixtures }}/medieval-factions-behaviour-setup.js
@@ -149,6 +149,24 @@ jobs:
                       "A changed row is not necessarily a bug: confirm each one is intended (and in the CHANGELOG).\n\n"
                       "| group | row | result | stable | this PR |\n|---|---|---|---|---|\n"
                       + "\n".join(f"| {x['group']} | `{x['id']}` | {x['result']} | `{json.dumps(x['stable'])}` | `{json.dumps(x['candidate'])}` |" for x in diff))
+          spec = r.get("spec") or []
+          def says(e):
+              x = e["expect"]
+              text = "takes effect" if x.get("effect") else "refused"
+              if "refusal" in x:
+                  text += ", no refusal message" if x["refusal"] is None else f", refusal `{x['refusal']}`"
+              return text
+          bad = [e for e in spec if e.get("status") in ("mismatch", "pre-existing")]
+          other = [e for e in spec if e.get("status") not in ("ok", "fixed", "mismatch", "pre-existing")]
+          if bad:
+              head += ("\n\n**Contradicts the documentation** (RFC 0019): each of these rows cites a doc line its behaviour does not match.\n\n"
+                       "| row | status | the docs say | source |\n|---|---|---|---|\n"
+                       + "\n".join(f"| `{e['id']}` | {e['status']} | {says(e)} | `{e['expect'].get('source')}` |" for e in bad))
+          if other:
+              head += ("\n\nNot judged against the docs this run: "
+                       + ", ".join(f"`{e['id']}` ({e['status']})" for e in other))
+          if spec and not bad and not other:
+              head += f"\n\nAll {len(spec)} rows with a reviewed expectation match the documentation they cite."
           print(f"{marker}\n{head}\n\n[Run]({run}) · rows from Dans-Plugins/plugin-fixtures · advisory, not a required check")
           EOF
           existing=$(gh api "repos/${{ github.repository }}/issues/$PR/comments" --paginate -q '.[] | select(.body | startswith("<!-- behaviour-check -->")) | .id' | tail -n1)
