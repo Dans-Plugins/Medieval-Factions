@@ -47,7 +47,7 @@ jobs:
           set -euo pipefail
           # The behaviour table, its setup and the driver, pinned to a plugin-fixtures commit (the
           # same pin quartermaster gates releases with; move both together).
-          echo "fixtures=https://raw.githubusercontent.com/Dans-Plugins/plugin-fixtures/55112d378ef9f4b0ee34120ad20c50291a6ea508/scenarios" >> "$GITHUB_OUTPUT"
+          echo "fixtures=https://raw.githubusercontent.com/Dans-Plugins/plugin-fixtures/08011196ba053b82bf8ecffb79b6221deb19bbcb/scenarios" >> "$GITHUB_OUTPUT"
 
           run=false
           if [ "$EVENT" = "workflow_dispatch" ]; then
