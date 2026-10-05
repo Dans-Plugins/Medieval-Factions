@@ -67,6 +67,7 @@ Every plugin is listed on [dansplugins.com](https://dansplugins.com), and [Dan's
 ### Documentation
 - [User Guide](USER_GUIDE.md) - Getting started and common scenarios
 - [FAQ](FAQ.md) - Answers to frequently asked questions
+- [Who can do what](BEHAVIOUR.md) - What each kind of player can do in faction territory, observed by bots on every release
 - [Commands Reference](COMMANDS.md) - Complete list of all commands
 - [Configuration Guide](CONFIG.md) - Detailed config options
 - [Faction Flags](FACTION_FLAGS.md) - Faction flag reference
