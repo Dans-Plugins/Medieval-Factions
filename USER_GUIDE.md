@@ -240,7 +240,7 @@ With the default configuration, these rules apply in land a faction has claimed:
 - Being at war gives no access either, except to ladders (`factions.laddersPlaceableInEnemyFactionTerritory`) and to the blocks the server lists in the `factions.wartime...` options, which are empty by default (see [CONFIG.md](CONFIG.md)).
 - Non-members also cannot set fire, use bone meal, place item frames, armour stands or end crystals, or right-click blocks, even with an empty hand.
 - Throwing an item while looking at a block in another faction's claim still works: snowballs, eggs, bottles o' enchanting, and splash and lingering potions are thrown, but the block itself is not used (a potion thrown at a chest does not open it).
-- Doors, trapdoors and fence gates follow `factions.nonMembersCanInteractWithDoors`, and entities (item frames, armour stands, minecarts and the like) follow `factions.nonMembersCanInteractWithEntities`. Both are off by default, so non-members cannot use them.
+- Doors, trapdoors and fence gates follow `factions.nonMembersCanInteractWithDoors`, and entities (item frames, armour stands, minecarts and the like) follow `factions.nonMembersCanInteractWithEntities`. Both are off by default, so non-members cannot use them. Trading with villagers is the exception: it follows the owning faction's `protectVillagerTrade` flag instead.
 - A server operator with the `mf.bypass` permission who has turned on `/f bypass` can do all of the above in any claim, and is warned each time.
 - Locked blocks have their own rules on top of these; see [Locking Important Blocks](#locking-important-blocks).
 
@@ -690,7 +690,7 @@ If you make a mistake:
 - Only the player who locked the block and the players on its access list can open it. This holds inside a claim too: an accessor from another faction, such as an ally, can open the block even though they cannot use anything else in the claim.
 - Everyone else is refused, including other members of the faction that owns the claim.
 - A server operator with the `mf.bypass` permission who has turned on `/f bypass` can open any locked block, and is warned. So can a player whose faction role has the `BYPASS_LOCKS` permission.
-- Only the player who locked the block can break it, which also removes the lock. Other players are refused unless they have `mf.force.unlock`.
+- Only the player who locked the block can break it, which also removes the lock. Other players are refused, unless they have `mf.force.unlock` and could break blocks at that spot anyway (for example as a member of the owning faction, or with `/f bypass` on).
 
 **Lock Tips:**
 - Lock your personal chests to prevent faction member theft
