@@ -5,17 +5,22 @@ import com.dansplugins.factionsystem.duel.MfDuel
 import com.dansplugins.factionsystem.duel.MfDuelId
 import com.dansplugins.factionsystem.duel.MfDuelService
 import com.dansplugins.factionsystem.faction.MfFactionService
+import com.dansplugins.factionsystem.lang.Language
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerService
 import com.dansplugins.factionsystem.service.Services
+import org.bukkit.ChatColor
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.Mockito.RETURNS_DEFAULTS
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import java.util.UUID
@@ -35,6 +40,7 @@ class EntityDamageByEntityListenerTest {
     private lateinit var damagerMfPlayer: MfPlayer
     private lateinit var damagedMfPlayer: MfPlayer
     private lateinit var event: EntityDamageByEntityEvent
+    private var now = 0L
 
     @BeforeEach
     fun setUp() {
@@ -50,6 +56,11 @@ class EntityDamageByEntityListenerTest {
         `when`(services.factionService).thenReturn(factionService)
         `when`(services.duelService).thenReturn(duelService)
         `when`(plugin.config).thenReturn(config)
+        // Each language key comes back unformatted, so the tests can assert which message was sent
+        val language = mock(Language::class.java) { invocation ->
+            if (invocation.method.returnType == String::class.java) invocation.arguments[0] else RETURNS_DEFAULTS.answer(invocation)
+        }
+        `when`(plugin.language).thenReturn(language)
 
         // Default: pvp allowed for factionless
         `when`(config.getBoolean("pvp.enabledForFactionlessPlayers")).thenReturn(true)
@@ -60,6 +71,7 @@ class EntityDamageByEntityListenerTest {
         val damagedId = UUID.randomUUID()
         `when`(damager.uniqueId).thenReturn(damagerId)
         `when`(damaged.uniqueId).thenReturn(damagedId)
+        `when`(damaged.name).thenReturn("Victim")
 
         damagerMfPlayer = mock(MfPlayer::class.java)
         damagedMfPlayer = mock(MfPlayer::class.java)
@@ -73,7 +85,7 @@ class EntityDamageByEntityListenerTest {
         `when`(event.damager).thenReturn(damager)
         `when`(event.entity).thenReturn(damaged)
 
-        uut = EntityDamageByEntityListener(plugin)
+        uut = EntityDamageByEntityListener(plugin) { now }
     }
 
     @Test
@@ -139,5 +151,49 @@ class EntityDamageByEntityListenerTest {
         uut.onEntityDamageByEntity(event)
 
         verify(event, never()).isCancelled = true
+    }
+
+    @Test
+    fun onEntityDamage_DuelRefusesHit_ShouldTellDamager() {
+        val duel = mock(MfDuel::class.java)
+        `when`(duel.id).thenReturn(MfDuelId("damaged-duel"))
+        `when`(duelService.getDuel(damagedMfPlayer.id)).thenReturn(duel)
+
+        uut.onEntityDamageByEntity(event)
+
+        verify(damager).sendMessage("${ChatColor.RED}CannotAttackPlayerDuringDuel")
+        verify(damaged, never()).sendMessage(anyString())
+    }
+
+    @Test
+    fun onEntityDamage_FactionlessPvpDisabled_ShouldCancelAndTellDamager() {
+        `when`(config.getBoolean("pvp.enabledForFactionlessPlayers")).thenReturn(false)
+
+        uut.onEntityDamageByEntity(event)
+
+        verify(event).isCancelled = true
+        verify(damager).sendMessage("${ChatColor.RED}CannotAttackPlayerFactionless")
+    }
+
+    @Test
+    fun onEntityDamage_FactionlessPvpEnabled_ShouldNotTellDamager() {
+        uut.onEntityDamageByEntity(event)
+
+        verify(damager, never()).sendMessage(anyString())
+    }
+
+    @Test
+    fun onEntityDamage_RepeatedRefusals_ShouldTellDamagerOncePerInterval() {
+        `when`(config.getBoolean("pvp.enabledForFactionlessPlayers")).thenReturn(false)
+
+        uut.onEntityDamageByEntity(event)
+        now += EntityDamageByEntityListener.REFUSAL_MESSAGE_INTERVAL_MILLIS - 1
+        uut.onEntityDamageByEntity(event)
+        verify(damager, times(1)).sendMessage("${ChatColor.RED}CannotAttackPlayerFactionless")
+
+        now += 1
+        uut.onEntityDamageByEntity(event)
+        verify(damager, times(2)).sendMessage("${ChatColor.RED}CannotAttackPlayerFactionless")
+        verify(event, times(3)).isCancelled = true
     }
 }

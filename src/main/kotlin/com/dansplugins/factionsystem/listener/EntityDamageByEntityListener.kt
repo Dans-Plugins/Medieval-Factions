@@ -10,8 +10,16 @@ import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import java.util.WeakHashMap
 
-class EntityDamageByEntityListener(private val plugin: MedievalFactions) : Listener {
+class EntityDamageByEntityListener(
+    private val plugin: MedievalFactions,
+    private val clock: () -> Long = System::currentTimeMillis
+) : Listener {
+
+    // A held attack button or a volley of arrows is refused once per hit, so tell each player at most
+    // once per interval. Players are weak keys, so nothing outlives a session.
+    private val lastRefusalMessage = WeakHashMap<Player, Long>()
 
     @EventHandler
     fun onEntityDamageByEntity(event: EntityDamageByEntityEvent) {
@@ -50,18 +58,21 @@ class EntityDamageByEntityListener(private val plugin: MedievalFactions) : Liste
             }
             if (damagerDuel != null || damagedDuel != null) {
                 event.isCancelled = true
+                tellRefused(damagerPlayer, "CannotAttackPlayerDuringDuel", damaged.name)
                 return
             }
             val damagedFaction = factionService.getFaction(damagedMfPlayer.id)
             if (damagerFaction == null || damagedFaction == null) {
                 if (!plugin.config.getBoolean("pvp.enabledForFactionlessPlayers")) {
                     event.isCancelled = true
+                    tellRefused(damagerPlayer, "CannotAttackPlayerFactionless")
                 }
                 return
             }
             if (damagerFaction.id == damagedFaction.id) {
                 if (!plugin.config.getBoolean("pvp.friendlyFire") && !damagerFaction.flags[plugin.flags.allowFriendlyFire]) {
                     event.isCancelled = true
+                    tellRefused(damagerPlayer, "CannotAttackFactionMember")
                 }
                 return
             }
@@ -71,9 +82,23 @@ class EntityDamageByEntityListener(private val plugin: MedievalFactions) : Liste
             if ((relationships + reverseRelationships).none { it.type == MfFactionRelationshipType.AT_WAR }) {
                 if (plugin.config.getBoolean("pvp.warRequiredForPlayersOfDifferentFactions")) {
                     event.isCancelled = true
+                    tellRefused(damagerPlayer, "CannotAttackPlayerNotAtWar", damagedFaction.name)
                 }
                 return
             }
         }
+    }
+
+    private fun tellRefused(player: Player, key: String, vararg params: String) {
+        val now = clock()
+        val last = lastRefusalMessage[player]
+        if (last != null && now - last < REFUSAL_MESSAGE_INTERVAL_MILLIS) return
+        lastRefusalMessage[player] = now
+        val message = plugin.language.get(key, *params)
+        player.sendMessage("${ChatColor.RED}$message")
+    }
+
+    companion object {
+        const val REFUSAL_MESSAGE_INTERVAL_MILLIS = 2000L
     }
 }
