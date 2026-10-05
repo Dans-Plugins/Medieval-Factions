@@ -8,6 +8,7 @@ This guide provides step-by-step instructions for common scenarios and getting s
   - [Creating Your First Faction](#creating-your-first-faction)
   - [Joining an Existing Faction](#joining-an-existing-faction)
   - [Claiming Your First Territory](#claiming-your-first-territory)
+  - [Who Can Do What in a Claim](#who-can-do-what-in-a-claim)
   - [Inviting Members](#inviting-members)
   - [Setting Up Faction Roles](#setting-up-faction-roles)
   - [Forming an Alliance](#forming-an-alliance)
@@ -226,6 +227,24 @@ If you need to unclaim:
 - Claim strategically - create a buffer zone around your important structures
 - Claim contiguously if server requires it (`contiguousClaims` in config)
 - Remember: you lose claims if faction power drops too low
+
+---
+
+### Who Can Do What in a Claim
+
+With the default configuration, these rules apply in land a faction has claimed:
+
+- Members of the faction can build, break blocks and use blocks (chests, doors, buttons and the like) in its claims.
+- Everyone else is refused and told why: members of other factions, members of a faction at war with it, and players in no faction cannot build, break or use blocks in its claims.
+- Allies are refused too. An alliance alone gives no access to land; allies can build, break and use blocks only after the owning faction turns on the `alliesCanInteractWithLand` flag, which is off by default (see [FACTION_FLAGS.md](FACTION_FLAGS.md)).
+- Being at war gives no access either, except to ladders (`factions.laddersPlaceableInEnemyFactionTerritory`) and to the blocks the server lists in the `factions.wartime...` options, which are empty by default (see [CONFIG.md](CONFIG.md)).
+- Non-members also cannot set fire, use bone meal, place item frames, armour stands or end crystals, or right-click blocks, even with an empty hand.
+- Throwing an item while looking at a block in another faction's claim still works: snowballs, eggs, bottles o' enchanting, and splash and lingering potions are thrown, but the block itself is not used (a potion thrown at a chest does not open it).
+- Doors, trapdoors and fence gates follow `factions.nonMembersCanInteractWithDoors`, and entities (item frames, armour stands, minecarts and the like) follow `factions.nonMembersCanInteractWithEntities`. Both are off by default, so non-members cannot use them. Trading with villagers is the exception: it follows the owning faction's `protectVillagerTrade` flag instead.
+- A server operator with the `mf.bypass` permission who has turned on `/f bypass` can do all of the above in any claim, and is warned each time.
+- Locked blocks have their own rules on top of these; see [Locking Important Blocks](#locking-important-blocks).
+
+These rules are checked by bots on a real server before each release; the observed results are in [BEHAVIOUR.md](BEHAVIOUR.md).
 
 ---
 
@@ -666,6 +685,12 @@ If you make a mistake:
 1. Enable remove mode: `/accessors remove`
 2. Right-click the locked block
 3. Right-click the player to revoke access from
+
+**Who can open and break a locked block:**
+- Only the player who locked the block and the players on its access list can open it. This holds inside a claim too: an accessor from another faction, such as an ally, can open the block even though they cannot use anything else in the claim.
+- Everyone else is refused, including other members of the faction that owns the claim.
+- A server operator with the `mf.bypass` permission who has turned on `/f bypass` can open any locked block, and is warned. So can a player whose faction role has the `BYPASS_LOCKS` permission.
+- Only the player who locked the block can break it, which also removes the lock. Other players are refused, unless they have `mf.force.unlock` and could break blocks at that spot anyway (for example as a member of the owning faction, or with `/f bypass` on).
 
 **Lock Tips:**
 - Lock your personal chests to prevent faction member theft

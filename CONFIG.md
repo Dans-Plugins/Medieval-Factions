@@ -285,7 +285,7 @@ Controls player vs player combat mechanics.
 ### `factions.laddersPlaceableInEnemyFactionTerritory`
 **Type:** Boolean  
 **Default:** `true`  
-**Description:** When `true`, allows placing ladders in enemy faction territory (useful for sieges).
+**Description:** When `true`, players whose faction is at war with a territory's owner can place ladders in that territory (useful for sieges). It does not apply without a war: a faction that is not at war with the owner cannot place ladders there.
 
 ### `factions.wartimePlaceableBlocks`
 **Type:** List of Strings  
@@ -345,7 +345,7 @@ factions:
 ### `factions.nonMembersCanInteractWithDoors`
 **Type:** Boolean  
 **Default:** `false`  
-**Description:** When `true`, non-faction members can open/close doors (including trapdoors and fence gates) in faction territory.
+**Description:** When `true`, non-faction members can open/close doors (including trapdoors and fence gates) in faction territory. It covers opening and closing only: using an item on a door, such as flint and steel while sneaking, is still refused.
 
 ### `factions.nonMembersCanInteractWithEntities`
 **Type:** Boolean  
