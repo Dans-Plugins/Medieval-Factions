@@ -150,12 +150,22 @@ jobs:
                       "| group | row | result | stable | this PR |\n|---|---|---|---|---|\n"
                       + "\n".join(f"| {x['group']} | `{x['id']}` | {x['result']} | `{json.dumps(x['stable'])}` | `{json.dumps(x['candidate'])}` |" for x in diff))
           spec = r.get("spec") or []
+          def says(e):
+              x = e["expect"]
+              text = "takes effect" if x.get("effect") else "refused"
+              if "refusal" in x:
+                  text += ", no refusal message" if x["refusal"] is None else f", refusal `{x['refusal']}`"
+              return text
           bad = [e for e in spec if e.get("status") in ("mismatch", "pre-existing")]
+          other = [e for e in spec if e.get("status") not in ("ok", "fixed", "mismatch", "pre-existing")]
           if bad:
               head += ("\n\n**Contradicts the documentation** (RFC 0019): each of these rows cites a doc line its behaviour does not match.\n\n"
                        "| row | status | the docs say | source |\n|---|---|---|---|\n"
-                       + "\n".join(f"| `{e['id']}` | {e['status']} | {'takes effect' if e['expect'].get('effect') else 'refused'} | `{e['expect'].get('source')}` |" for e in bad))
-          elif spec:
+                       + "\n".join(f"| `{e['id']}` | {e['status']} | {says(e)} | `{e['expect'].get('source')}` |" for e in bad))
+          if other:
+              head += ("\n\nNot judged against the docs this run: "
+                       + ", ".join(f"`{e['id']}` ({e['status']})" for e in other))
+          if spec and not bad and not other:
               head += f"\n\nAll {len(spec)} rows with a reviewed expectation match the documentation they cite."
           print(f"{marker}\n{head}\n\n[Run]({run}) · rows from Dans-Plugins/plugin-fixtures · advisory, not a required check")
           EOF
