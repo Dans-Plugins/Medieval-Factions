@@ -1,0 +1,158 @@
+name: Behaviour check
+
+# Plays the Medieval Factions behaviour table (Dans-Plugins/plugin-fixtures, Stephenson-Software
+# RFC 0017) with bots on the current stable release and on this pull request's build, and comments
+# with every row whose outcome changed. Advisory: it is not a required check, and a changed row is
+# a question ("is this change intended?"), not necessarily a bug.
+#
+# It runs when a pull request touches code that decides what players can do in the world, or when
+# the `behaviour-check` label is added, and can be dispatched by hand.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # An unrelated label must not cancel a check that is already running.
+  group: behaviour-${{ github.event.pull_request.number || github.ref }}-${{ (github.event.action == 'labeled' && github.event.label.name != 'behaviour-check') && 'ignored' || 'run' }}
+  cancel-in-progress: true
+
+jobs:
+  decide:
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.decide.outputs.run }}
+      baseline_url: ${{ steps.decide.outputs.baseline_url }}
+      fixtures: ${{ steps.decide.outputs.fixtures }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Decide whether to run
+        id: decide
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          ACTION: ${{ github.event.action }}
+          LABEL: ${{ github.event.label.name }}
+          LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          # The behaviour table, its setup and the driver, pinned to a plugin-fixtures commit (the
+          # same pin quartermaster gates releases with; move both together).
+          echo "fixtures=https://raw.githubusercontent.com/Dans-Plugins/plugin-fixtures/6c97ff9f180b763f5bf71d04821e40aad326fb12/scenarios" >> "$GITHUB_OUTPUT"
+
+          run=false
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            run=true
+          elif [ "$ACTION" = "labeled" ]; then
+            [ "$LABEL" = "behaviour-check" ] && run=true
+          elif echo ",$LABELS," | grep -q ",behaviour-check,"; then
+            run=true
+          else
+            changed=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" || true)
+            echo "Changed files:"; echo "$changed"
+            if echo "$changed" | grep -qE '^src/main/kotlin/com/dansplugins/factionsystem/(listener|claim|locks|gate|relationship|interaction|area|faction/flag)/|^src/main/resources/(config\.yml|plugin\.yml|lang/)|^build\.gradle$'; then
+              run=true
+            fi
+          fi
+          echo "run=$run" | tee -a "$GITHUB_OUTPUT"
+
+          url=$(gh api "repos/${{ github.repository }}/releases/latest" -q '[.assets[] | select(.name | endswith("-all.jar"))][0].browser_download_url')
+          echo "baseline: $url"
+          echo "baseline_url=$url" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: decide
+    if: needs.decide.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Build the plugin jar
+        run: |
+          chmod +x gradlew
+          ./gradlew shadowJar --no-daemon
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mf-candidate
+          path: build/libs/*-all.jar
+          if-no-files-found: error
+
+  behaviour:
+    needs: [decide, build]
+    if: needs.decide.outputs.run == 'true'
+    uses: Dans-Plugins/release-gates/.github/workflows/behaviour-gate.yml@v18
+    with:
+      repository: ${{ github.repository }}
+      sha: ${{ github.event.pull_request.head.sha || github.sha }}
+      candidate_artifact: mf-candidate
+      baseline_jar_url: ${{ needs.decide.outputs.baseline_url }}
+      rows_url: ${{ needs.decide.outputs.fixtures }}/medieval-factions-behaviour.json
+      setup_url: ${{ needs.decide.outputs.fixtures }}/medieval-factions-behaviour-setup.js
+      driver_url: ${{ needs.decide.outputs.fixtures }}/behaviour-driver.js
+
+  report:
+    needs: [decide, behaviour]
+    # A fork's pull request gets a read-only token, so it is not commented on (the run's
+    # summary still has the table).
+    if: always() && needs.decide.outputs.run == 'true' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: behaviour-${{ github.run_id }}
+          path: result
+        continue-on-error: true
+
+      - name: Comment with the result
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python3 - <<'EOF' > body.md
+          import json, os
+          marker = "<!-- behaviour-check -->"
+          run = os.environ["RUN_URL"]
+          p = "result/result.json"
+          if not os.path.exists(p):
+              print(f"{marker}\n### Behaviour check: no result\n\nThe run did not produce a result: {run}")
+              raise SystemExit
+          r = json.load(open(p))
+          rows = r.get("rows", [])
+          diff = [x for x in rows if x["result"] in ("changed", "message-changed", "flaky")]
+          failed = next((a for a in r["assertions"] if not a["passed"]), None)
+          if failed and failed["name"] != "behaviour-diff":
+              head = f"### Behaviour check: no verdict\n\n`{failed['name']}`: {failed.get('detail', '')}"
+          elif not diff:
+              head = f"### Behaviour check: no change\n\nAll {sum(1 for x in rows if x['result'] == 'same')} rows behave as in v{r.get('baselineVersion')}."
+          else:
+              changed = sum(1 for x in diff if x["result"] == "changed")
+              head = (f"### Behaviour check: {changed} row(s) changed\n\nCompared with v{r.get('baselineVersion')}. "
+                      "A changed row is not necessarily a bug: confirm each one is intended (and in the CHANGELOG).\n\n"
+                      "| group | row | result | stable | this PR |\n|---|---|---|---|---|\n"
+                      + "\n".join(f"| {x['group']} | `{x['id']}` | {x['result']} | `{json.dumps(x['stable'])}` | `{json.dumps(x['candidate'])}` |" for x in diff))
+          print(f"{marker}\n{head}\n\n[Run]({run}) · rows from Dans-Plugins/plugin-fixtures · advisory, not a required check")
+          EOF
+          existing=$(gh api "repos/${{ github.repository }}/issues/$PR/comments" --paginate -q '.[] | select(.body | startswith("<!-- behaviour-check -->")) | .id' | tail -n1)
+          if [ -n "$existing" ]; then
+            gh api -X PATCH "repos/${{ github.repository }}/issues/comments/$existing" -F body=@body.md >/dev/null
+          else
+            gh pr comment "$PR" --repo "${{ github.repository }}" --body-file body.md
+          fi
