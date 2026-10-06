@@ -228,6 +228,14 @@ If you need to unclaim:
 - Claim contiguously if server requires it (`contiguousClaims` in config)
 - Remember: you lose claims if faction power drops too low
 
+#### Who Can Claim and Unclaim
+
+- Only a member whose faction role has the `CLAIM` permission can claim land for the faction, and only one whose role has `UNCLAIM` can unclaim it. The faction owner has both; the default Member role has neither, so an ordinary member is refused until the owner grants them (`/f role setpermission Member claim true`, see [Setting Up Faction Roles](#setting-up-faction-roles)).
+- Players in no faction can neither claim nor unclaim land.
+- Land another faction has claimed cannot be claimed while that faction has the power to hold it. This applies to allies, to factions you are not at war with, and to factions you are at war with alike. Taking enemy land (overclaiming) is possible only during a war, and only when the owner's power is no more than the number of chunks it would still hold afterwards.
+- `/f unclaim` only removes your own faction's land. Standing in another faction's claim, it is refused, whatever your relationship to that faction.
+- A server operator with the `mf.bypass` permission who has turned on `/f bypass` can unclaim any faction's land.
+
 ---
 
 ### Who Can Do What in a Claim
