@@ -47,7 +47,7 @@ jobs:
           set -euo pipefail
           # The behaviour table, its setup and the driver, pinned to a plugin-fixtures commit (the
           # same pin quartermaster gates releases with; move both together).
-          echo "fixtures=https://raw.githubusercontent.com/Dans-Plugins/plugin-fixtures/08011196ba053b82bf8ecffb79b6221deb19bbcb/scenarios" >> "$GITHUB_OUTPUT"
+          echo "fixtures=https://raw.githubusercontent.com/Dans-Plugins/plugin-fixtures/63e686d11dd30d971d40100a7d27c8d16ed72a2c/scenarios" >> "$GITHUB_OUTPUT"
 
           run=false
           if [ "$EVENT" = "workflow_dispatch" ]; then
@@ -95,12 +95,12 @@ jobs:
   behaviour:
     needs: [decide, build]
     if: needs.decide.outputs.run == 'true'
-    uses: Dans-Plugins/release-gates/.github/workflows/behaviour-gate.yml@v22
+    uses: Dans-Plugins/release-gates/.github/workflows/behaviour-gate.yml@v23
     with:
       repository: ${{ github.repository }}
       sha: ${{ github.event.pull_request.head.sha || github.sha }}
       candidate_artifact: mf-candidate
-      gates_ref: v22   # keep equal to the tag in `uses:` above
+      gates_ref: v23   # keep equal to the tag in `uses:` above
       baseline_jar_url: ${{ needs.decide.outputs.baseline_url }}
       rows_url: ${{ needs.decide.outputs.fixtures }}/medieval-factions-behaviour.json
       setup_url: ${{ needs.decide.outputs.fixtures }}/medieval-factions-behaviour-setup.js
