@@ -215,7 +215,7 @@ To turn it off:
 - for every plugin on the server that reports to trace: `enabled: false` in `plugins/trace/config.yml` (written by the first such plugin to start)
 - the environment variable `TRACE_USAGE_REPORTING=off` or `DO_NOT_TRACK=1`
 
-Details: https://github.com/Stephenson-Software/trace#usage-reporting
+Details: https://danielstephenson.dev/usage-reporting
 
 ## Update check
 

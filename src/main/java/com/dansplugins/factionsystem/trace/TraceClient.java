@@ -1,5 +1,5 @@
 /*
- * trace-client 0.5.0 -- https://github.com/Stephenson-Software/trace-client-java
+ * trace-client 0.6.1 -- https://github.com/Stephenson-Software/trace-client-java
  *
  * One call to report that a program was used. Copy this file into a project as
  * is, or depend on the artifact; either way there is nothing else to add.
@@ -16,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Collections;
@@ -85,10 +86,14 @@ import java.util.regex.Pattern;
  * {@code plugins/trace/config.yml}, generated with
  * {@link UUID#randomUUID()} and appended to that file the first time an
  * enabled client finds none -- the same idea as bStats' {@code serverUuid}.
- * Anything else may pass one with {@link Builder#installId(String)};
- * without either, no {@code install} tag is sent. The ID is random: it
- * names no person, account or address. A disabled client never generates
- * or writes one. An event's own {@code install} tag wins over it.
+ * Anything else may pass a file to keep it in with
+ * {@link Builder#installIdFile(File)}, or the ID itself with
+ * {@link Builder#installId(String)}. When more than one is given, the
+ * explicit {@code installId} wins, then {@code installIdFile}, then the
+ * server-wide {@code server-id:}; with none of them, no {@code install} tag
+ * is sent. The ID is random: it names no person, account or address. A
+ * disabled client never generates, reads or writes one. An event's own
+ * {@code install} tag wins over it.
  *
  * <p>A disabled client is a no-op that costs nothing. Programs that run on
  * other people's machines should expose their own switch in their
@@ -119,7 +124,7 @@ import java.util.regex.Pattern;
 public final class TraceClient {
 
     /** This client's version, as sent in the User-Agent. */
-    public static final String VERSION = "0.5.0";
+    public static final String VERSION = "0.6.1";
 
     /** How many reports may wait to be sent before new ones are dropped. */
     public static final int QUEUE_CAPACITY = 256;
@@ -157,7 +162,7 @@ public final class TraceClient {
     /** Exactly what a missing server-wide switch file is created with. */
     static final String SERVER_WIDE_CONFIG_CONTENT =
             "# Server-wide switch for usage reporting by plugins that report to trace\n"
-            + "# (https://github.com/Stephenson-Software/trace#usage-reporting).\n"
+            + "# (https://danielstephenson.dev/usage-reporting).\n"
             + "# Set enabled to false and every such plugin on this server stops reporting,\n"
             + "# regardless of its own usage-reporting.enabled setting. Plugins never turn\n"
             + "# this back on.\n"
@@ -172,6 +177,9 @@ public final class TraceClient {
 
     /** The tag every event carries the installation's ID as. */
     static final String INSTALL_TAG = "install";
+
+    /** What {@link #installIdFromFile(File)} accepts as an ID on a line of its file. */
+    private static final Pattern INSTALL_ID_LINE = Pattern.compile("[A-Za-z0-9_.\\-]{1,255}");
 
     private static final Pattern ENABLED_LINE = Pattern.compile("^\\s*enabled\\s*:\\s*(\\S+)");
     private static final Pattern TAGS_LINE = Pattern.compile("^tags\\s*:\\s*(#.*)?$");
@@ -263,22 +271,27 @@ public final class TraceClient {
     /**
      * The random per-installation ID every event carries as the tag
      * {@code install}, or {@code null} when the client is disabled or has
-     * none (no {@link Builder#serverWideConfig(File)} and no
-     * {@link Builder#installId(String)}).
+     * none (no {@link Builder#installId(String)}, no
+     * {@link Builder#installIdFile(File)} and no
+     * {@link Builder#serverWideConfig(File)}).
      */
     public String installId() {
         return installId;
     }
 
     /**
-     * The installation's ID: the builder's, else the server-wide file's
-     * {@code server-id:}, else a new random one appended to that file. If the
+     * The installation's ID: the builder's, else the one kept in the
+     * builder's install ID file, else the server-wide file's
+     * {@code server-id:}, else a new random one appended to that file. If a
      * file could not be read or written, the new ID lives in memory for this
      * process only. Never throws.
      */
     private String resolveInstallId(Builder builder, ServerWideConfig serverWide) {
         if (builder.installId != null) {
             return builder.installId;
+        }
+        if (builder.installIdFile != null) {
+            return loadOrCreateInstallId(builder.installIdFile, logger);
         }
         if (builder.pluginsDirectory == null) {
             return null;
@@ -314,6 +327,63 @@ public final class TraceClient {
                     + ", using an in-memory one for this process: " + failure);
             return fresh;
         }
+    }
+
+    /**
+     * The installation's ID kept in {@code file}, which the program chooses
+     * -- there is no default location. The first line that is an ID
+     * ({@code [A-Za-z0-9_.-]}, at most {@value #MAX_TAG_LENGTH} characters,
+     * surrounding whitespace ignored) is returned. If the file does not exist
+     * or holds no such line, a new random {@link UUID#randomUUID()} is written
+     * to it (parent directories created) and returned. Delete the file to get
+     * a new one.
+     *
+     * <p>Never throws: if the file exists but cannot be read, or cannot be
+     * written, a fresh random ID is returned for this process only, and an
+     * unreadable file is left as it is.
+     *
+     * <p><b>Called directly, this writes whatever the opt-outs say.</b> Pass
+     * the file to {@link Builder#installIdFile(File)} instead to keep the
+     * guarantee that a disabled client writes nothing.
+     */
+    public static String installIdFromFile(File file) {
+        return loadOrCreateInstallId(file, null);
+    }
+
+    private static String loadOrCreateInstallId(File file, Logger logger) {
+        String fresh = UUID.randomUUID().toString();
+        if (file == null || file.getPath().trim().isEmpty()) {
+            return fresh;
+        }
+        Path path;
+        try {
+            // Inside the try: toPath() throws InvalidPathException for a path
+            // the file system cannot represent.
+            path = file.toPath();
+            for (String line : Files.readAllLines(path, StandardCharsets.UTF_8)) {
+                String candidate = line.trim();
+                if (INSTALL_ID_LINE.matcher(candidate).matches()) {
+                    return candidate;
+                }
+            }
+        } catch (NoSuchFileException missing) {
+            path = file.toPath(); // it converted, or there would be no NoSuchFileException
+        } catch (IOException | RuntimeException failure) {
+            // There but unreadable (a directory, no permission, not UTF-8):
+            // never overwrite it.
+            log(logger, "could not read install ID file " + file + ", using an in-memory one: " + failure);
+            return fresh;
+        }
+        try {
+            Path parent = path.toAbsolutePath().getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
+            Files.write(path, (fresh + "\n").getBytes(StandardCharsets.UTF_8));
+        } catch (IOException | RuntimeException failure) {
+            log(logger, "could not write install ID file " + file + ", using an in-memory one: " + failure);
+        }
+        return fresh;
     }
 
     private static String disabledReason(Builder builder, ServerWideConfig serverWide) {
@@ -714,6 +784,10 @@ public final class TraceClient {
     }
 
     private void log(String message) {
+        log(logger, message);
+    }
+
+    private static void log(Logger logger, String message) {
         if (logger != null) {
             logger.log(Level.FINE, "[trace] " + message);
         }
@@ -778,6 +852,7 @@ public final class TraceClient {
         private boolean enabled = true;
         private File pluginsDirectory;
         private String installId;
+        private File installIdFile;
         private Logger logger;
 
         private Builder(String baseUrl, String application, String version) {
@@ -845,8 +920,9 @@ public final class TraceClient {
          * server can count installations. It should be random -- e.g. a
          * {@link UUID#randomUUID()} the program stores in its own
          * configuration -- and never derived from a person, account or
-         * address. Takes precedence over the server-wide {@code server-id:}.
-         * Trimmed; {@code null} or blank means none. Without it, and without
+         * address. Takes precedence over {@link #installIdFile(File)} and the
+         * server-wide {@code server-id:}. Trimmed; {@code null} or blank means
+         * none. Without it, {@link #installIdFile(File)} or
          * {@link #serverWideConfig(File)}, no {@code install} tag is sent.
          *
          * @throws IllegalArgumentException when longer than {@value TraceClient#MAX_TAG_LENGTH} characters
@@ -857,6 +933,26 @@ public final class TraceClient {
                 throw new IllegalArgumentException("installId is longer than " + MAX_TAG_LENGTH + " characters");
             }
             this.installId = trimmed == null || trimmed.isEmpty() ? null : trimmed;
+            return this;
+        }
+
+        /**
+         * A file to keep the installation's ID in, for programs that are not
+         * Spigot plugins -- e.g. {@code <user data dir>/<program>/trace-install-id}.
+         * {@link #build()} resolves it with {@link TraceClient#installIdFromFile(File)}
+         * <b>only when the client is enabled</b>, after every opt-out: the first
+         * run writes a new random UUID there (creating parent directories) and
+         * later runs reuse it. A file that cannot be read or written yields an
+         * in-memory ID for this process; an unreadable one is never
+         * overwritten; {@code build()} still never throws.
+         *
+         * <p>Precedence: an explicit {@link #installId(String)} wins over this,
+         * and this wins over the server-wide {@code server-id:} of
+         * {@link #serverWideConfig(File)} (whose file then gains no
+         * {@code server-id:} line). {@code null} means none.
+         */
+        public Builder installIdFile(File installIdFile) {
+            this.installIdFile = installIdFile;
             return this;
         }
 

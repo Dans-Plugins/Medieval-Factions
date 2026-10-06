@@ -580,7 +580,7 @@ class TraceClientTest {
         // Assert
         assertTrue(Files.exists(file), "plugins/trace/config.yml should have been created");
         String expected = "# Server-wide switch for usage reporting by plugins that report to trace\n"
-                + "# (https://github.com/Stephenson-Software/trace#usage-reporting).\n"
+                + "# (https://danielstephenson.dev/usage-reporting).\n"
                 + "# Set enabled to false and every such plugin on this server stops reporting,\n"
                 + "# regardless of its own usage-reporting.enabled setting. Plugins never turn\n"
                 + "# this back on.\n"
@@ -1170,6 +1170,163 @@ class TraceClientTest {
         arrived = new CountDownLatch(1);
         assertEquals("{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\",\"install\":\"test-server\"}}",
                 reportedBody(plugins, "startup", null));
+    }
+
+    @Test
+    void installIdFile_isCreatedOnceWithParentDirectoriesAndReused(@TempDir Path scratch) throws Exception {
+        // Arrange
+        Path file = scratch.resolve("nested").resolve("deeper").resolve("trace-install-id");
+
+        // Act
+        TraceClient first = TraceClient.builder(baseUrl(), "MyCli", "1.2.3").key("k").installIdFile(file.toFile()).build();
+        first.close();
+        TraceClient second = TraceClient.builder(baseUrl(), "MyCli", "1.2.3").key("k").installIdFile(file.toFile()).build();
+        second.report("startup");
+
+        // Assert
+        assertTrue(arrived.await(5, TimeUnit.SECONDS));
+        second.close();
+        String id = first.installId();
+        assertTrue(id.matches(UUID_PATTERN), id);
+        assertEquals(id + "\n", new String(Files.readAllBytes(file), StandardCharsets.UTF_8), "parent directories are created");
+        assertEquals(id, second.installId(), "the next run reuses it");
+        assertEquals("{\"application\":\"MyCli\",\"name\":\"startup\",\"tags\":{\"version\":\"1.2.3\",\"install\":\"" + id + "\"}}",
+                received.get(0).body);
+    }
+
+    @Test
+    void installIdFromFile_readsTheFirstValidLineAndNeverRewritesTheFile(@TempDir Path scratch) throws Exception {
+        Path file = scratch.resolve("trace-install-id");
+        String content = "\n# not an id\n  my-own.id_1  \nsecond-id\n";
+        Files.write(file, content.getBytes(StandardCharsets.UTF_8));
+
+        assertEquals("my-own.id_1", TraceClient.installIdFromFile(file.toFile()));
+        assertEquals(content, new String(Files.readAllBytes(file), StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void installIdFromFile_replacesAFileWithNoValidLine(@TempDir Path scratch) throws Exception {
+        Path file = scratch.resolve("trace-install-id");
+        StringBuilder overlong = new StringBuilder();
+        for (int i = 0; i <= TraceClient.MAX_TAG_LENGTH; i++) {
+            overlong.append('x');
+        }
+        Files.write(file, ("not an id\n" + overlong + "\n").getBytes(StandardCharsets.UTF_8));
+
+        String made = TraceClient.installIdFromFile(file.toFile());
+
+        assertTrue(made.matches(UUID_PATTERN), made);
+        assertEquals(made, TraceClient.installIdFromFile(file.toFile()));
+        assertEquals(made + "\n", new String(Files.readAllBytes(file), StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void installIdFile_unwritableYieldsAnInMemoryIdWithoutThrowing(@TempDir Path scratch) throws Exception {
+        // Arrange: a path under a regular file cannot be created, even as root.
+        Path blocker = scratch.resolve("a-file");
+        Files.write(blocker, "x".getBytes(StandardCharsets.UTF_8));
+        Path file = blocker.resolve("trace-install-id");
+        Logger logger = Logger.getAnonymousLogger();
+        logger.setUseParentHandlers(false);
+        logger.setLevel(Level.FINE);
+        RecordingHandler handler = new RecordingHandler();
+        logger.addHandler(handler);
+
+        // Act
+        TraceClient client = assertDoesNotThrow(() -> TraceClient.builder(baseUrl(), "MyCli", "1.2.3").key("k")
+                .installIdFile(file.toFile()).logger(logger).build());
+        client.report("startup");
+
+        // Assert
+        assertTrue(arrived.await(5, TimeUnit.SECONDS));
+        client.close();
+        assertTrue(client.isEnabled());
+        assertTrue(client.installId().matches(UUID_PATTERN), client.installId());
+        assertFalse(Files.exists(file));
+        assertEquals("x", new String(Files.readAllBytes(blocker), StandardCharsets.UTF_8));
+        assertNotEquals(client.installId(), TraceClient.installIdFromFile(file.toFile()), "in memory: a new one each process");
+        assertTrue(received.get(0).body.contains("\"install\":\"" + client.installId() + "\""), received.get(0).body);
+        assertTrue(handler.records.stream().anyMatch(r -> r.getLevel() == Level.FINE && r.getMessage().contains("install ID file")),
+                "the fallback is logged at FINE");
+    }
+
+    @Test
+    void installIdFromFile_leavesAnUnreadableFileAlone(@TempDir Path scratch) throws Exception {
+        // A directory cannot be read as a file.
+        Path directory = Files.createDirectory(scratch.resolve("dir"));
+
+        String made = TraceClient.installIdFromFile(directory.toFile());
+
+        assertTrue(made.matches(UUID_PATTERN), made);
+        assertTrue(Files.isDirectory(directory));
+        try (java.util.stream.Stream<Path> entries = Files.list(directory)) {
+            assertEquals(0, entries.count());
+        }
+    }
+
+    @Test
+    void installIdFromFile_neverThrowsForABadPath() {
+        for (File file : new File[] {null, new File(""), new File("   "), new File("bad\u0000name")}) {
+            String made = assertDoesNotThrow(() -> TraceClient.installIdFromFile(file));
+            assertTrue(made.matches(UUID_PATTERN), String.valueOf(file));
+        }
+    }
+
+    @Test
+    void installIdFile_aDisabledClientNeverReadsOrWritesIt(@TempDir Path scratch) throws Exception {
+        Path directory = Files.createDirectory(scratch.resolve("data"));
+        File file = directory.resolve("trace-install-id").toFile();
+
+        environment.put("DO_NOT_TRACK", "1");
+        TraceClient byEnvironment = TraceClient.builder(baseUrl(), "MyCli", "1.2.3").key("k").installIdFile(file).build();
+        environment.clear();
+        environment.put("TRACE_USAGE_REPORTING", "off");
+        TraceClient byVariable = TraceClient.builder(baseUrl(), "MyCli", "1.2.3").key("k").installIdFile(file).build();
+        environment.clear();
+        TraceClient byConfig = TraceClient.builder(baseUrl(), "MyCli", "1.2.3").key("k").enabled(false).installIdFile(file).build();
+        TraceClient byNoKey = TraceClient.builder(baseUrl(), "MyCli", "1.2.3").installIdFile(file).build();
+
+        for (TraceClient client : Arrays.asList(byEnvironment, byVariable, byConfig, byNoKey)) {
+            assertNull(client.installId(), client.disabledReason());
+        }
+        try (java.util.stream.Stream<Path> entries = Files.list(directory)) {
+            assertEquals(0, entries.count(), "nothing is written");
+        }
+    }
+
+    @Test
+    void installIdFile_precedenceIsExplicitThenFileThenServerWide(@TempDir Path scratch) throws Exception {
+        Path plugins = scratch.resolve("plugins");
+        Path idFile = scratch.resolve("trace-install-id");
+        Path serverWide = plugins.resolve("trace").resolve("config.yml");
+
+        // An explicit ID wins over the file, which is then not consulted.
+        TraceClient explicit = TraceClient.builder(baseUrl(), "MyCli", "1.2.3").key("k")
+                .installId("  abc-123  ").installIdFile(idFile.toFile()).serverWideConfig(plugins.toFile()).build();
+        explicit.close();
+        assertEquals("abc-123", explicit.installId());
+        assertFalse(Files.exists(idFile), "the file is not consulted when an ID is given");
+
+        // The file wins over the server-wide server-id, and the server-wide
+        // file gains no server-id line.
+        TraceClient fromFile = TraceClient.builder(baseUrl(), "MyCli", "1.2.3").key("k")
+                .installIdFile(idFile.toFile()).serverWideConfig(plugins.toFile()).build();
+        fromFile.close();
+        assertEquals(new String(Files.readAllBytes(idFile), StandardCharsets.UTF_8).trim(), fromFile.installId());
+        assertEquals(TraceClient.SERVER_WIDE_CONFIG_CONTENT, new String(Files.readAllBytes(serverWide), StandardCharsets.UTF_8));
+
+        writeServerWideConfigExactly(plugins, "enabled: true\nserver-id: from-server-wide\n");
+        TraceClient overServerId = TraceClient.builder(baseUrl(), "MyCli", "1.2.3").key("k")
+                .installIdFile(idFile.toFile()).serverWideConfig(plugins.toFile()).build();
+        overServerId.close();
+        assertEquals(fromFile.installId(), overServerId.installId());
+
+        // The server-wide switch still disables a client given a file.
+        writeServerWideConfigExactly(plugins, "enabled: false\n");
+        Files.delete(idFile);
+        assertNull(TraceClient.builder(baseUrl(), "MyCli", "1.2.3").key("k")
+                .installIdFile(idFile.toFile()).serverWideConfig(plugins.toFile()).build().installId());
+        assertFalse(Files.exists(idFile));
     }
 
     /**

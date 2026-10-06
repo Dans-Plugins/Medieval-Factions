@@ -702,7 +702,7 @@ class MedievalFactions : JavaPlugin() {
                 "Usage reporting is on: $name sends its name, version and command names to $endpoint" +
                     ", plus a random server ID (server-id in plugins/trace/config.yml) - nothing about players. Turn it off with usage-reporting.enabled: false" +
                     " in this plugin's config.yml, or for every plugin with enabled: false in" +
-                    " plugins/trace/config.yml. Details: https://github.com/Stephenson-Software/trace#usage-reporting"
+                    " plugins/trace/config.yml. Details: https://danielstephenson.dev/usage-reporting"
             )
         } else {
             logger.info("Usage reporting is off (${trace.disabledReason()}).")
