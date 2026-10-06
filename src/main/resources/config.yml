@@ -313,7 +313,7 @@ dpc-api:
 #     plugins/trace/config.yml (written by the first such plugin to start)
 #   - environment variable TRACE_USAGE_REPORTING=off or DO_NOT_TRACK=1
 # The plugin says on every startup whether reporting is on. Details:
-# https://github.com/Stephenson-Software/trace#usage-reporting
+# https://danielstephenson.dev/usage-reporting
 usage-reporting:
   enabled: true
   endpoint: https://trace.danielstephenson.dev
