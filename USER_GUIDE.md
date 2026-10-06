@@ -230,11 +230,12 @@ If you need to unclaim:
 
 #### Who Can Claim and Unclaim
 
-- Only a member whose faction role has the `CLAIM` permission can claim land for the faction, and only one whose role has `UNCLAIM` can unclaim it. The faction owner has both; the default Member role has neither, so an ordinary member is refused until the owner grants them (`/f role setpermission Member claim true`, see [Setting Up Faction Roles](#setting-up-faction-roles)).
+- Only a member whose faction role has the `CLAIM` permission can claim land for the faction, and only one whose role has `UNCLAIM` can unclaim it. The faction owner has both; the default Member role has neither, so an ordinary member is refused until the owner grants them (`/f role setpermission Member claim allow`, see [Setting Up Faction Roles](#setting-up-faction-roles)).
 - Players in no faction can neither claim nor unclaim land.
 - Land another faction has claimed cannot be claimed while that faction has the power to hold it. This applies to allies, to factions you are not at war with, and to factions you are at war with alike. Taking enemy land (overclaiming) is possible only during a war, and only when the owner's power is no more than the number of chunks it would still hold afterwards.
 - `/f unclaim` only removes your own faction's land. Standing in another faction's claim, it is refused, whatever your relationship to that faction.
 - A server operator with the `mf.bypass` permission who has turned on `/f bypass` can unclaim any faction's land.
+- The rules above are for players. Administrators have two exceptions: with `mf.force.claim`, `/f claim <faction>` claims land for the named faction, and with `mf.force.unclaim`, `/f unclaim <faction>` removes the named faction's land. Neither needs membership of that faction or a role permission (see [COMMANDS.md](COMMANDS.md)).
 
 ---
 
@@ -324,10 +325,10 @@ Most factions start with these roles:
 
 2. **Set permissions for the role**:
    ```
-   /f role setpermission [RoleName] [Permission] [true/false]
-   /f role setpermission Guard claim true
-   /f role setpermission Guard invite false
-   /f role setpermission Guard kick false
+   /f role setpermission [RoleName] [Permission] [allow/deny/default]
+   /f role setpermission Guard claim allow
+   /f role setpermission Guard invite deny
+   /f role setpermission Guard kick deny
    ```
 
 3. **Assign players to the role**:
