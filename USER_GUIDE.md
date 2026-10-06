@@ -230,7 +230,7 @@ If you need to unclaim:
 
 #### Who Can Claim and Unclaim
 
-- Only a member whose faction role has the `CLAIM` permission can claim land for the faction, and only one whose role has `UNCLAIM` can unclaim it. The faction owner has both; the default Member role has neither, so an ordinary member is refused until the owner grants them (`/f role setpermission Member claim allow`, see [Setting Up Faction Roles](#setting-up-faction-roles)).
+- Only a member whose faction role has the `CLAIM` permission can claim land for the faction, and only one whose role has `UNCLAIM` can unclaim it. The faction owner has both; the default Member role has neither, so an ordinary member is refused until the owner grants them (`/f role setpermission Member CLAIM allow`, see [Setting Up Faction Roles](#setting-up-faction-roles)).
 - Players in no faction can neither claim nor unclaim land.
 - Land another faction has claimed cannot be claimed while that faction has the power to hold it. This applies to allies, to factions you are not at war with, and to factions you are at war with alike. Taking enemy land (overclaiming) is possible only during a war, and only when the owner's power is no more than the number of chunks it would still hold afterwards.
 - `/f unclaim` only removes your own faction's land. Standing in another faction's claim, it is refused, whatever your relationship to that faction.
@@ -310,10 +310,12 @@ These rules are checked by bots on a real server before each release; the observ
 **Goal:** Create a hierarchy with different permission levels.
 
 **Default Roles:**
-Most factions start with these roles:
-- **Leader** - Full permissions
-- **Officer** - Most permissions
-- **Member** - Basic permissions
+A new faction has three roles. New members get the Member role.
+- **Member** - only the faction permissions that are on by default for every role: going to the faction home, inviting players, listing the laws, members and roles, viewing the flags, the faction's info and stats, and the faction chat history. Everything else is refused until the role is granted it, including claiming and unclaiming land, setting the home, adding, editing or removing laws, requesting alliances, declaring war, setting flags, renaming the faction, managing roles, vassalizing, kicking members, unclaiming all land and disbanding.
+- **Officer** - the Member role's permissions, plus requesting alliances, declaring war, making peace, setting the faction home, kicking members, creating roles, approving and denying applications, and managing the Member role.
+- **Owner** - every faction permission except bypassing locks (`BYPASS_LOCKS`) and toggling autounclaim (`TOGGLE_AUTOUNCLAIM`), which must be granted explicitly.
+
+Permission names are upper case and must be given exactly, for example `CLAIM`, `INVITE` or `ADD_LAW`; `/f role setpermission Member claim allow` is refused as an invalid permission.
 
 **Creating Custom Roles:**
 
@@ -326,9 +328,9 @@ Most factions start with these roles:
 2. **Set permissions for the role**:
    ```
    /f role setpermission [RoleName] [Permission] [allow/deny/default]
-   /f role setpermission Guard claim allow
-   /f role setpermission Guard invite deny
-   /f role setpermission Guard kick deny
+   /f role setpermission Guard CLAIM allow
+   /f role setpermission Guard INVITE deny
+   /f role setpermission Guard KICK deny
    ```
 
 3. **Assign players to the role**:
