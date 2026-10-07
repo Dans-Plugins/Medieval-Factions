@@ -886,6 +886,10 @@ Challenge players to honor duels:
 
 Duels are time-limited and notify nearby players.
 
+While a duel lasts:
+- The two duelists can hurt each other even where faction rules would stop them, for example when they are in the same faction or in factions that are not at war.
+- Nobody else can hurt either duelist, and a duelist cannot hurt anyone else; the attacker is told that one of them is in a duel.
+
 ### Applications System
 
 **For Players:**
