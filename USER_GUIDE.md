@@ -886,6 +886,10 @@ Challenge players to honor duels:
 
 Duels are time-limited and notify nearby players.
 
+While a duel lasts:
+- The two duelists can hurt each other even where faction rules would stop them, for example when they are in the same faction or in factions that are not at war.
+- Nobody else can hit either duelist, in melee or with a projectile such as an arrow, and a duelist cannot hit anyone else; the attacker is told that one of them is in a duel. Splash and lingering potions are the exception: between a duelist and someone outside the duel they follow the normal faction rules, as if there were no duel.
+
 ### Applications System
 
 **For Players:**
