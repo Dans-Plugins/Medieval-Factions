@@ -158,6 +158,21 @@ permissions:
   mf.removelaw:
     description: Allows removing laws
     default: true
+  mf.law.add:
+    description: Allows adding laws (checked together with mf.addlaw)
+    default: true
+  mf.law.list:
+    description: Allows listing the laws of your faction (checked together with mf.laws)
+    default: true
+  mf.law.remove:
+    description: Allows removing laws (checked together with mf.removelaw)
+    default: true
+  mf.law.edit:
+    description: Allows editing laws
+    default: true
+  mf.law.move:
+    description: Allows reordering laws
+    default: true
   mf.makepeace:
     description: Allows making peace with other factions
     default: true
