@@ -24,6 +24,6 @@ class DeleteRole(private val plugin: MedievalFactions) : MfFactionPermissionType
     private fun permissionFor(roleId: MfFactionRoleId) = MfFactionPermission(
         "DELETE_ROLE(${roleId.value})",
         { faction -> plugin.language["FactionPermissionDeleteRole", faction.getRole(roleId)?.name ?: ""] },
-        true
+        false
     )
 }

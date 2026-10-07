@@ -24,6 +24,6 @@ class ModifyRole(private val plugin: MedievalFactions) : MfFactionPermissionType
     private fun permissionFor(roleId: MfFactionRoleId) = MfFactionPermission(
         "MODIFY_ROLE(${roleId.value})",
         { faction -> plugin.language["FactionPermissionModifyRole", faction.getRole(roleId)?.name ?: ""] },
-        true
+        false
     )
 }
