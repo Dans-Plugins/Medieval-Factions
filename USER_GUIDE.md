@@ -596,7 +596,7 @@ If enemy faction is disbanded or surrenders, war ends automatically.
 **Using a Gate:**
 
 - A gate opens while its trigger is powered (for example while its lever is on) and closes when the trigger loses power: the blocks are removed from the bottom row up, and put back when it closes.
-- Using the trigger is protected like any other block in the claim. In land the faction has claimed, a member can flip a gate's lever, and so can a server operator with `/f bypass` on. Allies, other factions (at war or not) and players in no faction are refused, unless a flag such as `alliesCanInteractWithLand` lets them use blocks in that land.
+- Using the trigger is protected like any other block in the claim. With the default settings, in land the faction has claimed, a member can flip a gate's lever, and so can a server operator with `/f bypass` on; allies, other factions (at war or not) and players in no faction are refused. Anything that lets a player use blocks in that land lets them use the trigger too: a flag such as `alliesCanInteractWithLand`, the trigger's block type listed in `factions.wartimeInteractableBlocks` (for a faction at war with the owner), or `pvp.enableWartimeBlockDestruction`.
 - Gates can be controlled with redstone, since anything that powers the trigger opens the gate.
 
 **Removing a Gate:**
