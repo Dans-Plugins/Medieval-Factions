@@ -129,7 +129,7 @@ internal fun MfFaction.toDto() = JsonFactionDto(
     autoclaim = autoclaim,
     autounclaim = autounclaim,
     roles = roles.toDto(),
-    defaultPermissionsByName = defaultPermissionsByName,
+    defaultPermissionsByName = savedDefaultPermissionsByName,
     applications = applications.map { JsonFactionApplicationDto(it.applicantId.value) }
 )
 
