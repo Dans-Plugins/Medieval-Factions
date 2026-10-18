@@ -35,20 +35,20 @@ class AreaEffectCloudApplyListener(private val plugin: MedievalFactions) : Liste
             val damagerDuel = duelService.getDuel(damagerMfPlayer.id)
             val damagedDuel = duelService.getDuel(damagedMfPlayer.id)
             if (damagerDuel != null && damagedDuel != null && damagerDuel.id == damagedDuel.id) {
-                return
+                continue
             }
             val damagedFaction = factionService.getFaction(damagedMfPlayer.id)
             if (damagerFaction == null || damagedFaction == null) {
                 if (!plugin.config.getBoolean("pvp.enabledForFactionlessPlayers")) {
                     event.affectedEntities.remove(damaged)
                 }
-                return
+                continue
             }
             if (damagerFaction.id == damagedFaction.id) {
                 if (!plugin.config.getBoolean("pvp.friendlyFire") && !damagerFaction.flags[plugin.flags.allowFriendlyFire]) {
                     event.affectedEntities.remove(damaged)
                 }
-                return
+                continue
             }
             val relationshipService = plugin.services.factionRelationshipService
             val relationships = relationshipService.getRelationships(damagerFaction.id, damagedFaction.id)
@@ -57,7 +57,7 @@ class AreaEffectCloudApplyListener(private val plugin: MedievalFactions) : Liste
                 if (plugin.config.getBoolean("pvp.warRequiredForPlayersOfDifferentFactions")) {
                     event.affectedEntities.remove(damaged)
                 }
-                return
+                continue
             }
         }
     }
