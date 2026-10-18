@@ -1,5 +1,11 @@
 # Medieval Factions
 
+![A Minecraft world rendered in 3D with translucent blue columns over the 29 chunks claimed by the faction Riverhold and orange columns over the 13 chunks claimed by Ashford](docs/images/claims-render.png)
+
+![The /f map command showing Riverhold's territory in blue and Ashford's in orange around the player](docs/images/faction-map.png)
+
+*Two factions' territory, claimed in game with Medieval Factions 7.0.0 on a local Paper 1.21.11 test server (seed 8675309), then exported from the world folder and Medieval Factions' JSON storage with [Minecraft-USD-Exporter](https://github.com/Dans-Plugins/Minecraft-USD-Exporter) and rendered in Blender. Below it, the real `/f map` output for the same claims, drawn as Minecraft-style chat (it was received by a scripted bot client).*
+
 ## Description 
 Medieval Factions is a system of mechanics that allows for the simulation of sovereign nations in Minecraft. Players can create nations, claim territory, engage in warfare or politics, write laws or hold dueling tournaments, and generally are able to attempt to recreate society somewhat.
 
