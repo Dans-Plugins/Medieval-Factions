@@ -100,7 +100,7 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
         plugin.logger.info("Config migration complete (${System.currentTimeMillis() - startTime}ms)")
     }
 
-    private fun migratePlayers(oldPlayerPowerRecordsFile: File, gson: Gson) {
+    internal fun migratePlayers(oldPlayerPowerRecordsFile: File, gson: Gson) {
         plugin.logger.info("Migrating player information...")
         val startTime = System.currentTimeMillis()
         val playerService = plugin.services.playerService
@@ -110,18 +110,14 @@ class MfLegacyDataMigrator(private val plugin: MedievalFactions) {
         )
         plugin.server.offlinePlayers.map { bukkitPlayer ->
             val powerRecord = playerPowerRecords.singleOrNull { gson.fromJson(it.playerUUID, String::class.java) == bukkitPlayer.uniqueId.toString() }
-            playerService.save(
-                MfPlayer(
-                    bukkitPlayer,
-                    0,
-                    powerRecord?.powerLevel?.toDoubleOrNull()
-                        ?: plugin.config.getDouble("players.initialPower"),
-                    powerRecord?.powerLevel?.toDoubleOrNull()
-                        ?: plugin.config.getDouble("players.initialPower"),
-                    false,
-                    null
-                )
-            ).onFailure {
+            val power = powerRecord?.powerLevel?.toDoubleOrNull()
+                ?: plugin.config.getDouble("players.initialPower")
+            // A player row can already exist, for example when an earlier migration stopped part-way and is run again.
+            // A plain save at version 0 would then be refused as a stale write and the player's power left unmigrated;
+            // update re-reads the stored row and sets the migrated power on it instead.
+            playerService.update(
+                playerService.getPlayer(bukkitPlayer) ?: MfPlayer(bukkitPlayer, 0, power, power, false, null)
+            ) { it.copy(power = power, powerAtLogout = power) }.onFailure {
                 plugin.logger.log(SEVERE, "Failed to save player \"${bukkitPlayer.uniqueId}\": ${it.reason.message}", it.reason.cause)
                 return@map
             }
