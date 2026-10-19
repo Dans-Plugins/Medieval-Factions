@@ -50,8 +50,16 @@ data class MfFaction(
     val maxPower: Double
         get() = maxMemberPower + maxVassalPower + (if (flags[plugin.flags.acceptBonusPower]) bonusPower else 0.0)
 
+    // A faction saves every permission's default when it is created, and a role with no entry of its own falls back
+    // to that saved value before the permission's built-in default. Factions created before role management was
+    // made deny-by-default (GHSA-hqm3-5qwr-49gp) saved SET_MEMBER_ROLE, MODIFY_ROLE and DELETE_ROLE as true, so the
+    // default Member role could still manage roles. Those three are always read as false; nothing sets a faction's
+    // saved defaults after creation, so no choice made by the faction is overridden. A save writes the false back.
+    val savedDefaultPermissionsByName: Map<String, Boolean>
+        get() = defaultPermissionsByName.mapValues { (key, value) -> value && !key.matches(ROLE_MANAGEMENT) }
+
     val defaultPermissions: Map<MfFactionPermission, Boolean>
-        get() = defaultPermissionsByName.toList().map { (key, value) -> plugin.factionPermissions.parse(key) to value }
+        get() = savedDefaultPermissionsByName.toList().map { (key, value) -> plugin.factionPermissions.parse(key) to value }
             .filter { (key, _) -> key != null }
             .associate { (key, value) -> key!! to value }
 
@@ -86,5 +94,9 @@ data class MfFaction(
                     )
                 }
             }
+    }
+
+    companion object {
+        private val ROLE_MANAGEMENT = Regex("(SET_MEMBER_ROLE|MODIFY_ROLE|DELETE_ROLE)\\(.+\\)")
     }
 }
