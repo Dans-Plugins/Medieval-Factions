@@ -313,7 +313,7 @@ These rules are checked by bots on a real server before each release; the observ
 A new faction has three roles. New members get the Member role.
 - **Member** - only the faction permissions that are on by default for every role: going to the faction home, inviting players, listing the laws, members and roles, viewing the flags, the faction's info and stats, and the faction chat history. Everything else is refused until the role is granted it, including claiming and unclaiming land, setting the home, adding, editing or removing laws, requesting alliances, declaring war, setting flags, renaming the faction, managing roles, vassalizing, kicking members, unclaiming all land and disbanding.
 - **Officer** - the Member role's permissions, plus requesting alliances, declaring war, making peace, setting the faction home, kicking members, creating roles, approving and denying applications, and managing the Member role.
-- **Owner** - every faction permission except bypassing locks (`BYPASS_LOCKS`) and toggling autounclaim (`TOGGLE_AUTOUNCLAIM`), which must be granted explicitly.
+- **Owner** - every faction permission except bypassing locks (`BYPASS_LOCKS`), which must be granted explicitly. In a faction created before `TOGGLE_AUTOUNCLAIM` existed, a role with no setting of its own for it follows its `TOGGLE_AUTOCLAIM` setting, so the Owner can toggle autounclaim there too.
 
 Permission names are upper case and must be given exactly, for example `CLAIM`, `INVITE` or `ADD_LAW`; `/f role setpermission Member claim allow` is refused as an invalid permission.
 

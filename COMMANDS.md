@@ -175,7 +175,7 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Description:** Toggles automatic unclaiming. When enabled, chunks claimed by your faction are automatically unclaimed as you walk through them.  
 **Usage:** `/f unclaim auto`  
 **Notes:** 
-- Requires the `TOGGLE_AUTOUNCLAIM` faction role permission to toggle.
+- Requires the `TOGGLE_AUTOUNCLAIM` faction role permission to toggle. The Owner role is granted it; a role with no setting of its own for it follows its `TOGGLE_AUTOCLAIM` setting.
 - While enabled, a chunk is only unclaimed for a member whose role has the `UNCLAIM` faction permission and who holds `mf.unclaim`.
 
 ### `/faction unclaimall` or `/f unclaimall`
