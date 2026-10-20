@@ -7,30 +7,21 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.PotionSplashEvent
+import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
-class PotionSplashListener(private val plugin: MedievalFactions) : Listener {
+// isHarmful is a parameter so that tests can avoid PotionEffectType, whose constants can only be
+// loaded from a running server's registry
+class PotionSplashListener internal constructor(
+    private val plugin: MedievalFactions,
+    private val isHarmful: (PotionEffect) -> Boolean
+) : Listener {
 
-    private val harmfulPotionEffectTypes = listOf(
-        "BAD_OMEN",
-        "BLINDNESS",
-        "CONFUSION",
-        "DARKNESS",
-        "HARM",
-        "HUNGER",
-        "POISON",
-        "SLOW",
-        "SLOW_DIGGING",
-        "UNLUCK",
-        "WEAKNESS",
-        "WITHER"
-    ).mapNotNull {
-        PotionEffectType.getByName(it)
-    }
+    constructor(plugin: MedievalFactions) : this(plugin, harmfulPotionEffectTypes().let { types -> { effect -> effect.type in types } })
 
     @EventHandler
     fun onPotionSplash(event: PotionSplashEvent) {
-        if (event.potion.effects.none { potionEffect -> harmfulPotionEffectTypes.any { it == potionEffect.type } }) return
+        if (event.potion.effects.none(isHarmful)) return
         val damager = event.potion.shooter as? Player ?: return
         for (damaged in event.affectedEntities.filterIsInstance<Player>()) {
             val playerService = plugin.services.playerService
@@ -42,20 +33,20 @@ class PotionSplashListener(private val plugin: MedievalFactions) : Listener {
             val damagerDuel = duelService.getDuel(damagerMfPlayer.id)
             val damagedDuel = duelService.getDuel(damagedMfPlayer.id)
             if (damagerDuel != null && damagedDuel != null && damagerDuel.id == damagedDuel.id) {
-                return
+                continue
             }
             val damagedFaction = factionService.getFaction(damagedMfPlayer.id)
             if (damagerFaction == null || damagedFaction == null) {
                 if (!plugin.config.getBoolean("pvp.enabledForFactionlessPlayers")) {
                     event.setIntensity(damaged, 0.0)
                 }
-                return
+                continue
             }
             if (damagerFaction.id == damagedFaction.id) {
                 if (!plugin.config.getBoolean("pvp.friendlyFire") && !damagerFaction.flags[plugin.flags.allowFriendlyFire]) {
                     event.setIntensity(damaged, 0.0)
                 }
-                return
+                continue
             }
             val relationshipService = plugin.services.factionRelationshipService
             val relationships = relationshipService.getRelationships(damagerFaction.id, damagedFaction.id)
@@ -64,8 +55,27 @@ class PotionSplashListener(private val plugin: MedievalFactions) : Listener {
                 if (plugin.config.getBoolean("pvp.warRequiredForPlayersOfDifferentFactions")) {
                     event.setIntensity(damaged, 0.0)
                 }
-                return
+                continue
             }
+        }
+    }
+
+    companion object {
+        private fun harmfulPotionEffectTypes() = listOf(
+            "BAD_OMEN",
+            "BLINDNESS",
+            "CONFUSION",
+            "DARKNESS",
+            "HARM",
+            "HUNGER",
+            "POISON",
+            "SLOW",
+            "SLOW_DIGGING",
+            "UNLUCK",
+            "WEAKNESS",
+            "WITHER"
+        ).mapNotNull {
+            PotionEffectType.getByName(it)
         }
     }
 }
