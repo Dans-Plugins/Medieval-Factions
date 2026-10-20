@@ -587,21 +587,17 @@ If enemy faction is disbanded or surrenders, war ends automatically.
    /gate create
    ```
 
-3. **Select gate blocks:**
-   - Right-click each block you want in the gate
-   - The blocks will be highlighted/marked
-   - Select all blocks that should move together
+3. **Select the gate's corners:** right-click the block at one corner of the gate, then the block at the opposite corner. The gate is every block between the two corners, which must lie in one flat plane (a wall or a door, not a solid box).
 
-4. **Finish selection** when all blocks are selected.
+4. **Select the trigger:** right-click the block that will open the gate, for example a lever. It must be in your faction's territory.
 
-5. **Verify creation** - You should receive a confirmation message.
+5. **Verify creation** - You should see "Gate created."
 
 **Using a Gate:**
 
-- **Toggle the gate** by right-clicking any gate block
-- The gate will open (blocks disappear) or close (blocks reappear)
-- Only faction members can toggle gates
-- Gates can be controlled with redstone (if enabled in config)
+- A gate opens while its trigger is powered (for example while its lever is on) and closes when the trigger loses power: the blocks are removed from the bottom row up, and put back when it closes.
+- Using the trigger is protected like any other block in the claim. With the default settings, in land the faction has claimed, a member can flip a gate's lever, and so can a server operator with `/f bypass` on; allies, other factions (at war or not) and players in no faction are refused. Anything that lets a player use blocks in that land lets them use the trigger too: a flag such as `alliesCanInteractWithLand`, the trigger's block type listed in `factions.wartimeInteractableBlocks` (for a faction at war with the owner), or `pvp.enableWartimeBlockDestruction`.
+- Gates can be controlled with redstone, since anything that powers the trigger opens the gate.
 
 **Removing a Gate:**
 

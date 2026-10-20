@@ -262,7 +262,7 @@ Controls player vs player combat mechanics.
 ### `pvp.enableWartimeBlockDestruction`
 **Type:** Boolean  
 **Default:** `false`  
-**Description:** When `true`, allows players to destroy blocks in enemy faction territory during war.
+**Description:** When `true`, members of a faction at war with a territory's owner can do anything there that the owner's members can: build, break blocks, set fire, and use blocks such as chests and doors (so also a gate's trigger). Factions not at war with the owner are unaffected.
 
 ## Faction Settings
 
