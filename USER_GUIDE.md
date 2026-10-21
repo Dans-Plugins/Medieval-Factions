@@ -313,7 +313,7 @@ These rules are checked by bots on a real server before each release; the observ
 A new faction has three roles. New members get the Member role.
 - **Member** - only the faction permissions that are on by default for every role: going to the faction home, inviting players, listing the laws, members and roles, viewing the flags, the faction's info and stats, and the faction chat history. Everything else is refused until the role is granted it, including claiming and unclaiming land, setting the home, adding, editing or removing laws, requesting alliances, declaring war, setting flags, renaming the faction, managing roles, vassalizing, kicking members, unclaiming all land and disbanding.
 - **Officer** - the Member role's permissions, plus requesting alliances, declaring war, making peace, setting the faction home, kicking members, creating roles, approving and denying applications, and managing the Member role.
-- **Owner** - every faction permission except bypassing locks (`BYPASS_LOCKS`) and toggling autounclaim (`TOGGLE_AUTOUNCLAIM`), which must be granted explicitly.
+- **Owner** - every faction permission except bypassing locks (`BYPASS_LOCKS`), which must be granted explicitly. In a faction created before `TOGGLE_AUTOUNCLAIM` existed, a role with no setting of its own for it follows its `TOGGLE_AUTOCLAIM` setting, so the Owner can toggle autounclaim there too.
 
 Permission names are upper case and must be given exactly, for example `CLAIM`, `INVITE` or `ADD_LAW`; `/f role setpermission Member claim allow` is refused as an invalid permission.
 
@@ -587,21 +587,17 @@ If enemy faction is disbanded or surrenders, war ends automatically.
    /gate create
    ```
 
-3. **Select gate blocks:**
-   - Right-click each block you want in the gate
-   - The blocks will be highlighted/marked
-   - Select all blocks that should move together
+3. **Select the gate's corners:** right-click the block at one corner of the gate, then the block at the opposite corner. The gate is every block between the two corners, which must lie in one flat plane (a wall or a door, not a solid box).
 
-4. **Finish selection** when all blocks are selected.
+4. **Select the trigger:** right-click the block that will open the gate, for example a lever. It must be in your faction's territory.
 
-5. **Verify creation** - You should receive a confirmation message.
+5. **Verify creation** - You should see "Gate created."
 
 **Using a Gate:**
 
-- **Toggle the gate** by right-clicking any gate block
-- The gate will open (blocks disappear) or close (blocks reappear)
-- Only faction members can toggle gates
-- Gates can be controlled with redstone (if enabled in config)
+- A gate opens while its trigger is powered (for example while its lever is on) and closes when the trigger loses power: the blocks are removed from the bottom row up, and put back when it closes.
+- Using the trigger is protected like any other block in the claim. With the default settings, in land the faction has claimed, a member can flip a gate's lever, and so can a server operator with `/f bypass` on; allies, other factions (at war or not) and players in no faction are refused. Anything that lets a player use blocks in that land lets them use the trigger too: a flag such as `alliesCanInteractWithLand`, the trigger's block type listed in `factions.wartimeInteractableBlocks` (for a faction at war with the owner), or `pvp.enableWartimeBlockDestruction`.
+- Gates can be controlled with redstone, since anything that powers the trigger opens the gate.
 
 **Removing a Gate:**
 

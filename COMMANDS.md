@@ -175,7 +175,7 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Description:** Toggles automatic unclaiming. When enabled, chunks claimed by your faction are automatically unclaimed as you walk through them.  
 **Usage:** `/f unclaim auto`  
 **Notes:** 
-- Requires the `TOGGLE_AUTOUNCLAIM` faction role permission to toggle.
+- Requires the `TOGGLE_AUTOUNCLAIM` faction role permission to toggle. The Owner role is granted it; a role with no setting of its own for it follows its `TOGGLE_AUTOCLAIM` setting.
 - While enabled, a chunk is only unclaimed for a member whose role has the `UNCLAIM` faction permission and who holds `mf.unclaim`.
 
 ### `/faction unclaimall` or `/f unclaimall`
@@ -366,8 +366,9 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Usage:** `/gate cancel`
 
 **Gate Interactions:**
-- Right-click on a gate block to toggle it open/closed
-- Gates can be controlled with redstone (if enabled)
+- A gate opens while its trigger block is powered (for example while its lever is on) and closes when the trigger loses power; right-clicking a gate block does not toggle it
+- Anything that powers the trigger, including redstone, opens the gate
+- Using the trigger is protected like any other block in the claim (see the user guide's gate section)
 - Certain blocks are restricted from gates (see config for list)
 
 ## Locks & Access Control

@@ -21,6 +21,7 @@ data class MfFactionRole(
 
     fun hasPermission(faction: MfFaction, permission: MfFactionPermission) =
         permissions[permission]
+            ?: INHERITED_FROM[permission.name]?.let { permissionsByName[it] }
             ?: faction.defaultPermissions[permission]
             ?: permission.default
 
@@ -33,6 +34,14 @@ data class MfFactionRole(
     )
 
     companion object {
+        // A permission added after factions already existed has no entry in their roles. Until a role is given one,
+        // it takes the value of the permission it pairs with, so existing Owners, who may toggle autoclaim, may
+        // also toggle autounclaim (and grant it) without their saved roles being rewritten.
+        private val INHERITED_FROM = mapOf(
+            "TOGGLE_AUTOUNCLAIM" to "TOGGLE_AUTOCLAIM",
+            "SET_ROLE_PERMISSION(TOGGLE_AUTOUNCLAIM)" to "SET_ROLE_PERMISSION(TOGGLE_AUTOCLAIM)"
+        )
+
         @JvmStatic
         fun deserialize(serialized: Map<String, Any?>): MfFactionRole {
             val id = (serialized["id"] as String).let(::MfFactionRoleId)

@@ -67,6 +67,7 @@ data class MfFactionRoles(
                     put(plugin.factionPermissions.requestAlliance.name, true)
                     put(plugin.factionPermissions.breakAlliance.name, true)
                     put(plugin.factionPermissions.toggleAutoclaim.name, true)
+                    put(plugin.factionPermissions.toggleAutounclaim.name, true)
                     put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.chat(FACTION)).name, true)
                     put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.chat(VASSALS)).name, true)
                     put(plugin.factionPermissions.setRolePermission(plugin.factionPermissions.chat(ALLIES)).name, true)
