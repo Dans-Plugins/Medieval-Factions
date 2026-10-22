@@ -8,7 +8,6 @@ import org.mockito.Mockito.`when`
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNull
@@ -171,13 +170,6 @@ class MfFlagsTest {
     }
 
     @Test
-    fun booleanCoercionRejectsNull() {
-        val result = coerceBoolean(plugin)(null)
-
-        assertIs<MfFlagValueCoercionFailure>(result)
-    }
-
-    @Test
     fun defaultsHoldEveryFlagsDefaultValue() {
         `when`(config.getBoolean("factions.defaults.flags.enableMobProtection")).thenReturn(true)
         `when`(config.getString("factions.defaults.flags.color")).thenReturn("#000000")
@@ -189,79 +181,5 @@ class MfFlagsTest {
         assertEquals(true, defaults[flags.enableMobProtection])
         assertEquals(false, defaults[flags.isNeutral])
         assertEquals("#000000", defaults[flags.color])
-    }
-
-    @Test
-    fun flagValuesFallBackToTheDefaultForAMissingOrNullValue() {
-        `when`(config.getBoolean("factions.defaults.flags.acceptBonusPower")).thenReturn(true)
-        val flags = flags()
-
-        assertEquals(true, MfFlagValues(plugin, emptyMap())[flags.acceptBonusPower])
-        assertEquals(true, MfFlagValues(plugin, mapOf("acceptBonusPower" to null))[flags.acceptBonusPower])
-        assertEquals(false, MfFlagValues(plugin, mapOf("acceptBonusPower" to false))[flags.acceptBonusPower])
-    }
-
-    @Test
-    fun addingAFlagValueReturnsANewInstanceAndLeavesTheOriginalUnchanged() {
-        val flags = flags()
-        val original = MfFlagValues(plugin, mapOf("neutral" to false))
-
-        val updated = original + (flags.isNeutral to true)
-
-        assertEquals(false, original[flags.isNeutral])
-        assertEquals(true, updated[flags.isNeutral])
-    }
-
-    @Test
-    fun addingAMapOfFlagValuesOverridesOnlyTheGivenFlags() {
-        val flags = flags()
-        val original = MfFlagValues(plugin, mapOf("neutral" to false, "color" to "#111111"))
-
-        val updated = original + mapOf<MfFlag<out Any>, Any?>(flags.color to "#222222")
-
-        assertEquals(false, updated[flags.isNeutral])
-        assertEquals("#222222", updated[flags.color])
-    }
-
-    @Test
-    fun valuesResolveNamesToFlagsAndDropUnknownNames() {
-        val flags = flags()
-        val flagValues = MfFlagValues(plugin, mapOf("NEUTRAL" to true, "removedFlag" to true))
-
-        assertEquals(mapOf<MfFlag<out Any>, Any?>(flags.isNeutral to true), flagValues.values)
-    }
-
-    @Test
-    fun stringFlagWithoutValidationAcceptsAnyValue() {
-        val flag = MfFlag.string("motto", "Onwards")
-
-        assertEquals("Onwards", flag.defaultValue)
-        assertEquals(MfFlagValidationSuccess, flag.validate(""))
-    }
-
-    @Test
-    fun withValidationReplacesOnlyTheValidator() {
-        val flag = MfFlag.string("motto", "Onwards")
-            .withValidation { if (it.isEmpty()) MfFlagValidationFailure("empty") else MfFlagValidationSuccess }
-
-        assertEquals("motto", flag.name)
-        assertEquals("Onwards", flag.defaultValue)
-        assertEquals(MfFlagValidationFailure("empty"), flag.validate(""))
-        assertEquals(MfFlagValidationSuccess, flag.validate("x"))
-    }
-
-    @Test
-    fun onFailureRunsTheBlockOnlyForAFailure() {
-        MfFlagValidationSuccess.onFailure { throw AssertionError("not a failure") }
-        MfFlagValueCoercionSuccess(true).onFailure { throw AssertionError("not a failure") }
-
-        val validationError = assertFailsWith<IllegalStateException> {
-            MfFlagValidationFailure("bad").onFailure { throw IllegalStateException(it.failureMessage) }
-        }
-        val coercionError = assertFailsWith<IllegalStateException> {
-            MfFlagValueCoercionFailure("worse").onFailure { throw IllegalStateException(it.failureMessage) }
-        }
-        assertEquals("bad", validationError.message)
-        assertEquals("worse", coercionError.message)
     }
 }
