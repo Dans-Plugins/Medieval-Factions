@@ -327,20 +327,32 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 
 ## Laws
 
+Laws are numbered from 1 in the order `/f law list` shows them. Where a command takes a law, it can be given by that number or by the law's ID. Each command also needs the matching faction role permission (`ADD_LAW`, `LIST_LAWS`, `REMOVE_LAW`, `EDIT_LAW`, `MOVE_LAW`).
+
 ### `/faction law add [law]` or `/f law add [law]`
-**Permission:** `mf.addlaw` (default: true)  
+**Permission:** `mf.law.add` and `mf.addlaw` (both required; default: true)  
 **Description:** Adds a new law to your faction.  
 **Usage:** `/f law add "No griefing within faction territory"`
 
 ### `/faction law list` or `/f law list`
-**Permission:** `mf.laws` (default: true)  
+**Permission:** `mf.law.list` and `mf.laws` (both required; default: true)  
 **Description:** Lists all laws of your faction.  
 **Usage:** `/f law list`
 
-### `/faction law remove [id]` or `/f law remove [id]`
-**Permission:** `mf.removelaw` (default: true)  
-**Description:** Removes a law from your faction using its ID.  
+### `/faction law remove [number]` or `/f law remove [number]`
+**Permission:** `mf.law.remove` and `mf.removelaw` (both required; default: true)  
+**Description:** Removes a law from your faction.  
 **Usage:** `/f law remove 1`
+
+### `/faction law edit [number] [text]` or `/f law edit [number] [text]`
+**Permission:** `mf.law.edit` (default: true)  
+**Description:** Replaces the text of a law. If only the law is given, the new text is asked for in chat.  
+**Usage:** `/f law edit 2 No griefing anywhere`
+
+### `/faction law move [number] [new number]` or `/f law move [number] [new number]`
+**Permission:** `mf.law.move` (default: true)  
+**Description:** Moves a law to a new position in the list; the laws in between shift up or down by one. If only the law is given, the new position is asked for in chat.  
+**Usage:** `/f law move 3 1`
 
 ## Gates
 
