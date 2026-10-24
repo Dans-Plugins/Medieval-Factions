@@ -744,7 +744,7 @@ This displays all laws with their numbers.
 /f law move 3 1
 ```
 
-The laws in between shift up or down by one.
+The laws in between shift up or down by one. The new number must be between 1 and the number of laws the faction has.
 
 **Removing Laws:**
 

@@ -351,7 +351,7 @@ Laws are numbered from 1 in the order `/f law list` shows them. Where a command 
 
 ### `/faction law move [number] [new number]` or `/f law move [number] [new number]`
 **Permission:** `mf.law.move` (default: true)  
-**Description:** Moves a law to a new position in the list; the laws in between shift up or down by one. If only the law is given, the new position is asked for in chat.  
+**Description:** Moves a law to a new position in the list; the laws in between shift up or down by one. The new position must be a whole number from 1 to the faction's number of laws. If only the law is given, the new position is asked for in chat.  
 **Usage:** `/f law move 3 1`
 
 ## Gates
