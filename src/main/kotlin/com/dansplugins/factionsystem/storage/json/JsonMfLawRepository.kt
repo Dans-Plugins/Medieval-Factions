@@ -78,8 +78,20 @@ class JsonMfLawRepository(
         val data = loadData()
         val existingIndex = data.laws.indexOfFirst { it.id == law.id }
         if (existingIndex >= 0) {
-            val updated = law.copy(number = number, version = law.version + 1)
-            data.laws[existingIndex] = updated
+            val oldNumber = data.laws[existingIndex].number
+            if (oldNumber != null) {
+                // Shift the laws in between by one, as JooqMfLawRepository.move does, so that no two laws share a number.
+                data.laws.replaceAll { other ->
+                    val otherNumber = other.number
+                    when {
+                        other.id == law.id || other.factionId != law.factionId || otherNumber == null -> other
+                        oldNumber > number && otherNumber in number until oldNumber -> other.copy(number = otherNumber + 1)
+                        oldNumber < number && otherNumber in (oldNumber + 1)..number -> other.copy(number = otherNumber - 1)
+                        else -> other
+                    }
+                }
+            }
+            data.laws[existingIndex] = law.copy(number = number, version = law.version + 1)
             saveData(data)
         }
     }

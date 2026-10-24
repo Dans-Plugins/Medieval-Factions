@@ -110,6 +110,34 @@ class JsonMfLawRepositoryTest {
     }
 
     @Test
+    fun `moving a law to a lower number shifts the laws in between up by one`() {
+        repository.upsert(law(text = "first", number = 1))
+        repository.upsert(law(text = "second", number = 2))
+        val third = repository.upsert(law(text = "third", number = 3))
+        val otherFaction = repository.upsert(law(faction = MfFactionId.generate(), text = "other faction", number = 1))
+
+        repository.move(third, 1)
+
+        assertEquals(listOf("third" to 1, "first" to 2, "second" to 3), repository.getLaws(factionId).map { it.text to it.number })
+        assertEquals(1, repository.getLaw(otherFaction.id)?.number, "another faction's laws should not be renumbered")
+    }
+
+    @Test
+    fun `moving a law to a higher number shifts the laws in between down by one`() {
+        val first = repository.upsert(law(text = "first", number = 1))
+        repository.upsert(law(text = "second", number = 2))
+        repository.upsert(law(text = "third", number = 3))
+        repository.upsert(law(text = "fourth", number = 4))
+
+        repository.move(first, 3)
+
+        assertEquals(
+            listOf("second" to 1, "third" to 2, "first" to 3, "fourth" to 4),
+            repository.getLaws(factionId).map { it.text to it.number }
+        )
+    }
+
+    @Test
     fun `deletes a law by id and by instance`() {
         val byId = repository.upsert(law(text = "delete by id", number = 1))
         val byInstance = repository.upsert(law(text = "delete by instance", number = 2))
