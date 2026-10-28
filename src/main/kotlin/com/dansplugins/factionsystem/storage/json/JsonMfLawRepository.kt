@@ -32,14 +32,11 @@ class JsonMfLawRepository(
         return data.laws.find { it.id == id }
     }
 
+    // Looks the law up by its number, as JooqMfLawRepository does; a null number matches no law.
     override fun getLaw(factionId: MfFactionId, index: Int?): MfLaw? {
+        if (index == null) return null
         val data = loadData()
-        val factionLaws = data.laws.filter { it.factionId == factionId }.sortedBy { it.number }
-        return if (index != null) {
-            factionLaws.getOrNull(index)
-        } else {
-            factionLaws.firstOrNull()
-        }
+        return data.laws.find { it.factionId == factionId && it.number == index }
     }
 
     override fun getLaws(factionId: MfFactionId): List<MfLaw> {
@@ -58,7 +55,10 @@ class JsonMfLawRepository(
             }
             law.copy(version = law.version + 1).also { data.laws[existingIndex] = it }
         } else {
-            law.copy(version = 1).also { data.laws.add(it) }
+            // A new law with no number is numbered after the faction's existing laws, as JooqMfLawRepository does.
+            // An explicit number is kept, so that a migration from the database copies laws as they were.
+            val number = law.number ?: (data.laws.count { it.factionId == law.factionId } + 1)
+            law.copy(version = 1, number = number).also { data.laws.add(it) }
         }
         saveData(data)
         updated
@@ -66,7 +66,20 @@ class JsonMfLawRepository(
 
     override fun delete(id: MfLawId) = storageManager.withFileLock(fileName) {
         val data = loadData()
+        val deleted = data.laws.find { it.id == id }
         data.laws.removeIf { it.id == id }
+        val deletedNumber = deleted?.number
+        if (deletedNumber != null) {
+            // Shift the laws after the deleted one down by one, as JooqMfLawRepository.delete does.
+            data.laws.replaceAll { other ->
+                val otherNumber = other.number
+                if (other.factionId == deleted.factionId && otherNumber != null && otherNumber > deletedNumber) {
+                    other.copy(number = otherNumber - 1)
+                } else {
+                    other
+                }
+            }
+        }
         saveData(data)
     }
 
