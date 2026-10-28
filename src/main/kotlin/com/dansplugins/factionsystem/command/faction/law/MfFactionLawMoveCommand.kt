@@ -98,7 +98,13 @@ class MfFactionLawMoveCommand(private val plugin: MedievalFactions) : CommandExe
                     player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionLawMoveNotYourFaction"]}")
                     return@Runnable
                 }
-                lawService.move(law, args.elementAt(1).toInt())
+                val lawCount = lawService.getLaws(faction.id).size
+                val number = args.elementAt(1).toIntOrNull()
+                if (number == null || number !in 1..lawCount) {
+                    player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionLawMoveInvalidNumber", lawCount.toString()]}")
+                    return@Runnable
+                }
+                lawService.move(law, number)
                     .onFailure {
                         player.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionLawMoveFailedToMove"]}")
                         plugin.logger.log(Level.SEVERE, "Failed to move law: ${it.reason.message}", it.reason.cause)

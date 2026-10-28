@@ -385,6 +385,20 @@ abstract class VersionedRepositoryContract {
         assertEquals("existing", laws.getLaw(existing.id)!!.text)
     }
 
+    @Test
+    fun `law - moving a law shifts the laws in between`() {
+        val faction = parentFactions.upsert(newFaction(name = "LawMove"))
+        laws.upsert(MfLaw(faction, "first"))
+        laws.upsert(MfLaw(faction, "second"))
+        val third = laws.upsert(MfLaw(faction, "third"))
+
+        laws.move(third, 1)
+        assertEquals(listOf("third" to 1, "first" to 2, "second" to 3), laws.getLaws(faction.id).map { it.text to it.number })
+
+        laws.move(laws.getLaw(third.id)!!, 3)
+        assertEquals(listOf("first" to 1, "second" to 2, "third" to 3), laws.getLaws(faction.id).map { it.text to it.number })
+    }
+
     // --- duels ---
 
     @Test

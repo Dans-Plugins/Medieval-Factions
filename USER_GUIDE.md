@@ -728,12 +728,28 @@ If you make a mistake:
 /f law list
 ```
 
-This displays all laws with their ID numbers.
+This displays all laws with their numbers.
+
+**Editing Laws:**
+
+```
+/f law edit [number] [new text]
+/f law edit 2 No griefing anywhere
+```
+
+**Reordering Laws:**
+
+```
+/f law move [number] [new number]
+/f law move 3 1
+```
+
+The laws in between shift up or down by one. The new number must be between 1 and the number of laws the faction has.
 
 **Removing Laws:**
 
 ```
-/f law remove [ID]
+/f law remove [number]
 /f law remove 3
 ```
 
