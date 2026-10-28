@@ -1,5 +1,5 @@
 /*
- * trace-client 0.6.1 -- https://github.com/Stephenson-Software/trace-client-java
+ * trace-client 0.7.0 -- https://github.com/Stephenson-Software/trace-client-java
  *
  * One call to report that a program was used. Copy this file into a project as
  * is, or depend on the artifact; either way there is nothing else to add.
@@ -20,11 +20,14 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.UUID;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -48,9 +51,17 @@ import java.util.regex.Pattern;
  *       are logged at {@link Level#FINE} if a logger was given, and otherwise
  *       not at all.</li>
  *   <li><b>It is bounded.</b> At most {@value #QUEUE_CAPACITY} reports wait to
- *       be sent; beyond that, new reports are dropped rather than accumulated.
- *       A trace server that is unreachable for a week costs a few kilobytes,
- *       not the host's heap.</li>
+ *       be sent; beyond that, new reports are dropped rather than accumulated,
+ *       without a log line, even at {@link Level#FINE}. A trace server
+ *       that is unreachable for a week costs a few kilobytes, not the
+ *       host's heap.</li>
+ *   <li><b>It is throttled.</b> Repeats of one event -- same name, value and
+ *       tags -- within {@value #COALESCE_WINDOW_MS} ms are counted, not sent:
+ *       the first goes out at once, the rest as one event when the window
+ *       closes, carrying how many there were (see {@link #report(String,
+ *       Double, Map)}). A program, or another plugin dispatching its
+ *       command in a loop, cannot flood the trace server. {@code startup}
+ *       is never held back.</li>
  * </ul>
  *
  * <p>Reporting is opt-out, and the person running the program always has the
@@ -124,10 +135,34 @@ import java.util.regex.Pattern;
 public final class TraceClient {
 
     /** This client's version, as sent in the User-Agent. */
-    public static final String VERSION = "0.6.1";
+    public static final String VERSION = "0.7.0";
 
     /** How many reports may wait to be sent before new ones are dropped. */
     public static final int QUEUE_CAPACITY = 256;
+
+    /**
+     * How long repeats of one event are counted rather than sent. A minute:
+     * long enough that a command dispatched every tick, or every 100 ms by
+     * another plugin, is one event a minute instead of hundreds; short
+     * enough that a person using a command a few times sees it on the trace
+     * server within a minute, and that close() seldom has much to flush.
+     * The server buckets by day, so nothing it shows is finer than this.
+     */
+    public static final long COALESCE_WINDOW_MS = 60_000;
+
+    /**
+     * How many distinct events may be counted at once. An event that is not
+     * already being counted while this many are is dropped, without a log
+     * line -- like a report that finds the queue full -- so a program
+     * reporting a new name or tag every call costs bounded memory too.
+     */
+    public static final int MAX_COALESCED_EVENTS = 256;
+
+    /** The tag a coalesced event carries how many repeats it stands for in. */
+    public static final String COALESCED_TAG = "coalesced";
+
+    /** The event that is never coalesced: a start is never held back. */
+    static final String STARTUP = "startup";
 
     private static final int CONNECT_TIMEOUT_MS = 5_000;
     private static final int READ_TIMEOUT_MS = 5_000;
@@ -205,7 +240,17 @@ public final class TraceClient {
     private final String disabledReason; // null when enabled
     private final Map<String, String> serverWideTags; // never null; read once, at build()
     private final String installId; // null when disabled or when there is none
-    private final ThreadPoolExecutor executor; // null when disabled
+    private final long coalesceWindowNanos;
+    private final ScheduledThreadPoolExecutor executor; // null when disabled
+
+    // The rest is guarded by lock: report() runs on the host's threads,
+    // flushes run on the sender thread.
+    private final Object lock = new Object();
+    // Events being counted, by coalesceKey(), oldest first.
+    private final Map<String, Window> windows = new LinkedHashMap<>();
+    private int queued; // sends waiting for the sender thread, not yet started
+    private ScheduledFuture<?> flushTimer; // the next flushDue(), or null
+    private boolean closed;
 
     private TraceClient(Builder builder) {
         this.endpoint = builder.baseUrl.replaceAll("/+$", "") + "/api/metrics";
@@ -221,17 +266,21 @@ public final class TraceClient {
         // After the opt-outs, never before: a disabled client neither makes
         // up an ID nor writes one to disk.
         this.installId = disabledReason == null ? resolveInstallId(builder, serverWide) : null;
+        this.coalesceWindowNanos = TimeUnit.MILLISECONDS.toNanos(builder.coalesceWindowMs);
         if (disabledReason == null) {
-            this.executor = new ThreadPoolExecutor(
-                    1, 1, 30, TimeUnit.SECONDS,
-                    new ArrayBlockingQueue<Runnable>(QUEUE_CAPACITY),
+            // Scheduled, so the one thread that sends also closes windows:
+            // no second thread. Its queue is unbounded; enqueue() is the
+            // bound, and at most one flush is ever scheduled beside the sends.
+            this.executor = new ScheduledThreadPoolExecutor(1,
                     runnable -> {
                         Thread thread = new Thread(runnable, "trace-client/" + application);
                         thread.setDaemon(true);
                         return thread;
                     },
                     new ThreadPoolExecutor.DiscardPolicy());
+            this.executor.setKeepAliveTime(30, TimeUnit.SECONDS);
             this.executor.allowCoreThreadTimeOut(true);
+            this.executor.setRemoveOnCancelPolicy(true);
         } else {
             this.executor = null;
         }
@@ -242,7 +291,10 @@ public final class TraceClient {
      * at {@code version}, reporting to the trace server at {@code baseUrl}.
      * The version is sent as the tag {@code version} on every event; a blank
      * one, or one longer than {@value #MAX_TAG_LENGTH} characters, is an
-     * {@link IllegalArgumentException}.
+     * {@link IllegalArgumentException}. Redirects are not followed, so
+     * {@code baseUrl} must be the final URL (e.g. {@code https://} when the
+     * server redirects {@code http://} there); otherwise every report is
+     * dropped and logged at {@code FINE}.
      */
     public static Builder builder(String baseUrl, String application, String version) {
         return new Builder(baseUrl, application, version);
@@ -488,9 +540,10 @@ public final class TraceClient {
      * double- or single-quoted. Entries the trace server would reject -- and
      * anything this reader does not understand -- are dropped, one by one,
      * and at most {@link #MAX_TAGS} are kept. The first {@code server-id:}
-     * line at column 0, outside a {@code tags:} block, whose value is a valid
-     * tag value made of {@code [A-Za-z0-9_.-]} is the installation's ID; any
-     * other is ignored. Nothing here throws.
+     * line at column 0, outside a {@code tags:} block, whose value is at most
+     * {@value #MAX_TAG_LENGTH} characters of {@code [A-Za-z0-9_.-]} starting
+     * with a letter or digit is the installation's ID; any other is ignored.
+     * Nothing here throws.
      */
     static ServerWideConfig parseServerWideConfig(List<String> lines) {
         Boolean disables = null;
@@ -703,20 +756,171 @@ public final class TraceClient {
 
     /**
      * Reports that {@code name} happened, with an optional numeric value and
-     * optional string tags. Returns immediately; see the class comment.
+     * optional string tags. Returns immediately; see the class comment. A
+     * {@code null} or blank name sends nothing.
+     *
+     * <p>Repeats are coalesced. The first report of an event -- its name,
+     * value and tags, once {@code version}, {@code install} and the
+     * server-wide tags are added -- is sent at once and opens a window of
+     * {@value #COALESCE_WINDOW_MS} ms. Identical reports inside the window are
+     * only counted. When it closes, a count above zero is sent as one more
+     * event: the same name and tags plus the tag {@value #COALESCED_TAG} with
+     * the count, and the count as its {@code value} when the event had none
+     * (an event with a value keeps it: it stands for that many more of the
+     * same value). A window that sent a count opens the next one, so an
+     * event repeated without pause costs one report a minute; one that
+     * counted nothing ends. {@link #close()} sends every count still open.
+     *
+     * <p>So the number of times an event happened is the sum, over the
+     * events the server stored, of {@code value} where the
+     * {@value #COALESCED_TAG} tag is present and 1 where it is not -- for
+     * a valueless event, simply {@code COALESCE(value, 1)}.
+     *
+     * <p>{@code startup} is never coalesced, nor held back: every one is
+     * sent at once.
      */
     public void report(String name, Double value, Map<String, String> tags) {
         if (executor == null || name == null || name.trim().isEmpty()) {
             return;
         }
-        final String body = json(application, name, value,
-                withServerWideTags(withInstall(withVersion(tags, version), installId), serverWideTags));
-        executor.execute(() -> send(body));
+        // json() leaves out a value that is NaN or infinite, so they are the
+        // same event as no value at all.
+        Double finite = value == null || value.isNaN() || value.isInfinite() ? null : value;
+        Map<String, String> merged =
+                withServerWideTags(withInstall(withVersion(tags, version), installId), serverWideTags);
+        String body = json(application, name, finite, merged);
+        synchronized (lock) {
+            if (closed) {
+                return;
+            }
+            if (!STARTUP.equals(name)) {
+                String key = json(application, name, finite, new TreeMap<>(merged)); // tag order is not identity
+                Window window = windows.get(key);
+                if (window != null) {
+                    window.count++;
+                    return;
+                }
+                if (windows.size() >= MAX_COALESCED_EVENTS) {
+                    return; // bounded, like a full queue: dropped without a log line
+                }
+                windows.put(key, new Window(name, finite, merged, System.nanoTime() + coalesceWindowNanos));
+                scheduleFlush();
+            }
+            enqueue(body);
+        }
+    }
+
+    /** One event being counted: what to send if it repeats, and until when. */
+    private static final class Window {
+        final String name;
+        final Double value; // null, or finite
+        final Map<String, String> tags;
+        long deadline; // System.nanoTime() at which the window closes
+        long count; // repeats since the window opened
+
+        Window(String name, Double value, Map<String, String> tags, long deadline) {
+            this.name = name;
+            this.value = value;
+            this.tags = tags;
+            this.deadline = deadline;
+        }
     }
 
     /**
-     * Stops the sending thread, giving reports already queued up to
-     * {@value #READ_TIMEOUT_MS} ms in total to be sent first. A program that
+     * Queues {@code body} for the sender thread, unless
+     * {@value #QUEUE_CAPACITY} sends are already waiting. Caller holds
+     * {@code lock}.
+     */
+    private void enqueue(final String body) {
+        if (queued >= QUEUE_CAPACITY) {
+            return;
+        }
+        queued++;
+        executor.execute(() -> {
+            synchronized (lock) {
+                queued--;
+            }
+            send(body);
+        });
+    }
+
+    /** Schedules flushDue() for the earliest window, if none is scheduled. Caller holds {@code lock}. */
+    private void scheduleFlush() {
+        if (flushTimer != null || windows.isEmpty()) {
+            return;
+        }
+        // Windows are opened and reopened in deadline order, but a scan is
+        // cheap and does not depend on it.
+        long now = System.nanoTime();
+        long wait = Long.MAX_VALUE;
+        for (Window window : windows.values()) {
+            wait = Math.min(wait, window.deadline - now);
+        }
+        flushTimer = executor.schedule(this::flushDue, Math.max(0, wait), TimeUnit.NANOSECONDS);
+    }
+
+    /** Runs on the sender thread when the earliest window closes. */
+    private void flushDue() {
+        synchronized (lock) {
+            flushTimer = null;
+            if (closed) {
+                return;
+            }
+            flush(false);
+            scheduleFlush();
+        }
+    }
+
+    /**
+     * Sends a count for every window that has closed -- every window at all
+     * when {@code everything} -- and ends or reopens it. Caller holds
+     * {@code lock}.
+     */
+    private void flush(boolean everything) {
+        long now = System.nanoTime();
+        for (Iterator<Window> it = windows.values().iterator(); it.hasNext(); ) {
+            Window window = it.next();
+            if (!everything && now - window.deadline < 0) {
+                continue;
+            }
+            if (window.count > 0) {
+                enqueue(json(application, window.name,
+                        window.value != null ? window.value : Double.valueOf(window.count),
+                        withCount(window.tags, window.count)));
+            }
+            if (everything || window.count == 0) {
+                it.remove();
+            } else {
+                window.count = 0;
+                window.deadline = now + coalesceWindowNanos;
+            }
+        }
+    }
+
+    /**
+     * The tags plus {@value #COALESCED_TAG} with the count, unless they
+     * already carry one or are at {@link #MAX_TAGS}. A copy.
+     */
+    static Map<String, String> withCount(Map<String, String> tags, long count) {
+        Map<String, String> merged = new LinkedHashMap<>(tags);
+        if (!merged.containsKey(COALESCED_TAG) && merged.size() < MAX_TAGS) {
+            merged.put(COALESCED_TAG, String.valueOf(count));
+        }
+        return merged;
+    }
+
+    /** How many distinct events are being counted. For tests. */
+    int coalescing() {
+        synchronized (lock) {
+            return windows.size();
+        }
+    }
+
+    /**
+     * Sends every count still being coalesced (see {@link #report(String,
+     * Double, Map)}), then stops the sending thread, giving reports already
+     * queued up to {@value #READ_TIMEOUT_MS} ms in total to be sent first.
+     * A program that
      * reports and then exits within milliseconds -- a CLI -- would otherwise
      * lose its one event to the race between queueing it and the thread
      * picking it up. The bound still holds: an unreachable server delays exit
@@ -726,6 +930,16 @@ public final class TraceClient {
     public void close() {
         if (executor == null) {
             return;
+        }
+        synchronized (lock) {
+            if (!closed) {
+                closed = true;
+                flush(true);
+                if (flushTimer != null) {
+                    flushTimer.cancel(false); // or shutdown() would wait for it
+                    flushTimer = null;
+                }
+            }
         }
         executor.shutdown(); // no new work; queued reports still run
         try {
@@ -854,6 +1068,7 @@ public final class TraceClient {
         private String installId;
         private File installIdFile;
         private Logger logger;
+        private long coalesceWindowMs = COALESCE_WINDOW_MS;
 
         private Builder(String baseUrl, String application, String version) {
             if (baseUrl == null || baseUrl.trim().isEmpty()) {
@@ -956,9 +1171,22 @@ public final class TraceClient {
             return this;
         }
 
-        /** Where dropped reports are mentioned, at {@link Level#FINE}. Optional. */
+        /**
+         * Where problems are mentioned, at {@link Level#FINE}, prefixed
+         * {@code [trace]}: a report the server did not answer {@code 201}
+         * to or that could not be delivered, and a server-wide config or
+         * install ID file that could not be read or written in
+         * {@link #build()}. A report dropped because the queue is full is
+         * not mentioned. Optional; without one, nothing is logged.
+         */
         public Builder logger(Logger logger) {
             this.logger = logger;
+            return this;
+        }
+
+        /** A shorter coalescing window, so tests need not wait a minute. Not public: the window is the client's. */
+        Builder coalesceWindowMillis(long millis) {
+            this.coalesceWindowMs = millis;
             return this;
         }
 
