@@ -59,10 +59,15 @@ class JsonMfLawRepositoryTest {
     }
 
     @Test
-    fun `round trips a law with no number`() {
-        val saved = repository.upsert(law(number = null))
+    fun `numbers a new law with no number after the faction's existing laws`() {
+        repository.upsert(law(text = "first", number = 1))
+        repository.upsert(law(text = "second", number = 2))
+        repository.upsert(law(faction = MfFactionId.generate(), text = "other faction", number = 1))
 
-        assertNull(repository.getLaw(saved.id)?.number)
+        val saved = repository.upsert(law(text = "third", number = null))
+
+        assertEquals(3, saved.number)
+        assertEquals(3, repository.getLaw(saved.id)?.number)
     }
 
     @Test
@@ -76,14 +81,16 @@ class JsonMfLawRepositoryTest {
     }
 
     @Test
-    fun `looks a law up by its index within the faction`() {
-        repository.upsert(law(text = "first", number = 1))
+    fun `looks a law up by its number within the faction`() {
         repository.upsert(law(text = "second", number = 2))
+        repository.upsert(law(text = "first", number = 1))
+        repository.upsert(law(faction = MfFactionId.generate(), text = "other faction", number = 3))
 
-        assertEquals("first", repository.getLaw(factionId, 0)?.text)
-        assertEquals("second", repository.getLaw(factionId, 1)?.text)
-        assertNull(repository.getLaw(factionId, 99), "an out-of-range index should return null")
-        assertEquals("first", repository.getLaw(factionId, null)?.text, "a null index returns the first law")
+        assertEquals("first", repository.getLaw(factionId, 1)?.text)
+        assertEquals("second", repository.getLaw(factionId, 2)?.text)
+        assertNull(repository.getLaw(factionId, 0), "no law is numbered 0")
+        assertNull(repository.getLaw(factionId, 3), "another faction's law should not be found")
+        assertNull(repository.getLaw(factionId, null), "a null number should match no law")
     }
 
     @Test
@@ -149,6 +156,21 @@ class JsonMfLawRepositoryTest {
         repository.delete(byInstance)
         assertNull(repository.getLaw(byInstance.id))
         assertTrue(repository.getLaws(factionId).isEmpty())
+    }
+
+    @Test
+    fun `deleting a law shifts the laws after it down by one`() {
+        repository.upsert(law(text = "first", number = 1))
+        val second = repository.upsert(law(text = "second", number = 2))
+        repository.upsert(law(text = "third", number = 3))
+        val otherFaction = repository.upsert(law(faction = MfFactionId.generate(), text = "other faction", number = 3))
+
+        repository.delete(second)
+
+        assertEquals(listOf("first" to 1, "third" to 2), repository.getLaws(factionId).map { it.text to it.number })
+        assertEquals("third", repository.getLaw(factionId, 2)?.text)
+        assertEquals(3, repository.getLaw(otherFaction.id)?.number, "another faction's laws should not be renumbered")
+        assertEquals(3, repository.upsert(law(text = "added after the delete", number = null)).number)
     }
 
     @Test

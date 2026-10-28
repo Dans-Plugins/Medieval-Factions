@@ -72,6 +72,7 @@ class JooqMfLawRepository(
             .set(MF_LAW.NUMBER, MF_LAW.NUMBER - 1)
             .where(MF_LAW.FACTION_ID.eq(law.factionId.value))
             .and(MF_LAW.NUMBER.gt(law.number))
+            .execute()
     }
 
     override fun move(law: MfLaw, number: Int) {
