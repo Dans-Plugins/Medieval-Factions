@@ -37,6 +37,10 @@ class AreaEffectCloudApplyListener(private val plugin: MedievalFactions) : Liste
             if (damagerDuel != null && damagedDuel != null && damagerDuel.id == damagedDuel.id) {
                 continue
             }
+            if (damagerDuel != null || damagedDuel != null) {
+                event.affectedEntities.remove(damaged)
+                continue
+            }
             val damagedFaction = factionService.getFaction(damagedMfPlayer.id)
             if (damagerFaction == null || damagedFaction == null) {
                 if (!plugin.config.getBoolean("pvp.enabledForFactionlessPlayers")) {

@@ -97,6 +97,41 @@ class PotionSplashListenerTest {
         verify(event).setIntensity(bystander, 0.0)
     }
 
+    // Factionless PvP is on in the duel isolation tests, so only the duel check can refuse the hit
+    @Test
+    fun onPotionSplash_ThrowerInDuel_ShouldZeroIntensityForPlayersOutsideTheDuel() {
+        `when`(config.getBoolean("pvp.enabledForFactionlessPlayers")).thenReturn(true)
+        val opponent = mockPlayer()
+        val outsider = mockPlayer()
+        val duel = mock(MfDuel::class.java)
+        `when`(duel.id).thenReturn(MfDuelId("duel"))
+        val throwerId = playerService.getPlayer(thrower)!!.id
+        val opponentId = playerService.getPlayer(opponent)!!.id
+        `when`(duelService.getDuel(throwerId)).thenReturn(duel)
+        `when`(duelService.getDuel(opponentId)).thenReturn(duel)
+        `when`(event.affectedEntities).thenReturn(listOf(opponent, outsider))
+
+        uut.onPotionSplash(event)
+
+        verify(event, never()).setIntensity(eq(opponent), anyDouble())
+        verify(event).setIntensity(outsider, 0.0)
+    }
+
+    @Test
+    fun onPotionSplash_AffectedPlayerInSomeoneElsesDuel_ShouldZeroTheirIntensity() {
+        `when`(config.getBoolean("pvp.enabledForFactionlessPlayers")).thenReturn(true)
+        val duelist = mockPlayer()
+        val duel = mock(MfDuel::class.java)
+        `when`(duel.id).thenReturn(MfDuelId("duel"))
+        val duelistId = playerService.getPlayer(duelist)!!.id
+        `when`(duelService.getDuel(duelistId)).thenReturn(duel)
+        `when`(event.affectedEntities).thenReturn(listOf(duelist))
+
+        uut.onPotionSplash(event)
+
+        verify(event).setIntensity(duelist, 0.0)
+    }
+
     @Test
     fun onPotionSplash_FactionlessPvpEnabled_ShouldLeaveIntensityAlone() {
         `when`(config.getBoolean("pvp.enabledForFactionlessPlayers")).thenReturn(true)
