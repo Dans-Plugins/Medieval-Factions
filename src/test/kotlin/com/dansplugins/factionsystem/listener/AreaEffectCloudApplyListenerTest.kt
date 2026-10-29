@@ -131,11 +131,50 @@ class AreaEffectCloudApplyListenerTest {
         assertEquals(listOf<LivingEntity>(opponent), affectedEntities)
     }
 
+    // Factionless PvP is on in the duel isolation tests, so only the duel check can refuse the hit
+    @Test
+    fun onAreaEffectCloudApply_ThrowerInDuel_ShouldRemovePlayersOutsideTheDuel() {
+        val fixture = harmfulCloudFixture()
+        `when`(fixture.config.getBoolean("pvp.enabledForFactionlessPlayers")).thenReturn(true)
+        val opponent = fixture.mockPlayer()
+        val outsider = fixture.mockPlayer()
+        val duel = mock(MfDuel::class.java)
+        `when`(duel.id).thenReturn(MfDuelId("duel"))
+        val throwerId = fixture.playerService.getPlayer(fixture.thrower)!!.id
+        val opponentId = fixture.playerService.getPlayer(opponent)!!.id
+        `when`(fixture.duelService.getDuel(throwerId)).thenReturn(duel)
+        `when`(fixture.duelService.getDuel(opponentId)).thenReturn(duel)
+        val affectedEntities = mutableListOf<LivingEntity>(opponent, outsider)
+        `when`(fixture.event.affectedEntities).thenReturn(affectedEntities)
+
+        uut.onAreaEffectCloudApply(fixture.event)
+
+        assertEquals(listOf<LivingEntity>(opponent), affectedEntities)
+    }
+
+    @Test
+    fun onAreaEffectCloudApply_AffectedPlayerInSomeoneElsesDuel_ShouldRemoveThem() {
+        val fixture = harmfulCloudFixture()
+        `when`(fixture.config.getBoolean("pvp.enabledForFactionlessPlayers")).thenReturn(true)
+        val duelist = fixture.mockPlayer()
+        val duel = mock(MfDuel::class.java)
+        `when`(duel.id).thenReturn(MfDuelId("duel"))
+        val duelistId = fixture.playerService.getPlayer(duelist)!!.id
+        `when`(fixture.duelService.getDuel(duelistId)).thenReturn(duel)
+        val affectedEntities = mutableListOf<LivingEntity>(duelist)
+        `when`(fixture.event.affectedEntities).thenReturn(affectedEntities)
+
+        uut.onAreaEffectCloudApply(fixture.event)
+
+        assertEquals(emptyList<LivingEntity>(), affectedEntities)
+    }
+
     private class HarmfulCloudFixture(
         val event: AreaEffectCloudApplyEvent,
         val thrower: Player,
         val playerService: MfPlayerService,
-        val duelService: MfDuelService
+        val duelService: MfDuelService,
+        val config: FileConfiguration
     ) {
         fun mockPlayer(): Player {
             val player = mock(Player::class.java)
@@ -172,7 +211,7 @@ class AreaEffectCloudApplyListenerTest {
         `when`(config.getBoolean("pvp.enabledForFactionlessPlayers")).thenReturn(false)
 
         val thrower = mock(Player::class.java)
-        val fixture = HarmfulCloudFixture(event, thrower, playerService, duelService)
+        val fixture = HarmfulCloudFixture(event, thrower, playerService, duelService, config)
         val throwerId = UUID.randomUUID()
         `when`(thrower.uniqueId).thenReturn(throwerId)
         val throwerMfPlayer = mock(MfPlayer::class.java)
