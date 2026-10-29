@@ -710,14 +710,18 @@ class MedievalFactions : JavaPlugin() {
     }
 
     // Every top-level command goes through here so that one usage event is reported
-    // per use. The event carries the command's declared name (so "/mf" and "/f"
-    // both report as "faction"), never the sender or the arguments. Tab completion
-    // is wired to the executor explicitly because wrapping it hides the fact that
-    // it is also a TabCompleter from PluginCommand's fallback.
+    // per use by a player. The event carries the command's declared name (so "/mf"
+    // and "/f" both report as "faction"), never the sender or the arguments. Commands
+    // run by the console, command blocks or other plugins are not reported: one
+    // server's plugin dispatching /power every two ticks once sent ~500k events.
+    // Tab completion is wired to the executor explicitly because wrapping it hides
+    // the fact that it is also a TabCompleter from PluginCommand's fallback.
     private fun <T> registerCommand(name: String, executor: T) where T : CommandExecutor, T : TabCompleter {
         val command = getCommand(name) ?: return
         command.setExecutor { sender, cmd, label, args ->
-            trace.report("command", null, mapOf("name" to cmd.name))
+            if (sender is Player) {
+                trace.report("command", null, mapOf("name" to cmd.name))
+            }
             executor.onCommand(sender, cmd, label, args)
         }
         command.tabCompleter = executor

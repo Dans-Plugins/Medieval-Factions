@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Usage reporting now counts a `command` event only when a player runs the command. Commands run from the console, by command blocks or dispatched by another plugin are no longer reported: one server's plugin running `/power` every two ticks had sent about 500,000 events, swamping every real use. Nothing about how commands work changes.
 - The usage-reporting "Details" link (startup notice, `config.yml` and the docs) now points at https://danielstephenson.dev/usage-reporting, a public page; the previous link led to a private repository and returned 404 for everyone. The vendored trace client is now 0.6.1, which carries the same link in the `plugins/trace/config.yml` header it writes. Details: https://github.com/Stephenson-Software/trace-client-java/releases/tag/0.6.1.
 - The vendored trace client is now 0.4.0, and every usage event now carries the plugin version, `command` events included; before, only `startup` did.
 
