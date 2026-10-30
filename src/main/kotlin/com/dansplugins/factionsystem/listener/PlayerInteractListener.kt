@@ -737,7 +737,9 @@ class PlayerInteractListener(
                     return@syncValidations
                 }
                 val minHeight = plugin.config.getInt("gates.minHeight")
-                if (area.height < minHeight) {
+                // area.height is maxY - minY (the gap between the top and bottom rows), so the gate's
+                // height in blocks is one more: a three-block column has a height of 2.
+                if (area.height + 1 < minHeight) {
                     player.sendMessage("$RED${plugin.language["GateCreateMinHeightNotMet", minHeight.toString()]}")
                     restartGateCreation(player, ctx)
                     return@syncValidations
