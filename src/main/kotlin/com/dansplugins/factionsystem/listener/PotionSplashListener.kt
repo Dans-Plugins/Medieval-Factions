@@ -35,6 +35,10 @@ class PotionSplashListener internal constructor(
             if (damagerDuel != null && damagedDuel != null && damagerDuel.id == damagedDuel.id) {
                 continue
             }
+            if (damagerDuel != null || damagedDuel != null) {
+                event.setIntensity(damaged, 0.0)
+                continue
+            }
             val damagedFaction = factionService.getFaction(damagedMfPlayer.id)
             if (damagerFaction == null || damagedFaction == null) {
                 if (!plugin.config.getBoolean("pvp.enabledForFactionlessPlayers")) {
