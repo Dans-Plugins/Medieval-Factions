@@ -731,7 +731,8 @@ class PlayerInteractListener(
 
                 // Validate area dimensions
                 val area = MfCuboidArea(position1, position2)
-                if (area.width > 1 && area.depth > 1) {
+                // area.width and area.depth are max - min, so a gate one block thick has 0 on that side.
+                if (area.width > 0 && area.depth > 0) {
                     player.sendMessage("$RED${plugin.language["GateCreateMustBeFlatPlane"]}")
                     restartGateCreation(player, ctx)
                     return@syncValidations
