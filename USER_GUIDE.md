@@ -587,7 +587,7 @@ If enemy faction is disbanded or surrenders, war ends automatically.
    /gate create
    ```
 
-3. **Select the gate's corners:** right-click the block at one corner of the gate, then the block at the opposite corner. The gate is every block between the two corners, which must lie in one flat plane (a wall or a door, not a solid box).
+3. **Select the gate's corners:** right-click the block at one corner of the gate, then the block at the opposite corner. The gate is every block between the two corners, which must lie in one flat plane one block thick (a wall or a door, not a solid box or a two-block-thick slab).
 
 4. **Select the trigger:** right-click the block that will open the gate, for example a lever. It must be in your faction's territory.
 

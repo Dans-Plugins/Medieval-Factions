@@ -1737,14 +1737,62 @@ class PlayerInteractListenerTest {
         verify(language).get("GateCreateMinHeightNotMet", "3")
     }
 
+    // #2122: a gate must be one block thick, and MfCuboidArea.width and depth are max - min.
+
+    @Test
+    fun onPlayerInteract_SelectingGateTrigger_GateOneBlockThickWall_ShouldPassFlatPlaneCheck() {
+        // Arrange - a wall five blocks wide (x = 0..4), three tall and one block thick
+        val language = setupGateTriggerSelection(minHeight = 3, gateTopY = 2, gateFarX = 4)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+        runScheduledAsyncTasks()
+        runScheduledSyncTasks()
+
+        // Assert - creation moves past the flat-plane and height checks to gates.maxBlocks, unset here
+        verify(language, never()).get("GateCreateMustBeFlatPlane")
+        verify(language).get("GateCreateAreaLimitExceeded", "0")
+    }
+
+    @Test
+    fun onPlayerInteract_SelectingGateTrigger_GateTwoByTwoColumn_ShouldRefuseFlatPlane() {
+        // Arrange - a column two blocks wide and two deep (x = 0..1, z = 0..1), three tall
+        val language = setupGateTriggerSelection(minHeight = 3, gateTopY = 2, gateFarX = 1, gateFarZ = 1)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+        runScheduledAsyncTasks()
+        runScheduledSyncTasks()
+
+        // Assert
+        verify(language).get("GateCreateMustBeFlatPlane")
+        verify(language, never()).get("GateCreateAreaLimitExceeded", "0")
+    }
+
+    @Test
+    fun onPlayerInteract_SelectingGateTrigger_GateTwoBlocksThickSlab_ShouldRefuseFlatPlane() {
+        // Arrange - a slab five blocks wide and two deep (x = 0..4, z = 0..1), three tall
+        val language = setupGateTriggerSelection(minHeight = 3, gateTopY = 2, gateFarX = 4, gateFarZ = 1)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+        runScheduledAsyncTasks()
+        runScheduledSyncTasks()
+
+        // Assert
+        verify(language).get("GateCreateMustBeFlatPlane")
+        verify(language, never()).get("GateCreateAreaLimitExceeded", "0")
+    }
+
     // Helper functions
 
     /**
-     * Arranges a player who has selected both corners of a gate - a one-wide column from y = 0 to
-     * [gateTopY] - and is now clicking its trigger, so that the next interaction runs gate creation.
+     * Arranges a player who has selected both corners of a gate - from (0, 0, 0) to
+     * ([gateFarX], [gateTopY], [gateFarZ]), a one-wide column by default - and is now clicking its
+     * trigger, so that the next interaction runs gate creation.
      * Returns the language mock, whose keys tell which creation check refused the gate.
      */
-    private fun setupGateTriggerSelection(minHeight: Int, gateTopY: Int): Language {
+    private fun setupGateTriggerSelection(minHeight: Int, gateTopY: Int, gateFarX: Int = 0, gateFarZ: Int = 0): Language {
         val (_, playerId) = setupPlayerMocks(fixture.player)
         `when`(interactionService.getInteractionStatus(playerId))
             .thenReturn(com.dansplugins.factionsystem.interaction.MfInteractionStatus.SELECTING_GATE_TRIGGER)
@@ -1753,7 +1801,7 @@ class PlayerInteractListenerTest {
         val ctx = com.dansplugins.factionsystem.gate.MfGateCreationContext(
             playerId = playerId,
             position1 = MfBlockPosition(worldId, 0, 0, 0),
-            position2 = MfBlockPosition(worldId, 0, gateTopY, 0),
+            position2 = MfBlockPosition(worldId, gateFarX, gateTopY, gateFarZ),
             trigger = MfBlockPosition(worldId, 1, 0, 0)
         )
         val gateService = mock(com.dansplugins.factionsystem.gate.MfGateService::class.java)
