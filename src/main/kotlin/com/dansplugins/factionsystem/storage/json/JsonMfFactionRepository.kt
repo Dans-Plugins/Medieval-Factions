@@ -65,8 +65,19 @@ class JsonMfFactionRepository(
             faction.copy(version = 1).also { data.factions.add(it.toDto()) }
         }
         saveData(data)
-        updated
+        updated.withMembersInSavedRoles()
     }
+
+    /**
+     * Each member holds its own copy of its role, and only the role's id is written, so a save that changes a role
+     * (a permission, a name) leaves the members' copies out of date. [com.dansplugins.factionsystem.faction.MfFactionService]
+     * caches the returned faction, and permission checks read the member's copy, so the change would not apply until
+     * the faction was next read from the file at startup. A member whose role is not among the faction's roles is kept
+     * as it is rather than dropped or moved to another role.
+     */
+    private fun MfFaction.withMembersInSavedRoles() = copy(
+        members = members.map { member -> roles.getRole(member.role.id)?.let { member.copy(role = it) } ?: member }
+    )
 
     override fun delete(factionId: MfFactionId) = storageManager.withFileLock(fileName) {
         val data = loadData()

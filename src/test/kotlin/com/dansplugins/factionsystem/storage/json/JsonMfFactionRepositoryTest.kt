@@ -220,6 +220,67 @@ class JsonMfFactionRepositoryTest {
     }
 
     @Test
+    fun `a member sees a permission change to their role in the saved faction`() {
+        val member = role("Member", mapOf("CLAIM" to false))
+        val playerId = MfPlayerId(UUID.randomUUID().toString())
+        val first = repository.upsert(
+            faction(members = listOf(MfFactionMember(playerId, member)), roles = MfFactionRoles(member.id, listOf(member)))
+        )
+
+        val granted = member.copy(permissionsByName = mapOf("CLAIM" to true))
+        val second = repository.upsert(first.copy(roles = first.roles.copy(roles = listOf(granted))))
+
+        assertEquals(mapOf("CLAIM" to true), second.getRole(playerId)?.permissionsByName)
+        assertEquals(repository.getFaction(first.id)?.getRole(playerId), second.getRole(playerId))
+    }
+
+    @Test
+    fun `a member sees a renamed role in the saved faction`() {
+        val member = role("Member")
+        val playerId = MfPlayerId(UUID.randomUUID().toString())
+        val first = repository.upsert(
+            faction(members = listOf(MfFactionMember(playerId, member)), roles = MfFactionRoles(member.id, listOf(member)))
+        )
+
+        val renamed = member.copy(name = "Peasant")
+        val second = repository.upsert(first.copy(roles = first.roles.copy(roles = listOf(renamed))))
+
+        assertEquals("Peasant", second.getRole(playerId)?.name)
+    }
+
+    @Test
+    fun `the members of a new faction get the roles it is saved with`() {
+        // What a FactionCreateEvent listener leaves behind when it grants a permission through faction.copy(roles = ...).
+        val owner = role("Owner")
+        val granted = owner.copy(permissionsByName = mapOf("CREATE_CURRENCY" to true))
+        val playerId = MfPlayerId(UUID.randomUUID().toString())
+
+        val saved = repository.upsert(
+            faction(members = listOf(MfFactionMember(playerId, owner)), roles = MfFactionRoles(owner.id, listOf(granted)))
+        )
+
+        assertEquals(mapOf("CREATE_CURRENCY" to true), saved.getRole(playerId)?.permissionsByName)
+    }
+
+    @Test
+    fun `saving keeps a member whose role is not in the faction's roles`() {
+        val owner = role("Owner")
+        val removed = role("Removed")
+        val ownerId = MfPlayerId(UUID.randomUUID().toString())
+        val orphanId = MfPlayerId(UUID.randomUUID().toString())
+
+        val saved = repository.upsert(
+            faction(
+                members = listOf(MfFactionMember(ownerId, owner), MfFactionMember(orphanId, removed)),
+                roles = MfFactionRoles(owner.id, listOf(owner))
+            )
+        )
+
+        assertEquals(listOf(ownerId, orphanId), saved.members.map { it.playerId })
+        assertEquals(removed, saved.getRole(orphanId))
+    }
+
+    @Test
     fun `deletes a faction`() {
         val owner = role("Owner")
         val factionId = MfFactionId.generate()
