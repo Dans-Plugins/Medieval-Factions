@@ -526,14 +526,16 @@ class MfFactionServiceTest {
     }
 
     @Test
-    fun aSecondSaveBuiltFromTheFirstResultCarriesTheNextVersion() {
+    fun aSaveCachesTheStoredVersionForTheNextReader() {
         val stored = faction()
         val service = MfFactionService(plugin, FakeRepository(stored))
 
-        val first = valueOf(service.save(stored.copy(bonusPower = 5.0)))
-        val second = valueOf(service.save(first.copy(description = "Changed")))
+        valueOf(service.save(assertNotNull(service.getFaction(factionId)).copy(bonusPower = 5.0)))
+        assertEquals(stored.version + 1, service.getFaction(factionId)?.version)
 
-        assertEquals(2, second.version)
+        // Commands read the faction from the cache, so this is the version their next save is built on.
+        valueOf(service.save(assertNotNull(service.getFaction(factionId)).copy(description = "Changed")))
+        assertEquals(stored.version + 2, service.getFaction(factionId)?.version)
         assertEquals(5.0, service.getFaction(factionId)?.bonusPower)
     }
 
