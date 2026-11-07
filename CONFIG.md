@@ -405,7 +405,7 @@ factions:
 ### `factions.allowNeutrality`
 **Type:** Boolean  
 **Default:** `false`  
-**Description:** When `true`, allows factions to declare themselves as neutral, preventing them from participating in wars.
+**Description:** When `true`, allows factions to declare themselves as neutral, preventing them from participating in wars. When `false`, the `neutral` flag is cleared on every faction that has it at the next startup.
 
 ### `factions.warDeclarationRequiresApproval`
 **Type:** Boolean  
