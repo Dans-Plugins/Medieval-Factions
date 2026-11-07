@@ -26,6 +26,7 @@ import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.result4k.resultFrom
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.logging.Level.SEVERE
 
 class MfFactionService(private val plugin: MedievalFactions, private val repository: MfFactionRepository) {
 
@@ -45,8 +46,10 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
         if (!plugin.config.getBoolean("factions.allowNeutrality")) {
             plugin.logger.info("Disabling neutrality for existing factions due to config setting...")
             startTime = System.currentTimeMillis()
+            // Writes through the repository because save() needs plugin.services, which is assigned after this service
+            // is built. Only a flag changes here, so save() would raise no event, and territories render during startup.
             val updatedFactions = factions.filter { it.flags[plugin.flags.isNeutral] }.map { faction ->
-                save(faction.copy(flags = faction.flags + (plugin.flags.isNeutral to false))).onFailure { throw it.reason.cause }
+                repository.upsert(faction.copy(flags = faction.flags + (plugin.flags.isNeutral to false)))
             }.associateBy(MfFaction::id)
             if (updatedFactions.isNotEmpty()) {
                 factionsById.putAll(updatedFactions)
@@ -70,6 +73,7 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
     fun save(faction: MfFaction): Result4k<MfFaction, ServiceFailure> = resultFrom {
         val previousState = getFaction(faction.id)
         var factionToSave = faction
+        var leavingMembers = emptyList<MfPlayerId>()
         if (previousState == null) {
             val event = FactionCreateEvent(faction.id, faction, !plugin.server.isPrimaryThread)
             plugin.server.pluginManager.callEvent(event)
@@ -107,22 +111,18 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
                     throw EventCancelledException("Event cancelled")
                 }
             }
-            val oldMembers = previousState.members.map(MfFactionMember::playerId) - faction.members.map(MfFactionMember::playerId)
-            oldMembers.forEach { oldMember ->
-                val event = FactionLeaveEvent(faction.id, oldMember, !plugin.server.isPrimaryThread)
+            leavingMembers = previousState.members.map(MfFactionMember::playerId) - faction.members.map(MfFactionMember::playerId)
+            leavingMembers.forEach { leavingMember ->
+                val event = FactionLeaveEvent(faction.id, leavingMember, !plugin.server.isPrimaryThread)
                 plugin.server.pluginManager.callEvent(event)
                 if (event.isCancelled) {
                     throw EventCancelledException("Event cancelled")
-                }
-                val lockService = plugin.services.lockService
-                lockService.getLockedBlocks(oldMember).forEach { lockedBlock ->
-                    lockService.delete(lockedBlock.block)
-                        .onFailure { failure -> throw failure.reason.cause }
                 }
             }
         }
         val result = repository.upsert(factionToSave)
         factionsById[result.id] = result
+        leavingMembers.forEach(::deleteLocksOfFormerMember)
         val mapService = plugin.services.mapService
         if (mapService != null && !plugin.config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
             plugin.server.scheduler.runTask(
@@ -135,6 +135,24 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
         return@resultFrom result
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+    }
+
+    /**
+     * Runs after the faction is stored, so a failure here is logged and not reported as a failed save: the player has
+     * already left, and a caller told otherwise would treat them as still a member.
+     */
+    private fun deleteLocksOfFormerMember(playerId: MfPlayerId) {
+        val lockService = plugin.services.lockService
+        lockService.getLockedBlocks(playerId).forEach { lockedBlock ->
+            lockService.delete(lockedBlock.block).onFailure { failure ->
+                plugin.logger.log(
+                    SEVERE,
+                    "Failed to delete lock at ${lockedBlock.block} of former member ${playerId.value}: ${failure.reason.message}",
+                    failure.reason.cause
+                )
+                return@forEach
+            }
+        }
     }
 
     @JvmName("deleteFactionByFactionId")

@@ -41,6 +41,7 @@ import org.bukkit.plugin.PluginManager
 import org.bukkit.scheduler.BukkitScheduler
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.doAnswer
 import org.mockito.Mockito.mock
@@ -49,6 +50,7 @@ import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.Mockito.`when`
 import java.util.UUID
+import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -234,19 +236,30 @@ class MfFactionServiceTest {
         assertEquals(neutral.version + 1, updated.version)
     }
 
-    // Startup builds this service before plugin.services is assigned, but save() reads plugin.services.mapService
-    // after the write. Until #2147 is fixed, the first neutral faction is written, then the constructor throws.
+    // Startup builds this service before plugin.services is assigned, so clearing the flag must not read it (#2147).
     @Test
-    fun startupFailsAfterOneWriteWhenNeutralFactionsExistAndNeutralityIsNotAllowed_issue2147() {
+    fun startupClearsEveryNeutralFactionBeforeServicesAreAssigned() {
         `when`(config.getBoolean("factions.allowNeutrality")).thenReturn(false)
         `when`(plugin.services).thenThrow(UninitializedPropertyAccessException("services"))
         val first = faction(flagValues = mapOf("neutral" to true))
         val second = faction(id = MfFactionId("second"), name = "Second", members = emptyList(), flagValues = mapOf("neutral" to true))
         val repository = FakeRepository(first, second)
 
-        assertFailsWith<UninitializedPropertyAccessException> { MfFactionService(plugin, repository) }
+        val service = MfFactionService(plugin, repository)
 
-        assertEquals(1, repository.upserted.size)
+        assertEquals(setOf(first.id, second.id), repository.upserted.map(MfFaction::id).toSet())
+        assertFalse(assertNotNull(service.getFaction(first.id)).flags[flags.isNeutral])
+        assertFalse(assertNotNull(service.getFaction(second.id)).flags[flags.isNeutral])
+        assertEquals(first.version + 1, service.getFaction(first.id)?.version)
+    }
+
+    @Test
+    fun aRefusedNeutralityWriteStopsStartup() {
+        `when`(config.getBoolean("factions.allowNeutrality")).thenReturn(false)
+        val repository = FakeRepository(faction(flagValues = mapOf("neutral" to true)))
+        repository.failure = OptimisticLockingFailureException("stale")
+
+        assertFailsWith<OptimisticLockingFailureException> { MfFactionService(plugin, repository) }
     }
 
     // Lookups
@@ -452,25 +465,48 @@ class MfFactionServiceTest {
     }
 
     @Test
-    fun aLockThatCannotBeDeletedStopsTheSave() {
+    fun aLockThatCannotBeDeletedDoesNotFailTheSave() {
         val stored = faction()
-        val theirs = lockedBy(member, 1)
+        val stuck = lockedBy(member, 1)
+        val nextLock = lockedBy(member, 2)
         val cause = RuntimeException("lock storage")
-        `when`(lockService.getLockedBlocks(member)).thenReturn(listOf(theirs))
-        `when`(lockService.delete(theirs.block)).thenReturn(Failure(ServiceFailure(GENERAL, "lock", cause)))
+        `when`(lockService.getLockedBlocks(member)).thenReturn(listOf(stuck, nextLock))
+        `when`(lockService.delete(stuck.block)).thenReturn(Failure(ServiceFailure(GENERAL, "lock", cause)))
+        val mapService = mock(MapService::class.java)
+        `when`(services.mapService).thenReturn(mapService)
         val repository = FakeRepository(stored)
         val service = MfFactionService(plugin, repository)
 
-        val failure = failureOf(service.save(stored.copy(members = stored.members.take(1))))
+        val saved = valueOf(service.save(stored.copy(members = stored.members.take(1))))
 
-        assertSame(cause, failure.cause)
-        assertTrue(repository.upserted.isEmpty())
+        assertEquals(listOf(owner), saved.members.map(MfFactionMember::playerId))
+        assertEquals(saved.version, service.getFaction(factionId)?.version)
+        verify(plugin.logger).log(eq(Level.SEVERE), anyString(), eq(cause))
+        verify(lockService).delete(nextLock.block)
+        capturedMapTask().run()
+        verify(mapService).scheduleUpdateClaims(saved)
     }
 
-    // The leaver's locks are deleted before the write. Until #2148 is fixed, a refused write leaves the player in the
-    // faction with their locks gone. These two tests pin that and need updating with the fix.
     @Test
-    fun aRefusedWriteStillDeletesTheLeaversLocks_issue2148() {
+    fun theLeaversLocksAreDeletedOnlyAfterTheWrite() {
+        val stored = faction()
+        val theirs = lockedBy(member, 1)
+        `when`(lockService.getLockedBlocks(member)).thenReturn(listOf(theirs))
+        val repository = FakeRepository(stored)
+        val service = MfFactionService(plugin, repository)
+        var writesBeforeDelete = -1
+        doAnswer {
+            writesBeforeDelete = repository.upserted.size
+            Success(Unit)
+        }.`when`(lockService).delete(theirs.block)
+
+        valueOf(service.save(stored.copy(members = stored.members.take(1))))
+
+        assertEquals(1, writesBeforeDelete)
+    }
+
+    @Test
+    fun aRefusedWriteKeepsTheLeaversLocks() {
         val stored = faction()
         val theirs = lockedBy(member, 1)
         `when`(lockService.getLockedBlocks(member)).thenReturn(listOf(theirs))
@@ -482,11 +518,11 @@ class MfFactionServiceTest {
 
         assertEquals(CONFLICT, failure.type)
         assertTrue(service.getFaction(factionId)!!.members.any { it.playerId == member })
-        verify(lockService).delete(theirs.block)
+        verify(lockService, never()).delete(theirs.block)
     }
 
     @Test
-    fun aCancelledSecondLeaveStillDeletesTheFirstLeaversLocks_issue2148() {
+    fun aCancelledSecondLeaveKeepsTheFirstLeaversLocks() {
         val second = MfPlayerId("second")
         `when`(lockService.getLockedBlocks(second)).thenReturn(emptyList())
         val stored = faction(members = listOf(owner, member, second))
@@ -499,7 +535,7 @@ class MfFactionServiceTest {
         failureOf(service.save(stored.copy(members = stored.members.take(1))))
 
         assertTrue(repository.upserted.isEmpty())
-        verify(lockService).delete(theirs.block)
+        verify(lockService, never()).delete(theirs.block)
     }
 
     @Test
