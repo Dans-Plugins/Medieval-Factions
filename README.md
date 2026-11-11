@@ -1,5 +1,7 @@
 # Medieval Factions
 
+![Medieval Factions banner: a Strata render of a test-server world with the real claims of its five factions tinted and outlined in their colours](docs/images/banner.jpg)
+
 ![A Minecraft world rendered in 3D with translucent blue columns over the 29 chunks claimed by the faction Riverhold and orange columns over the 13 chunks claimed by Ashford](docs/images/claims-render.png)
 
 ![The /f map command showing Riverhold's territory in blue and Ashford's in orange around the player](docs/images/faction-map.png)
