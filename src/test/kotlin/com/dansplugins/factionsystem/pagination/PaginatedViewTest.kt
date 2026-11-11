@@ -6,6 +6,7 @@ import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.TextComponent
+import net.md_5.bungee.api.chat.hover.content.Text
 import org.bukkit.command.CommandSender
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -98,6 +99,7 @@ class PaginatedViewTest {
         assertEquals(ClickEvent.Action.RUN_COMMAND, next.clickEvent.action)
         assertEquals("/cmd 1", next.clickEvent.value)
         assertEquals(HoverEvent.Action.SHOW_TEXT, next.hoverEvent.action)
+        assertEquals("Go forward", hoverText(next))
     }
 
     @Test
@@ -111,6 +113,7 @@ class PaginatedViewTest {
         assertEquals(ChatColor.GREEN, previous.color)
         assertEquals("/cmd 0", previous.clickEvent.value)
         assertEquals(HoverEvent.Action.SHOW_TEXT, previous.hoverEvent.action)
+        assertEquals("Go back", hoverText(previous))
 
         val next = controls[4]
         assertEquals(ChatColor.DARK_GREEN, next.color)
@@ -219,4 +222,7 @@ class PaginatedViewTest {
     private fun plain(components: List<BaseComponent>) = components.joinToString("") { it.toPlainText() }
 
     private fun plain(component: BaseComponent) = component.toPlainText()
+
+    private fun hoverText(component: BaseComponent) =
+        component.hoverEvent.contents.joinToString("") { (it as Text).value.toString() }
 }
