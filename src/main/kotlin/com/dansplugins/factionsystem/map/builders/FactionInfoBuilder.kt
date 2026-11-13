@@ -28,18 +28,18 @@ class FactionInfoBuilder(private val plugin: MedievalFactions) {
         val claimService = plugin.services.claimService
         val playerService = plugin.services.playerService
         return buildString {
-            append("<h1>${faction.name}</h1>")
+            append("<h1>${faction.name.escapeHtml()}</h1>")
             if (plugin.config.getBoolean("dynmap.showDescription")) {
                 append("<h2>Description</h2>")
-                append(faction.description)
+                append(faction.description.escapeHtml())
             }
             if (plugin.config.getBoolean("dynmap.showMembers")) {
                 append("<h2>Members (${faction.members.size})</h2>")
                 append(
                     faction.members.groupBy { it.role }.map { (role, members) ->
                         """
-                <h3>${role.name} (${faction.members.count { it.role.id == role.id }})</h3>
-                ${members.joinToString { member -> playerService.getPlayer(member.playerId)?.name ?: plugin.language["UnknownPlayer"] }}
+                <h3>${role.name.escapeHtml()} (${faction.members.count { it.role.id == role.id }})</h3>
+                ${members.joinToString { member -> (playerService.getPlayer(member.playerId)?.name ?: plugin.language["UnknownPlayer"]).escapeHtml() }}
                         """.trimIndent()
                     }.joinToString("<br />")
                 )
@@ -49,7 +49,7 @@ class FactionInfoBuilder(private val plugin: MedievalFactions) {
                 val liege = liegeId?.let(factionService::getFaction)
                 if (liege != null) {
                     append("<h2>Liege</h2>")
-                    append(liege.name)
+                    append(liege.name.escapeHtml())
                     append("<br />")
                 }
             }
@@ -57,7 +57,7 @@ class FactionInfoBuilder(private val plugin: MedievalFactions) {
                 val vassals = relationshipService.getVassals(faction.id).mapNotNull(factionService::getFaction)
                 if (vassals.isNotEmpty()) {
                     append("<h2>Vassals</h2>")
-                    append(vassals.joinToString(transform = MfFaction::name))
+                    append(vassals.joinToString { it.name.escapeHtml() })
                     append("<br />")
                 }
             }
@@ -65,7 +65,7 @@ class FactionInfoBuilder(private val plugin: MedievalFactions) {
                 val allies = relationshipService.getAllies(faction.id).mapNotNull(factionService::getFaction)
                 if (allies.isNotEmpty()) {
                     append("<h2>Allies</h2>")
-                    append(allies.joinToString(transform = MfFaction::name))
+                    append(allies.joinToString { it.name.escapeHtml() })
                     append("<br />")
                 }
             }
@@ -73,7 +73,7 @@ class FactionInfoBuilder(private val plugin: MedievalFactions) {
                 val atWarWith = relationshipService.getFactionsAtWarWith(faction.id).mapNotNull(factionService::getFaction)
                 if (atWarWith.isNotEmpty()) {
                     append("<h2>At war with</h2>")
-                    append(atWarWith.joinToString(transform = MfFaction::name))
+                    append(atWarWith.joinToString { it.name.escapeHtml() })
                     append("<br />")
                 }
             }
@@ -86,6 +86,23 @@ class FactionInfoBuilder(private val plugin: MedievalFactions) {
                 append("<h2>Demesne</h2>")
                 val claims = claimService.getClaims(faction.id)
                 append("${claims.size}/${floor(faction.power).roundToInt()}")
+            }
+        }
+    }
+
+    /**
+     * Escapes the characters that are significant in HTML, so that player-controlled text such as faction
+     * names and descriptions is shown as text in the Dynmap popup rather than interpreted as markup.
+     */
+    private fun String.escapeHtml(): String = buildString(length) {
+        for (char in this@escapeHtml) {
+            when (char) {
+                '&' -> append("&amp;")
+                '<' -> append("&lt;")
+                '>' -> append("&gt;")
+                '"' -> append("&quot;")
+                '\'' -> append("&#39;")
+                else -> append(char)
             }
         }
     }

@@ -217,15 +217,53 @@ class FactionInfoBuilderTest {
         assertEquals("<h1>Avalon</h1><h2>Demesne</h2>3/10", uut.build(faction))
     }
 
-    // Characterizes current behaviour, which issue #2159 reports as a bug: names and descriptions are inserted
-    // into the popup HTML unescaped. The fix for #2159 must change this assertion to the escaped output.
+    // Issue #2159: player-controlled text must not be interpreted as markup in the popup.
     @Test
-    fun `build inserts the name and description without escaping_issue2159`() {
+    fun `build escapes the name and description_issue2159`() {
         show("showDescription")
         `when`(faction.name).thenReturn("<b>Avalon</b>")
-        `when`(faction.description).thenReturn("<i>desc</i> & more")
+        `when`(faction.description).thenReturn("<img src=x onerror=\"alert('x')\"> & more")
 
-        assertEquals("<h1><b>Avalon</b></h1><h2>Description</h2><i>desc</i> & more", uut.build(faction))
+        assertEquals(
+            "<h1>&lt;b&gt;Avalon&lt;/b&gt;</h1><h2>Description</h2>" +
+                "&lt;img src=x onerror=&quot;alert(&#39;x&#39;)&quot;&gt; &amp; more",
+            uut.build(faction)
+        )
+    }
+
+    @Test
+    fun `build escapes role and member names_issue2159`() {
+        show("showMembers")
+        val role = MfFactionRole(plugin, name = "<i>Owner</i>")
+        val player = player("alice", "<script>")
+        `when`(faction.members).thenReturn(listOf(MfFactionMember(player.id, role)))
+
+        assertEquals(
+            "<h1>Avalon</h1><h2>Members (1)</h2><h3>&lt;i&gt;Owner&lt;/i&gt; (1)</h3>\n&lt;script&gt;",
+            uut.build(faction)
+        )
+    }
+
+    @Test
+    fun `build escapes liege, vassal, ally and enemy names_issue2159`() {
+        listOf("showLiege", "showVassals", "showAllies", "showAtWarWith").forEach(::show)
+        val liege = faction("liege-id", "<b>L</b>")
+        val vassal = faction("vassal-id", "<b>V</b>")
+        val ally = faction("ally-id", "<b>A</b>")
+        val enemy = faction("enemy-id", "<b>E</b>")
+        `when`(relationshipService.getLiege(factionId)).thenReturn(liege)
+        `when`(relationshipService.getVassals(factionId)).thenReturn(listOf(vassal))
+        `when`(relationshipService.getAllies(factionId)).thenReturn(listOf(ally))
+        `when`(relationshipService.getFactionsAtWarWith(factionId)).thenReturn(listOf(enemy))
+
+        assertEquals(
+            "<h1>Avalon</h1>" +
+                "<h2>Liege</h2>&lt;b&gt;L&lt;/b&gt;<br />" +
+                "<h2>Vassals</h2>&lt;b&gt;V&lt;/b&gt;<br />" +
+                "<h2>Allies</h2>&lt;b&gt;A&lt;/b&gt;<br />" +
+                "<h2>At war with</h2>&lt;b&gt;E&lt;/b&gt;<br />",
+            uut.build(faction)
+        )
     }
 
     @Test
