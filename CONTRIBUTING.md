@@ -10,7 +10,7 @@ Thank you for being interested in contributing to the project! It wouldn't be wh
 - A GitHub account
 - Git installed on your local machine
 - A text editor or IDE
-- A basic understanding of Java
+- A basic understanding of Kotlin (the plugin is written in Kotlin; Java experience carries over)
 
 ## Getting Started
 - If you don't already have a GitHub account, you can sign up for one [here](https://github.com/signup).
@@ -39,14 +39,16 @@ Work items are organized into milestones, which represent a specific version of 
 ## Making Changes
 - Before you start working on something, make sure there is an issue for it. If there isn't, create one.
 - Make sure you are working on the "main" branch. If you are not, switch to it using `git checkout main`.
-- Create a new branch for your changes using `git checkout -b <branch-name>`. Make sure to name your branch something that is related to the issue you are working on.
+- Create a new branch for your changes using `git checkout -b <branch-name>`. Start the name with `feature/` for a new capability, `fix/` for a correction or `docs/` for documentation, followed by something related to the issue you are working on, e.g. `fix/2129-law-move-validation`.
 - Make your changes to the code.
 - Test your changes to make sure they work as expected. [More information on testing can be found here](#testing).
-- When you are finished, commit your changes using `git commit -m "Your commit message here"`.
+- When you are finished, commit your changes using `git commit -m "Your commit message here"`. Write the message in the imperative mood with no trailing period, e.g. `Add pagination to the law list`.
 - Push your changes to your fork using `git push origin <branch-name>`.
-- Open a pull request on the original repository. Make sure to include a description of your changes and link the related issue using #(number). The main branch should be used as the base branch.
+- Open a pull request on the original repository. Make sure to include a description of your changes and write `Closes #(number)` for the issue it resolves, so the issue is closed when the pull request is merged. The main branch should be used as the base branch.
 - Wait for your pull request to be reviewed. If there are any changes that need to be made, make them and push the changes to your fork. Your pull request will be updated automatically.
-- Once your pull request has been reviewed and approved, it will be merged into the main branch.
+- Once your pull request has been reviewed and approved, it will be merged into the main branch with a merge commit.
+
+The full commit and pull request conventions, including the `Co-Authored-By` trailer for commits written by an AI agent, are in [CLAUDE.md](CLAUDE.md#commit-and-pr-conventions).
 
 ### Language Files
 The plugin supports multiple languages. Code changes that require changes to the language files should include the changes to the language files as well. If you are adding a new language, you will need to create a new language file. The language files are located in the `src/main/resources/lang` directory.
