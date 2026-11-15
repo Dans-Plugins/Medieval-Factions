@@ -108,8 +108,13 @@ class MfFactionRivalCommandTest {
 
     @Test
     fun rival_isRefusedForAnAlly() {
-        `when`(relationshipService.getRelationships(north.id, south.id)).thenReturn(listOf(MfFactionRelationship(factionId = north.id, targetId = south.id, type = ALLY)))
-        `when`(relationshipService.getRelationships(south.id, north.id)).thenReturn(listOf(MfFactionRelationship(factionId = south.id, targetId = north.id, type = ALLY)))
+        // Built before stubbing: reading the faction mocks inside `when(...)` would interrupt the stubbing.
+        val northId = north.id
+        val southId = south.id
+        val alliance = listOf(MfFactionRelationship(factionId = northId, targetId = southId, type = ALLY))
+        val reverseAlliance = listOf(MfFactionRelationship(factionId = southId, targetId = northId, type = ALLY))
+        `when`(relationshipService.getRelationships(northId, southId)).thenReturn(alliance)
+        `when`(relationshipService.getRelationships(southId, northId)).thenReturn(reverseAlliance)
 
         run(remove = false, "South")
 
