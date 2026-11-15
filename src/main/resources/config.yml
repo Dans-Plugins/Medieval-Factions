@@ -94,6 +94,8 @@ factions:
   vassalizeDeclarationRequiresApproval: false
   factionlessFactionName: Factionless
   factionHomeTeleportDelay: 5
+  factionHomeTeleportCooldown: 0 # Seconds a player must wait between /faction home teleports. 0 disables the cooldown.
+  respawnAtFactionHome: false # When true, players without a bed or respawn anchor respawn at their faction home, if it is set.
   maxMembers: -1
   claimFillMaxChunks: 100
   claimFillMaxDepth: 50

@@ -22,6 +22,11 @@ class MfFactionHomeCommand(private val plugin: MedievalFactions) : CommandExecut
             sender.sendMessage("$RED${plugin.language["CommandFactionHomeNotAPlayer"]}")
             return true
         }
+        val remainingCooldown = plugin.services.teleportService.getRemainingCooldownSeconds(sender)
+        if (remainingCooldown > 0) {
+            sender.sendMessage("$RED${plugin.language["CommandFactionHomeOnCooldown", remainingCooldown.toString()]}")
+            return true
+        }
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
