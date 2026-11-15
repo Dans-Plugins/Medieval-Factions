@@ -14,11 +14,13 @@ import com.dansplugins.factionsystem.law.JooqMfLawRepository
 import com.dansplugins.factionsystem.locks.JooqMfLockRepository
 import com.dansplugins.factionsystem.player.JooqMfPlayerRepository
 import com.dansplugins.factionsystem.relationship.JooqMfFactionRelationshipRepository
+import com.dansplugins.factionsystem.relationship.rival.JooqMfFactionRivalRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfChatChannelMessageRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfClaimedChunkRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfDuelInviteRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfDuelRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfFactionRelationshipRepository
+import com.dansplugins.factionsystem.storage.json.JsonMfFactionRivalRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfFactionRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfGateCreationContextRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfGateRepository
@@ -140,6 +142,7 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
                         val sourceChatRepo = JooqMfChatChannelMessageRepository(dsl)
                         val sourceDuelRepo = JooqMfDuelRepository(dsl)
                         val sourceDuelInviteRepo = JooqMfDuelInviteRepository(dsl)
+                        val sourceRivalRepo = JooqMfFactionRivalRepository(dsl)
 
                         // Initialize JSON repositories
                         plugin.logger.info("Initializing JSON repositories...")
@@ -158,6 +161,7 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
                         val targetChatRepo = JsonMfChatChannelMessageRepository(plugin, storageManager)
                         val targetDuelRepo = JsonMfDuelRepository(plugin, storageManager)
                         val targetDuelInviteRepo = JsonMfDuelInviteRepository(plugin, storageManager)
+                        val targetRivalRepo = JsonMfFactionRivalRepository(plugin, storageManager)
 
                         // Create and run migrator
                         val migrator = DatabaseToJsonMigrator(
@@ -167,7 +171,8 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
                             sourceGateContextRepo, sourceChatRepo, sourceDuelRepo, sourceDuelInviteRepo,
                             targetPlayerRepo, targetFactionRepo, targetLawRepo, targetRelationshipRepo,
                             targetClaimRepo, targetLockRepo, targetInteractionRepo, targetGateRepo,
-                            targetGateContextRepo, targetChatRepo, targetDuelRepo, targetDuelInviteRepo
+                            targetGateContextRepo, targetChatRepo, targetDuelRepo, targetDuelInviteRepo,
+                            sourceRivalRepo, targetRivalRepo
                         )
 
                         val result = migrator.migrate()
@@ -251,6 +256,7 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
                     val sourceChatRepo = JsonMfChatChannelMessageRepository(plugin, storageManager)
                     val sourceDuelRepo = JsonMfDuelRepository(plugin, storageManager)
                     val sourceDuelInviteRepo = JsonMfDuelInviteRepository(plugin, storageManager)
+                    val sourceRivalRepo = JsonMfFactionRivalRepository(plugin, storageManager)
 
                     // Initialize database repositories
                     plugin.logger.info("Initializing database repositories...")
@@ -292,6 +298,7 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
                         val targetChatRepo = JooqMfChatChannelMessageRepository(dsl)
                         val targetDuelRepo = JooqMfDuelRepository(dsl)
                         val targetDuelInviteRepo = JooqMfDuelInviteRepository(dsl)
+                        val targetRivalRepo = JooqMfFactionRivalRepository(dsl)
 
                         // Create and run migrator
                         val migrator = JsonToDatabaseMigrator(
@@ -301,7 +308,8 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
                             sourceGateContextRepo, sourceChatRepo, sourceDuelRepo, sourceDuelInviteRepo,
                             targetPlayerRepo, targetFactionRepo, targetLawRepo, targetRelationshipRepo,
                             targetClaimRepo, targetLockRepo, targetInteractionRepo, targetGateRepo,
-                            targetGateContextRepo, targetChatRepo, targetDuelRepo, targetDuelInviteRepo
+                            targetGateContextRepo, targetChatRepo, targetDuelRepo, targetDuelInviteRepo,
+                            sourceRivalRepo, targetRivalRepo
                         )
 
                         val result = migrator.migrate()

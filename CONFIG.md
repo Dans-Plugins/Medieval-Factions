@@ -367,6 +367,11 @@ factions:
 **Default:** `false`  
 **Description:** When `true`, factions with zero or negative total power are automatically disbanded.
 
+### `factions.minimumRivalryHours`
+**Type:** Number  
+**Default:** `0`  
+**Description:** How many hours a rivalry named with `/f rival` must last before `/f unrival` can end it. `0` lets a rivalry be ended at any time.
+
 ### `factions.vassalPowerContributionMultiplier`
 **Type:** Float  
 **Default:** `0.75`  

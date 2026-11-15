@@ -140,6 +140,9 @@ permissions:
   mf.create:
     description: Allows the creation of factions
     default: true
+  mf.rival:
+    description: Allows naming and removing your faction's rivals (/f rival, /f unrival)
+    default: true
   mf.declarewar:
     description: Allows declaring war on other factions
     default: true
