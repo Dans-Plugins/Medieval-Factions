@@ -341,8 +341,8 @@ Laws are numbered from 1 in the order `/f law list` shows them. Where a command 
 
 ### `/faction law list` or `/f law list`
 **Permission:** `mf.law.list` and `mf.laws` (both required; default: true)  
-**Description:** Lists all laws of your faction.  
-**Usage:** `/f law list`
+**Description:** Lists the laws of your faction, or of the named faction, ten to a page with links to the previous and next pages. A single number is read as a page of your own faction's laws unless a faction has that name.  
+**Usage:** `/f law list [faction] [page]`
 
 ### `/faction law remove [number]` or `/f law remove [number]`
 **Permission:** `mf.law.remove` and `mf.removelaw` (both required; default: true)  
