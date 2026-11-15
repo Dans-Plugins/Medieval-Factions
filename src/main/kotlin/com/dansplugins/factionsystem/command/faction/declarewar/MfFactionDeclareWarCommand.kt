@@ -88,9 +88,8 @@ class MfFactionDeclareWarCommand(private val plugin: MedievalFactions) : Command
                     sender.sendMessage("$RED${plugin.language["CommandFactionDeclareWarNeutralTarget"]}")
                     return@Runnable
                 }
-                val remainingTruce = plugin.truceService.getRemainingTruce(faction.id, target.id)
-                if (remainingTruce != null) {
-                    val minutesLeft = maxOf(1L, (remainingTruce.seconds + 59) / 60)
+                val minutesLeft = plugin.truceService.getRemainingTruceMinutes(faction.id, target.id)
+                if (minutesLeft != null) {
                     sender.sendMessage("$RED${plugin.language["CommandFactionDeclareWarTruceActive", target.name, minutesLeft.toString()]}")
                     return@Runnable
                 }

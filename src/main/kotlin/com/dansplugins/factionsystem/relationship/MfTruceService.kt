@@ -55,6 +55,16 @@ class MfTruceService(
         return Duration.ofMillis(remaining)
     }
 
+    /**
+     * Returns the whole minutes left on the truce between the two factions, rounded up (at least 1), or `null`
+     * when there is no truce. Used for the refusal messages.
+     */
+    @JvmName("getRemainingTruceMinutes")
+    fun getRemainingTruceMinutes(factionId: MfFactionId, targetId: MfFactionId): Long? {
+        val remaining = getRemainingTruce(factionId, targetId) ?: return null
+        return maxOf(1L, (remaining.seconds + 59) / 60)
+    }
+
     private fun key(factionId: MfFactionId, targetId: MfFactionId): String =
         listOf(factionId.value, targetId.value).sorted().joinToString("_")
 
