@@ -76,6 +76,7 @@ import com.dansplugins.factionsystem.listener.PlayerInteractListener
 import com.dansplugins.factionsystem.listener.PlayerJoinListener
 import com.dansplugins.factionsystem.listener.PlayerMoveListener
 import com.dansplugins.factionsystem.listener.PlayerQuitListener
+import com.dansplugins.factionsystem.listener.PlayerRespawnListener
 import com.dansplugins.factionsystem.listener.PlayerTeleportListener
 import com.dansplugins.factionsystem.listener.PotionSplashListener
 import com.dansplugins.factionsystem.listener.StructureGrowListener
@@ -394,6 +395,7 @@ class MedievalFactions : JavaPlugin() {
             PlayerJoinListener(this),
             PlayerMoveListener(this),
             PlayerQuitListener(this, entityInteractionProtection),
+            PlayerRespawnListener(this),
             PlayerTeleportListener(this),
             PotionSplashListener(this),
             StructureGrowListener(growthBorderTrimmer)
