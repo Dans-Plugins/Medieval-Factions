@@ -3,8 +3,10 @@ package com.dansplugins.factionsystem.db
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.jooq.SQLDialect
+import java.io.File
 import java.net.UnknownHostException
 import java.sql.SQLException
+import java.util.Properties
 import java.util.logging.Logger
 
 /**
@@ -39,10 +41,16 @@ object MfJdbc {
      * The configured value is not changed, and a warning says what happened. Any other
      * failure is rethrown unchanged.
      */
-    fun openDataSource(configuredUrl: String, username: String?, password: String?, logger: Logger): HikariDataSource {
+    fun openDataSource(
+        configuredUrl: String,
+        username: String?,
+        password: String?,
+        logger: Logger,
+        hikariProperties: Properties? = null
+    ): HikariDataSource {
         val jdbcUrl = hardenUrl(configuredUrl)
         try {
-            return newDataSource(jdbcUrl, username, password)
+            return newDataSource(jdbcUrl, username, password, hikariProperties)
         } catch (exception: Exception) {
             if (!isAutoServerH2Url(jdbcUrl) || !isUnresolvableHostFailure(exception)) throw exception
             val fallbackUrl = hardenUrl(withoutAutoServer(configuredUrl))
@@ -55,13 +63,26 @@ object MfJdbc {
                     "resolve (e.g. add it to /etc/hosts); if nothing else needs the file, removing " +
                     "AUTO_SERVER=true from database.url in config.yml also stops this warning."
             )
-            return newDataSource(fallbackUrl, username, password)
+            return newDataSource(fallbackUrl, username, password, hikariProperties)
         }
     }
 
-    private fun newDataSource(jdbcUrl: String, username: String?, password: String?): HikariDataSource {
+    private fun newDataSource(jdbcUrl: String, username: String?, password: String?, hikariProperties: Properties?): HikariDataSource {
         preloadDriver(jdbcUrl)
-        val hikariConfig = HikariConfig()
+        return HikariDataSource(hikariConfig(jdbcUrl, username, password, hikariProperties))
+    }
+
+    /**
+     * Builds the pool configuration. When [hikariProperties] is given (read from
+     * [HIKARI_PROPERTIES_FILE_NAME]), every HikariCP setting in it is applied first, and the
+     * settings that `config.yml` controls are applied over it: the JDBC URL always, and the
+     * username and password when `config.yml` sets them. Without the file the pool is built
+     * exactly as before, from HikariCP's own defaults.
+     *
+     * @throws RuntimeException from HikariCP when the file names a property HikariCP does not have
+     */
+    fun hikariConfig(jdbcUrl: String, username: String?, password: String?, hikariProperties: Properties?): HikariConfig {
+        val hikariConfig = if (hikariProperties == null) HikariConfig() else HikariConfig(hikariProperties)
         hikariConfig.jdbcUrl = jdbcUrl
         if (username != null) {
             hikariConfig.username = username
@@ -69,7 +90,27 @@ object MfJdbc {
         if (password != null) {
             hikariConfig.password = password
         }
-        return HikariDataSource(hikariConfig)
+        return hikariConfig
+    }
+
+    /** The optional file, in the plugin's data folder, that holds extra HikariCP settings. */
+    const val HIKARI_PROPERTIES_FILE_NAME = "hikaricp.properties"
+
+    /**
+     * Reads [HIKARI_PROPERTIES_FILE_NAME] from [dataFolder], or returns null when there is no
+     * such file. The plugin never creates the file, so servers that do not add one keep the
+     * pool settings they have always had.
+     */
+    fun loadHikariProperties(dataFolder: File, logger: Logger): Properties? {
+        val file = File(dataFolder, HIKARI_PROPERTIES_FILE_NAME)
+        if (!file.isFile) return null
+        val properties = Properties()
+        file.inputStream().use { properties.load(it) }
+        logger.info(
+            "Applying ${properties.size} HikariCP setting(s) from ${file.name}. database.url, and database.username " +
+                "and database.password when set, in config.yml take precedence over the same settings in that file."
+        )
+        return properties
     }
 
     fun isAutoServerH2Url(url: String): Boolean =

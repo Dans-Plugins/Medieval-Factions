@@ -2,60 +2,52 @@ package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfBlockPosition
+import com.dansplugins.factionsystem.locks.MfLockedBlock
+import org.bukkit.block.Block
 import org.bukkit.block.Chest
 import org.bukkit.block.DoubleChest
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryMoveItemEvent
 import org.bukkit.inventory.BlockInventoryHolder
+import org.bukkit.inventory.Inventory
 
 class InventoryMoveItemListener(private val plugin: MedievalFactions) : Listener {
 
     @EventHandler
     fun onInventoryMoveItem(event: InventoryMoveItemEvent) {
         // Stop hoppers from taking items from or putting items into locked blocks.
+        val sourceLocks = locksOf(event.source)
+        val destinationLocks = locksOf(event.destination)
+        if (sourceLocks.isEmpty() && destinationLocks.isEmpty()) return
+        if (isSameOwnerTransfer(sourceLocks, destinationLocks)) return
+        event.isCancelled = true
+    }
+
+    // With factions.allowHopperTransfersBetweenSameOwnerLocks enabled, a transfer is allowed when both sides are
+    // locked and every lock on either side belongs to the same player, e.g. a player's locked hopper pulling from
+    // their own locked chest. An unlocked side never qualifies, so a locked chest still cannot be drained by an
+    // unlocked hopper.
+    private fun isSameOwnerTransfer(sourceLocks: List<MfLockedBlock>, destinationLocks: List<MfLockedBlock>): Boolean {
+        if (!plugin.config.getBoolean("factions.allowHopperTransfersBetweenSameOwnerLocks")) return false
+        if (sourceLocks.isEmpty() || destinationLocks.isEmpty()) return false
+        return (sourceLocks + destinationLocks).map { it.playerId }.distinct().size == 1
+    }
+
+    private fun locksOf(inventory: Inventory): List<MfLockedBlock> {
         val lockService = plugin.services.lockService
-
-        // Check source inventory (where items are being taken from)
-        val sourceInventoryHolder = event.source.holder
-        val sourceBlocksToCheck = when (sourceInventoryHolder) {
-            is BlockInventoryHolder -> listOf(sourceInventoryHolder.block)
-            is DoubleChest -> {
-                val left = sourceInventoryHolder.leftSide as? Chest
-                val right = sourceInventoryHolder.rightSide as? Chest
-                listOfNotNull(left?.block, right?.block)
-            }
-            else -> emptyList()
+        return blocksOf(inventory).mapNotNull { block ->
+            lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block))
         }
+    }
 
-        // Check if any of the source blocks are locked
-        for (block in sourceBlocksToCheck) {
-            val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block))
-            if (lockedBlock != null) {
-                event.isCancelled = true
-                return
-            }
+    private fun blocksOf(inventory: Inventory): List<Block> = when (val holder = inventory.holder) {
+        is BlockInventoryHolder -> listOf(holder.block)
+        is DoubleChest -> {
+            val left = holder.leftSide as? Chest
+            val right = holder.rightSide as? Chest
+            listOfNotNull(left?.block, right?.block)
         }
-
-        // Check destination inventory (where items are being put into)
-        val destinationInventoryHolder = event.destination.holder
-        val destinationBlocksToCheck = when (destinationInventoryHolder) {
-            is BlockInventoryHolder -> listOf(destinationInventoryHolder.block)
-            is DoubleChest -> {
-                val left = destinationInventoryHolder.leftSide as? Chest
-                val right = destinationInventoryHolder.rightSide as? Chest
-                listOfNotNull(left?.block, right?.block)
-            }
-            else -> emptyList()
-        }
-
-        // Check if any of the destination blocks are locked
-        for (block in destinationBlocksToCheck) {
-            val lockedBlock = lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(block))
-            if (lockedBlock != null) {
-                event.isCancelled = true
-                return
-            }
-        }
+        else -> emptyList()
     }
 }
