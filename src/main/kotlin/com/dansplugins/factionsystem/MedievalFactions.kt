@@ -99,6 +99,7 @@ import com.dansplugins.factionsystem.potion.MfPotionService
 import com.dansplugins.factionsystem.relationship.JooqMfFactionRelationshipRepository
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipRepository
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
+import com.dansplugins.factionsystem.scoreboard.MfPowerScoreboard
 import com.dansplugins.factionsystem.service.Services
 import com.dansplugins.factionsystem.teleport.MfTeleportService
 import com.dansplugins.factionsystem.trace.TraceClient
@@ -138,6 +139,7 @@ class MedievalFactions : JavaPlugin() {
     lateinit var flags: MfFlags
     lateinit var factionPermissions: MfFactionPermissions
     lateinit var services: Services
+    private var powerScoreboard: MfPowerScoreboard? = null
     lateinit var language: Language
 
     // A no-op until the config has been read, so a command arriving before
@@ -527,6 +529,8 @@ class MedievalFactions : JavaPlugin() {
             }, 5L, 20L)
         }
 
+        powerScoreboard = MfPowerScoreboard(this).also { it.start() }
+
         val dpcApiService = MfDpcApiService(this)
         val syncIntervalMinutes = config.getInt("dpc-api.sync-interval-minutes", 10).coerceAtLeast(1)
         val syncIntervalTicks = syncIntervalMinutes.toLong() * 20L * 60L
@@ -564,7 +568,8 @@ class MedievalFactions : JavaPlugin() {
             config.getString("database.url") ?: "",
             config.getString("database.username"),
             config.getString("database.password"),
-            logger
+            logger,
+            MfJdbc.loadHikariProperties(dataFolder, logger)
         )
         val oldClassLoader = Thread.currentThread().contextClassLoader
         Thread.currentThread().contextClassLoader = classLoader
@@ -682,6 +687,7 @@ class MedievalFactions : JavaPlugin() {
     }
 
     override fun onDisable() {
+        powerScoreboard?.stop()
         apiServer?.stop()
         trace.close()
 

@@ -9,6 +9,7 @@ import com.dansplugins.factionsystem.faction.flag.MfFlagValidationFailure
 import com.dansplugins.factionsystem.faction.flag.MfFlagValidationSuccess
 import com.dansplugins.factionsystem.faction.flag.MfFlagValueCoercionFailure
 import com.dansplugins.factionsystem.faction.flag.MfFlagValueCoercionSuccess
+import com.dansplugins.factionsystem.faction.flag.displayFlagValue
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.result4k.valueOrNull
@@ -297,7 +298,7 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
             return
         }
 
-        sender.sendMessage("$GREEN${plugin.language["CommandFactionFlagSetSuccess", flag.name, value.toString()]}")
+        sender.sendMessage("$GREEN${plugin.language["CommandFactionFlagSetSuccess", flag.name, displayFlagValue(plugin.language, value)]}")
         redirectToFlagList(sender, faction, targetFaction, page)
     }
 
@@ -347,11 +348,25 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
                     // First arg is faction, suggest flag names
                     plugin.flags.filter { it.name.lowercase().startsWith(args[1].lowercase()) }.map { it.name }
                 } else {
-                    // First arg is flag, no more suggestions
-                    emptyList()
+                    // First arg is flag, suggest values
+                    valueSuggestions(args[0], args[1])
                 }
+            }
+            args.size == 2 -> valueSuggestions(args[0], args[1])
+            args.size == 3 && hasForcePermission -> {
+                val unquotedArgs = args.unquote()
+                val potentialFaction = factionService.getFaction(MfFactionId(unquotedArgs[0])) ?: factionService.getFaction(unquotedArgs[0])
+                if (potentialFaction != null) valueSuggestions(args[1], args[2]) else emptyList()
             }
             else -> emptyList()
         }
+    }
+
+    /** For a boolean flag, the server language's words for true and false that start with [typed]. */
+    private fun valueSuggestions(flagName: String, typed: String): List<String> {
+        val flag = plugin.flags.get<Any>(flagName) ?: return emptyList()
+        if (flag.type != Boolean::class) return emptyList()
+        return listOf(displayFlagValue(plugin.language, true), displayFlagValue(plugin.language, false))
+            .filter { it.lowercase().startsWith(typed.lowercase()) }
     }
 }
