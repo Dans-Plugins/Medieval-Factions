@@ -13,6 +13,7 @@ This document provides detailed information about all configuration options avai
 - [PVP Settings](#pvp-settings)
 - [Faction Settings](#faction-settings)
 - [Faction Default Flags](#faction-default-flags)
+- [Power Scoreboard](#power-scoreboard)
 - [Chat Settings](#chat-settings)
 - [Duels](#duels)
 - [Dynmap Integration](#dynmap-integration)
@@ -507,6 +508,18 @@ These settings define the default values for faction flags when a new faction is
 **Default:** Not currently set in config.yml (uses hardcoded default of `false`)  
 **Description:** Default setting for whether hostile mobs are protected from damage by non-members in faction territory. While the flag is available for factions to set, this config option is not currently implemented in the default config file.  
 **Note:** Factions can still set this flag individually using `/f flag set enableMobProtection [true/false]`.
+
+## Power Scoreboard
+
+### `powerScoreboard.enabled`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, each online player sees a sidebar scoreboard with their own power and, if they are in a faction, the faction's power and max power. A player whose scoreboard has already been set by another plugin is left alone, so the sidebar never replaces a scoreboard Medieval Factions did not create. When the plugin is disabled, players showing the sidebar get the server's main scoreboard back. The setting is read at startup, so a change needs a restart.
+
+### `powerScoreboard.updateIntervalSeconds`
+**Type:** Integer  
+**Default:** `5`  
+**Description:** How often, in seconds, the power scoreboard is refreshed. Values below `1` are treated as `1`. Only used when `powerScoreboard.enabled` is `true`.
 
 ## Chat Settings
 
