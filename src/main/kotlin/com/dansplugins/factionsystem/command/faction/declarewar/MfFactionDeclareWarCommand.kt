@@ -1,9 +1,9 @@
 package com.dansplugins.factionsystem.command.faction.declarewar
 
 import com.dansplugins.factionsystem.MedievalFactions
-import com.dansplugins.factionsystem.command.faction.MfForcedDiplomacy
 import com.dansplugins.factionsystem.approval.MfApprovalRequest
 import com.dansplugins.factionsystem.approval.MfApprovalRequestType
+import com.dansplugins.factionsystem.command.faction.MfForcedDiplomacy
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationship
