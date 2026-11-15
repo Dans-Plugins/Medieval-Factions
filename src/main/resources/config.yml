@@ -79,6 +79,8 @@ factions:
   allowHopperTransfersBetweenSameOwnerLocks: false # When true, hoppers may move items between two locked blocks that are locked by the same player (e.g. a player's locked hopper pulling from their own locked chest). Transfers involving an unlocked block, or locks of different players, stay blocked.
   maxClaimRadius: 3
   limitLand: true
+  claimPowerCost: 1.0 # Power each claimed chunk counts against the faction's power when limitLand is true.
+  claimPowerCostByWorld: {} # Per-world overrides of claimPowerCost, by world name. Example: {world_nether: 4.0}
   contiguousClaims: false
   blockedClaimWorlds: [] # List of world names where claiming is not allowed. Example: ["world_nether", "world_the_end"]
   actionBarTerritoryIndicator: true
