@@ -107,6 +107,9 @@ factions:
       allowFriendlyFire: false
       acceptBonusPower: true
       protectVillagerTrade: true
+powerScoreboard:
+  enabled: false  # Show each player's power and their faction's power and max power on a sidebar scoreboard. Players whose scoreboard another plugin has set are left alone.
+  updateIntervalSeconds: 5
 chat:
   enableDefaultChatFormatting: true
   faction:
