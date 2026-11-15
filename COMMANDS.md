@@ -320,6 +320,10 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Description:** Moves a role one place up or down your faction's role list, for example to list a new role above an older one. The order only changes how roles are listed; it does not grant or remove anything. Moving a role needs the same faction permission as renaming it: `MODIFY_ROLE` for that role.  
 **Usage:** `/f role move Duke up`
 
+![Animation: /f role list shows Owner, Officer, Member, Duke; after /f role move Duke up, the list shows Owner, Officer, Duke, Member](docs/images/role-move/role-move.gif)
+
+*`/f role move Duke up` moves Duke one place up, above Member. Captured with a scripted bot client on a throwaway Spigot 1.21.1 test server running Medieval Factions 10.2.1-SNAPSHOT; the server's real chat output, drawn as Minecraft chat.*
+
 ### `/faction role setdefault [name]` or `/f role setdefault [name]`
 **Permission:** `mf.role.setdefault` (default: true)  
 **Description:** Sets a role as the default role for new members.  
@@ -343,6 +347,10 @@ Laws are numbered from 1 in the order `/f law list` shows them. Where a command 
 **Permission:** `mf.law.list` and `mf.laws` (both required; default: true)  
 **Description:** Lists the laws of your faction, or of the named faction, ten to a page with links to the previous and next pages. A single number is read as a page of your own faction's laws unless a faction has that name.  
 **Usage:** `/f law list [faction] [page]`
+
+![Chat: /f law list shows laws 1 to 10 with remove, edit and move buttons and Previous page / Page 1 / Next page links; /f law list 2 shows laws 11 and 12](docs/images/law-list/law-list.png)
+
+*A faction with twelve laws: page 1 holds ten, `/f law list 2` shows the rest. Captured with a scripted bot client on a throwaway Spigot 1.21.1 test server running Medieval Factions 10.2.1-SNAPSHOT; the server's real chat output, drawn as Minecraft chat.*
 
 ### `/faction law remove [number]` or `/f law remove [number]`
 **Permission:** `mf.law.remove` and `mf.removelaw` (both required; default: true)  
