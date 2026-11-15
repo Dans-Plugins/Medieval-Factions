@@ -4,6 +4,7 @@ import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.command.unquote
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionId
+import com.dansplugins.factionsystem.faction.flag.displayFlagValue
 import com.dansplugins.factionsystem.pagination.PaginatedView
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
@@ -183,7 +184,7 @@ class MfFactionFlagListCommand(private val plugin: MedievalFactions) : CommandEx
         return buildList {
             add(TextComponent(flag.name).apply { color = SpigotChatColor.GRAY })
             add(TextComponent(" (${flag.type.simpleName}): ").apply { color = SpigotChatColor.GRAY })
-            add(TextComponent("$flagValue ").apply { color = SpigotChatColor.WHITE })
+            add(TextComponent("${displayFlagValue(plugin.language, flagValue)} ").apply { color = SpigotChatColor.WHITE })
 
             val canSetFlag = canUserSetFlag(sender, faction, targetFaction, role, flag)
             if (canSetFlag) {

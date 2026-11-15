@@ -331,6 +331,15 @@ factions:
     - TORCH
 ```
 
+**Tags:** All three wartime lists also accept Minecraft block and item tags, written with a leading `#` and quoted in YAML, for example `'#minecraft:signs'` or `'#minecraft:doors'` (`'#signs'` is read as `#minecraft:signs`). A tag matches every material in it, including tags added by data packs, and an unknown tag matches nothing. Material names and tags can be mixed in one list:
+```yaml
+factions:
+  wartimeInteractableBlocks:
+    - '#minecraft:doors'
+    - '#minecraft:buttons'
+    - STONE_BUTTON
+```
+
 ### `factions.wartimeBreakableBlocks`
 **Type:** List of Strings  
 **Default:** `[]` (empty)  
@@ -468,7 +477,19 @@ factions:
 **Type:** Integer  
 **Default:** `5`  
 **Description:** Delay (in seconds) before teleporting to faction home.  
-**Note:** Movement cancels the teleport.
+**Note:** Taking damage, teleporting by other means or logging out cancels the teleport. Walking does not.
+
+### `factions.factionHomeTeleportCooldown`
+**Type:** Integer  
+**Default:** `0`  
+**Description:** Seconds a player must wait after a completed `/faction home` teleport before using it again. `0` disables the cooldown. The cooldown is kept in memory, so a server restart clears it; logging out and back in does not.  
+**Range:** Any non-negative integer
+
+### `factions.respawnAtFactionHome`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, a player who dies respawns at their faction's home instead of the world spawn. Leaving the End is not affected. A bed or respawn anchor still takes priority, and players whose faction has no home (or whose home is in an unloaded world) respawn as usual.  
+**Values:** `true` or `false`
 
 ### `factions.maxMembers`
 **Type:** Integer  
