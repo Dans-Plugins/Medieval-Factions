@@ -2110,6 +2110,7 @@ class PlayerInteractListenerTest {
 
         val services = mock(com.dansplugins.factionsystem.service.Services::class.java)
         `when`(medievalFactions.services).thenReturn(services)
+        `when`(services.lockedAreaService).thenReturn(org.mockito.Mockito.mock(com.dansplugins.factionsystem.lockedarea.MfLockedAreaService::class.java))
         `when`(services.playerService).thenReturn(playerService)
         `when`(services.claimService).thenReturn(claimService)
         `when`(services.interactionService).thenReturn(interactionService)

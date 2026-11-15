@@ -8,6 +8,7 @@ import com.dansplugins.factionsystem.faction.MfFactionService
 import com.dansplugins.factionsystem.gate.MfGateService
 import com.dansplugins.factionsystem.interaction.MfInteractionService
 import com.dansplugins.factionsystem.law.MfLawService
+import com.dansplugins.factionsystem.lockedarea.MfLockedAreaService
 import com.dansplugins.factionsystem.locks.MfLockService
 import com.dansplugins.factionsystem.map.MapService
 import com.dansplugins.factionsystem.notification.MfNotificationService
@@ -31,5 +32,6 @@ class Services(
     val potionService: MfPotionService,
     val teleportService: MfTeleportService,
     val mapService: MapService?,
-    val approvalRequestService: MfApprovalRequestService
+    val approvalRequestService: MfApprovalRequestService,
+    val lockedAreaService: MfLockedAreaService
 )

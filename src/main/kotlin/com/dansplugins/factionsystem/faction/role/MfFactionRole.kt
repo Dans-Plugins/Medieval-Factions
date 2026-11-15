@@ -39,7 +39,10 @@ data class MfFactionRole(
         // also toggle autounclaim (and grant it) without their saved roles being rewritten.
         private val INHERITED_FROM = mapOf(
             "TOGGLE_AUTOUNCLAIM" to "TOGGLE_AUTOCLAIM",
-            "SET_ROLE_PERMISSION(TOGGLE_AUTOUNCLAIM)" to "SET_ROLE_PERMISSION(TOGGLE_AUTOCLAIM)"
+            "SET_ROLE_PERMISSION(TOGGLE_AUTOUNCLAIM)" to "SET_ROLE_PERMISSION(TOGGLE_AUTOCLAIM)",
+            // Locked areas (#1393) narrow who may build inside claimed land, so the roles that may claim it may set them up.
+            "MANAGE_LOCKED_AREAS" to "CLAIM",
+            "SET_ROLE_PERMISSION(MANAGE_LOCKED_AREAS)" to "SET_ROLE_PERMISSION(CLAIM)"
         )
 
         @JvmStatic

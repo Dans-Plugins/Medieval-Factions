@@ -65,6 +65,16 @@ class BlockBreakListener(private val plugin: MedievalFactions) : Listener {
             }
         }
 
+        // A locked area (#1393) narrows who may break blocks inside it, on top of the claim.
+        if (claimService.isInteractionAllowed(mfPlayer.id, claim)) {
+            val lockedArea = plugin.services.lockedAreaService.getRefusingArea(mfPlayer, event.player, claim, blockPosition)
+            if (lockedArea != null) {
+                event.isCancelled = true
+                event.player.sendMessage("$RED${plugin.language["CannotBreakBlockInLockedArea", lockedArea.name]}")
+                return
+            }
+        }
+
         // if block locked and breaker is owner, unlock
         val lockService = plugin.services.lockService
         val lockedBlock = lockService.getLockedBlock(blockPosition) ?: return

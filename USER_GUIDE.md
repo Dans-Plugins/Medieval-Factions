@@ -313,7 +313,7 @@ These rules are checked by bots on a real server before each release; the observ
 A new faction has three roles. New members get the Member role.
 - **Member** - only the faction permissions that are on by default for every role: going to the faction home, inviting players, listing the laws, members and roles, viewing the flags, the faction's info and stats, and the faction chat history. Everything else is refused until the role is granted it, including claiming and unclaiming land, setting the home, adding, editing or removing laws, requesting alliances, declaring war, setting flags, renaming the faction, managing roles, vassalizing, kicking members, unclaiming all land and disbanding.
 - **Officer** - the Member role's permissions, plus requesting alliances, declaring war, making peace, setting the faction home, kicking members, creating roles, approving and denying applications, and managing the Member role.
-- **Owner** - every faction permission except bypassing locks (`BYPASS_LOCKS`), which must be granted explicitly. In a faction created before `TOGGLE_AUTOUNCLAIM` existed, a role with no setting of its own for it follows its `TOGGLE_AUTOCLAIM` setting, so the Owner can toggle autounclaim there too.
+- **Owner** - every faction permission except bypassing locks (`BYPASS_LOCKS`), which must be granted explicitly. In a faction created before `TOGGLE_AUTOUNCLAIM` existed, a role with no setting of its own for it follows its `TOGGLE_AUTOCLAIM` setting, so the Owner can toggle autounclaim there too. Likewise, a role with no setting of its own for `MANAGE_LOCKED_AREAS` follows its `CLAIM` setting.
 
 Permission names are upper case and must be given exactly, for example `CLAIM`, `INVITE` or `ADD_LAW`; `/f role setpermission Member claim allow` is refused as an invalid permission.
 
@@ -706,6 +706,30 @@ If you make a mistake:
 - Grant access to trusted faction members
 - Use locks for role-based access control (officers only, etc.)
 - Admins can force unlock blocks with `mf.force.unlock`
+
+**Locked areas:**
+
+A lock protects one block, but a wall can be broken around it. A locked area protects a whole room: inside it, only the players and roles you list may place, break or use blocks, even if they are members of your faction.
+
+1. Stand on one corner and run `/f area pos1`, then stand on the opposite corner and run `/f area pos2`. Include the floor and ceiling.
+2. Run `/f area create vault`. Every chunk of the area must be claimed by your faction.
+3. Give access: `/f area add vault Steve`, or `/f area add vault role Officer` for every Officer.
+4. `/f area list` shows your areas, and `/f area delete vault` removes one.
+
+Setting areas up needs the `MANAGE_LOCKED_AREAS` role permission, which the Owner has. Members with that permission, and players with `/f bypass` on, are never refused inside an area. Areas do not stop players from walking in, and they do not protect armour stands, item frames or other entities; they cover placing, breaking and using blocks (doors, chests, buttons and so on).
+
+```mermaid
+flowchart TD
+    A[A player places, breaks or uses a block] --> C{"Allowed by the claim?<br/>(member, or ally with access)"}
+    C -- no --> T[Refused by territory protection]
+    C -- yes --> L{Inside one of the claim faction's locked areas?}
+    L -- no --> OK[Allowed]
+    L -- yes --> M{"Role has MANAGE_LOCKED_AREAS,<br/>or /f bypass on?"}
+    M -- yes --> OK
+    M -- no --> P{"Listed by name, or holds a listed role,<br/>in every area containing the block?"}
+    P -- yes --> OK
+    P -- no --> X[Refused: locked area]
+```
 
 ---
 

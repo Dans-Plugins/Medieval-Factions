@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.area.MfBlockPosition
 import org.bukkit.ChatColor.RED
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -46,7 +47,13 @@ class WorldActionProtection(private val plugin: MedievalFactions) {
         }
 
         val claimFaction = plugin.services.factionService.getFaction(claim.factionId) ?: return false
-        if (claimService.isInteractionAllowed(mfPlayer.id, claim)) return false
+        if (claimService.isInteractionAllowed(mfPlayer.id, claim)) {
+            // A locked area (#1393) narrows who may change blocks inside it, on top of the claim.
+            val lockedArea = plugin.services.lockedAreaService.getRefusingArea(mfPlayer, player, claim, MfBlockPosition.fromBukkitBlock(block)) ?: return false
+            event.isCancelled = true
+            player.sendMessage("$RED${plugin.language["CannotInteractInLockedArea", lockedArea.name]}")
+            return true
+        }
         if (mfPlayer.isBypassEnabled && player.hasPermission("mf.bypass")) return false
         if (item != null && claimService.isWartimePlaceableBlock(mfPlayer.id, claim, item)) return false
 

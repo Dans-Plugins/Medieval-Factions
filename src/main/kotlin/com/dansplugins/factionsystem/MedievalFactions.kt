@@ -80,6 +80,9 @@ import com.dansplugins.factionsystem.listener.PlayerTeleportListener
 import com.dansplugins.factionsystem.listener.PotionSplashListener
 import com.dansplugins.factionsystem.listener.StructureGrowListener
 import com.dansplugins.factionsystem.listener.WorldActionProtection
+import com.dansplugins.factionsystem.lockedarea.JooqMfLockedAreaRepository
+import com.dansplugins.factionsystem.lockedarea.MfLockedAreaRepository
+import com.dansplugins.factionsystem.lockedarea.MfLockedAreaService
 import com.dansplugins.factionsystem.locks.JooqMfLockRepository
 import com.dansplugins.factionsystem.locks.MfLockRepository
 import com.dansplugins.factionsystem.locks.MfLockService
@@ -203,6 +206,7 @@ class MedievalFactions : JavaPlugin() {
         val potionService = MfPotionService(this)
         val teleportService = MfTeleportService(this)
         val approvalRequestService = MfApprovalRequestService()
+        val lockedAreaService = MfLockedAreaService(this, repositories.lockedAreaRepository)
 
         services = Services(
             playerService,
@@ -219,7 +223,8 @@ class MedievalFactions : JavaPlugin() {
             potionService,
             teleportService,
             mapService,
-            approvalRequestService
+            approvalRequestService,
+            lockedAreaService
         )
         setupRpkLockService()
 
@@ -558,7 +563,8 @@ class MedievalFactions : JavaPlugin() {
         val gateCreationContextRepository: MfGateCreationContextRepository,
         val chatMessageRepository: MfChatChannelMessageRepository,
         val duelRepository: MfDuelRepository,
-        val duelInviteRepository: MfDuelInviteRepository
+        val duelInviteRepository: MfDuelInviteRepository,
+        val lockedAreaRepository: MfLockedAreaRepository
     )
 
     private fun initializeDatabaseRepositories(gson: Gson): Repositories {
@@ -605,7 +611,8 @@ class MedievalFactions : JavaPlugin() {
             gateCreationContextRepository = JooqMfGateCreationContextRepository(dsl),
             chatMessageRepository = JooqMfChatChannelMessageRepository(dsl),
             duelRepository = JooqMfDuelRepository(dsl),
-            duelInviteRepository = JooqMfDuelInviteRepository(dsl)
+            duelInviteRepository = JooqMfDuelInviteRepository(dsl),
+            lockedAreaRepository = JooqMfLockedAreaRepository(dsl)
         )
     }
 
@@ -627,7 +634,8 @@ class MedievalFactions : JavaPlugin() {
             gateCreationContextRepository = com.dansplugins.factionsystem.storage.json.JsonMfGateCreationContextRepository(this, storageManager),
             chatMessageRepository = com.dansplugins.factionsystem.storage.json.JsonMfChatChannelMessageRepository(this, storageManager),
             duelRepository = com.dansplugins.factionsystem.storage.json.JsonMfDuelRepository(this, storageManager),
-            duelInviteRepository = com.dansplugins.factionsystem.storage.json.JsonMfDuelInviteRepository(this, storageManager)
+            duelInviteRepository = com.dansplugins.factionsystem.storage.json.JsonMfDuelInviteRepository(this, storageManager),
+            lockedAreaRepository = com.dansplugins.factionsystem.storage.json.JsonMfLockedAreaRepository(storageManager)
         )
     }
 

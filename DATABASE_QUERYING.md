@@ -200,6 +200,9 @@ Medieval Factions uses the following tables:
 | `mf_gate` | Gate structures with coordinates and status |
 | `mf_locked_block` | Player-locked blocks/containers |
 | `mf_locked_block_accessor` | Access list for locked blocks |
+| `mf_locked_area` | Locked areas: named cuboids in a faction's territory |
+| `mf_locked_area_accessor` | Players allowed to build in a locked area |
+| `mf_locked_area_role_accessor` | Faction roles allowed to build in a locked area |
 | `mf_player_interaction_status` | Player interaction state |
 | `mf_gate_creation_context` | In-progress gate creation state |
 | `mf_chat_channel_message` | Chat message history |

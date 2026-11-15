@@ -28,6 +28,8 @@ import com.dansplugins.factionsystem.gate.MfGateStatus
 import com.dansplugins.factionsystem.law.JooqMfLawRepository
 import com.dansplugins.factionsystem.law.MfLaw
 import com.dansplugins.factionsystem.law.MfLawId
+import com.dansplugins.factionsystem.lockedarea.JooqMfLockedAreaRepository
+import com.dansplugins.factionsystem.lockedarea.MfLockedArea
 import com.dansplugins.factionsystem.locks.JooqMfLockRepository
 import com.dansplugins.factionsystem.locks.MfLockedBlock
 import com.dansplugins.factionsystem.player.JooqMfPlayerRepository
@@ -105,6 +107,7 @@ abstract class VersionedRepositoryContract {
     private lateinit var gates: JooqMfGateRepository
     private lateinit var gateCreationContexts: JooqMfGateCreationContextRepository
     private lateinit var locks: JooqMfLockRepository
+    private lateinit var lockedAreas: JooqMfLockedAreaRepository
     private lateinit var laws: JooqMfLawRepository
     private lateinit var duels: JooqMfDuelRepository
 
@@ -140,6 +143,7 @@ abstract class VersionedRepositoryContract {
         gates = JooqMfGateRepository(plugin, dsl)
         gateCreationContexts = JooqMfGateCreationContextRepository(dsl)
         locks = JooqMfLockRepository(dsl)
+        lockedAreas = JooqMfLockedAreaRepository(dsl)
         laws = JooqMfLawRepository(dsl)
         duels = JooqMfDuelRepository(dsl)
     }
@@ -341,6 +345,41 @@ abstract class VersionedRepositoryContract {
             locks.upsert(existing.copy(version = 0, accessors = emptyList()))
         }
         assertEquals(listOf(accessor.id), locks.getLockedBlock(existing.id)!!.accessors)
+    }
+
+    // --- locked areas (#1393) ---
+
+    @Test
+    fun `locked area - round trips, a stale save is rejected, and it goes with its faction`() {
+        val faction = parentFactions.upsert(newFaction(name = "AreaOwner"))
+        val listed = players.upsert(newPlayer())
+        val other = players.upsert(newPlayer())
+        val world = UUID.randomUUID()
+        val stewardRole = MfFactionRoleId.generate()
+        val original = lockedAreas.upsert(
+            MfLockedArea(
+                factionId = faction.id,
+                name = "Vault",
+                area = MfCuboidArea(MfBlockPosition(world, 10, 70, 10), MfBlockPosition(world, 0, 60, 0)),
+                accessors = listOf(listed.id),
+                accessorRoleIds = listOf(stewardRole)
+            )
+        )
+        assertEquals(1, original.version)
+        val stored = lockedAreas.getLockedAreas().single { it.id == original.id }
+        assertEquals(MfBlockPosition(world, 0, 60, 0), stored.area.minPosition)
+        assertEquals(MfBlockPosition(world, 10, 70, 10), stored.area.maxPosition)
+        assertEquals(listOf(listed.id), stored.accessors)
+        assertEquals(listOf(stewardRole), stored.accessorRoleIds)
+
+        lockedAreas.upsert(original.copy(accessors = emptyList()))
+        assertThrows(OptimisticLockingFailureException::class.java) {
+            lockedAreas.upsert(original.copy(accessors = listOf(other.id)))
+        }
+        assertEquals(emptyList<MfPlayerId>(), lockedAreas.getLockedAreas().single { it.id == original.id }.accessors)
+
+        factions.delete(faction.id)
+        assertFalse(lockedAreas.getLockedAreas().any { it.id == original.id }, "the area must go with its faction")
     }
 
     // --- laws ---

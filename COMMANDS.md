@@ -178,6 +178,22 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 - Requires the `TOGGLE_AUTOUNCLAIM` faction role permission to toggle. The Owner role is granted it; a role with no setting of its own for it follows its `TOGGLE_AUTOCLAIM` setting.
 - While enabled, a chunk is only unclaimed for a member whose role has the `UNCLAIM` faction permission and who holds `mf.unclaim`.
 
+### `/faction area` or `/f area`
+**Permission:** `mf.area` (default: true)  
+**Description:** Locked areas: named cuboids inside your faction's territory in which only the players and roles you list may place, break or use blocks (#1393).  
+**Usage:**
+- `/f area pos1` and `/f area pos2` - Mark the block you are standing on as a corner
+- `/f area create [name]` - Create a locked area between the two corners. Every chunk it touches must be claimed by your faction. Names are 1 to 32 letters, digits, `-` or `_`.
+- `/f area delete [name]` - Delete an area
+- `/f area list` - List your faction's areas, their corners and who has access
+- `/f area add [name] [player]` / `/f area add [name] role [role]` - Let a player, or every member holding a role, build and use blocks in the area
+- `/f area remove [name] [player]` / `/f area remove [name] role [role]` - Take that access away
+
+**Notes:**
+- Everything except `list` needs the `MANAGE_LOCKED_AREAS` faction role permission. The Owner role of a new faction is granted it; a role with no setting of its own for it follows its `CLAIM` setting, so owners of existing factions can use it without their roles being changed.
+- An area only adds to territory protection: players who may not build in the claim at all are still refused. Inside the area, members whose role has `MANAGE_LOCKED_AREAS`, and players with `/f bypass` on, are never refused.
+- An area protects only land its faction still holds; unclaimed or lost chunks inside it are not protected. Locked blocks keep their own access lists: an accessor of a locked chest inside an area can still open it.
+
 ### `/faction unclaimall` or `/f unclaimall`
 **Permission:** `mf.unclaimall` (default: true)  
 **Description:** Unclaims all land owned by your faction.  
