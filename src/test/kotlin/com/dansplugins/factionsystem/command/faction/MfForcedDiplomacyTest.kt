@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import java.util.logging.Logger
@@ -121,10 +122,10 @@ class MfForcedDiplomacyTest {
 
     @Test
     fun parse_anUnknownFactionIsRefused() {
+        // The unknown faction is refused whether it is the acting faction or the target
         assertEquals(MfForcedDiplomacy.Parse.Refused, uut.parse(sender, arrayOf("Nowhere", "South"), hasForcePermission = true))
-        verify(sender).sendMessage("${RED}CommandFactionForceInvalidFaction|Nowhere")
         assertEquals(MfForcedDiplomacy.Parse.Refused, uut.parse(sender, arrayOf("North", "Nowhere"), hasForcePermission = true))
-        verify(sender).sendMessage("${RED}CommandFactionForceInvalidFaction|Nowhere")
+        verify(sender, times(2)).sendMessage("${RED}CommandFactionForceInvalidFaction|Nowhere")
     }
 
     @Test
