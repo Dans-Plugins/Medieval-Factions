@@ -94,6 +94,7 @@ import com.dansplugins.factionsystem.player.JooqMfPlayerRepository
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerRepository
 import com.dansplugins.factionsystem.player.MfPlayerService
+import com.dansplugins.factionsystem.player.MfPowerUpdateSettings
 import com.dansplugins.factionsystem.potion.MfPotionService
 import com.dansplugins.factionsystem.relationship.JooqMfFactionRelationshipRepository
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipRepository
@@ -403,6 +404,7 @@ class MedievalFactions : JavaPlugin() {
         registerCommand("gate", MfGateCommand(this))
         registerCommand("duel", MfDuelCommand(this))
 
+        val powerUpdateIntervalMinutes = MfPowerUpdateSettings.intervalMinutes(config)
         server.scheduler.scheduleSyncRepeatingTask(this, {
             val onlinePlayers = server.onlinePlayers
             val onlineMfPlayerIds = onlinePlayers.map(MfPlayerId.Companion::fromBukkitPlayer)
@@ -419,7 +421,7 @@ class MedievalFactions : JavaPlugin() {
                     )
                 }
             )
-        }, (15 - (LocalTime.now().minute % 15)) * 60 * 20L, 18000L)
+        }, (powerUpdateIntervalMinutes - (LocalTime.now().minute % powerUpdateIntervalMinutes)) * 60 * 20L, powerUpdateIntervalMinutes * 60 * 20L)
         server.scheduler.scheduleSyncRepeatingTask(this, {
             val gates = gateService.gates
             gates.filter(MfGate::shouldOpen).forEach(MfGate::open)
