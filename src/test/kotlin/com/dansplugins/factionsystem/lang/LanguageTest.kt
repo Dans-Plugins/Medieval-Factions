@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.lang
 
 import com.dansplugins.factionsystem.MedievalFactions
+import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -52,6 +53,46 @@ class LanguageTest {
         val language = Language(plugin, "en-US")
 
         assertEquals("Operator-edited usage", language["CommandFactionCreateUsage"])
+    }
+
+    @Test
+    fun `packaged language files are byte-identical to their sources`() {
+        // processResources output is what the jar ships; a resource filter once re-encoded the ISO-8859-1 files
+        listOf("lang_en_US", "lang_en_GB", "lang_fr_FR", "lang_de_DE", "lang_pt_BR").forEach { name ->
+            val packaged = javaClass.classLoader.getResourceAsStream("lang/$name.properties")!!.use { it.readBytes() }
+            val source = File("src/main/resources/lang/$name.properties").readBytes()
+            assertArrayEquals(source, packaged, "$name.properties was altered while packaging")
+        }
+    }
+
+    @Test
+    fun `the bundled German translation keeps its umlauts`() {
+        writeOnDiskFile("lang_de_DE.properties", "CommandFactionCreateUsage=Verwendung\n")
+
+        val language = Language(plugin, "de-DE")
+
+        assertEquals("Nächste Seite >", language["NextPage"])
+    }
+
+    @Test
+    fun `an on-disk value damaged by the old packaging bug gives way to the bundled one`() {
+        val languageFolder = File(tempDir.toFile(), "lang")
+        languageFolder.mkdirs()
+        // What earlier builds copied to servers: UTF-8 bytes with U+FFFD where the umlaut was
+        File(languageFolder, "lang_de_DE.properties").writeText("NextPage=N�chste Seite >\n", Charsets.UTF_8)
+
+        val language = Language(plugin, "de-DE")
+
+        assertEquals("Nächste Seite >", language["NextPage"])
+    }
+
+    @Test
+    fun `an intact operator-edited on-disk value still wins`() {
+        writeOnDiskFile("lang_de_DE.properties", "NextPage=Weiter ä >\n")
+
+        val language = Language(plugin, "de-DE")
+
+        assertEquals("Weiter ä >", language["NextPage"])
     }
 
     @Test
