@@ -10,6 +10,7 @@ import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.AT_W
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
+import org.bukkit.ChatColor.YELLOW
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -75,9 +76,9 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                 plugin.server.scheduler.runTaskAsynchronously(
                     plugin,
                     Runnable saveChunks@{
-                        val chunks: Set<MfChunkPosition>?
+                        val filledChunks: Set<MfChunkPosition>?
                         try {
-                            chunks = fill(senderWorldId, senderChunkX, senderChunkZ, faction, emptySet(), 0)
+                            filledChunks = fill(senderWorldId, senderChunkX, senderChunkZ, faction, emptySet(), 0)
                         } catch (e: ClaimFillLimitReachedException) {
                             sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillTooManyChunks", claimFillMaxChunks.toString()]}")
                             return@saveChunks
@@ -85,10 +86,20 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                             sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillTooDeep", claimFillMaxDepth.toString()]}")
                             return@saveChunks
                         }
-                        if (chunks == null) {
+                        if (filledChunks == null) {
                             sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillNotEnoughPower"]}")
                             return@saveChunks
                         }
+                        // With worldGuard.blockClaimsInRegions, chunks overlapping a WorldGuard region are left out (#1630)
+                        val regionBlockedChunks = filledChunks.filterTo(HashSet(), claimService::isClaimBlockedByWorldGuard)
+                        if (regionBlockedChunks.isNotEmpty()) {
+                            if (regionBlockedChunks.size == filledChunks.size) {
+                                sender.sendMessage("$RED${plugin.language["CommandFactionClaimWorldGuardRegion"]}")
+                                return@saveChunks
+                            }
+                            sender.sendMessage("$YELLOW${plugin.language["CommandFactionClaimWorldGuardRegionSkipped", regionBlockedChunks.size.toString()]}")
+                        }
+                        val chunks = filledChunks - regionBlockedChunks
                         val claimService = plugin.services.claimService
                         val claims = chunks.associateWith(claimService::getClaim)
                         val relationshipService = plugin.services.factionRelationshipService

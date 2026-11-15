@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.command.faction.claim
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.TestUtils
+import com.dansplugins.factionsystem.area.MfChunkPosition
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.faction.MfFaction
@@ -16,6 +17,7 @@ import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerService
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
 import com.dansplugins.factionsystem.service.Services
+import dev.forkhandles.result4k.Success
 import org.bukkit.ChatColor
 import org.bukkit.Location
 import org.bukkit.Server
@@ -149,7 +151,70 @@ class MfFactionClaimFillCommandTest {
         verify(player, never()).sendMessage("${ChatColor.RED}Not enough power")
     }
 
+    @Test
+    fun testOnCommand_fillSkipsChunksOverlappingAWorldGuardRegion() {
+        // prepare — own claims enclose the two chunks (0, 0) and (1, 0); (1, 0) is inside a WorldGuard region (#1630)
+        val player = fixture.player
+        val command = fixture.command
+        stubMembershipOf(player)
+        stubSenderChunk(player, 0, 0)
+        stubEnclosureAroundTwoChunks()
+        `when`(faction.power).thenReturn(10.0)
+        val open = stubClaimSave(0, 0)
+        val protected = stubClaimSave(1, 0)
+        `when`(claimService.isClaimBlockedByWorldGuard(MfChunkPosition(worldId, 1, 0))).thenReturn(true)
+        `when`(language["CommandFactionClaimWorldGuardRegionSkipped", "1"]).thenReturn("Skipped 1")
+        `when`(language["CommandFactionClaimFillSuccess", "1"]).thenReturn("Filled 1")
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf())
+        runPendingTasks()
+
+        // verify
+        assertTrue(result)
+        verify(claimService).save(open)
+        verify(claimService, never()).save(protected)
+        verify(player).sendMessage("${ChatColor.YELLOW}Skipped 1")
+        verify(player).sendMessage("${ChatColor.GREEN}Filled 1")
+    }
+
+    @Test
+    fun testOnCommand_fillRefusedWhenEveryChunkOverlapsAWorldGuardRegion() {
+        // prepare
+        val player = fixture.player
+        val command = fixture.command
+        stubMembershipOf(player)
+        stubSenderChunk(player, 0, 0)
+        stubEnclosureAroundTwoChunks()
+        `when`(faction.power).thenReturn(10.0)
+        val first = stubClaimSave(0, 0)
+        val second = stubClaimSave(1, 0)
+        `when`(claimService.isClaimBlockedByWorldGuard(MfChunkPosition(worldId, 0, 0))).thenReturn(true)
+        `when`(claimService.isClaimBlockedByWorldGuard(MfChunkPosition(worldId, 1, 0))).thenReturn(true)
+        `when`(language["CommandFactionClaimWorldGuardRegion"]).thenReturn("Protected region")
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf())
+        runPendingTasks()
+
+        // verify
+        assertTrue(result)
+        verify(claimService, never()).save(first)
+        verify(claimService, never()).save(second)
+        verify(player).sendMessage("${ChatColor.RED}Protected region")
+    }
+
     // Helper functions
+
+    private fun stubEnclosureAroundTwoChunks() {
+        listOf(-1 to 0, 2 to 0, 0 to -1, 0 to 1, 1 to -1, 1 to 1).forEach { (x, z) -> stubOwnClaim(x, z) }
+    }
+
+    private fun stubClaimSave(chunkX: Int, chunkZ: Int): MfClaimedChunk {
+        val claim = MfClaimedChunk(worldId, chunkX, chunkZ, factionId)
+        `when`(claimService.save(claim)).thenReturn(Success(claim))
+        return claim
+    }
 
     private fun stubOwnClaim(chunkX: Int, chunkZ: Int): MfClaimedChunk {
         val claim = MfClaimedChunk(worldId, chunkX, chunkZ, factionId)

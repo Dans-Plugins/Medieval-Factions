@@ -202,6 +202,8 @@ Fill unclaimed gaps surrounded by your claims:
 /f claim fill
 ```
 
+> **Protected regions:** on servers that turn on `worldGuard.blockClaimsInRegions`, chunks that overlap a WorldGuard region (spawn, a market, a road) cannot be claimed. A radius or fill claim skips them and says how many were skipped; autoclaim walks over them. See [CONFIG.md](CONFIG.md#worldguard-integration).
+
 #### Setting Your Faction Home
 
 1. **Stand where you want your home** (must be in claimed territory):

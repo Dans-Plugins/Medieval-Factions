@@ -139,6 +139,13 @@ dynmap:
   fillClaims: true
   # fillOpacity: 0.0-1.0, controls how transparent the territory fill is (0.0 = invisible, 1.0 = solid)
   fillOpacity: 0.35
+worldGuard:
+  # Refuse new claims in chunks that overlap a WorldGuard region. Needs WorldGuard installed. Existing claims are not changed.
+  blockClaimsInRegions: false
+  # Region IDs that never block claims. Example: ["market", "farmland"]
+  exemptRegions: []
+  # A region setting any of these flags never blocks claims. A state flag counts only when set to allow. Example: ["build"]
+  exemptFlags: []
 gates:
   minHeight: 3
   maxBlocks: 64

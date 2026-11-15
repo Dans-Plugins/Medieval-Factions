@@ -47,6 +47,10 @@ class PlayerMoveListener(private val plugin: MedievalFactions) : Listener {
                         if (claimService.isClaimingBlockedInWorld(to.world!!)) {
                             return@Runnable
                         }
+                        // Autoclaim silently skips chunks overlapping a WorldGuard region, as it does blocked worlds (#1630)
+                        if (claimService.isClaimBlockedByWorldGuard(MfChunkPosition(to.world!!.uid, to.chunk.x, to.chunk.z))) {
+                            return@Runnable
+                        }
                         if (plugin.config.getBoolean("factions.limitLand") && claimService.getClaims(playerFaction.id).size + 1 > playerFaction.power) {
                             event.player.sendMessage("$RED${plugin.language["AutoclaimPowerLimitReached"]}")
                             val updatedFaction = factionService.save(playerFaction.copy(autoclaim = false)).onFailure {

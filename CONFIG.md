@@ -17,6 +17,7 @@ This document provides detailed information about all configuration options avai
 - [Chat Settings](#chat-settings)
 - [Duels](#duels)
 - [Dynmap Integration](#dynmap-integration)
+- [WorldGuard Integration](#worldguard-integration)
 - [Gates](#gates)
 - [Developer Options](#developer-options)
 - [REST API](#rest-api)
@@ -682,6 +683,44 @@ Dynmap integration allows faction claims to be displayed on a dynamic web map.
 **Default:** `0.35`  
 **Description:** Controls transparency of territory fill color.  
 **Range:** 0.0 (invisible) to 1.0 (solid)
+
+## WorldGuard Integration
+
+These options keep factions from claiming land that WorldGuard already protects, such as spawn or a market (#1630). They need WorldGuard 7 installed and do nothing without it; Medieval Factions loads and runs normally when WorldGuard is absent. Existing claims are never changed: a chunk claimed before the option was turned on stays claimed.
+
+When the option is on, every way of claiming checks each chunk: `/f claim` (with or without a radius), `/f claim fill` and autoclaim (`/f claim auto`). A chunk counts as overlapping a region when any part of the region lies inside the chunk's full column, from the bottom of the world to the top. The world's `__global__` region is ignored.
+
+```mermaid
+flowchart TD
+    A[Claim requested for a chunk] --> B{worldGuard.blockClaimsInRegions?}
+    B -- false --> OK[Claim checks continue as before]
+    B -- true --> C{WorldGuard installed?}
+    C -- no --> OK
+    C -- yes --> D{Any region overlaps the chunk column?<br/>__global__ ignored}
+    D -- no --> OK
+    D -- yes --> E{Every overlapping region exempt?<br/>listed in exemptRegions, or<br/>sets a flag in exemptFlags}
+    E -- yes --> OK
+    E -- no --> R[Chunk refused]
+    R --> R1["/f claim, /f claim fill: chunk skipped, player told;<br/>refused outright if every chunk is in a region"]
+    R --> R2[Autoclaim: chunk silently skipped]
+```
+
+### `worldGuard.blockClaimsInRegions`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true` and WorldGuard is installed, new claims are refused in chunks that overlap a WorldGuard region. A radius or fill claim skips those chunks, claims the rest and tells the player how many were skipped. Autoclaim walks over them without claiming. If the option is on but WorldGuard is not installed, a warning is logged at startup and claiming is not restricted.
+
+### `worldGuard.exemptRegions`
+**Type:** List of Strings  
+**Default:** `[]` (empty list)  
+**Description:** IDs of WorldGuard regions that never block claims, matched without regard to case.  
+**Example:** `["market", "farmland"]`
+
+### `worldGuard.exemptFlags`
+**Type:** List of Strings  
+**Default:** `[]` (empty list)  
+**Description:** A region that sets any of these WorldGuard flags never blocks claims. A state flag, such as `build`, only counts when it is set to `allow`; any other flag counts when it is set to any value. This lets regions that are open to building, or that carry a marker flag, stay claimable without listing each one.  
+**Example:** `["build"]`
 
 ## Gates
 

@@ -23,7 +23,11 @@ import org.bukkit.World
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-class MfClaimService(private val plugin: MedievalFactions, private val repository: MfClaimedChunkRepository) {
+class MfClaimService @JvmOverloads constructor(
+    private val plugin: MedievalFactions,
+    private val repository: MfClaimedChunkRepository,
+    private val regionClaimGuard: MfRegionClaimGuard? = null
+) {
 
     private data class ClaimKey(val worldId: UUID, val x: Int, val z: Int) {
         constructor(claimedChunk: MfClaimedChunk) : this(claimedChunk.worldId, claimedChunk.x, claimedChunk.z)
@@ -52,6 +56,16 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
 
     fun isClaimingBlockedInWorld(world: World): Boolean {
         return isClaimingBlockedInWorld(world.name)
+    }
+
+    /**
+     * Whether a new claim on this chunk is refused because the chunk overlaps a WorldGuard region (#1630).
+     * Always false unless `worldGuard.blockClaimsInRegions` is true and WorldGuard is installed.
+     * Only the player-facing claim paths consult this; existing claims and data migration are unaffected.
+     */
+    fun isClaimBlockedByWorldGuard(chunk: MfChunkPosition): Boolean {
+        if (!plugin.config.getBoolean("worldGuard.blockClaimsInRegions")) return false
+        return regionClaimGuard?.overlapsProtectedRegion(chunk) == true
     }
 
     @JvmName("getClaimsByFactionId")

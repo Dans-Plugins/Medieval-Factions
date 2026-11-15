@@ -10,6 +10,8 @@ import com.dansplugins.factionsystem.chat.MfChatService
 import com.dansplugins.factionsystem.claim.JooqMfClaimedChunkRepository
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.claim.MfClaimedChunkRepository
+import com.dansplugins.factionsystem.claim.MfRegionClaimGuard
+import com.dansplugins.factionsystem.claim.worldguard.MfWorldGuardClaimGuard
 import com.dansplugins.factionsystem.command.accessors.MfAccessorsCommand
 import com.dansplugins.factionsystem.command.duel.MfDuelCommand
 import com.dansplugins.factionsystem.command.faction.MfFactionCommand
@@ -193,7 +195,7 @@ class MedievalFactions : JavaPlugin() {
         val factionService = MfFactionService(this, repositories.factionRepository)
         val lawService = MfLawService(repositories.lawRepository)
         val factionRelationshipService = MfFactionRelationshipService(this, repositories.factionRelationshipRepository)
-        val claimService = MfClaimService(this, repositories.claimedChunkRepository)
+        val claimService = MfClaimService(this, repositories.claimedChunkRepository, setupRegionClaimGuard())
         val lockService = MfLockService(this, repositories.lockRepository)
         val interactionService = MfInteractionService(repositories.interactionStatusRepository)
         val notificationService = setupNotificationService()
@@ -676,6 +678,17 @@ class MedievalFactions : JavaPlugin() {
                 }
             }
         }
+    }
+
+    // WorldGuard is a soft dependency: its classes are only loaded when the plugin is enabled (#1630)
+    private fun setupRegionClaimGuard(): MfRegionClaimGuard? {
+        if (server.pluginManager.getPlugin("WorldGuard")?.isEnabled == true) {
+            return MfWorldGuardClaimGuard(this)
+        }
+        if (config.getBoolean("worldGuard.blockClaimsInRegions")) {
+            logger.warning("worldGuard.blockClaimsInRegions is enabled, but WorldGuard is not installed, so claims are not checked against regions.")
+        }
+        return null
     }
 
     private fun setupNotificationService(): MfNotificationService = when {

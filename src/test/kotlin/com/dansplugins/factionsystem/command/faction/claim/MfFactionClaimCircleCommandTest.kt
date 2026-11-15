@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.command.faction.claim
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.TestUtils
+import com.dansplugins.factionsystem.area.MfChunkPosition
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.faction.MfFaction
@@ -228,6 +229,59 @@ class MfFactionClaimCircleCommandTest {
         // verify
         assertTrue(result)
         verify(player).sendMessage("${ChatColor.RED}No such faction")
+    }
+
+    @Test
+    fun testOnCommand_refusesAChunkOverlappingAWorldGuardRegion() {
+        // prepare — worldGuard.blockClaimsInRegions reports the sender's chunk as inside a region (#1630)
+        val player = fixture.player
+        val command = fixture.command
+        stubMembershipOf(player)
+        stubSenderChunk(player, 0, 0)
+        val claim = stubClaimSave(0, 0)
+        `when`(claimService.isClaimBlockedByWorldGuard(MfChunkPosition(worldId, 0, 0))).thenReturn(true)
+        `when`(language["CommandFactionClaimWorldGuardRegion"]).thenReturn("Protected region")
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf())
+        runPendingTasks()
+
+        // verify
+        assertTrue(result)
+        verify(claimService, never()).save(claim)
+        verify(player).sendMessage("${ChatColor.RED}Protected region")
+    }
+
+    @Test
+    fun testOnCommand_radiusClaimSkipsOnlyTheChunksOverlappingAWorldGuardRegion() {
+        // prepare — a radius-1 circle covers the centre and its four neighbours; one neighbour is in a region
+        val player = fixture.player
+        val command = fixture.command
+        stubMembershipOf(player)
+        stubSenderChunk(player, 0, 0)
+        listOf(0 to 0, -1 to 0, 1 to 0, 0 to -1, 0 to 1).forEach { (x, z) ->
+            val chunk = testUtils.createMockChunk(world, x, z)
+            `when`(world.getChunkAt(x, z)).thenReturn(chunk)
+        }
+        val centre = stubClaimSave(0, 0)
+        val west = stubClaimSave(-1, 0)
+        val east = stubClaimSave(1, 0)
+        val north = stubClaimSave(0, -1)
+        val south = stubClaimSave(0, 1)
+        `when`(claimService.isClaimBlockedByWorldGuard(MfChunkPosition(worldId, 1, 0))).thenReturn(true)
+        `when`(language["CommandFactionClaimWorldGuardRegionSkipped", "1"]).thenReturn("Skipped 1")
+        `when`(language["CommandFactionClaimSuccess", "4"]).thenReturn("Claimed 4 chunks")
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf("1"))
+        runPendingTasks()
+
+        // verify
+        assertTrue(result)
+        verify(claimService, never()).save(east)
+        listOf(centre, west, north, south).forEach { verify(claimService).save(it) }
+        verify(player).sendMessage("${ChatColor.YELLOW}Skipped 1")
+        verify(player).sendMessage("${ChatColor.GREEN}Claimed 4 chunks")
     }
 
     // Helper functions
