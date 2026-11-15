@@ -13,6 +13,7 @@ This document provides detailed information about all configuration options avai
 - [PVP Settings](#pvp-settings)
 - [Faction Settings](#faction-settings)
 - [Faction Default Flags](#faction-default-flags)
+- [Power Scoreboard](#power-scoreboard)
 - [Chat Settings](#chat-settings)
 - [Duels](#duels)
 - [Dynmap Integration](#dynmap-integration)
@@ -111,6 +112,37 @@ silences the warning.
 **Default:** `` (empty)  
 **Description:** Database password for authentication.  
 **Security Note:** Consider using environment variables or secure storage for production passwords.
+
+### Connection pool settings (`hikaricp.properties`)
+**Type:** Optional file, `plugins/MedievalFactions/hikaricp.properties`  
+**Default:** No file. The plugin does not create one, and without it the connection pool uses HikariCP's own defaults, as it always has.  
+**Description:** Any [HikariCP setting](https://github.com/brettwooldridge/HikariCP#gear-configuration-knobs-baby) can be tuned by putting it in this file, one `name=value` per line. Settings for the JDBC driver itself take a `dataSource.` prefix. `database.url` in `config.yml` always takes precedence over `jdbcUrl` in the file, and `database.username` / `database.password` take precedence over `username` / `password` when they are set in `config.yml`. The file is read when the plugin enables and by `/mf migrate`. A setting HikariCP does not recognise stops the database from opening, with HikariCP's error in the server log, rather than being silently ignored.
+
+```properties
+maximumPoolSize=5
+connectionTimeout=10000
+maxLifetime=1800000
+dataSource.cachePrepStmts=true
+```
+
+How the pool settings are put together when the database is opened:
+
+```mermaid
+flowchart TD
+    A[Plugin enables or /mf migrate runs] --> B{hikaricp.properties<br/>in the data folder?}
+    B -- no --> C[HikariCP defaults, as before]
+    B -- yes --> D[Every setting in the file]
+    D --> E{Unknown setting name?}
+    E -- yes --> F[HikariCP error in the log;<br/>the database does not open]
+    E -- no --> G[Apply config.yml over it]
+    C --> G
+    G --> H[jdbcUrl = database.url, always]
+    H --> I{database.username / password<br/>set in config.yml?}
+    I -- yes --> J[config.yml values win]
+    I -- no --> K[Values from the file, if any, are kept]
+    J --> L[Open the pool]
+    K --> L
+```
 
 ### JSON Storage
 
@@ -352,6 +384,11 @@ factions:
 **Default:** `false`  
 **Description:** When `true`, non-faction members can right-click entities in faction territory — minecarts (including chest and hopper minecarts), boats, item frames, armour stands, animals and the like. When `false`, those interactions are blocked for anyone without interaction rights in the claim, and the player is told why. Villager trading is not covered by this option: it is governed by the `protectVillagerTrade` faction flag instead. Wilderness is not covered either; see `wilderness.interaction.prevent`. Note that `true` is more permissive than releases before this option existed: armour stands were protected then, and setting this to `true` leaves them editable by non-members.
 
+### `factions.allowHopperTransfersBetweenSameOwnerLocks`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** Hoppers cannot move items into or out of a locked block. When `true`, a transfer is allowed if both blocks involved are locked and every lock on them belongs to the same player, so a player can lock a chest and the hoppers of their own sorter or storage system and still have items flow between them. A transfer between a locked block and an unlocked one (including a hopper minecart), or between blocks locked by different players, is still refused. Accessors added with `/accessors add` do not count: only the player who placed the lock does.
+
 ### `factions.maxClaimRadius`
 **Type:** Integer  
 **Default:** `3`  
@@ -377,12 +414,12 @@ factions:
 ### `factions.actionBarTerritoryIndicator`
 **Type:** Boolean  
 **Default:** `true`  
-**Description:** When `true`, shows territory information in the action bar when entering new chunks.
+**Description:** When `true`, shows the name of the territory the player is standing in (a faction, or wilderness) in the action bar above the hotbar. The text is sent again every second for as long as the option is on, so it stays on screen and does not fade out; the `titleTerritory*` timings below do not apply to it. It is also sent when a player moves into territory held by a different faction, and when they join. The every-second refresh is set up at startup, so turning the option off takes effect after a restart.
 
 ### `factions.titleTerritoryIndicator`
 **Type:** Boolean  
 **Default:** `true`  
-**Description:** When `true`, shows territory information as a title when entering new chunks.
+**Description:** When `true`, shows the territory's name (and the faction's description as a subtitle) as a title in the middle of the screen when a player moves into territory held by a different faction or into wilderness, and when they join. The title fades in, stays and fades out according to the three `titleTerritory*` timings below. A territory name that stays on screen without fading is the action bar indicator (`factions.actionBarTerritoryIndicator`), not this title.
 
 ### `factions.titleTerritoryFadeInLength`
 **Type:** Integer  
@@ -507,6 +544,18 @@ These settings define the default values for faction flags when a new faction is
 **Default:** Not currently set in config.yml (uses hardcoded default of `false`)  
 **Description:** Default setting for whether hostile mobs are protected from damage by non-members in faction territory. While the flag is available for factions to set, this config option is not currently implemented in the default config file.  
 **Note:** Factions can still set this flag individually using `/f flag set enableMobProtection [true/false]`.
+
+## Power Scoreboard
+
+### `powerScoreboard.enabled`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, each online player sees a sidebar scoreboard with their own power and, if they are in a faction, the faction's power and max power. A player whose scoreboard has already been set by another plugin is left alone, so the sidebar never replaces a scoreboard Medieval Factions did not create. When the plugin is disabled, players showing the sidebar get the server's main scoreboard back. The setting is read at startup, so a change needs a restart.
+
+### `powerScoreboard.updateIntervalSeconds`
+**Type:** Integer  
+**Default:** `5`  
+**Description:** How often, in seconds, the power scoreboard is refreshed. Values below `1` are treated as `1`. Only used when `powerScoreboard.enabled` is `true`.
 
 ## Chat Settings
 
