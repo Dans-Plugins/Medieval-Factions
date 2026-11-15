@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 
 /** Covers block and item tags in material lists such as `factions.wartimePlaceableBlocks` (#1967). */
 class MfMaterialListTest {
@@ -73,8 +74,9 @@ class MfMaterialListTest {
 
     private fun taggedWith(vararg materials: Material): Tag<Material> {
         @Suppress("UNCHECKED_CAST")
-        return mock(Tag::class.java) { invocation ->
-            invocation.method.name == "isTagged" && invocation.arguments.firstOrNull() in materials
-        } as Tag<Material>
+        val tag = mock(Tag::class.java) as Tag<Material>
+        // Unstubbed materials return Mockito's default, false.
+        materials.forEach { material -> `when`(tag.isTagged(material)).thenReturn(true) }
+        return tag
     }
 }
