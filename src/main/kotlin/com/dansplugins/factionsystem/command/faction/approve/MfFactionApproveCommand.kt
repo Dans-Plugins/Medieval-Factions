@@ -48,6 +48,12 @@ class MfFactionApproveCommand(private val plugin: MedievalFactions) : CommandExe
                 val factionRelationshipService = plugin.services.factionRelationshipService
                 when (request.type) {
                     WAR -> {
+                        val minutesLeft = plugin.truceService.getRemainingTruceMinutes(faction.id, target.id)
+                        if (minutesLeft != null) {
+                            // The request is kept, so it can still be approved once the truce has ended.
+                            sender.sendMessage("$RED${plugin.language["CommandFactionApproveWarTruceActive", faction.name, target.name, minutesLeft.toString()]}")
+                            return@Runnable
+                        }
                         factionRelationshipService.save(
                             MfFactionRelationship(factionId = faction.id, targetId = target.id, type = MfFactionRelationshipType.AT_WAR)
                         ).onFailure {
