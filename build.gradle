@@ -144,9 +144,13 @@ jooq {
 import org.apache.tools.ant.filters.ReplaceTokens
 
 processResources {
-    filter ReplaceTokens, tokens: [
-            'version': version
-    ]
+    // Only plugin.yml and config.yml carry @version@. Filtering every resource decoded the ISO-8859-1
+    // language files as UTF-8 and wrote each accented byte back as U+FFFD (every German umlaut).
+    filesMatching(['plugin.yml', 'config.yml']) {
+        filter ReplaceTokens, tokens: [
+                'version': version
+        ]
+    }
 }
 
 shadowJar {
