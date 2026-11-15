@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.ally
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.command.faction.MfForcedDiplomacy
 import com.dansplugins.factionsystem.approval.MfApprovalRequest
 import com.dansplugins.factionsystem.approval.MfApprovalRequestType
 import com.dansplugins.factionsystem.faction.MfFaction
@@ -20,6 +21,8 @@ import org.bukkit.entity.Player
 import java.util.logging.Level
 
 class MfFactionAllyCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
+
+    private val forcedDiplomacy = MfForcedDiplomacy(plugin)
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.ally")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionAllyNoPermission"]}")
@@ -33,9 +36,19 @@ class MfFactionAllyCommand(private val plugin: MedievalFactions) : CommandExecut
             sender.sendMessage("$RED${plugin.language["CommandFactionAllyNotAPlayer"]}")
             return true
         }
+        val hasForcePermission = sender.hasPermission("mf.force.ally")
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
+                // With mf.force.ally, `<faction> <target>` acts for both factions at once (#1898).
+                when (val forced = forcedDiplomacy.parse(sender, args, hasForcePermission)) {
+                    is MfForcedDiplomacy.Parse.Resolved -> {
+                        forcedDiplomacy.ally(sender, forced.faction, forced.target)
+                        return@Runnable
+                    }
+                    MfForcedDiplomacy.Parse.Refused -> return@Runnable
+                    MfForcedDiplomacy.Parse.NotForced -> Unit
+                }
                 val playerService = plugin.services.playerService
                 val mfPlayer = playerService.getPlayer(sender)
                     ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
