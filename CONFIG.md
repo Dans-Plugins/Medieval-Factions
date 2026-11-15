@@ -357,6 +357,27 @@ factions:
 **Default:** `false`  
 **Description:** Hoppers cannot move items into or out of a locked block. When `true`, a transfer is allowed if both blocks involved are locked and every lock on them belongs to the same player, so a player can lock a chest and the hoppers of their own sorter or storage system and still have items flow between them. A transfer between a locked block and an unlocked one (including a hopper minecart), or between blocks locked by different players, is still refused. Accessors added with `/accessors add` do not count: only the player who placed the lock does.
 
+### `factions.allowBuildingEverywhere`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, anyone can place and break blocks anywhere: in every faction's territory, whatever its flags and relationships, and in the wilderness, whatever the `wilderness.place.prevent` and `wilderness.break.prevent` settings. It takes precedence over those options. Only placing and breaking blocks are opened up; everything else stays protected as configured, including opening chests and doors, buckets, setting fire, and right-clicking entities. Gate blocks still cannot be placed into or broken, and a locked block can still only be broken by its owner (or with `mf.force.unlock`), which unlocks it as usual.
+
+```mermaid
+flowchart TD
+    A["Player places or breaks a block"] --> B{"Block is part of a gate?"}
+    B -- yes --> R1["Refused"]
+    B -- no --> C{"allowBuildingEverywhere?"}
+    C -- no --> N["Normal territory and wilderness rules"]
+    C -- yes --> D{"Breaking a block that<br/>another player has locked?"}
+    D -- "yes, without mf.force.unlock" --> R2["Refused"]
+    D -- no --> OK["Allowed (a lock of the breaker's own is removed)"]
+```
+
+### `factions.preventPortalGenerationInClaims`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, when a player travels through a nether portal and the game would generate the matching portal on the other side inside a faction's territory, the portal is not generated, unless the player could build in that territory anyway (a member, or someone the faction's flags or a war let build there) or is in bypass mode. The player is told whose territory stopped it. Existing portals are unaffected, and so are portals players light themselves. What the player experiences when the portal is refused (whether they are still moved to the other world) is decided by the server software, and has not been checked in game.
+
 ### `factions.maxClaimRadius`
 **Type:** Integer  
 **Default:** `3`  
