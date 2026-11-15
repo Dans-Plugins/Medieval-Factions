@@ -93,5 +93,6 @@ making any changes.
 
 - Branch from `main` for all changes. (The legacy `develop` branch was retired; trunk-based development on `main` is the current flow.)
 - Open a pull request against `main`.
-- Reference the related GitHub issue in every pull request description using `#<number>`.
+- Write `Closes #<number>` in the pull request description for each issue it resolves, so the issue closes on merge.
+- Branch prefixes, commit-message style and the merge strategy are in `CLAUDE.md` (Commit and PR conventions).
 - The CI build (`.github/workflows/build.yml`) must pass before a pull request can be merged.
