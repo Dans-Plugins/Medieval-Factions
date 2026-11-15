@@ -10,7 +10,6 @@ import com.dansplugins.factionsystem.command.faction.approve.MfFactionApproveCom
 import com.dansplugins.factionsystem.command.faction.approveapp.MfFactionApproveAppCommand
 import com.dansplugins.factionsystem.command.faction.bonuspower.MfFactionBonusPowerCommand
 import com.dansplugins.factionsystem.command.faction.breakalliance.MfFactionBreakAllianceCommand
-import com.dansplugins.factionsystem.command.faction.rival.MfFactionRivalCommand
 import com.dansplugins.factionsystem.command.faction.bypass.MfFactionBypassCommand
 import com.dansplugins.factionsystem.command.faction.chat.MfFactionChatCommand
 import com.dansplugins.factionsystem.command.faction.claim.MfFactionClaimCommand
@@ -42,6 +41,7 @@ import com.dansplugins.factionsystem.command.faction.migrate.MfFactionMigrateCom
 import com.dansplugins.factionsystem.command.faction.pendingactions.MfFactionPendingActionsCommand
 import com.dansplugins.factionsystem.command.faction.power.MfFactionPowerCommand
 import com.dansplugins.factionsystem.command.faction.relationship.MfFactionRelationshipCommand
+import com.dansplugins.factionsystem.command.faction.rival.MfFactionRivalCommand
 import com.dansplugins.factionsystem.command.faction.role.MfFactionRoleCommand
 import com.dansplugins.factionsystem.command.faction.set.MfFactionSetCommand
 import com.dansplugins.factionsystem.command.faction.set.name.MfFactionSetNameCommand

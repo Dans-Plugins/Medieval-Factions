@@ -20,8 +20,8 @@ import com.dansplugins.factionsystem.storage.json.JsonMfClaimedChunkRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfDuelInviteRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfDuelRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfFactionRelationshipRepository
-import com.dansplugins.factionsystem.storage.json.JsonMfFactionRivalRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfFactionRepository
+import com.dansplugins.factionsystem.storage.json.JsonMfFactionRivalRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfGateCreationContextRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfGateRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfInteractionStatusRepository
