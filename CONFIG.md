@@ -212,8 +212,36 @@ The power system determines how much land a faction can claim and player impact 
 ### `players.hoursToReachMinPower`
 **Type:** Integer  
 **Default:** `72`  
-**Description:** Number of hours required to reach minimum power from initial power through deaths.  
+**Description:** Number of hours an offline player takes to decay from the power they had at logout down to `players.minPower`. A faction's power is the sum of its members' power, so a faction whose members are all offline loses some power at every power update.  
 **Range:** Any positive integer
+
+### `players.powerUpdateIntervalMinutes`
+**Type:** Integer  
+**Default:** `15`  
+**Description:** Minutes between scheduled power updates, the moment online players gain power and offline players lose it. Changing the interval changes how often power moves, not how fast: each update advances the gain and decay curves by the interval, so `hoursToReachMaxPower` and `hoursToReachMinPower` still hold. Takes effect after a server restart. A value of 0 or below falls back to 15.  
+**Range:** Any positive integer
+
+### `players.disablePowerGainOverTime`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, online players no longer gain power at each power update. Power still changes through deaths, kills (`powerLostOnDeath`, `powerGainedOnKill`) and `/power set`.  
+**Values:** `true` or `false`
+
+### `players.disablePowerDecayOverTime`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, offline players no longer lose power at each power update, so a faction whose members are all offline keeps its power.  
+**Values:** `true` or `false`
+
+**Fixed power.** To give every player a power value that only changes when an operator or another plugin sets it (for example a rank plugin that runs `power set <player> <amount>` from the console on each promotion), combine:
+
+```yaml
+players:
+  disablePowerGainOverTime: true
+  disablePowerDecayOverTime: true
+  powerLostOnDeath: 0
+  powerGainedOnKill: 0
+```
 
 ### `players.powerLostOnDeath`
 **Type:** Integer  
@@ -462,6 +490,11 @@ factions:
 **Type:** Boolean  
 **Default:** `false`  
 **Description:** When `true`, war declarations require moderator approval before taking effect. Players with the `mf.approve` permission can approve or deny pending war declarations using `/faction approve` and `/faction deny`. Players can optionally include a reason by appending `-- <reason>` after the faction name.
+
+### `factions.truceDurationMinutes`
+**Type:** Integer  
+**Default:** `0`  
+**Description:** Length of the truce, in minutes, that starts when two factions make peace (both sides have run `/faction makepeace`). During the truce neither faction can declare war on the other; `/faction declarewar` tells the player how many minutes are left. `0` or less turns truces off, which is the default, so existing servers see no change. Truce end times are kept in `truces.yml` in the plugin's data folder so that a restart does not end them. The truce is checked by `/faction declarewar`, by `/faction approve` for a pending war declaration (the request is kept, so it can be approved once the truce ends), and by `/faction invoke` when the ally being called in is under truce with the enemy. Operator commands that set relationships directly are not blocked.
 
 ### `factions.allyDeclarationRequiresApproval`
 **Type:** Boolean  
