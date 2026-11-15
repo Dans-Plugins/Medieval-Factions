@@ -12,6 +12,7 @@ import com.dansplugins.factionsystem.failure.ServiceFailure
 import com.dansplugins.factionsystem.failure.ServiceFailureType
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType
+import com.dansplugins.factionsystem.utils.MfMaterialList
 import dev.forkhandles.result4k.mapFailure
 import dev.forkhandles.result4k.resultFrom
 import net.md_5.bungee.api.ChatColor
@@ -75,11 +76,13 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
 
     /**
      * The total number of chunks a faction with the given power could hold if all its further claims were made in the
-     * given world, for the "you may not claim more than N chunks" message. At the default cost of 1 this is the
+     * given world: the denominator wherever claims are shown against what the faction can hold (the "you may not
+     * claim more than N chunks" message, `/f power` and the Dynmap demesne line). At the default cost of 1 this is the
      * faction's power rounded down, as the message showed before claim costs were configurable.
      */
-    fun getClaimLimit(factionId: MfFactionId, power: Double, worldId: UUID): Double {
-        val cost = getClaimPowerCost(worldId)
+    fun getClaimLimit(factionId: MfFactionId, power: Double, worldId: UUID?): Double {
+        // Without a world (the console, or a map popup for a faction with no land) the default cost is used
+        val cost = if (worldId == null) getClaimPowerCost(null as String?) else getClaimPowerCost(worldId)
         if (cost <= 0.0) return floor(power)
         return getClaims(factionId).size + floor((power - getClaimPowerUsed(factionId)) / cost)
     }
@@ -167,8 +170,8 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
         isWartimeBlockActionAllowed(playerId, claim, material, "factions.wartimeInteractableBlocks")
 
     private fun isWartimeBlockActionAllowed(playerId: MfPlayerId, claim: MfClaimedChunk, material: Material, configKey: String): Boolean {
-        val blocks = plugin.config.getStringList(configKey).mapTo(HashSet()) { it.uppercase() }
-        if (material.name !in blocks) return false
+        val blocks = MfMaterialList(plugin.config.getStringList(configKey))
+        if (material !in blocks) return false
         val factionService = plugin.services.factionService
         val playerFaction = factionService.getFaction(playerId) ?: return false
         val relationshipService = plugin.services.factionRelationshipService

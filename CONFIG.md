@@ -13,6 +13,7 @@ This document provides detailed information about all configuration options avai
 - [PVP Settings](#pvp-settings)
 - [Faction Settings](#faction-settings)
 - [Faction Default Flags](#faction-default-flags)
+- [Power Scoreboard](#power-scoreboard)
 - [Chat Settings](#chat-settings)
 - [Duels](#duels)
 - [Dynmap Integration](#dynmap-integration)
@@ -111,6 +112,37 @@ silences the warning.
 **Default:** `` (empty)  
 **Description:** Database password for authentication.  
 **Security Note:** Consider using environment variables or secure storage for production passwords.
+
+### Connection pool settings (`hikaricp.properties`)
+**Type:** Optional file, `plugins/MedievalFactions/hikaricp.properties`  
+**Default:** No file. The plugin does not create one, and without it the connection pool uses HikariCP's own defaults, as it always has.  
+**Description:** Any [HikariCP setting](https://github.com/brettwooldridge/HikariCP#gear-configuration-knobs-baby) can be tuned by putting it in this file, one `name=value` per line. Settings for the JDBC driver itself take a `dataSource.` prefix. `database.url` in `config.yml` always takes precedence over `jdbcUrl` in the file, and `database.username` / `database.password` take precedence over `username` / `password` when they are set in `config.yml`. The file is read when the plugin enables and by `/mf migrate`. A setting HikariCP does not recognise stops the database from opening, with HikariCP's error in the server log, rather than being silently ignored.
+
+```properties
+maximumPoolSize=5
+connectionTimeout=10000
+maxLifetime=1800000
+dataSource.cachePrepStmts=true
+```
+
+How the pool settings are put together when the database is opened:
+
+```mermaid
+flowchart TD
+    A[Plugin enables or /mf migrate runs] --> B{hikaricp.properties<br/>in the data folder?}
+    B -- no --> C[HikariCP defaults, as before]
+    B -- yes --> D[Every setting in the file]
+    D --> E{Unknown setting name?}
+    E -- yes --> F[HikariCP error in the log;<br/>the database does not open]
+    E -- no --> G[Apply config.yml over it]
+    C --> G
+    G --> H[jdbcUrl = database.url, always]
+    H --> I{database.username / password<br/>set in config.yml?}
+    I -- yes --> J[config.yml values win]
+    I -- no --> K[Values from the file, if any, are kept]
+    J --> L[Open the pool]
+    K --> L
+```
 
 ### JSON Storage
 
@@ -299,6 +331,15 @@ factions:
     - TORCH
 ```
 
+**Tags:** All three wartime lists also accept Minecraft block and item tags, written with a leading `#` and quoted in YAML, for example `'#minecraft:signs'` or `'#minecraft:doors'` (`'#signs'` is read as `#minecraft:signs`). A tag matches every material in it, including tags added by data packs, and an unknown tag matches nothing. Material names and tags can be mixed in one list:
+```yaml
+factions:
+  wartimeInteractableBlocks:
+    - '#minecraft:doors'
+    - '#minecraft:buttons'
+    - STONE_BUTTON
+```
+
 ### `factions.wartimeBreakableBlocks`
 **Type:** List of Strings  
 **Default:** `[]` (empty)  
@@ -372,7 +413,7 @@ factions:
 **Type:** Decimal  
 **Default:** `1.0`  
 **Description:** How much power each claimed chunk counts against the faction's power when `factions.limitLand` is `true`. A faction may claim another chunk only while the cost of all its claims, plus the new ones, does not exceed its power. At the default of `1.0` each chunk costs one power, which is how claiming worked before this option existed. A higher value makes land scarcer (at `2.0` a faction with 10 power can hold 5 chunks); a lower one makes it more plentiful. The same cost decides when an enemy faction holds more land than its power and so can be conquered during war. Negative values are treated as `0`, which makes claims free. Has no effect when `factions.limitLand` is `false`.  
-**Note:** `/f power` and the Dynmap demesne line still show a faction's chunk count against its power, so with a cost other than `1.0` the two numbers are not directly comparable.
+**Note:** `/f power` and the Dynmap demesne line show a faction's claims against the number of chunks it could hold: the chunks it has, plus as many more as its unused power buys at the cost in the viewer's world (`/f power`) or the faction's home world (Dynmap; the world of its first claim if it has no home). The console uses `factions.claimPowerCost`. At the default cost of `1.0` that number is the faction's power rounded down, as before.
 
 ### `factions.claimPowerCostByWorld`
 **Type:** Map of world name to Decimal  
@@ -453,7 +494,19 @@ claimPowerCostByWorld:
 **Type:** Integer  
 **Default:** `5`  
 **Description:** Delay (in seconds) before teleporting to faction home.  
-**Note:** Movement cancels the teleport.
+**Note:** Taking damage, teleporting by other means or logging out cancels the teleport. Walking does not.
+
+### `factions.factionHomeTeleportCooldown`
+**Type:** Integer  
+**Default:** `0`  
+**Description:** Seconds a player must wait after a completed `/faction home` teleport before using it again. `0` disables the cooldown. The cooldown is kept in memory, so a server restart clears it; logging out and back in does not.  
+**Range:** Any non-negative integer
+
+### `factions.respawnAtFactionHome`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, a player who dies respawns at their faction's home instead of the world spawn. Leaving the End is not affected. A bed or respawn anchor still takes priority, and players whose faction has no home (or whose home is in an unloaded world) respawn as usual.  
+**Values:** `true` or `false`
 
 ### `factions.maxMembers`
 **Type:** Integer  
@@ -529,6 +582,18 @@ These settings define the default values for faction flags when a new faction is
 **Default:** Not currently set in config.yml (uses hardcoded default of `false`)  
 **Description:** Default setting for whether hostile mobs are protected from damage by non-members in faction territory. While the flag is available for factions to set, this config option is not currently implemented in the default config file.  
 **Note:** Factions can still set this flag individually using `/f flag set enableMobProtection [true/false]`.
+
+## Power Scoreboard
+
+### `powerScoreboard.enabled`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, each online player sees a sidebar scoreboard with their own power and, if they are in a faction, the faction's power and max power. A player whose scoreboard has already been set by another plugin is left alone, so the sidebar never replaces a scoreboard Medieval Factions did not create. When the plugin is disabled, players showing the sidebar get the server's main scoreboard back. The setting is read at startup, so a change needs a restart.
+
+### `powerScoreboard.updateIntervalSeconds`
+**Type:** Integer  
+**Default:** `5`  
+**Description:** How often, in seconds, the power scoreboard is refreshed. Values below `1` are treated as `1`. Only used when `powerScoreboard.enabled` is `true`.
 
 ## Chat Settings
 

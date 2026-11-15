@@ -67,6 +67,16 @@ class MfClaimServicePowerCostTest {
     }
 
     @Test
+    fun claimLimitWithoutAWorldUsesTheDefaultCost() {
+        // /f power from the console and map popups for a faction with no land pass no world
+        assertEquals(7.0, uut.getClaimLimit(factionId, 7.9, null))
+        stubWorldCosts(mapOf("world_nether" to 4.0))
+        `when`(config.getDouble("factions.claimPowerCost", 1.0)).thenReturn(2.0)
+        // 10 power, 2 overworld chunks at 2 + 1 nether chunk at 4 = 8 used: 2 left buys 1 more at the default cost
+        assertEquals(4.0, uut.getClaimLimit(factionId, 10.0, null))
+    }
+
+    @Test
     fun globalCostAppliesToEveryWorld() {
         `when`(config.getDouble("factions.claimPowerCost", 1.0)).thenReturn(2.0)
 

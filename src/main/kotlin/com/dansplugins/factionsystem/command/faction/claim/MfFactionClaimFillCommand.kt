@@ -100,7 +100,7 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                                 val relationships = relationshipService.getRelationships(faction.id, claimFactionId)
                                 val reverseRelationships = relationshipService.getRelationships(claimFactionId, faction.id)
                                 return@filter (relationships + reverseRelationships).any { it.type == AT_WAR } &&
-                                    claimFaction.power < claimService.getClaimPowerUsed(claimFactionId) - claimService.getClaimPowerCost(claims.map { (chunk, _) -> chunk })
+                                    claimFaction.power <= claimService.getClaimPowerUsed(claimFactionId) - claimService.getClaimPowerCost(claims.map { (chunk, _) -> chunk })
                             }
                             .flatMap { it.value.map { (chunk, _) -> chunk } }
                         val claimableChunks = unclaimedChunks + contestedChunks
