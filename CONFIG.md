@@ -377,12 +377,12 @@ factions:
 ### `factions.actionBarTerritoryIndicator`
 **Type:** Boolean  
 **Default:** `true`  
-**Description:** When `true`, shows territory information in the action bar when entering new chunks.
+**Description:** When `true`, shows the name of the territory the player is standing in (a faction, or wilderness) in the action bar above the hotbar. The text is sent again every second for as long as the option is on, so it stays on screen and does not fade out; the `titleTerritory*` timings below do not apply to it. It is also sent when a player moves into territory held by a different faction, and when they join. The every-second refresh is set up at startup, so turning the option off takes effect after a restart.
 
 ### `factions.titleTerritoryIndicator`
 **Type:** Boolean  
 **Default:** `true`  
-**Description:** When `true`, shows territory information as a title when entering new chunks.
+**Description:** When `true`, shows the territory's name (and the faction's description as a subtitle) as a title in the middle of the screen when a player moves into territory held by a different faction or into wilderness, and when they join. The title fades in, stays and fades out according to the three `titleTerritory*` timings below. A territory name that stays on screen without fading is the action bar indicator (`factions.actionBarTerritoryIndicator`), not this title.
 
 ### `factions.titleTerritoryFadeInLength`
 **Type:** Integer  
