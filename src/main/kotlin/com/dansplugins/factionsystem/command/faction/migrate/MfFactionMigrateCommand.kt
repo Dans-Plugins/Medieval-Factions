@@ -106,7 +106,8 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
                         databaseUrl,
                         plugin.config.getString("database.username"),
                         plugin.config.getString("database.password"),
-                        plugin.logger
+                        plugin.logger,
+                        MfJdbc.loadHikariProperties(plugin.dataFolder, plugin.logger)
                     )
 
                     try {
@@ -257,7 +258,8 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
                         databaseUrl,
                         plugin.config.getString("database.username"),
                         plugin.config.getString("database.password"),
-                        plugin.logger
+                        plugin.logger,
+                        MfJdbc.loadHikariProperties(plugin.dataFolder, plugin.logger)
                     )
 
                     try {
