@@ -40,6 +40,18 @@ class BundledLanguageKeysTest {
     }
 
     @Test
+    fun `no bundled language file contains merge conflict markers`() {
+        val markers = listOf("<<<<<<<", "=======", ">>>>>>>")
+        languageFiles.forEach { filename ->
+            val text = javaClass.classLoader.getResourceAsStream("lang/$filename.properties")!!.use { it.readBytes() }
+                .toString(Charsets.ISO_8859_1)
+            text.lines().forEachIndexed { index, line ->
+                assertFalse(markers.any { line.startsWith(it) }, "$filename line ${index + 1} is a merge conflict marker: $line")
+            }
+        }
+    }
+
+    @Test
     fun `no help line advertises the nonexistent checkclaim command`() {
         languageFiles.forEach { filename ->
             val properties = load(filename)

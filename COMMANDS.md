@@ -247,7 +247,7 @@ flowchart TD
 
 ### `/faction declarewar [faction]` or `/f declarewar [faction]`
 **Permission:** `mf.declarewar` (default: true)  
-**Description:** Declares war on another faction. If `factions.warDeclarationRequiresApproval` is enabled in config, the declaration will be held for moderator approval. When approval is required, you can optionally include a reason: `/f declarewar EnemyFaction -- reason for war`.  
+**Description:** Declares war on another faction. If `factions.warDeclarationRequiresApproval` is enabled in config, the declaration will be held for moderator approval. When approval is required, you can optionally include a reason: `/f declarewar EnemyFaction -- reason for war`. If `factions.truceDurationMinutes` is above `0`, war cannot be declared on a faction you made peace with until the truce ends.  
 **Usage:** `/f declarewar EnemyFaction`
 
 ### `/faction makepeace [faction]` or `/f makepeace [faction]`
