@@ -81,6 +81,9 @@ factions:
   limitLand: true
   contiguousClaims: false
   blockedClaimWorlds: [] # List of world names where claiming is not allowed. Example: ["world_nether", "world_the_end"]
+  blockedClaimChunks: [] # Chunks that can never be claimed, as "world:x:z" or an inclusive rectangle "world:x1:z1:x2:z2" in chunk coordinates. Example: ["world:-2:-2:1:1"]
+  maxClaimDistance: -1 # Maximum distance, in chunks, a new claim may be from the faction's nearest existing claim in the same world. -1 disables the limit.
+  preventConqueringSurroundedChunks: false # When true, an enemy chunk surrounded on all four sides by its owner's claims cannot be conquered until a neighbouring chunk is taken.
   actionBarTerritoryIndicator: true
   titleTerritoryIndicator: true
   titleTerritoryFadeInLength: 5  # "Length" is measured in ticks (20 ticks = 1 second).

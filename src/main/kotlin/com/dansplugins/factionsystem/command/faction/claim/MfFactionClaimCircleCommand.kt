@@ -107,10 +107,18 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
                             plugin,
                             Runnable saveChunks@{
                                 val claimService = plugin.services.claimService
-                                val claims = chunks.associateWith(claimService::getClaim)
+                                // Chunks listed in factions.blockedClaimChunks are never claimable, whoever holds them now
+                                val blockedChunks = chunks.filter(claimService::isChunkClaimBlocked)
+                                val claims = (chunks - blockedChunks.toSet()).associateWith(claimService::getClaim)
                                 val relationshipService = plugin.services.factionRelationshipService
                                 val unclaimedChunks = claims.filter { (_, claim) -> claim == null }.keys
+                                // With factions.preventConqueringSurroundedChunks, an enemy chunk enclosed by its owner's
+                                // other claims cannot be taken until a neighbouring border chunk has been conquered
+                                val surroundedChunks = claims
+                                    .filter { (chunk, claim) -> claim != null && claim.factionId != faction.id && claimService.isConquestBlockedBySurroundingClaims(chunk, claim.factionId) }
+                                    .keys
                                 val contestedChunks = claims
+                                    .filterKeys { it !in surroundedChunks }
                                     .mapNotNull { (chunk, claim) -> claim?.let { chunk to it } }
                                     .groupBy { (_, claim) -> claim.factionId }
                                     .filter { (claimFactionId, claims) ->
@@ -123,7 +131,12 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
                                     .flatMap { it.value.map { (chunk, _) -> chunk } }
                                 val claimableChunks = unclaimedChunks + contestedChunks
                                 if (claimableChunks.isEmpty()) {
-                                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimNoClaimableChunks"]}")
+                                    val reason = when {
+                                        surroundedChunks.isNotEmpty() -> "CommandFactionClaimSurroundedChunk"
+                                        blockedChunks.isNotEmpty() -> "CommandFactionClaimChunkBlocked"
+                                        else -> "CommandFactionClaimNoClaimableChunks"
+                                    }
+                                    sender.sendMessage("${ChatColor.RED}${plugin.language[reason]}")
                                     return@saveChunks
                                 }
                                 if (plugin.config.getBoolean("factions.limitLand") && claimableChunks.size + claimService.getClaims(faction.id).size > faction.power) {
@@ -136,6 +149,10 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
                                     claimService.getClaims(faction.id).isNotEmpty()
                                 ) {
                                     sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimNotContiguous"]}")
+                                    return@saveChunks
+                                }
+                                if (claimService.exceedsMaxClaimDistance(faction.id, *claimableChunks.toTypedArray())) {
+                                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimTooFarFromClaims", plugin.config.getInt("factions.maxClaimDistance").toString()]}")
                                     return@saveChunks
                                 }
                                 claimableChunks.forEach { chunk ->

@@ -226,6 +226,7 @@ If you need to unclaim:
 **Tips:**
 - Claim strategically - create a buffer zone around your important structures
 - Claim contiguously if server requires it (`contiguousClaims` in config)
+- Some chunks may be unclaimable (`blockedClaimChunks`), and new claims may have to stay within a set distance of your existing land (`maxClaimDistance`)
 - Remember: you lose claims if faction power drops too low
 
 #### Who Can Claim and Unclaim
