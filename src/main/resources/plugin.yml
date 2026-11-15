@@ -209,6 +209,9 @@ permissions:
   mf.role.rename:
     description: Allows renaming roles
     default: true
+  mf.role.move:
+    description: Allows moving roles up or down the role list
+    default: true
   mf.list:
     description: Allows listing factions
     default: true

@@ -76,6 +76,7 @@ class MfFactionHelpCommand(private val plugin: MedievalFactions) : CommandExecut
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionRoleCreate"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionRoleDelete"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionRoleList"]).apply { color = SpigotChatColor.GRAY }),
+                arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionRoleMove"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionRoleRename"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionRoleSet"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionRoleSetDefault"]).apply { color = SpigotChatColor.GRAY }),
