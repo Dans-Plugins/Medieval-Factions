@@ -315,6 +315,11 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Description:** Renames a role in your faction.  
 **Usage:** `/f role rename Guard Protector`
 
+### `/faction role move [name] [up|down]` or `/f role move [name] [up|down]`
+**Permission:** `mf.role.move` (default: true)  
+**Description:** Moves a role one place up or down your faction's role list, for example to list a new role above an older one. The order only changes how roles are listed; it does not grant or remove anything. Moving a role needs the same faction permission as renaming it: `MODIFY_ROLE` for that role.  
+**Usage:** `/f role move Duke up`
+
 ### `/faction role setdefault [name]` or `/f role setdefault [name]`
 **Permission:** `mf.role.setdefault` (default: true)  
 **Description:** Sets a role as the default role for new members.  
