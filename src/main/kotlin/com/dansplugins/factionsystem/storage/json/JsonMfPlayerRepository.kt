@@ -5,6 +5,7 @@ import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerRepository
+import com.dansplugins.factionsystem.player.MfPowerUpdateSettings
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import org.everit.json.schema.Schema
@@ -73,7 +74,7 @@ class JsonMfPlayerRepository(
         val minPower = plugin.config.getDouble("players.minPower")
         val maxPower = plugin.config.getDouble("players.maxPower")
         val hoursToReachMax = plugin.config.getDouble("players.hoursToReachMaxPower")
-        val timeIncrementHours = 0.25
+        val timeIncrementHours = MfPowerUpdateSettings.intervalHours(plugin.config)
 
         data.players.forEachIndexed { index, player ->
             if (player.id in onlinePlayerIds && player.power < maxPower) {
@@ -105,7 +106,7 @@ class JsonMfPlayerRepository(
         val minPower = plugin.config.getDouble("players.minPower")
         val maxPower = plugin.config.getDouble("players.maxPower")
         val hoursToReachMin = plugin.config.getDouble("players.hoursToReachMinPower")
-        val timeIncrementHours = 0.25
+        val timeIncrementHours = MfPowerUpdateSettings.intervalHours(plugin.config)
 
         data.players.forEachIndexed { index, player ->
             if (player.id in offlinePlayerIds && player.powerAtLogout > minPower && player.power > minPower) {
