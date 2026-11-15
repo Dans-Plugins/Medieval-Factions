@@ -51,8 +51,10 @@ class PlayerDeathListenerTest {
     fun setUp() {
         plugin = mock(MedievalFactions::class.java)
         `when`(plugin.logger).thenReturn(mock(Logger::class.java))
-        val language = mock(Language::class.java) { invocation -> invocation.arguments.firstOrNull() as? String ?: "" }
-        `when`(language.locale).thenReturn(Locale.US)
+        // Messages are their keys; the death message formatter asks the language for its locale.
+        val language = mock(Language::class.java) { invocation ->
+            if (invocation.method.returnType == Locale::class.java) Locale.US else invocation.arguments.firstOrNull() as? String ?: ""
+        }
         `when`(plugin.language).thenReturn(language)
 
         config = mock(FileConfiguration::class.java)
