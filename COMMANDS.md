@@ -332,7 +332,7 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 
 ## Laws
 
-Laws are numbered from 1 in the order `/f law list` shows them. Where a command takes a law, it can be given by that number or by the law's ID. Each command also needs the matching faction role permission (`ADD_LAW`, `LIST_LAWS`, `REMOVE_LAW`, `EDIT_LAW`, `MOVE_LAW`).
+Laws are numbered from 1 in the order `/f law list` shows them. Where a command takes a law, it can be given by that number or by the law's ID. Each command also needs the matching faction role permission (`ADD_LAW`, `LIST_LAWS`, `REMOVE_LAW`, `EDIT_LAW`, `MOVE_LAW`; `/f law section` uses `EDIT_LAW`).
 
 ### `/faction law add [law]` or `/f law add [law]`
 **Permission:** `mf.law.add` and `mf.addlaw` (both required; default: true)  
@@ -341,7 +341,7 @@ Laws are numbered from 1 in the order `/f law list` shows them. Where a command 
 
 ### `/faction law list` or `/f law list`
 **Permission:** `mf.law.list` and `mf.laws` (both required; default: true)  
-**Description:** Lists the laws of your faction, or of the named faction, ten to a page with links to the previous and next pages. A single number is read as a page of your own faction's laws unless a faction has that name.  
+**Description:** Lists the laws of your faction, or of the named faction, ten to a page with links to the previous and next pages. Laws with no section are listed first, as before; each section set with `/f law section` follows under its own heading, in the order of its lowest-numbered law, and every law keeps its global number. A single number is read as a page of your own faction's laws unless a faction has that name.  
 **Usage:** `/f law list [faction] [page]`
 
 ### `/faction law remove [number]` or `/f law remove [number]`
@@ -358,6 +358,11 @@ Laws are numbered from 1 in the order `/f law list` shows them. Where a command 
 **Permission:** `mf.law.move` (default: true)  
 **Description:** Moves a law to a new position in the list; the laws in between shift up or down by one. The new position must be a whole number from 1 to the faction's number of laws. If only the law is given, the new position is asked for in chat.  
 **Usage:** `/f law move 3 1`
+
+### `/faction law section [number] [section]` or `/f law section [number] [section]`
+**Permission:** `mf.law.section` (default: true)  
+**Description:** Puts a law under a free-text section, such as `Trade` or `Warfare`, or, when no section is given, takes it out of its section. Sections only group the laws in `/f law list`: law numbers stay global, so law 3 is still law 3 whichever section it is in, and `/f law move` still moves a law by its global number. A section name can be up to 64 characters long; laws are grouped by section ignoring case. Needs the `EDIT_LAW` faction role permission, the same as `/f law edit`.  
+**Usage:** `/f law section 3 Trade` sets law 3's section; `/f law section 3` clears it.
 
 ## Gates
 

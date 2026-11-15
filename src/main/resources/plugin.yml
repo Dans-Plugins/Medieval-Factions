@@ -173,6 +173,9 @@ permissions:
   mf.law.move:
     description: Allows reordering laws
     default: true
+  mf.law.section:
+    description: Allows putting laws under sections (/f law section)
+    default: true
   mf.makepeace:
     description: Allows making peace with other factions
     default: true

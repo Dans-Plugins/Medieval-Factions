@@ -3,6 +3,7 @@ package com.dansplugins.factionsystem.command.faction.law
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.command.unquote
 import com.dansplugins.factionsystem.faction.MfFaction
+import com.dansplugins.factionsystem.law.MfLaw
 import com.dansplugins.factionsystem.pagination.PaginatedView
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
@@ -73,7 +74,16 @@ class MfFactionLawListCommand(private val plugin: MedievalFactions) : CommandExe
                 val view = PaginatedView(
                     plugin.language,
                     lazy { TextComponent.fromLegacyText(BukkitChatColor.WHITE.toString() + plugin.language["CommandFactionLawListTitle"]) },
-                    laws.mapIndexed { i, law ->
+                    arrangeBySection(laws).map { entry ->
+                        if (entry is LawListEntry.Heading) {
+                            return@map lazy {
+                                val heading = TextComponent(plugin.language["CommandFactionLawListSectionHeading", entry.section])
+                                heading.color = SpigotChatColor.GOLD
+                                heading.isBold = true
+                                arrayOf(heading)
+                            }
+                        }
+                        val (number, law) = entry as LawListEntry.Law
                         lazy {
                             val buttonList: MutableList<TextComponent> = mutableListOf()
                             if ((sender.hasPermission("mf.law.remove") || sender.hasPermission("mf.removelaw")) && role.hasPermission(faction, plugin.factionPermissions.removeLaw)) {
@@ -100,7 +110,7 @@ class MfFactionLawListCommand(private val plugin: MedievalFactions) : CommandExe
                                     HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionLawListMoveButtonHover"]))
                                 buttonList.add(moveButton)
                             }
-                            val text = TextComponent(plugin.language["CommandFactionLawListLaw", (i + 1).toString(), law.text])
+                            val text = TextComponent(plugin.language["CommandFactionLawListLaw", number.toString(), law.text])
                             text.color = SpigotChatColor.AQUA
                             (buttonList + text).toTypedArray()
                         }
@@ -115,6 +125,30 @@ class MfFactionLawListCommand(private val plugin: MedievalFactions) : CommandExe
             }
         )
         return true
+    }
+
+    /** One line of `/faction law list`: a section heading, or a law with its global number. */
+    internal sealed interface LawListEntry {
+        data class Heading(val section: String) : LawListEntry
+        data class Law(val number: Int, val law: MfLaw) : LawListEntry
+    }
+
+    /**
+     * Arranges [laws], given in number order, for `/faction law list` (#1650).
+     *
+     * Laws with no section come first, exactly as the list showed them before sections existed. Each section
+     * then gets a heading, in the order of its lowest-numbered law, followed by its laws. Section names are
+     * grouped ignoring case, and the heading uses the spelling of the section's first law. Every law keeps its
+     * global number, so `/faction law remove 3` still means the third law however the list is grouped.
+     */
+    internal fun arrangeBySection(laws: List<MfLaw>): List<LawListEntry> {
+        val numbered = laws.mapIndexed { i, law -> LawListEntry.Law(i + 1, law) }
+        val unsectioned = numbered.filter { it.law.section.isNullOrBlank() }
+        val sections = numbered.filterNot { it.law.section.isNullOrBlank() }
+            .groupBy { it.law.section!!.trim().lowercase() }
+        return unsectioned + sections.values.flatMap { sectionLaws ->
+            listOf(LawListEntry.Heading(sectionLaws.first().law.section!!.trim())) + sectionLaws
+        }
     }
 
     /**
