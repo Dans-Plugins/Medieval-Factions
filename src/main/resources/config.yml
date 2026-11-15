@@ -87,6 +87,7 @@ factions:
   titleTerritoryFadeOutLength: 5
   allowNeutrality: false
   warDeclarationRequiresApproval: false
+  truceDurationMinutes: 0  # After two factions make peace, neither can declare war on the other for this many minutes. 0 turns truces off.
   allyDeclarationRequiresApproval: false
   vassalizeDeclarationRequiresApproval: false
   factionlessFactionName: Factionless

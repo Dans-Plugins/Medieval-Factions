@@ -88,6 +88,12 @@ class MfFactionDeclareWarCommand(private val plugin: MedievalFactions) : Command
                     sender.sendMessage("$RED${plugin.language["CommandFactionDeclareWarNeutralTarget"]}")
                     return@Runnable
                 }
+                val remainingTruce = plugin.truceService.getRemainingTruce(faction.id, target.id)
+                if (remainingTruce != null) {
+                    val minutesLeft = maxOf(1L, (remainingTruce.seconds + 59) / 60)
+                    sender.sendMessage("$RED${plugin.language["CommandFactionDeclareWarTruceActive", target.name, minutesLeft.toString()]}")
+                    return@Runnable
+                }
                 if (requiresApproval) {
                     val approvalService = plugin.services.approvalRequestService
                     if (approvalService.hasPendingRequest(faction.id, target.id, MfApprovalRequestType.WAR)) {
