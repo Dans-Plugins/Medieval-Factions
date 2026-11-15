@@ -520,6 +520,12 @@ These settings define the default values for faction flags when a new faction is
 **Default:** `true`  
 **Description:** When `true`, enables Medieval Factions custom chat formatting.
 
+### `chat.prefixWorlds`
+**Type:** List of Strings  
+**Default:** `[]` (empty list: everyone sees the prefix)  
+**Description:** The worlds whose players see the faction prefix (`[FactionName]`, or the faction's prefix if it has one) that `chat.enableDefaultChatFormatting` adds to public chat. When the list is not empty, a player in any other world sees the same message without the prefix, in the format the message had before Medieval Factions added its prefix (the server's normal `<Player> message` unless another chat plugin changed it first). It is the reader's world that counts, not the speaker's. Useful on a multi-world server where factions only matter in some worlds. Faction, ally and vassal chat channels are not affected. Has no effect when `chat.enableDefaultChatFormatting` is `false`. A chat plugin that changes the message format after Medieval Factions has handled the message does not affect what players outside these worlds see.  
+**Example:** `["Factions", "Factions_nether"]`
+
 ### `chat.faction.format`
 **Type:** String  
 **Default:** `&7[faction] [${factionColor}${faction}&7] [${role}] &f${displayName}: ${message}`  

@@ -108,6 +108,7 @@ factions:
       protectVillagerTrade: true
 chat:
   enableDefaultChatFormatting: true
+  prefixWorlds: [] # When not empty, only players in these worlds see the faction prefix in public chat; players elsewhere see the message without it. Example: ["Factions"]
   faction:
     format: '&7[faction] [${factionColor}${faction}&7] [${role}] &f${displayName}: ${message}'
   vassals:
