@@ -352,6 +352,11 @@ factions:
 **Default:** `false`  
 **Description:** When `true`, non-faction members can right-click entities in faction territory — minecarts (including chest and hopper minecarts), boats, item frames, armour stands, animals and the like. When `false`, those interactions are blocked for anyone without interaction rights in the claim, and the player is told why. Villager trading is not covered by this option: it is governed by the `protectVillagerTrade` faction flag instead. Wilderness is not covered either; see `wilderness.interaction.prevent`. Note that `true` is more permissive than releases before this option existed: armour stands were protected then, and setting this to `true` leaves them editable by non-members.
 
+### `factions.allowHopperTransfersBetweenSameOwnerLocks`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** Hoppers cannot move items into or out of a locked block. When `true`, a transfer is allowed if both blocks involved are locked and every lock on them belongs to the same player, so a player can lock a chest and the hoppers of their own sorter or storage system and still have items flow between them. A transfer between a locked block and an unlocked one (including a hopper minecart), or between blocks locked by different players, is still refused. Accessors added with `/accessors add` do not count: only the player who placed the lock does.
+
 ### `factions.maxClaimRadius`
 **Type:** Integer  
 **Default:** `3`  
