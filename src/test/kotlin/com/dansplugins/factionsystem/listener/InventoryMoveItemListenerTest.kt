@@ -5,11 +5,14 @@ import com.dansplugins.factionsystem.TestUtils
 import com.dansplugins.factionsystem.area.MfBlockPosition
 import com.dansplugins.factionsystem.locks.MfLockService
 import com.dansplugins.factionsystem.locks.MfLockedBlock
+import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.service.Services
 import org.bukkit.World
 import org.bukkit.block.Block
 import org.bukkit.block.Chest
 import org.bukkit.block.DoubleChest
+import org.bukkit.block.Hopper
+import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.event.inventory.InventoryMoveItemEvent
 import org.bukkit.inventory.BlockInventoryHolder
 import org.bukkit.inventory.Inventory
@@ -30,6 +33,7 @@ class InventoryMoveItemListenerTest {
     private lateinit var fixture: InventoryMoveItemListenerTestFixture
     private lateinit var plugin: MedievalFactions
     private lateinit var lockService: MfLockService
+    private lateinit var config: FileConfiguration
     private lateinit var uut: InventoryMoveItemListener
 
     @BeforeEach
@@ -223,7 +227,126 @@ class InventoryMoveItemListenerTest {
         verify(event).isCancelled = true
     }
 
+    @Test
+    fun onInventoryMoveItem_SameOwnerLockedChestAndHopper_OptionEnabled_ShouldNotCancelEvent() {
+        // Arrange
+        enableSameOwnerTransfers()
+        val transfer = createChestToHopperFixture()
+        stubLock(transfer.chestBlock, OWNER)
+        stubLock(transfer.hopperBlock, OWNER)
+
+        // Act
+        uut.onInventoryMoveItem(transfer.event)
+
+        // Assert
+        verify(transfer.event, never()).isCancelled = true
+    }
+
+    @Test
+    fun onInventoryMoveItem_SameOwnerLockedHopperIntoChest_OptionEnabled_ShouldNotCancelEvent() {
+        // Arrange
+        enableSameOwnerTransfers()
+        val transfer = createChestToHopperFixture(hopperIsSource = true)
+        stubLock(transfer.chestBlock, OWNER)
+        stubLock(transfer.hopperBlock, OWNER)
+
+        // Act
+        uut.onInventoryMoveItem(transfer.event)
+
+        // Assert
+        verify(transfer.event, never()).isCancelled = true
+    }
+
+    @Test
+    fun onInventoryMoveItem_SameOwnerLockedChestAndHopper_OptionDisabled_ShouldCancelEvent() {
+        // Arrange
+        val transfer = createChestToHopperFixture()
+        stubLock(transfer.chestBlock, OWNER)
+        stubLock(transfer.hopperBlock, OWNER)
+
+        // Act
+        uut.onInventoryMoveItem(transfer.event)
+
+        // Assert
+        verify(transfer.event).isCancelled = true
+    }
+
+    @Test
+    fun onInventoryMoveItem_DifferentOwnerLocks_OptionEnabled_ShouldCancelEvent() {
+        // Arrange
+        enableSameOwnerTransfers()
+        val transfer = createChestToHopperFixture()
+        stubLock(transfer.chestBlock, OWNER)
+        stubLock(transfer.hopperBlock, OTHER_PLAYER)
+
+        // Act
+        uut.onInventoryMoveItem(transfer.event)
+
+        // Assert
+        verify(transfer.event).isCancelled = true
+    }
+
+    @Test
+    fun onInventoryMoveItem_LockedChestUnlockedHopper_OptionEnabled_ShouldCancelEvent() {
+        // Arrange
+        enableSameOwnerTransfers()
+        val transfer = createChestToHopperFixture()
+        stubLock(transfer.chestBlock, OWNER)
+
+        // Act
+        uut.onInventoryMoveItem(transfer.event)
+
+        // Assert
+        verify(transfer.event).isCancelled = true
+    }
+
     // Helper functions
+
+    private fun enableSameOwnerTransfers() {
+        `when`(config.getBoolean("factions.allowHopperTransfersBetweenSameOwnerLocks")).thenReturn(true)
+    }
+
+    private fun stubLock(block: Block, owner: MfPlayerId) {
+        val position = MfBlockPosition.fromBukkitBlock(block)
+        val lockedBlock = MfLockedBlock(
+            block = position,
+            chunkX = 0,
+            chunkZ = 0,
+            playerId = owner,
+            accessors = emptyList()
+        )
+        `when`(lockService.getLockedBlock(position)).thenReturn(lockedBlock)
+    }
+
+    // A chest at y=64 and a hopper below it at y=63, so the two blocks have distinct positions.
+    private fun createChestToHopperFixture(hopperIsSource: Boolean = false): ChestHopperTransfer {
+        val world = testUtils.createMockWorld()
+        val chestBlock = testUtils.createMockBlock(world, 0, 64, 0)
+        val hopperBlock = testUtils.createMockBlock(world, 0, 63, 0)
+
+        val chest = mock(Chest::class.java)
+        val chestInventory = mock(Inventory::class.java)
+        `when`(chest.block).thenReturn(chestBlock)
+        `when`(chestInventory.holder).thenReturn(chest)
+
+        val hopper = mock(Hopper::class.java)
+        val hopperInventory = mock(Inventory::class.java)
+        `when`(hopper.block).thenReturn(hopperBlock)
+        `when`(hopperInventory.holder).thenReturn(hopper)
+
+        val event = mock(InventoryMoveItemEvent::class.java)
+        `when`(event.source).thenReturn(if (hopperIsSource) hopperInventory else chestInventory)
+        `when`(event.destination).thenReturn(if (hopperIsSource) chestInventory else hopperInventory)
+        `when`(event.item).thenReturn(mock(ItemStack::class.java))
+
+        return ChestHopperTransfer(chestBlock, hopperBlock, event)
+    }
+
+    private data class ChestHopperTransfer(
+        val chestBlock: Block,
+        val hopperBlock: Block,
+        val event: InventoryMoveItemEvent
+    )
 
     private fun createSingleChestFixture(): InventoryMoveItemListenerTestFixture {
         val world = testUtils.createMockWorld()
@@ -354,5 +477,13 @@ class InventoryMoveItemListenerTest {
 
         lockService = mock(MfLockService::class.java)
         `when`(services.lockService).thenReturn(lockService)
+
+        config = mock(FileConfiguration::class.java)
+        `when`(plugin.config).thenReturn(config)
+    }
+
+    companion object {
+        private val OWNER = MfPlayerId("00000000-0000-0000-0000-000000000001")
+        private val OTHER_PLAYER = MfPlayerId("00000000-0000-0000-0000-000000000002")
     }
 }
