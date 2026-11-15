@@ -119,16 +119,20 @@ class MfFactionInvokeCommandTest {
         `when`(ally.flags).thenReturn(allyFlags)
         `when`(allyFlags[neutral]).thenReturn(false)
 
-        `when`(relationshipService.getRelationships(faction.id, ally.id))
-            .thenReturn(listOf(MfFactionRelationship(factionId = faction.id, targetId = ally.id, type = ALLY)))
-        `when`(relationshipService.getRelationships(ally.id, faction.id))
-            .thenReturn(listOf(MfFactionRelationship(factionId = ally.id, targetId = faction.id, type = ALLY)))
-        `when`(relationshipService.getRelationships(faction.id, enemy.id))
-            .thenReturn(listOf(MfFactionRelationship(factionId = faction.id, targetId = enemy.id, type = AT_WAR)))
-        `when`(relationshipService.getRelationships(enemy.id, faction.id))
-            .thenReturn(listOf(MfFactionRelationship(factionId = enemy.id, targetId = faction.id, type = AT_WAR)))
+        // Ids are read into locals first: reading a mock inside thenReturn(...) breaks Mockito's stubbing.
+        val factionId = faction.id
+        val allyId = ally.id
+        val enemyId = enemy.id
+        val factionToAlly = listOf(MfFactionRelationship(factionId = factionId, targetId = allyId, type = ALLY))
+        val allyToFaction = listOf(MfFactionRelationship(factionId = allyId, targetId = factionId, type = ALLY))
+        val factionToEnemy = listOf(MfFactionRelationship(factionId = factionId, targetId = enemyId, type = AT_WAR))
+        val enemyToFaction = listOf(MfFactionRelationship(factionId = enemyId, targetId = factionId, type = AT_WAR))
+        `when`(relationshipService.getRelationships(factionId, allyId)).thenReturn(factionToAlly)
+        `when`(relationshipService.getRelationships(allyId, factionId)).thenReturn(allyToFaction)
+        `when`(relationshipService.getRelationships(factionId, enemyId)).thenReturn(factionToEnemy)
+        `when`(relationshipService.getRelationships(enemyId, factionId)).thenReturn(enemyToFaction)
 
-        val saved = MfFactionRelationship(factionId = ally.id, targetId = enemy.id, type = AT_WAR)
+        val saved = MfFactionRelationship(factionId = allyId, targetId = enemyId, type = AT_WAR)
         doReturn(Success(saved)).`when`(relationshipService).save(anyRelationship())
 
         uut = MfFactionInvokeCommand(plugin)
