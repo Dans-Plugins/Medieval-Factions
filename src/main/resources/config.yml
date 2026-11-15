@@ -15,6 +15,9 @@ players:
   minPower: -5
   hoursToReachMaxPower: 12
   hoursToReachMinPower: 72
+  powerUpdateIntervalMinutes: 15 # Minutes between scheduled power updates. Gain and decay still follow hoursToReachMaxPower/hoursToReachMinPower.
+  disablePowerGainOverTime: false # When true, online players no longer gain power on each power update.
+  disablePowerDecayOverTime: false # When true, offline players no longer lose power on each power update.
   powerLostOnDeath: 1
   powerGainedOnKill: 1
 wilderness:
@@ -76,6 +79,7 @@ factions:
   vassalPowerContributionMultiplier: 0.75
   nonMembersCanInteractWithDoors: false
   nonMembersCanInteractWithEntities: false # When true, non-members can right-click entities (minecarts, boats, item frames, animals, armour stands) in faction territory. Villager trading is governed separately by the protectVillagerTrade faction flag.
+  allowHopperTransfersBetweenSameOwnerLocks: false # When true, hoppers may move items between two locked blocks that are locked by the same player (e.g. a player's locked hopper pulling from their own locked chest). Transfers involving an unlocked block, or locks of different players, stay blocked.
   maxClaimRadius: 3
   limitLand: true
   contiguousClaims: false
@@ -91,6 +95,8 @@ factions:
   vassalizeDeclarationRequiresApproval: false
   factionlessFactionName: Factionless
   factionHomeTeleportDelay: 5
+  factionHomeTeleportCooldown: 0 # Seconds a player must wait between /faction home teleports. 0 disables the cooldown.
+  respawnAtFactionHome: false # When true, players without a bed or respawn anchor respawn at their faction home, if it is set.
   maxMembers: -1
   claimFillMaxChunks: 100
   claimFillMaxDepth: 50
@@ -105,6 +111,9 @@ factions:
       allowFriendlyFire: false
       acceptBonusPower: true
       protectVillagerTrade: true
+powerScoreboard:
+  enabled: false  # Show each player's power and their faction's power and max power on a sidebar scoreboard. Players whose scoreboard another plugin has set are left alone.
+  updateIntervalSeconds: 5
 chat:
   enableDefaultChatFormatting: true
   faction:

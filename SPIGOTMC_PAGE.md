@@ -249,6 +249,21 @@ language: en-US
 
 View server statistics and usage on [bStats](https://bstats.org/plugin/bukkit/Medieval%20Factions/8929)
 
+### Usage reporting
+
+Usage reporting is on by default: when the plugin is enabled, and each time one of its commands is used, it sends its name, version and the command's name to the author's usage-tracking service (trace, at https://trace.danielstephenson.dev), so it is known which plugins are actually in use. Nothing about players, worlds or IPs is sent, and nothing typed after a command. Each event also carries a random server ID (the `server-id` line in `plugins/trace/config.yml`) so servers can be counted rather than events; it identifies no person, account or IP address. The plugin says on every startup whether reporting is on.
+
+To turn it off:
+- `usage-reporting.enabled: false` in this plugin's `config.yml`
+- for every plugin on the server that reports to trace: `enabled: false` in `plugins/trace/config.yml`
+- the environment variable `TRACE_USAGE_REPORTING=off` or `DO_NOT_TRACK=1`
+
+Details: https://danielstephenson.dev/usage-reporting
+
+### Update check
+
+Once per startup the plugin asks GitHub for the latest Medieval Factions release (one unauthenticated request to `api.github.com`) and, if a newer one exists, logs one line and tells players with `mf.updatenotice` on join. Nothing about the server or its players is sent and nothing is downloaded. Turn it off with `update-check.enabled: false` in `config.yml`, or with `TRACE_USAGE_REPORTING=off` / `DO_NOT_TRACK=1`.
+
 ---
 
 ## 👥 Credits
