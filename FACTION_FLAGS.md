@@ -18,7 +18,9 @@ Faction flags are settings that can be configured per-faction to customize how t
   - [acceptBonusPower](#acceptbonuspower)
   - [enableMobProtection](#enablemobprotection)
   - [protectVillagerTrade](#protectvillagertrade)
+  - [allowMobGriefing](#allowmobgriefing)
 - [Default Values](#default-values)
+- [Forced Flags](#forced-flags)
 - [Use Cases](#use-cases)
 
 ## Managing Faction Flags
@@ -296,6 +298,32 @@ To set a flag value for your faction:
 
 ---
 
+### allowMobGriefing
+**Type:** Boolean (true/false)  
+**Default:** `true` (configurable in config.yml)  
+**Description:** Controls whether mobs can change blocks in your faction territory.
+
+**Impact:**
+- When `true`: Mobs change blocks in your territory as they do anywhere else
+- When `false`: Mobs cannot change blocks in your territory. This covers endermen picking up blocks, zombies breaking doors, ravagers and other mobs trampling crops and farmland, withers breaking blocks, silverfish entering stone and sheep eating grass
+
+**Use Cases:**
+- Set to `false` to stop endermen carrying off builds and zombies breaking down doors
+- Set to `false` to protect farms from trampling mobs
+
+**Command:**
+```
+/f flag set allowMobGriefing false
+/f flag set allowMobGriefing true
+```
+
+**Important Notes:**
+- Explosions (creepers, ghast fireballs, TNT) are not covered by this flag
+- Players, falling blocks (sand, gravel) and other non-mob entities are not affected
+- Factions created before this flag existed use the `factions.defaults.flags.allowMobGriefing` value (`true` unless changed)
+
+---
+
 ## Default Values
 
 Default values for faction flags are set in the server's `config.yml` file under `factions.defaults.flags`. When a new faction is created, it inherits these default values.
@@ -314,7 +342,23 @@ factions:
       acceptBonusPower: true
       enableMobProtection: false
       protectVillagerTrade: true
+      allowMobGriefing: true
 ```
+
+## Forced Flags
+
+A server can fix a flag's value for every faction by listing it under `factions.forcedFlags` in `config.yml`. A forced flag always reads as its value under `factions.defaults.flags`, and `/f flag set` refuses to change it, even for holders of `mf.force.flag`. For example, to keep friendly fire on in every faction:
+
+```yaml
+factions:
+  defaults:
+    flags:
+      allowFriendlyFire: true
+  forcedFlags:
+  - allowFriendlyFire
+```
+
+The value each faction had stored is kept, so removing a flag from the list gives every faction its own setting back. `color` cannot be forced. The list is read at startup.
 
 ## Use Cases
 

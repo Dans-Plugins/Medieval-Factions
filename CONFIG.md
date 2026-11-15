@@ -513,6 +513,27 @@ These settings define the default values for faction flags when a new faction is
 **Description:** Default setting for whether hostile mobs are protected from damage by non-members in faction territory. While the flag is available for factions to set, this config option is not currently implemented in the default config file.  
 **Note:** Factions can still set this flag individually using `/f flag set enableMobProtection [true/false]`.
 
+### `factions.defaults.flags.allowMobGriefing`
+**Type:** Boolean  
+**Default:** `true`  
+**Description:** Default setting for whether mobs can change blocks in faction territory (endermen taking blocks, zombies breaking doors, ravagers and other mobs trampling crops and farmland, withers breaking blocks, sheep eating grass). Existing factions that never set the flag use this value. See `FACTION_FLAGS.md`.
+
+### `factions.forcedFlags`
+**Type:** List of flag names  
+**Default:** `[]`  
+**Description:** Flags that are fixed for every faction. A forced flag always reads as its value under `factions.defaults.flags`, whatever a faction set before, and `/faction flag set` refuses to change it, including for holders of `mf.force.flag`. The value each faction stored is left in place, so taking a flag off the list restores every faction's own setting. Names are case-insensitive; unknown names are ignored. `color` cannot be forced. Read at startup.  
+**Example:**
+```yaml
+factions:
+  defaults:
+    flags:
+      allowFriendlyFire: true
+      neutral: false
+  forcedFlags:
+  - allowFriendlyFire
+  - neutral
+```
+
 ## Chat Settings
 
 ### `chat.enableDefaultChatFormatting`

@@ -106,6 +106,8 @@ factions:
       allowFriendlyFire: false
       acceptBonusPower: true
       protectVillagerTrade: true
+      allowMobGriefing: true
+  forcedFlags: [] # Flags that always use the value under defaults.flags for every faction and cannot be changed with /faction flag set. Example: ["allowFriendlyFire", "neutral"]. 'color' cannot be forced.
 chat:
   enableDefaultChatFormatting: true
   faction:
