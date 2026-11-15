@@ -15,6 +15,9 @@ players:
   minPower: -5
   hoursToReachMaxPower: 12
   hoursToReachMinPower: 72
+  powerUpdateIntervalMinutes: 15 # Minutes between scheduled power updates. Gain and decay still follow hoursToReachMaxPower/hoursToReachMinPower.
+  disablePowerGainOverTime: false # When true, online players no longer gain power on each power update.
+  disablePowerDecayOverTime: false # When true, offline players no longer lose power on each power update.
   powerLostOnDeath: 1
   powerGainedOnKill: 1
 wilderness:
@@ -88,10 +91,13 @@ factions:
   titleTerritoryFadeOutLength: 5
   allowNeutrality: false
   warDeclarationRequiresApproval: false
+  truceDurationMinutes: 0  # After two factions make peace, neither can declare war on the other for this many minutes. 0 turns truces off.
   allyDeclarationRequiresApproval: false
   vassalizeDeclarationRequiresApproval: false
   factionlessFactionName: Factionless
   factionHomeTeleportDelay: 5
+  factionHomeTeleportCooldown: 0 # Seconds a player must wait between /faction home teleports. 0 disables the cooldown.
+  respawnAtFactionHome: false # When true, players without a bed or respawn anchor respawn at their faction home, if it is set.
   maxMembers: -1
   claimFillMaxChunks: 100
   claimFillMaxDepth: 50
