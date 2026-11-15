@@ -45,6 +45,7 @@ commands:
       /f role set [player] [role] - Sets a player to a given role
       /f role rename [name] (new name) - Renames a role
       /f role setdefault [name] - Sets a role to be the default role
+      /f role setprefix [role] (prefix) - Sets or clears a role's prefix
       /f list - Lists factions
       /f claim (radius) - Claims land
       /f unclaim (radius) - Unclaims land
@@ -211,6 +212,9 @@ permissions:
     default: true
   mf.role.move:
     description: Allows moving roles up or down the role list
+    default: true
+  mf.role.setprefix:
+    description: Allows setting the prefix shown for a role's members (/f role setprefix)
     default: true
   mf.list:
     description: Allows listing factions
@@ -405,7 +409,7 @@ permissions:
     description: Allows forcefully adding a member to a faction.
     default: op
   mf.force.role:
-    description: Allows managing another faction's roles (/f role <faction> <view|list|setpermission|create|delete|rename|set|setdefault> ...), bypassing that faction's role permissions
+    description: Allows managing another faction's roles (/f role <faction> <view|list|setpermission|create|delete|rename|set|setdefault|setprefix> ...), bypassing that faction's role permissions
     default: op
   mf.force.*:
     description: Allows all force commands

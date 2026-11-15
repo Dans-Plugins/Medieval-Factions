@@ -40,7 +40,16 @@ class AsyncPlayerChatListener(private val plugin: MedievalFactions) : Listener {
                 }
             )
         } else if (isDefaultChatFormattingEnabled) {
-            event.format = "${ChatColor.WHITE}[${ChatColor.of(faction.flags[plugin.flags.color])}${faction.prefix ?: faction.name}${ChatColor.WHITE}] %s: %s"
+            event.format = "${ChatColor.WHITE}[${ChatColor.of(faction.flags[plugin.flags.color])}${faction.prefix ?: faction.name}${ChatColor.WHITE}] " +
+                "${rolePrefixFormat(faction.getRole(mfPlayer.id)?.displayPrefix)}%s: %s"
         }
     }
+
+    /**
+     * The sender's role prefix (#1525) as it goes into the public chat format, followed by a colour reset and a space, or
+     * nothing when the role has no prefix, which leaves the format exactly as before. A `%` in the prefix is escaped, as
+     * the format is a [String.format] pattern.
+     */
+    internal fun rolePrefixFormat(displayPrefix: String?): String =
+        if (displayPrefix.isNullOrEmpty()) "" else "${displayPrefix.replace("%", "%%")}${ChatColor.WHITE} "
 }

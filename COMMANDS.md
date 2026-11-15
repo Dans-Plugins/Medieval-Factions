@@ -320,6 +320,11 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Description:** Moves a role one place up or down your faction's role list, for example to list a new role above an older one. The order only changes how roles are listed; it does not grant or remove anything. Moving a role needs the same faction permission as renaming it: `MODIFY_ROLE` for that role.  
 **Usage:** `/f role move Duke up`
 
+### `/faction role setprefix [role] (prefix)` or `/f role setprefix [role] (prefix)`
+**Permission:** `mf.role.setprefix` (default: true)  
+**Description:** Sets the prefix shown for a role's members, such as `[Knight]`, or clears it when no prefix is given. `&` colour codes are allowed, and a prefix can be up to 32 characters long, colour codes included. Roles have no prefix until one is set, and a role without one changes nothing in chat. Once set, the prefix appears in front of the member's name in faction, ally and vassal chat and, when `chat.enableDefaultChatFormatting` is on, in public chat (see [Chat Settings](CONFIG.md#chat-settings)). It is also available to other plugins as the PlaceholderAPI placeholder `%medievalfactions_faction_role_prefix%` (alias `%medievalfactions_faction_rank_prefix%`), which is empty for a role without a prefix or a player without a faction. Setting a prefix needs the same faction permission as renaming the role: `MODIFY_ROLE` for that role. `/f role view` shows the prefix and, to those who may set it, a `[Set prefix]` button that fills in this command.  
+**Usage:** `/f role setprefix Knight &6[Knight]` sets it; `/f role setprefix Knight` clears it. Quote a role name with spaces: `/f role setprefix "High Priest" [HP]`.
+
 ### `/faction role setdefault [name]` or `/f role setdefault [name]`
 **Permission:** `mf.role.setdefault` (default: true)  
 **Description:** Sets a role as the default role for new members.  
