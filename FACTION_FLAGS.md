@@ -46,6 +46,18 @@ To set a flag value for your faction:
 /f flag set neutral false
 ```
 
+A boolean flag also accepts the words for true and false in the server's language (`language` in `config.yml`): `wahr`/`falsch` in German, `vrai`/`faux` in French, `verdadeiro`/`falso` in Brazilian Portuguese, ignoring case. `true` and `false` are always accepted, whatever the language. `/f flag list` and the confirmation after setting a flag show boolean values in the server's language, and tab completion suggests them. The words come from the `FlagValueTrue` and `FlagValueFalse` keys in the language file.
+
+```mermaid
+flowchart TD
+    A["/f flag set &lt;boolean flag&gt; &lt;value&gt;"] --> B{"value is exactly<br/>true or false?"}
+    B -- yes --> T[Stored as that boolean]
+    B -- no --> C{"matches FlagValueTrue or FlagValueFalse,<br/>ignoring case and spaces?<br/>(e.g. wahr / falsch)"}
+    C -- yes --> T
+    C -- no --> R["Refused: FactionFlagBooleanCoercionFailed"]
+    T --> D["Confirmation and /f flag list show the value<br/>in the server language"]
+```
+
 ### Permissions
 - **View flags:** `mf.flag.list` (default: true)
 - **Set flags:** `mf.flag.set` (default: true)

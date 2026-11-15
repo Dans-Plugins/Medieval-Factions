@@ -92,6 +92,8 @@ factions:
   vassalizeDeclarationRequiresApproval: false
   factionlessFactionName: Factionless
   factionHomeTeleportDelay: 5
+  factionHomeTeleportCooldown: 0 # Seconds a player must wait between /faction home teleports. 0 disables the cooldown.
+  respawnAtFactionHome: false # When true, players without a bed or respawn anchor respawn at their faction home, if it is set.
   maxMembers: -1
   claimFillMaxChunks: 100
   claimFillMaxDepth: 50
@@ -108,6 +110,9 @@ factions:
       protectVillagerTrade: true
       allowMobGriefing: true
   forcedFlags: [] # Flags that always use the value under defaults.flags for every faction and cannot be changed with /faction flag set. Example: ["allowFriendlyFire", "neutral"]. 'color' cannot be forced.
+powerScoreboard:
+  enabled: false  # Show each player's power and their faction's power and max power on a sidebar scoreboard. Players whose scoreboard another plugin has set are left alone.
+  updateIntervalSeconds: 5
 chat:
   enableDefaultChatFormatting: true
   faction:
