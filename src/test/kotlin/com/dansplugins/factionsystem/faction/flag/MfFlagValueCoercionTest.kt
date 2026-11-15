@@ -55,9 +55,10 @@ class MfFlagValueCoercionTest {
     @Test
     fun `coerceBoolean reads the words from the plugin's language`() {
         val coerce = coerceBoolean(germanPlugin())
-        assertEquals(MfFlagValueCoercionSuccess(true), coerce("wahr"))
-        assertEquals(MfFlagValueCoercionSuccess(false), coerce("falsch"))
-        assertEquals(MfFlagValueCoercionSuccess(true), coerce("true"))
+        // MfFlagValueCoercionSuccess is not a data class, so compare the coerced value, not the wrapper.
+        assertEquals(true, assertIs<MfFlagValueCoercionSuccess<*>>(coerce("wahr")).value)
+        assertEquals(false, assertIs<MfFlagValueCoercionSuccess<*>>(coerce("falsch")).value)
+        assertEquals(true, assertIs<MfFlagValueCoercionSuccess<*>>(coerce("true")).value)
         val failure = coerce("ja")
         assertIs<MfFlagValueCoercionFailure>(failure)
         assertEquals("FactionFlagBooleanCoercionFailed", failure.failureMessage)
