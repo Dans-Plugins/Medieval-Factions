@@ -93,6 +93,7 @@ class MfFactionMakePeaceCommand(private val plugin: MedievalFactions) : CommandE
                         }
                     )
                 } else {
+                    plugin.truceService.startTruce(faction.id, target.id)
                     sender.sendMessage("$GREEN${plugin.language["CommandFactionMakePeaceNowAtPeace"]}")
                     plugin.server.scheduler.runTask(
                         plugin,
