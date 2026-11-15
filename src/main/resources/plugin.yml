@@ -23,6 +23,7 @@ softdepend:
 - rpk-selection-lib-bukkit
 - Mailboxes
 - Multiverse-Core
+- Slimefun
 description: Allows players to organise themselves into feudal, diplomatic, lawful groups akin to nations.
 commands:
   faction:
