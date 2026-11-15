@@ -124,7 +124,7 @@ To build directly on Medieval Factions, the [expansions above](#expansions) are 
 For development purposes, a Docker-based test server is available with integrated plugin hot-reloading capabilities using ServerUtils (a modern Plugman alternative).
 
 #### Setup
-1. Copy `sample.env` to `.env` and configure as needed
+1. Copy `sample.env` to `.env` and configure as needed. Optional plugins (Currencies, Dynmap, BlueMap, PlaceholderAPI, ServerUtils, Slimefun) are switched on with their `*_ENABLED` variables; Slimefun is off by default.
 2. Build the plugin: `./gradlew build`
 3. Start the test server: `./up.sh`
 
