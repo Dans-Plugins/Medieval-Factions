@@ -299,6 +299,15 @@ factions:
     - TORCH
 ```
 
+**Tags:** All three wartime lists also accept Minecraft block and item tags, written with a leading `#` and quoted in YAML, for example `'#minecraft:signs'` or `'#minecraft:doors'` (`'#signs'` is read as `#minecraft:signs`). A tag matches every material in it, including tags added by data packs, and an unknown tag matches nothing. Material names and tags can be mixed in one list:
+```yaml
+factions:
+  wartimeInteractableBlocks:
+    - '#minecraft:doors'
+    - '#minecraft:buttons'
+    - STONE_BUTTON
+```
+
 ### `factions.wartimeBreakableBlocks`
 **Type:** List of Strings  
 **Default:** `[]` (empty)  
