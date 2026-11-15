@@ -38,6 +38,11 @@ RUN mkdir -p /testmcserver-build/MedievalFactions/build && cp -r /tmp/mf-build/b
 COPY ./.testcontainer /resources
 RUN chmod +x /resources/post-create.sh
 
+# Slimefun (GPL-3.0) is downloaded rather than committed: dev build 1160, which supports 1.21.x.
+# The checksum pins the exact file; the jar is only copied into the server when SLIMEFUN_ENABLED=true.
+RUN wget -O /resources/jars/Slimefun-dev-1160.jar https://blob.build/dl/Slimefun4/Dev/1160 \
+    && echo "8aa3ca4bcda767f04713511f2d2fb2be3be0a5a08a8f72543f1fbc4cbd773caa  /resources/jars/Slimefun-dev-1160.jar" | sha256sum -c -
+
 # Run server
 WORKDIR /testmcserver
 EXPOSE 25565
