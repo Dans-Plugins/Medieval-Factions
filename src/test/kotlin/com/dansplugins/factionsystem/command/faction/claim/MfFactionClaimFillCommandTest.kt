@@ -15,7 +15,9 @@ import com.dansplugins.factionsystem.lang.Language
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerService
+import com.dansplugins.factionsystem.relationship.MfFactionRelationship
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
+import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType
 import com.dansplugins.factionsystem.service.Services
 import dev.forkhandles.result4k.Success
 import org.bukkit.ChatColor
@@ -202,6 +204,46 @@ class MfFactionClaimFillCommandTest {
         verify(claimService, never()).save(first)
         verify(claimService, never()).save(second)
         verify(player).sendMessage("${ChatColor.RED}Protected region")
+    }
+
+    @Test
+    fun testOnCommand_conquersAnEnemyChunkWhenTheEnemysPowerEqualsTheClaimsItWouldKeep() {
+        // prepare — an enemy at war with 0 power holds a single chunk, surrounded by the sender's faction. Taking it
+        // would leave the enemy 0 claims, and 0 power is no more than that, so the chunk can be conquered: the same
+        // `<=` rule /f claim has used since #1785 (#1730). /f claim fill used `<`, which refused it.
+        val player = fixture.player
+        val command = fixture.command
+        val enemyId = MfFactionId.generate()
+        val enemy = mock(MfFaction::class.java)
+        `when`(enemy.id).thenReturn(enemyId)
+        `when`(enemy.power).thenReturn(0.0)
+        `when`(factionService.getFaction(enemyId)).thenReturn(enemy)
+        stubMembershipOf(player)
+        `when`(faction.power).thenReturn(100.0)
+        stubSenderChunk(player, 0, 0)
+        stubOwnClaim(-1, 0)
+        stubOwnClaim(1, 0)
+        stubOwnClaim(0, -1)
+        stubOwnClaim(0, 1)
+        val enemyClaim = MfClaimedChunk(worldId, 0, 0, enemyId)
+        `when`(claimService.getClaim(worldId, 0, 0)).thenReturn(enemyClaim)
+        `when`(claimService.getClaim(MfChunkPosition(worldId, 0, 0))).thenReturn(enemyClaim)
+        `when`(claimService.getClaims(enemyId)).thenReturn(listOf(enemyClaim))
+        val relationshipService = plugin.services.factionRelationshipService
+        `when`(relationshipService.getRelationships(factionId, enemyId))
+            .thenReturn(listOf(MfFactionRelationship(factionId = factionId, targetId = enemyId, type = MfFactionRelationshipType.AT_WAR)))
+        val conquered = MfClaimedChunk(worldId, 0, 0, factionId)
+        `when`(claimService.save(conquered)).thenReturn(Success(conquered))
+        `when`(language["CommandFactionClaimFillSuccess", "1"]).thenReturn("Claimed 1 chunk")
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf())
+        runPendingTasks()
+
+        // verify
+        assertTrue(result)
+        verify(claimService).save(conquered)
+        verify(player).sendMessage("${ChatColor.GREEN}Claimed 1 chunk")
     }
 
     // Helper functions
