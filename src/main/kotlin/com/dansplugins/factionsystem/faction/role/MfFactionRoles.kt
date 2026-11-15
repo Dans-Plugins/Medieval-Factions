@@ -171,4 +171,20 @@ data class MfFactionRoles(
 
     @JvmName("getRoleByName")
     fun getRole(name: String) = getRole(MfFactionRoleId(name)) ?: roles.singleOrNull { it.name.equals(name, ignoreCase = true) }
+
+    /**
+     * Returns these roles with the role [roleId] moved [offset] places along the list (a negative offset moves it
+     * towards the top), or null when there is no such role or the move would take it past either end of the list.
+     * Only the order changes: the roles themselves, their permissions and the default role are kept.
+     */
+    @JvmName("moveRole")
+    fun move(roleId: MfFactionRoleId, offset: Int): MfFactionRoles? {
+        val index = roles.indexOfFirst { it.id.value == roleId.value }
+        if (index < 0) return null
+        val newIndex = index + offset
+        if (newIndex == index || newIndex !in roles.indices) return null
+        val reordered = roles.toMutableList()
+        reordered.add(newIndex, reordered.removeAt(index))
+        return copy(roles = reordered)
+    }
 }
