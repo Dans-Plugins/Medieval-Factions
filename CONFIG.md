@@ -212,8 +212,36 @@ The power system determines how much land a faction can claim and player impact 
 ### `players.hoursToReachMinPower`
 **Type:** Integer  
 **Default:** `72`  
-**Description:** Number of hours required to reach minimum power from initial power through deaths.  
+**Description:** Number of hours an offline player takes to decay from the power they had at logout down to `players.minPower`. A faction's power is the sum of its members' power, so a faction whose members are all offline loses some power at every power update.  
 **Range:** Any positive integer
+
+### `players.powerUpdateIntervalMinutes`
+**Type:** Integer  
+**Default:** `15`  
+**Description:** Minutes between scheduled power updates, the moment online players gain power and offline players lose it. Changing the interval changes how often power moves, not how fast: each update advances the gain and decay curves by the interval, so `hoursToReachMaxPower` and `hoursToReachMinPower` still hold. Takes effect after a server restart. A value of 0 or below falls back to 15.  
+**Range:** Any positive integer
+
+### `players.disablePowerGainOverTime`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, online players no longer gain power at each power update. Power still changes through deaths, kills (`powerLostOnDeath`, `powerGainedOnKill`) and `/power set`.  
+**Values:** `true` or `false`
+
+### `players.disablePowerDecayOverTime`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, offline players no longer lose power at each power update, so a faction whose members are all offline keeps its power.  
+**Values:** `true` or `false`
+
+**Fixed power.** To give every player a power value that only changes when an operator or another plugin sets it (for example a rank plugin that runs `power set <player> <amount>` from the console on each promotion), combine:
+
+```yaml
+players:
+  disablePowerGainOverTime: true
+  disablePowerDecayOverTime: true
+  powerLostOnDeath: 0
+  powerGainedOnKill: 0
+```
 
 ### `players.powerLostOnDeath`
 **Type:** Integer  
@@ -329,6 +357,15 @@ factions:
   wartimePlaceableBlocks:
     - SCAFFOLDING
     - TORCH
+```
+
+**Tags:** All three wartime lists also accept Minecraft block and item tags, written with a leading `#` and quoted in YAML, for example `'#minecraft:signs'` or `'#minecraft:doors'` (`'#signs'` is read as `#minecraft:signs`). A tag matches every material in it, including tags added by data packs, and an unknown tag matches nothing. Material names and tags can be mixed in one list:
+```yaml
+factions:
+  wartimeInteractableBlocks:
+    - '#minecraft:doors'
+    - '#minecraft:buttons'
+    - STONE_BUTTON
 ```
 
 ### `factions.wartimeBreakableBlocks`
@@ -468,7 +505,19 @@ factions:
 **Type:** Integer  
 **Default:** `5`  
 **Description:** Delay (in seconds) before teleporting to faction home.  
-**Note:** Movement cancels the teleport.
+**Note:** Taking damage, teleporting by other means or logging out cancels the teleport. Walking does not.
+
+### `factions.factionHomeTeleportCooldown`
+**Type:** Integer  
+**Default:** `0`  
+**Description:** Seconds a player must wait after a completed `/faction home` teleport before using it again. `0` disables the cooldown. The cooldown is kept in memory, so a server restart clears it; logging out and back in does not.  
+**Range:** Any non-negative integer
+
+### `factions.respawnAtFactionHome`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, a player who dies respawns at their faction's home instead of the world spawn. Leaving the End is not affected. A bed or respawn anchor still takes priority, and players whose faction has no home (or whose home is in an unloaded world) respawn as usual.  
+**Values:** `true` or `false`
 
 ### `factions.maxMembers`
 **Type:** Integer  
