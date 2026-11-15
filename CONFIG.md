@@ -491,6 +491,10 @@ factions:
 **Default:** `0`  
 **Description:** Length of the truce, in minutes, that starts when two factions make peace (both sides have run `/faction makepeace`). During the truce neither faction can declare war on the other; `/faction declarewar` tells the player how many minutes are left. `0` or less turns truces off, which is the default, so existing servers see no change. Truce end times are kept in `truces.yml` in the plugin's data folder so that a restart does not end them. The truce is checked by `/faction declarewar`, by `/faction approve` for a pending war declaration (the request is kept, so it can be approved once the truce ends), and by `/faction invoke` when the ally being called in is under truce with the enemy. Operator commands that set relationships directly are not blocked.
 
+![Chat: Founder declares war on Eastholm; Founder and Rival each run /f makepeace and the factions are at peace; Founder's second /f declarewar Eastholm is refused: You are in a truce with Eastholm and cannot declare war on them for another 30 minute(s)](docs/images/relations/truce.png)
+
+*`truceDurationMinutes: 30`. Two factions go to war, both sides make peace, and a new declaration is refused with the minutes left. Each command is prefixed with the name of the bot that typed it. Captured with scripted bot clients on a throwaway Spigot 1.21.1 test server; the server's real chat output, drawn as Minecraft chat.*
+
 ### `factions.allyDeclarationRequiresApproval`
 **Type:** Boolean  
 **Default:** `false`  
