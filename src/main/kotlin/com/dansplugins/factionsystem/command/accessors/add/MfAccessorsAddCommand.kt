@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.command.accessors.add
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfBlockPosition
+import com.dansplugins.factionsystem.command.accessors.MfEntityAccessors
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.ADDING_ACCESSOR
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
@@ -22,9 +23,12 @@ import org.bukkit.conversations.ConversationFactory
 import org.bukkit.conversations.Prompt
 import org.bukkit.conversations.ValidatingPrompt
 import org.bukkit.entity.Player
+import java.util.UUID
 import java.util.logging.Level.SEVERE
 
 class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
+
+    private val entityAccessors = MfEntityAccessors(plugin)
 
     private val conversationFactory = ConversationFactory(plugin)
         .withModality(true)
@@ -56,6 +60,11 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
         override fun acceptValidatedInput(context: ConversationContext, input: String): Prompt? {
             val sender = context.forWhom as Player
             val player = plugin.server.getOfflinePlayer(input)
+            val entityId = context.getSessionData("entity") as? String
+            if (entityId != null) {
+                entityAccessors.add(sender, UUID.fromString(entityId), player)
+                return END_OF_CONVERSATION
+            }
             val block = sender.world.getBlockAt(
                 context.getSessionData("x") as Int,
                 context.getSessionData("y") as Int,
@@ -88,6 +97,22 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
         }
         if (sender !is Player) {
             sender.sendMessage("$RED${plugin.language["CommandAccessorsAddNotAPlayer"]}")
+            return true
+        }
+        if (args.firstOrNull()?.lowercase() == "entity") {
+            val entityId = entityAccessors.parseEntityId(sender, args.drop(1), "CommandAccessorsAddUsage") ?: return true
+            if (args.size < 3) {
+                val conversation = conversationFactory.buildConversation(sender)
+                conversation.context.setSessionData("entity", entityId.toString())
+                conversation.begin()
+                return true
+            }
+            val player = plugin.server.getOfflinePlayer(args[2])
+            if (!player.isOnline && !player.hasPlayedBefore()) {
+                sender.sendMessage("$RED${plugin.language["CommandAccessorsAddInvalidPlayer"]}")
+                return true
+            }
+            entityAccessors.add(sender, entityId, player)
             return true
         }
         if (args.size < 3) {

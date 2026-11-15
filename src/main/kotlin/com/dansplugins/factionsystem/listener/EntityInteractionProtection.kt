@@ -1,10 +1,13 @@
 package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.locks.MfLockedEntity
 import com.dansplugins.factionsystem.player.MfPlayer
+import com.dansplugins.factionsystem.player.MfPlayerId
 import org.bukkit.ChatColor.RED
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
+import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
@@ -21,7 +24,10 @@ import java.util.concurrent.ConcurrentHashMap
  * should only be told once, so notifications are de-duplicated per player and clicked entity over a
  * short window.
  */
-class EntityInteractionProtection(private val plugin: MedievalFactions) {
+class EntityInteractionProtection(
+    private val plugin: MedievalFactions,
+    private val entityLockInteraction: EntityLockInteraction = EntityLockInteraction(plugin)
+) {
 
     private val lastNotifications = ConcurrentHashMap<UUID, Notification>()
 
@@ -37,6 +43,9 @@ class EntityInteractionProtection(private val plugin: MedievalFactions) {
     fun protect(event: PlayerInteractEntityEvent, mfPlayer: MfPlayer): Boolean {
         val player = event.player
         val clickedEntity = event.rightClicked
+        if (MfLockedEntity.isLockable(clickedEntity)) {
+            protectLockedEntity(event, mfPlayer)?.let { return it }
+        }
         val claimService = plugin.services.claimService
         val claim = claimService.getClaim(clickedEntity.location.chunk)
         if (claim == null) {
@@ -65,6 +74,44 @@ class EntityInteractionProtection(private val plugin: MedievalFactions) {
         event.isCancelled = true
         notify(player, clickedEntity, "$RED${plugin.language["CannotInteractWithEntityInFactionTerritory", claimFaction.name]}")
         return true
+    }
+
+    /**
+     * Applies entity locks (#1679) to a right-click on an armour stand or item frame. Returns whether
+     * the event was cancelled, or null when no lock is involved and territory protection applies as
+     * usual. As with block locks, a player with access is let through without the territory check.
+     */
+    private fun protectLockedEntity(event: PlayerInteractEntityEvent, mfPlayer: MfPlayer): Boolean? {
+        val player = event.player
+        val clickedEntity = event.rightClicked
+        val status = plugin.services.interactionService.getInteractionStatus(mfPlayer.id)
+        if (status != null && status in EntityLockInteraction.LOCK_MODES) {
+            event.isCancelled = true
+            // One click raises an "interact at" event and then a plain one; act on the first only.
+            if (event is PlayerInteractAtEntityEvent) entityLockInteraction.handle(status, player, clickedEntity)
+            return true
+        }
+        val lockedEntity = plugin.services.lockService.getLockedEntity(clickedEntity.uniqueId) ?: return null
+        if (lockedEntity.hasAccess(mfPlayer.id)) return false
+        if ((mfPlayer.isBypassEnabled && player.hasPermission("mf.bypass")) || EntityLockInteraction.hasLockBypassPermission(plugin, mfPlayer.id)) {
+            notifyNamingOwner(player, clickedEntity, "LockProtectionBypassed", lockedEntity.playerId)
+            return false
+        }
+        event.isCancelled = true
+        notifyNamingOwner(player, clickedEntity, "EntityLocked", lockedEntity.playerId)
+        return true
+    }
+
+    /** Like [notify], with the lock owner's name, which is looked up off the main thread as for blocks. */
+    private fun notifyNamingOwner(player: Player, clickedEntity: Entity, key: String, ownerId: MfPlayerId) {
+        if (!shouldNotify(player.uniqueId, clickedEntity.uniqueId)) return
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val ownerName = plugin.services.playerService.getPlayer(ownerId)?.toBukkit()?.name ?: plugin.language["UnknownPlayer"]
+                player.sendMessage("$RED${plugin.language[key, ownerName]}")
+            }
+        )
     }
 
     /**

@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.command.accessors.remove
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfBlockPosition
+import com.dansplugins.factionsystem.command.accessors.MfEntityAccessors
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.REMOVING_ACCESSOR
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
@@ -26,6 +27,8 @@ import java.util.*
 import java.util.logging.Level
 
 class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
+
+    private val entityAccessors = MfEntityAccessors(plugin)
 
     private val conversationFactory = ConversationFactory(plugin)
         .withModality(true)
@@ -65,6 +68,11 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
             } catch (exception: IllegalArgumentException) {
                 plugin.server.getOfflinePlayer(input)
             }
+            val entityId = context.getSessionData("entity") as? String
+            if (entityId != null) {
+                entityAccessors.remove(sender, UUID.fromString(entityId), player)
+                return END_OF_CONVERSATION
+            }
             val block = sender.world.getBlockAt(
                 context.getSessionData("x") as Int,
                 context.getSessionData("y") as Int,
@@ -97,6 +105,26 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
         }
         if (sender !is Player) {
             sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveNotAPlayer"]}")
+            return true
+        }
+        if (args.firstOrNull()?.lowercase() == "entity") {
+            val entityId = entityAccessors.parseEntityId(sender, args.drop(1), "CommandAccessorsRemoveUsage") ?: return true
+            if (args.size < 3) {
+                val conversation = conversationFactory.buildConversation(sender)
+                conversation.context.setSessionData("entity", entityId.toString())
+                conversation.begin()
+                return true
+            }
+            val player = try {
+                plugin.server.getOfflinePlayer(UUID.fromString(args[2]))
+            } catch (exception: IllegalArgumentException) {
+                plugin.server.getOfflinePlayer(args[2])
+            }
+            if (!player.isOnline && !player.hasPlayedBefore()) {
+                sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveInvalidPlayer"]}")
+                return true
+            }
+            entityAccessors.remove(sender, entityId, player)
             return true
         }
         if (args.size < 3) {
