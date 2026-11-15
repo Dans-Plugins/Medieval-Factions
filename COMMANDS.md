@@ -418,13 +418,21 @@ Laws are numbered from 1 in the order `/f law list` shows them. Where a command 
 **Permission:** `mf.accessors.add` or `mf.grantaccess` (default: true)  
 **Aliases:** `/accessoren add`, `/accesseurs add`  
 **Description:** Right-click on a locked block, then click on a player to grant them access.  
-**Usage:** `/accessors add`
+**Usage:**
+- `/accessors add` - Enables add mode
+- `/accessors add [x] [y] [z] [player]` - Grants a player access to the locked block at those coordinates
+- `/accessors add [x] [y] [z] role [role]` - Grants access to every member of the lock owner's faction who holds that role (by name or id). Only roles of the lock owner's own faction can be added, and only the lock owner or a player on the block's access list can add one. The **Add role** button under `/accessors list` fills in this command.
+
+**Notes:** A role accessor follows the role: a member given the role gets access, a member whose role changes loses it, and the role grants nothing if it is deleted or the lock owner leaves the faction (which also removes the owner's locks). Holding a listed role does not let a player manage the access list; that stays with the owner and the players listed by name.
 
 ### `/accessors remove`
 **Permission:** `mf.accessors.remove` or `mf.revokeaccess` (default: true)  
 **Aliases:** `/accessoren remove`, `/accesseurs remove`  
 **Description:** Right-click on a locked block, then click on a player to revoke their access.  
-**Usage:** `/accessors remove`
+**Usage:**
+- `/accessors remove` - Enables remove mode
+- `/accessors remove [x] [y] [z] [player]` - Revokes a player's access to the locked block at those coordinates
+- `/accessors remove [x] [y] [z] role [role]` - Takes a role off the block's access list. A role that has since been deleted can be removed by its id, which is what the ✖ button next to it in `/accessors list` does.
 
 ## Duels
 

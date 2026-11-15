@@ -693,8 +693,28 @@ If you make a mistake:
 2. Right-click the locked block
 3. Right-click the player to revoke access from
 
+**Grant access to a faction role:**
+1. View the block's accessors: `/accessors list`, then right-click the locked block
+2. Click **Add role** and type the role's name, or run `/accessors add [x] [y] [z] role [role]` directly
+3. To take it away again, click the ✖ next to the role in the list, or run `/accessors remove [x] [y] [z] role [role]`
+
+Only roles of the lock owner's own faction can be added. Access follows the role, so a new Officer can open the Officers' chest straight away, and a demoted one no longer can.
+
+```mermaid
+flowchart TD
+    A[Player right-clicks a locked block] --> B{Locked it?}
+    B -- yes --> OK[Opens]
+    B -- no --> C{On the access list by name?}
+    C -- yes --> OK
+    C -- no --> D{"In the lock owner's faction, holding a role on the block's role list?"}
+    D -- yes --> OK
+    D -- no --> E{"mf.bypass with /f bypass on, or a BYPASS_LOCKS role?"}
+    E -- yes --> W[Opens, with a bypass warning]
+    E -- no --> X[Refused: the block is locked]
+```
+
 **Who can open and break a locked block:**
-- Only the player who locked the block and the players on its access list can open it. This holds inside a claim too: an accessor from another faction, such as an ally, can open the block even though they cannot use anything else in the claim.
+- Only the player who locked the block, the players on its access list, and members of the lock owner's faction who hold a role on its role list can open it. This holds inside a claim too: an accessor from another faction, such as an ally, can open the block even though they cannot use anything else in the claim.
 - Everyone else is refused, including other members of the faction that owns the claim.
 - A server operator with the `mf.bypass` permission who has turned on `/f bypass` can open any locked block, and is warned. So can a player whose faction role has the `BYPASS_LOCKS` permission.
 - Only the player who locked the block can break it, which also removes the lock. Other players are refused, unless they have `mf.force.unlock` and could break blocks at that spot anyway (for example as a member of the owning faction, or with `/f bypass` on).
