@@ -562,7 +562,8 @@ class MedievalFactions : JavaPlugin() {
             config.getString("database.url") ?: "",
             config.getString("database.username"),
             config.getString("database.password"),
-            logger
+            logger,
+            MfJdbc.loadHikariProperties(dataFolder, logger)
         )
         val oldClassLoader = Thread.currentThread().contextClassLoader
         Thread.currentThread().contextClassLoader = classLoader
