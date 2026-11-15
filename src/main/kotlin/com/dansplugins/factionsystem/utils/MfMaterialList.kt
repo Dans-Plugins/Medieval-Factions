@@ -13,12 +13,12 @@ import org.bukkit.Tag
  */
 class MfMaterialList internal constructor(
     entries: List<String>,
-    private val tagLookup: (registry: String, key: NamespacedKey) -> Tag<Material>?
+    private val tagLookup: (registry: String, key: NamespacedKey) -> ((Material) -> Boolean)?
 ) {
 
     constructor(entries: List<String>) : this(
         entries,
-        { registry, key -> Bukkit.getTag(registry, key, Material::class.java) }
+        { registry, key -> Bukkit.getTag(registry, key, Material::class.java)?.let { tag -> tag::isTagged } }
     )
 
     private val materialNames: Set<String> = entries
@@ -32,8 +32,8 @@ class MfMaterialList internal constructor(
     operator fun contains(material: Material): Boolean {
         if (material.name in materialNames) return true
         return tagKeys.any { key ->
-            tagLookup(Tag.REGISTRY_BLOCKS, key)?.isTagged(material) == true ||
-                tagLookup(Tag.REGISTRY_ITEMS, key)?.isTagged(material) == true
+            tagLookup(Tag.REGISTRY_BLOCKS, key)?.invoke(material) == true ||
+                tagLookup(Tag.REGISTRY_ITEMS, key)?.invoke(material) == true
         }
     }
 }

@@ -6,17 +6,17 @@ import org.bukkit.Tag
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
 
 /** Covers block and item tags in material lists such as `factions.wartimePlaceableBlocks` (#1967). */
 class MfMaterialListTest {
 
-    private val signs: Tag<Material> = taggedWith(Material.OAK_SIGN, Material.SPRUCE_WALL_SIGN)
-    private val boats: Tag<Material> = taggedWith(Material.OAK_BOAT)
+    // Tags are modelled as membership tests: mocking org.bukkit.Tag initialises its constants,
+    // which need a running server.
+    private val signs: (Material) -> Boolean = setOf(Material.OAK_SIGN, Material.SPRUCE_WALL_SIGN)::contains
+    private val boats: (Material) -> Boolean = setOf(Material.OAK_BOAT)::contains
     private val blockTags = mapOf(NamespacedKey.minecraft("signs") to signs)
     private val itemTags = mapOf(NamespacedKey.minecraft("boats") to boats)
-    private val lookup: (String, NamespacedKey) -> Tag<Material>? = { registry, key ->
+    private val lookup: (String, NamespacedKey) -> ((Material) -> Boolean)? = { registry, key ->
         when (registry) {
             Tag.REGISTRY_BLOCKS -> blockTags[key]
             Tag.REGISTRY_ITEMS -> itemTags[key]
@@ -70,13 +70,5 @@ class MfMaterialListTest {
         assertTrue(Material.TORCH in list)
         assertTrue(Material.OAK_SIGN in list)
         assertFalse(Material.SCAFFOLDING in list)
-    }
-
-    private fun taggedWith(vararg materials: Material): Tag<Material> {
-        @Suppress("UNCHECKED_CAST")
-        val tag = mock(Tag::class.java) as Tag<Material>
-        // Unstubbed materials return Mockito's default, false.
-        materials.forEach { material -> `when`(tag.isTagged(material)).thenReturn(true) }
-        return tag
     }
 }
