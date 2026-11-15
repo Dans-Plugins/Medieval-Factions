@@ -113,6 +113,37 @@ silences the warning.
 **Description:** Database password for authentication.  
 **Security Note:** Consider using environment variables or secure storage for production passwords.
 
+### Connection pool settings (`hikaricp.properties`)
+**Type:** Optional file, `plugins/MedievalFactions/hikaricp.properties`  
+**Default:** No file. The plugin does not create one, and without it the connection pool uses HikariCP's own defaults, as it always has.  
+**Description:** Any [HikariCP setting](https://github.com/brettwooldridge/HikariCP#gear-configuration-knobs-baby) can be tuned by putting it in this file, one `name=value` per line. Settings for the JDBC driver itself take a `dataSource.` prefix. `database.url` in `config.yml` always takes precedence over `jdbcUrl` in the file, and `database.username` / `database.password` take precedence over `username` / `password` when they are set in `config.yml`. The file is read when the plugin enables and by `/mf migrate`. A setting HikariCP does not recognise stops the database from opening, with HikariCP's error in the server log, rather than being silently ignored.
+
+```properties
+maximumPoolSize=5
+connectionTimeout=10000
+maxLifetime=1800000
+dataSource.cachePrepStmts=true
+```
+
+How the pool settings are put together when the database is opened:
+
+```mermaid
+flowchart TD
+    A[Plugin enables or /mf migrate runs] --> B{hikaricp.properties<br/>in the data folder?}
+    B -- no --> C[HikariCP defaults, as before]
+    B -- yes --> D[Every setting in the file]
+    D --> E{Unknown setting name?}
+    E -- yes --> F[HikariCP error in the log;<br/>the database does not open]
+    E -- no --> G[Apply config.yml over it]
+    C --> G
+    G --> H[jdbcUrl = database.url, always]
+    H --> I{database.username / password<br/>set in config.yml?}
+    I -- yes --> J[config.yml values win]
+    I -- no --> K[Values from the file, if any, are kept]
+    J --> L[Open the pool]
+    K --> L
+```
+
 ### JSON Storage
 
 When `storage.type` is set to `json`, the following options apply:
