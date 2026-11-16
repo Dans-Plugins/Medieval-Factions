@@ -89,6 +89,8 @@ class MfPowerFixedCommandsTest {
 
     private fun givenTarget(player: MfPlayer) {
         `when`(playerService.getPlayer(target)).thenReturn(player)
+        // /power set takes its upper limit from the player service (players.leaderMaxPower, #1945)
+        `when`(playerService.getMaxPower(target)).thenReturn(20.0)
         `when`(playerService.update(eqPlayer(player), anyTransform())).thenAnswer { invocation ->
             @Suppress("UNCHECKED_CAST")
             val transform = invocation.arguments[1] as (MfPlayer) -> MfPlayer
