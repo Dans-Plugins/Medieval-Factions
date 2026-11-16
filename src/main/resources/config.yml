@@ -161,6 +161,13 @@ slimefun:
   protection:
     # Stop non-members from using or breaking Slimefun blocks in claimed land, following the same rules as ordinary blocks. Needs Slimefun installed. Takes effect on restart.
     enabled: false
+worldGuard:
+  # Refuse new claims in chunks that overlap a WorldGuard region. Needs WorldGuard installed. Existing claims are not changed.
+  blockClaimsInRegions: false
+  # Region IDs that never block claims. Example: ["market", "farmland"]
+  exemptRegions: []
+  # A region setting any of these flags never blocks claims. A state flag counts only when set to allow. Example: ["build"]
+  exemptFlags: []
 gates:
   minHeight: 3
   maxBlocks: 64
