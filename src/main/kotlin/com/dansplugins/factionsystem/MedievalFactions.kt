@@ -68,6 +68,7 @@ import com.dansplugins.factionsystem.listener.HangingPlaceListener
 import com.dansplugins.factionsystem.listener.InventoryClickListener
 import com.dansplugins.factionsystem.listener.InventoryMoveItemListener
 import com.dansplugins.factionsystem.listener.LingeringPotionSplashListener
+import com.dansplugins.factionsystem.listener.MobGriefingListener
 import com.dansplugins.factionsystem.listener.PlayerBucketListener
 import com.dansplugins.factionsystem.listener.PlayerDeathListener
 import com.dansplugins.factionsystem.listener.PlayerInteractAtEntityListener
@@ -78,6 +79,7 @@ import com.dansplugins.factionsystem.listener.PlayerMoveListener
 import com.dansplugins.factionsystem.listener.PlayerQuitListener
 import com.dansplugins.factionsystem.listener.PlayerRespawnListener
 import com.dansplugins.factionsystem.listener.PlayerTeleportListener
+import com.dansplugins.factionsystem.listener.PortalCreateListener
 import com.dansplugins.factionsystem.listener.PotionSplashListener
 import com.dansplugins.factionsystem.listener.StructureGrowListener
 import com.dansplugins.factionsystem.listener.WorldActionProtection
@@ -96,10 +98,12 @@ import com.dansplugins.factionsystem.player.JooqMfPlayerRepository
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerRepository
 import com.dansplugins.factionsystem.player.MfPlayerService
+import com.dansplugins.factionsystem.player.MfPowerUpdateSettings
 import com.dansplugins.factionsystem.potion.MfPotionService
 import com.dansplugins.factionsystem.relationship.JooqMfFactionRelationshipRepository
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipRepository
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
+import com.dansplugins.factionsystem.relationship.MfTruceService
 import com.dansplugins.factionsystem.scoreboard.MfPowerScoreboard
 import com.dansplugins.factionsystem.service.Services
 import com.dansplugins.factionsystem.teleport.MfTeleportService
@@ -125,6 +129,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.flywaydb.core.Flyway
 import org.jooq.conf.Settings
 import org.jooq.impl.DSL
+import java.io.File
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalTime
@@ -141,6 +146,7 @@ class MedievalFactions : JavaPlugin() {
     lateinit var flags: MfFlags
     lateinit var factionPermissions: MfFactionPermissions
     lateinit var services: Services
+    lateinit var truceService: MfTruceService
     private var powerScoreboard: MfPowerScoreboard? = null
     lateinit var language: Language
 
@@ -224,6 +230,7 @@ class MedievalFactions : JavaPlugin() {
             mapService,
             approvalRequestService
         )
+        truceService = MfTruceService({ config.getLong("factions.truceDurationMinutes") }, File(dataFolder, "truces.yml"))
         setupRpkLockService()
 
         val metrics = Metrics(this, 8929)
@@ -382,6 +389,7 @@ class MedievalFactions : JavaPlugin() {
             EntityDamageByEntityListener(this),
             EntityDamageListener(this),
             EntityExplodeListener(this),
+            MobGriefingListener(this),
             EntityPlaceListener(worldActionProtection),
             HangingPlaceListener(worldActionProtection),
             InventoryClickListener(this),
@@ -397,6 +405,7 @@ class MedievalFactions : JavaPlugin() {
             PlayerQuitListener(this, entityInteractionProtection),
             PlayerRespawnListener(this),
             PlayerTeleportListener(this),
+            PortalCreateListener(this),
             PotionSplashListener(this),
             StructureGrowListener(growthBorderTrimmer)
         ).forEach { server.pluginManager.registerEvents(it, this) }
@@ -409,6 +418,7 @@ class MedievalFactions : JavaPlugin() {
         registerCommand("gate", MfGateCommand(this))
         registerCommand("duel", MfDuelCommand(this))
 
+        val powerUpdateIntervalMinutes = MfPowerUpdateSettings.intervalMinutes(config)
         server.scheduler.scheduleSyncRepeatingTask(this, {
             val onlinePlayers = server.onlinePlayers
             val onlineMfPlayerIds = onlinePlayers.map(MfPlayerId.Companion::fromBukkitPlayer)
@@ -425,7 +435,7 @@ class MedievalFactions : JavaPlugin() {
                     )
                 }
             )
-        }, (15 - (LocalTime.now().minute % 15)) * 60 * 20L, 18000L)
+        }, (powerUpdateIntervalMinutes - (LocalTime.now().minute % powerUpdateIntervalMinutes)) * 60 * 20L, powerUpdateIntervalMinutes * 60 * 20L)
         server.scheduler.scheduleSyncRepeatingTask(this, {
             val gates = gateService.gates
             gates.filter(MfGate::shouldOpen).forEach(MfGate::open)
