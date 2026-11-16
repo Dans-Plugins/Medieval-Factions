@@ -180,10 +180,16 @@ Operators can force join any faction:
 
 **Option 1: Radius Claim**
 
-Claim multiple chunks in a square area:
+Claim the chunks within a radius of the one you are standing in (a circle, not a square):
 ```
 /f claim [radius]
-/f claim 2  (claims a 5x5 chunk area)
+/f claim 2  (claims the 13 chunks within 2 chunks of yours)
+```
+
+Or claim a square or rectangle centred on your chunk, giving the side lengths in chunks:
+```
+/f claim square 3        (claims a 3x3 chunk area)
+/f claim rectangle 5 2   (claims 5 chunks east-west by 2 north-south)
 ```
 
 **Option 2: Auto-Claim**

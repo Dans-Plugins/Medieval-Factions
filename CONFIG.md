@@ -17,6 +17,7 @@ This document provides detailed information about all configuration options avai
 - [Chat Settings](#chat-settings)
 - [Duels](#duels)
 - [Dynmap Integration](#dynmap-integration)
+- [Slimefun Integration](#slimefun-integration)
 - [Gates](#gates)
 - [Developer Options](#developer-options)
 - [REST API](#rest-api)
@@ -404,6 +405,25 @@ factions:
 **Default:** `false`  
 **Description:** When `true`, factions with zero or negative total power are automatically disbanded.
 
+### `factions.leaderZeroPowerDisbandsFaction`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, a faction is disbanded when a member holding its `Owner` role (the role `/faction admin setleader` assigns, matched by name regardless of case) is brought to 0 power by a death. Only a death that takes the leader from above 0 to 0 counts: power lost while offline (`players.hoursToReachMinPower`), set with `/power set`, or already at 0 before the death never disbands a faction. With several `Owner` members, any one of them is enough. The disband goes through the same path as `/faction disband` (the `FactionDisbandEvent` is raised and can be cancelled by another plugin, claims and gates are released), the faction's members are notified, and the server log records which leader's death caused it. If `factions.zeroPowerFactionsGetDisbanded` already disbands the faction on that death, this setting adds nothing.
+
+```mermaid
+flowchart TD
+    D[Player dies] --> L{Power lost on death?}
+    L -- no --> X[Nothing]
+    L -- yes --> Z{zeroPowerFactionsGetDisbanded<br/>and faction power <= 0?}
+    Z -- yes --> DZ[Disband: faction at 0 power]
+    Z -- no --> E{leaderZeroPowerDisbandsFaction?}
+    E -- no --> X
+    E -- yes --> O{"Victim has the Owner role,<br/>power was > 0 and is now <= 0?"}
+    O -- no --> X
+    O -- yes --> DL["Disband: FactionDisbandEvent,<br/>claims and gates released,<br/>members notified, logged"]
+    P[Power cycle: offline decay] -.never checks.-> E
+```
+
 ### `factions.vassalPowerContributionMultiplier`
 **Type:** Float  
 **Default:** `0.75`  
@@ -425,6 +445,27 @@ factions:
 **Type:** Boolean  
 **Default:** `false`  
 **Description:** Hoppers cannot move items into or out of a locked block. When `true`, a transfer is allowed if both blocks involved are locked and every lock on them belongs to the same player, so a player can lock a chest and the hoppers of their own sorter or storage system and still have items flow between them. A transfer between a locked block and an unlocked one (including a hopper minecart), or between blocks locked by different players, is still refused. Accessors added with `/accessors add` do not count: only the player who placed the lock does.
+
+### `factions.allowBuildingEverywhere`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, anyone can place and break blocks anywhere: in every faction's territory, whatever its flags and relationships, and in the wilderness, whatever the `wilderness.place.prevent` and `wilderness.break.prevent` settings. It takes precedence over those options. Only placing and breaking blocks are opened up; everything else stays protected as configured, including opening chests and doors, buckets, setting fire, and right-clicking entities. Gate blocks still cannot be placed into or broken, and a locked block can still only be broken by its owner (or with `mf.force.unlock`), which unlocks it as usual.
+
+```mermaid
+flowchart TD
+    A["Player places or breaks a block"] --> B{"Block is part of a gate?"}
+    B -- yes --> R1["Refused"]
+    B -- no --> C{"allowBuildingEverywhere?"}
+    C -- no --> N["Normal territory and wilderness rules"]
+    C -- yes --> D{"Breaking a block that<br/>another player has locked?"}
+    D -- "yes, without mf.force.unlock" --> R2["Refused"]
+    D -- no --> OK["Allowed (a lock of the breaker's own is removed)"]
+```
+
+### `factions.preventPortalGenerationInClaims`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, when a player travels through a nether portal and the game would generate the matching portal on the other side inside a faction's territory, the portal is not generated, unless the player could build in that territory anyway (a member, or someone the faction's flags or a war let build there) or is in bypass mode. The player is told whose territory stopped it. Existing portals are unaffected, and so are portals players light themselves. What the player experiences when the portal is refused (whether they are still moved to the other world) is decided by the server software, and has not been checked in game.
 
 ### `factions.maxClaimRadius`
 **Type:** Integer  
@@ -553,6 +594,10 @@ flowchart TD
 **Default:** `0`  
 **Description:** Length of the truce, in minutes, that starts when two factions make peace (both sides have run `/faction makepeace`). During the truce neither faction can declare war on the other; `/faction declarewar` tells the player how many minutes are left. `0` or less turns truces off, which is the default, so existing servers see no change. Truce end times are kept in `truces.yml` in the plugin's data folder so that a restart does not end them. The truce is checked by `/faction declarewar`, by `/faction approve` for a pending war declaration (the request is kept, so it can be approved once the truce ends), and by `/faction invoke` when the ally being called in is under truce with the enemy. Operator commands that set relationships directly are not blocked.
 
+![Chat: Founder declares war on Eastholm; Founder and Rival each run /f makepeace and the factions are at peace; Founder's second /f declarewar Eastholm is refused: You are in a truce with Eastholm and cannot declare war on them for another 30 minute(s)](docs/images/relations/truce.png)
+
+*`truceDurationMinutes: 30`. Two factions go to war, both sides make peace, and a new declaration is refused with the minutes left. Each command is prefixed with the name of the bot that typed it. Captured with scripted bot clients on a throwaway Spigot 1.21.1 test server; the server's real chat output, drawn as Minecraft chat.*
+
 ### `factions.allyDeclarationRequiresApproval`
 **Type:** Boolean  
 **Default:** `false`  
@@ -585,6 +630,10 @@ flowchart TD
 **Default:** `false`  
 **Description:** When `true`, a player who dies respawns at their faction's home instead of the world spawn. Leaving the End is not affected. A bed or respawn anchor still takes priority, and players whose faction has no home (or whose home is in an unloaded world) respawn as usual.  
 **Values:** `true` or `false`
+
+![Chat: /f sethome; /f home teleports to -183.5, 119, -55.5; a second /f home is refused with "You must wait 55 more seconds"; the player is moved away and killed, and the position read back after respawning is the faction home again](docs/images/faction-home/home-cooldown-respawn.png)
+
+*`factionHomeTeleportCooldown: 60`, `factionHomeTeleportDelay: 1` and `respawnAtFactionHome: true`. The player's position is read back over the server console (`data get entity`) after the teleport, before the kill and after the respawn. Captured with a scripted bot client on a throwaway Spigot 1.21.1 test server; the server's real chat and console output, drawn as Minecraft chat. The build also had some still-open pull requests merged in, which do not touch faction homes.*
 
 ### `factions.maxMembers`
 **Type:** Integer  
@@ -715,8 +764,24 @@ factions:
 - `${factionColor}` - Faction's color
 - `${faction}` - Faction name
 - `${role}` - Player's role
+- `${rolePrefix}` - The prefix of the player's role, set with `/f role setprefix`, or nothing when the role has none
 - `${displayName}` - Player's display name
 - `${message}` - The chat message
+
+**Role prefixes:** when the sender's role has a prefix (`/f role setprefix`), it is shown in front of `${displayName}` in all three channel formats, followed by a space, and the colour the format gives the name is restored after it. A format that contains `${rolePrefix}` puts the prefix there instead, and gets no second copy in front of the name. A role without a prefix, which is every role until one is set, leaves every message exactly as before. With `chat.enableDefaultChatFormatting` on, public chat shows the prefix between the faction tag and the name in the same way: `[Faction] [Knight] Alice: hello`.
+
+```mermaid
+flowchart TD
+    M[Member sends a chat message] --> P{Role has a prefix?}
+    P -- no --> U[Message formatted exactly as before]
+    P -- yes --> C{Faction, ally or vassal channel?}
+    C -- yes --> T{"Format contains ${rolePrefix}?"}
+    T -- yes --> X["Prefix placed at ${rolePrefix}"]
+    T -- no --> N["Prefix placed in front of ${displayName}"]
+    C -- "no: public chat" --> D{chat.enableDefaultChatFormatting?}
+    D -- yes --> F["[Faction] [Knight] Alice: message"]
+    D -- no --> O[Message left to the server and other chat plugins]
+```
 
 ### `chat.vassals.format`
 **Type:** String  
@@ -825,6 +890,36 @@ Dynmap integration allows faction claims to be displayed on a dynamic web map.
 **Default:** `0.35`  
 **Description:** Controls transparency of territory fill color.  
 **Range:** 0.0 (invisible) to 1.0 (solid)
+
+## Slimefun Integration
+
+Slimefun checks with every protection plugin it knows before a player uses, breaks or places one of its blocks or items. With this option on, Medieval Factions registers itself with Slimefun as one of those plugins, so outsiders cannot use or break Slimefun machines in claimed land (#1750). It needs Slimefun installed and does nothing without it; Medieval Factions loads and runs normally when Slimefun is absent.
+
+Slimefun's checks follow the rules Medieval Factions already applies to ordinary blocks; no new option decides who may do what:
+
+```mermaid
+flowchart TD
+    A[Slimefun asks: may this player do this here?] --> B{slimefun.protection.enabled?}
+    B -- false --> Y[Allowed: Medieval Factions does not object]
+    B -- true --> C{Attack on a player?}
+    C -- yes --> Y2[Allowed here; Medieval Factions' PvP rules<br/>decide when the damage happens]
+    C -- no --> D{Location claimed?}
+    D -- no, wilderness --> Y
+    D -- yes --> M{Attack on a mob, and the claim's faction<br/>has enableMobProtection off?}
+    M -- yes --> Y
+    M -- no --> E{"Same claim rules as ordinary blocks:<br/>member, vassal/liege flags, alliesCanInteractWithLand,<br/>at war with pvp.enableWartimeBlockDestruction"}
+    E -- allowed --> Y
+    E -- not allowed --> F{Bypass on and mf.bypass?}
+    F -- yes --> Y
+    F -- no --> G{"Break: block in factions.wartimeBreakableBlocks?<br/>Use: door with factions.nonMembersCanInteractWithDoors,<br/>or block in factions.wartimeInteractableBlocks?"}
+    G -- yes --> Y
+    G -- no --> N[Refused by Slimefun]
+```
+
+### `slimefun.protection.enabled`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true` and Slimefun is installed, Medieval Factions registers a protection module with Slimefun. In claimed land, a player whom the claim rules above do not allow cannot use, break or place Slimefun blocks, or use Slimefun items on entities there. The wartime lists (`factions.wartimeBreakableBlocks`, `factions.wartimeInteractableBlocks`) and `factions.nonMembersCanInteractWithDoors` apply to Slimefun blocks by their block type, exactly as they do to ordinary blocks. Placing a Slimefun block is refused to outsiders even in wartime, because Slimefun does not say which block is being placed. Wilderness is not restricted. The option is read at startup, so a restart is needed after changing it. If it is on but Slimefun is not installed, a warning is logged at startup.
 
 ## Gates
 
