@@ -129,7 +129,8 @@ class MfFactionPowerCommand(private val plugin: MedievalFactions) : CommandExecu
                                 plugin.language[
                                     "CommandFactionPowerFactionClaims",
                                     decimalFormat.format(claimCount.toLong()),
-                                    decimalFormat.format(floor(faction.power))
+                                    // Chunks the faction can hold at the claim power cost of the sender's world
+                                    decimalFormat.format(claimService.getClaimLimit(faction.id, faction.power, (sender as? Player)?.world?.uid))
                                 ]
                                 }"
                             )

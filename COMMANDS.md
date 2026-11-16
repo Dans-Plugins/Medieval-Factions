@@ -143,7 +143,7 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 - `/f claim circle 2` - Same as above; `circle` is an explicit alias for the default radius-claiming behavior
 
 **Notes:** 
-- Each chunk claimed requires power. Your faction must have enough power to claim land.
+- Each chunk claimed requires power. Your faction must have enough power to claim land. By default a chunk costs one power; servers can change this, per world too, with `factions.claimPowerCost` and `factions.claimPowerCostByWorld` (see [CONFIG.md](CONFIG.md)).
 - Maximum claim radius is configurable (default: 3).
 - The claimed area is a circle (chunks within the given radius of your current chunk), not a square.
 - With `mf.force.claim` (default: op), a faction name or ID can be given before the radius (`/f claim FactionName [radius]`, or `/f claim circle FactionName [radius]`) to claim land on behalf of any faction, including one you are not in. The target faction's own claim role permission is not checked; its power limit, contiguity and contested-chunk rules still apply. A lone number is always read as a radius. Quote a multi-word faction name (`/f claim "My Faction" 2`). `/f claim auto` and `/f claim fill` do not take a faction.
