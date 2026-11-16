@@ -272,6 +272,46 @@ class PlayerInteractListenerTest {
     }
 
     @Test
+    fun onPlayerInteract_LockedBlock_PlayerHoldsAccessorRole_ShouldAllowInteraction() {
+        // Arrange
+        mockBlockData<Door>()
+        setupConfigForDoorInteraction(enabled = false)
+        val (_, playerId) = setupPlayerMocks(fixture.player, bypassEnabled = false)
+        val officer = com.dansplugins.factionsystem.faction.role.MfFactionRole(medievalFactions, name = "Officer")
+        val member = com.dansplugins.factionsystem.faction.role.MfFactionRole(medievalFactions, name = "Member")
+        val ownerId = setupLockedBlock(ownedByPlayer = false, accessorRoleIds = listOf(officer.id))
+        setupLockOwnerFaction(ownerId, playerId, playerRole = officer, otherRole = member)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert - the player's role in the lock owner's faction is on the role access list (#1569)
+        verifyEventNotCancelled()
+        verifyNoAsyncTaskScheduled()
+    }
+
+    @Test
+    fun onPlayerInteract_LockedBlock_PlayerRoleNotListed_ShouldCancelAndNotifyPlayer() {
+        // Arrange - same faction as the owner, but the listed role is not the player's
+        mockBlockData<Door>()
+        setupConfigForDoorInteraction(enabled = false)
+        val (_, playerId) = setupPlayerMocks(fixture.player, bypassEnabled = false)
+        val officer = com.dansplugins.factionsystem.faction.role.MfFactionRole(medievalFactions, name = "Officer")
+        val member = com.dansplugins.factionsystem.faction.role.MfFactionRole(medievalFactions, name = "Member")
+        val ownerId = setupLockedBlock(ownedByPlayer = false, accessorRoleIds = listOf(officer.id))
+        setupLockOwnerFaction(ownerId, playerId, playerRole = member, otherRole = member)
+        `when`(fixture.player.hasPermission("mf.bypass")).thenReturn(false)
+
+        // Act
+        uut.onPlayerInteract(fixture.event)
+
+        // Assert
+        verifyEventCancelled()
+        runScheduledAsyncTasks()
+        verifyPlayerNotified()
+    }
+
+    @Test
     fun onPlayerInteract_ClaimProtection_PlayerWithBypassEnabled_ShouldAllowInteraction() {
         // Arrange
         mockBlockData<Door>()
@@ -1859,8 +1899,9 @@ class PlayerInteractListenerTest {
     private fun setupLockedBlock(
         ownedByPlayer: Boolean = false,
         playerIsAccessor: Boolean = false,
-        playerIdForAccess: MfPlayerId? = null
-    ) {
+        playerIdForAccess: MfPlayerId? = null,
+        accessorRoleIds: List<com.dansplugins.factionsystem.faction.role.MfFactionRoleId> = emptyList()
+    ): MfPlayerId {
         val ownerPlayerId = if (ownedByPlayer && playerIdForAccess != null) {
             playerIdForAccess
         } else {
@@ -1879,7 +1920,8 @@ class PlayerInteractListenerTest {
             chunkX = 0,
             chunkZ = 0,
             playerId = ownerPlayerId,
-            accessors = accessors
+            accessors = accessors,
+            accessorRoleIds = accessorRoleIds
         )
 
         // Mock the lockService to return our locked block for the specific block position
@@ -1894,6 +1936,28 @@ class PlayerInteractListenerTest {
         neighbourPositions.forEach { position ->
             doReturn(null).`when`(lockService).getLockedBlock(position)
         }
+        return ownerPlayerId
+    }
+
+    /** Puts the lock owner and the player in one faction, the player holding [playerRole] (#1569). */
+    private fun setupLockOwnerFaction(
+        ownerId: MfPlayerId,
+        playerId: MfPlayerId,
+        playerRole: com.dansplugins.factionsystem.faction.role.MfFactionRole,
+        otherRole: com.dansplugins.factionsystem.faction.role.MfFactionRole
+    ) {
+        val faction = MfFaction(
+            plugin = medievalFactions,
+            name = "Lockers",
+            members = listOf(
+                com.dansplugins.factionsystem.faction.MfFactionMember(ownerId, otherRole),
+                com.dansplugins.factionsystem.faction.MfFactionMember(playerId, playerRole)
+            ),
+            flags = com.dansplugins.factionsystem.faction.flag.MfFlagValues(medievalFactions, emptyMap()),
+            roles = com.dansplugins.factionsystem.faction.role.MfFactionRoles(otherRole.id, listOf(otherRole, playerRole)),
+            defaultPermissionsByName = emptyMap()
+        )
+        `when`(factionService.getFaction(ownerId)).thenReturn(faction)
     }
 
     private fun setupClaimAndFaction(block: Block): Pair<MfClaimedChunk, MfFactionId> {

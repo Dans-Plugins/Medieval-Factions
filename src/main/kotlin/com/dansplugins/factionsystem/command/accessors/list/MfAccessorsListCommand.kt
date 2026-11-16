@@ -8,6 +8,7 @@ import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ClickEvent.Action.RUN_COMMAND
+import net.md_5.bungee.api.chat.ClickEvent.Action.SUGGEST_COMMAND
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT
 import net.md_5.bungee.api.chat.TextComponent
@@ -104,6 +105,26 @@ class MfAccessorsListCommand(private val plugin: MedievalFactions) : CommandExec
                                 }
                             )
                         }
+                    } + lockedBlock.accessorRoleIds.map { roleId ->
+                        lazy {
+                            val roleName = plugin.services.factionService.getFaction(lockedBlock.playerId)?.getRole(roleId)?.name
+                            return@lazy arrayOf(
+                                TextComponent("✖ ").apply {
+                                    color = SpigotChatColor.RED
+                                    clickEvent = ClickEvent(RUN_COMMAND, "/accessors remove ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z} role ${roleId.value}")
+                                    hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandAccessorsListDeleteRoleAccessorButtonHover", roleName ?: roleId.value]))
+                                },
+                                TextComponent(
+                                    if (roleName != null) {
+                                        plugin.language["CommandAccessorsListRole", roleName]
+                                    } else {
+                                        plugin.language["CommandAccessorsListUnknownRole"]
+                                    }
+                                ).apply {
+                                    color = if (roleName != null) SpigotChatColor.GRAY else SpigotChatColor.RED
+                                }
+                            )
+                        }
                     } + lazy {
                         val player = playerService.getPlayer(lockedBlock.playerId)
                         return@lazy arrayOf(
@@ -135,6 +156,14 @@ class MfAccessorsListCommand(private val plugin: MedievalFactions) : CommandExec
                             clickEvent = ClickEvent(RUN_COMMAND, "/accessors add ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z}")
                             hoverEvent =
                                 HoverEvent(SHOW_TEXT, Text(plugin.language["CommandAccessorsListAddAccessorHover"]))
+                        }
+                    )
+                    sender.spigot().sendMessage(
+                        TextComponent(plugin.language["CommandAccessorsListAddRoleAccessor"]).apply {
+                            color = SpigotChatColor.GREEN
+                            clickEvent = ClickEvent(SUGGEST_COMMAND, "/accessors add ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z} role ")
+                            hoverEvent =
+                                HoverEvent(SHOW_TEXT, Text(plugin.language["CommandAccessorsListAddRoleAccessorHover"]))
                         }
                     )
                 }
