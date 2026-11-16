@@ -89,10 +89,16 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                             return@saveChunks
                         }
                         val claimService = plugin.services.claimService
-                        val claims = chunks.associateWith(claimService::getClaim)
+                        // Chunks listed in factions.blockedClaimChunks are left out of the fill
+                        val blockedChunks = chunks.filter(claimService::isChunkClaimBlocked)
+                        val claims = (chunks - blockedChunks.toSet()).associateWith(claimService::getClaim)
                         val relationshipService = plugin.services.factionRelationshipService
                         val unclaimedChunks = claims.filter { (_, claim) -> claim == null }.keys
+                        val surroundedChunks = claims
+                            .filter { (chunk, claim) -> claim != null && claim.factionId != faction.id && claimService.isConquestBlockedBySurroundingClaims(chunk, claim.factionId) }
+                            .keys
                         val contestedChunks = claims
+                            .filterKeys { it !in surroundedChunks }
                             .mapNotNull { (chunk, claim) -> claim?.let { chunk to it } }
                             .groupBy { (_, claim) -> claim.factionId }
                             .filter { (claimFactionId, claims) ->
@@ -105,7 +111,12 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                             .flatMap { it.value.map { (chunk, _) -> chunk } }
                         val claimableChunks = unclaimedChunks + contestedChunks
                         if (claimableChunks.isEmpty()) {
-                            sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillNoClaimableChunks"]}")
+                            val reason = when {
+                                surroundedChunks.isNotEmpty() -> "CommandFactionClaimSurroundedChunk"
+                                blockedChunks.isNotEmpty() -> "CommandFactionClaimChunkBlocked"
+                                else -> "CommandFactionClaimFillNoClaimableChunks"
+                            }
+                            sender.sendMessage("$RED${plugin.language[reason]}")
                             return@saveChunks
                         }
                         if (plugin.config.getBoolean("factions.limitLand") && claimService.getClaimPowerCost(claimableChunks) + claimService.getClaimPowerUsed(faction.id) > faction.power) {

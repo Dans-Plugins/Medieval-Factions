@@ -57,6 +57,68 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
     }
 
     /**
+     * Checks whether a chunk is listed in `factions.blockedClaimChunks`, which holds entries of the form
+     * `world:x:z` (one chunk) or `world:x1:z1:x2:z2` (an inclusive rectangle of chunks). Coordinates are chunk
+     * coordinates, not block coordinates. Entries that cannot be parsed are ignored.
+     */
+    fun isChunkClaimBlocked(worldName: String, x: Int, z: Int): Boolean {
+        return plugin.config.getStringList("factions.blockedClaimChunks").any { entry ->
+            val parts = entry.trim().split(":")
+            if (parts.size != 3 && parts.size != 5) return@any false
+            if (parts[0] != worldName) return@any false
+            val coordinates = parts.drop(1).map { it.trim().toIntOrNull() ?: return@any false }
+            if (coordinates.size == 2) {
+                coordinates[0] == x && coordinates[1] == z
+            } else {
+                x in minOf(coordinates[0], coordinates[2])..maxOf(coordinates[0], coordinates[2]) &&
+                    z in minOf(coordinates[1], coordinates[3])..maxOf(coordinates[1], coordinates[3])
+            }
+        }
+    }
+
+    fun isChunkClaimBlocked(chunk: MfChunkPosition): Boolean {
+        val worldName = plugin.server.getWorld(chunk.worldId)?.name ?: return false
+        return isChunkClaimBlocked(worldName, chunk.x, chunk.z)
+    }
+
+    /**
+     * Checks whether a claim of the given chunks would be further than `factions.maxClaimDistance` chunks from
+     * every claim the faction already holds in the same world. A negative value (the default) disables the check,
+     * and so does the faction having no claims in that world yet. The claim passes if any one of the chunks is
+     * close enough, so a radius claim is judged by its nearest chunk.
+     */
+    fun exceedsMaxClaimDistance(factionId: MfFactionId, vararg chunks: MfChunkPosition): Boolean {
+        val maxDistance = plugin.config.getInt("factions.maxClaimDistance", -1)
+        if (maxDistance < 0 || chunks.isEmpty()) return false
+        val factionClaims = getClaims(factionId)
+        val maxDistanceSquared = maxDistance.toLong() * maxDistance
+        return chunks.groupBy { it.worldId }.none { (worldId, worldChunks) ->
+            val worldClaims = factionClaims.filter { it.worldId == worldId }
+            if (worldClaims.isEmpty()) return@none true
+            worldChunks.any { chunk ->
+                worldClaims.any { claim ->
+                    val dx = (claim.x - chunk.x).toLong()
+                    val dz = (claim.z - chunk.z).toLong()
+                    dx * dx + dz * dz <= maxDistanceSquared
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks whether a chunk held by a faction is surrounded on all four sides by that same faction's claims. When
+     * `factions.preventConqueringSurroundedChunks` is enabled, such a chunk cannot be conquered until one of its
+     * neighbours has been taken, so a war has to work inwards from the border.
+     */
+    fun isConquestBlockedBySurroundingClaims(chunk: MfChunkPosition, defendingFactionId: MfFactionId): Boolean {
+        if (!plugin.config.getBoolean("factions.preventConqueringSurroundedChunks")) return false
+        return getClaim(chunk.worldId, chunk.x - 1, chunk.z)?.factionId == defendingFactionId &&
+            getClaim(chunk.worldId, chunk.x + 1, chunk.z)?.factionId == defendingFactionId &&
+            getClaim(chunk.worldId, chunk.x, chunk.z - 1)?.factionId == defendingFactionId &&
+            getClaim(chunk.worldId, chunk.x, chunk.z + 1)?.factionId == defendingFactionId
+    }
+
+    /**
      * The power one claimed chunk in the named world counts against a faction's power when `factions.limitLand` is
      * on: the world's entry in `factions.claimPowerCostByWorld` if it has one, otherwise `factions.claimPowerCost`.
      * Both default to 1, which is one power per chunk, as before these options existed. Negative values count as 0.

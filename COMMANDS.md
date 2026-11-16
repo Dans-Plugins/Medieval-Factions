@@ -148,6 +148,7 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 - Each chunk claimed requires power. Your faction must have enough power to claim land. By default a chunk costs one power; servers can change this, per world too, with `factions.claimPowerCost` and `factions.claimPowerCostByWorld` (see [CONFIG.md](CONFIG.md)).
 - Maximum claim radius is configurable (default: 3).
 - The claimed area is a circle (chunks within the given radius of your current chunk), not a square.
+- Servers can restrict where claims go: chunks listed in `factions.blockedClaimChunks` are skipped, `factions.maxClaimDistance` keeps new claims near the faction's existing land, and `factions.preventConqueringSurroundedChunks` stops an enemy chunk enclosed by its owner's claims from being conquered until a neighbouring chunk is taken (see [CONFIG.md](CONFIG.md)).
 - With `mf.force.claim` (default: op), a faction name or ID can be given before the radius (`/f claim FactionName [radius]`, or `/f claim circle FactionName [radius]`) to claim land on behalf of any faction, including one you are not in. The target faction's own claim role permission is not checked; its power limit, contiguity and contested-chunk rules still apply. A lone number is always read as a radius. Quote a multi-word faction name (`/f claim "My Faction" 2`). `/f claim auto` and `/f claim fill` do not take a faction.
 
 ### `/faction claim square <size>` / `/faction claim rectangle <sizeX> <sizeZ>`
@@ -375,6 +376,10 @@ Rivals are stored apart from alliances, wars and vassalage (table `mf_faction_ri
 **Description:** Moves a role one place up or down your faction's role list, for example to list a new role above an older one. The order only changes how roles are listed; it does not grant or remove anything. Moving a role needs the same faction permission as renaming it: `MODIFY_ROLE` for that role.  
 **Usage:** `/f role move Duke up`
 
+![Animation: /f role list shows Owner, Officer, Member, Duke; after /f role move Duke up, the list shows Owner, Officer, Duke, Member](docs/images/role-move/role-move.gif)
+
+*`/f role move Duke up` moves Duke one place up, above Member. Captured with a scripted bot client on a throwaway Spigot 1.21.1 test server running Medieval Factions 10.2.1-SNAPSHOT; the server's real chat output, drawn as Minecraft chat.*
+
 ### `/faction role setprefix [role] (prefix)` or `/f role setprefix [role] (prefix)`
 **Permission:** `mf.role.setprefix` (default: true)  
 **Description:** Sets the prefix shown for a role's members, such as `[Knight]`, or clears it when no prefix is given. `&` colour codes are allowed, and a prefix can be up to 32 characters long, colour codes included. Roles have no prefix until one is set, and a role without one changes nothing in chat. Once set, the prefix appears in front of the member's name in faction, ally and vassal chat and, when `chat.enableDefaultChatFormatting` is on, in public chat (see [Chat Settings](CONFIG.md#chat-settings)). It is also available to other plugins as the PlaceholderAPI placeholder `%medievalfactions_faction_role_prefix%` (alias `%medievalfactions_faction_rank_prefix%`), which is empty for a role without a prefix or a player without a faction. Setting a prefix needs the same faction permission as renaming the role: `MODIFY_ROLE` for that role. `/f role view` shows the prefix and, to those who may set it, a `[Set prefix]` button that fills in this command.  
@@ -403,6 +408,10 @@ Laws are numbered from 1 in the order `/f law list` shows them. Where a command 
 **Permission:** `mf.law.list` and `mf.laws` (both required; default: true)  
 **Description:** Lists the laws of your faction, or of the named faction, ten to a page with links to the previous and next pages. A single number is read as a page of your own faction's laws unless a faction has that name.  
 **Usage:** `/f law list [faction] [page]`
+
+![Chat: /f law list shows laws 1 to 10 with remove, edit and move buttons and Previous page / Page 1 / Next page links; /f law list 2 shows laws 11 and 12](docs/images/law-list/law-list.png)
+
+*A faction with twelve laws: page 1 holds ten, `/f law list 2` shows the rest. Captured with a scripted bot client on a throwaway Spigot 1.21.1 test server running Medieval Factions 10.2.1-SNAPSHOT; the server's real chat output, drawn as Minecraft chat.*
 
 ### `/faction law remove [number]` or `/f law remove [number]`
 **Permission:** `mf.law.remove` and `mf.removelaw` (both required; default: true)  

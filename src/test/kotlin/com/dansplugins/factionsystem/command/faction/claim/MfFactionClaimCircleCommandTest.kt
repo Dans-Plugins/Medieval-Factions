@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.command.faction.claim
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.TestUtils
+import com.dansplugins.factionsystem.area.MfChunkPosition
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.faction.MfFaction
@@ -228,6 +229,49 @@ class MfFactionClaimCircleCommandTest {
         // verify
         assertTrue(result)
         verify(player).sendMessage("${ChatColor.RED}No such faction")
+    }
+
+    @Test
+    fun testOnCommand_blockedChunkIsNotClaimed() {
+        // prepare — the chunk is listed in factions.blockedClaimChunks (#1723)
+        val player = fixture.player
+        val command = fixture.command
+        stubMembershipOf(player)
+        stubSenderChunk(player, 0, 0)
+        val claim = stubClaimSave(0, 0)
+        val chunk = MfChunkPosition(worldId, 0, 0)
+        `when`(claimService.isChunkClaimBlocked(chunk)).thenReturn(true)
+        `when`(language["CommandFactionClaimChunkBlocked"]).thenReturn("Blocked")
+
+        // execute
+        uut.onCommand(player, command, "label", arrayOf())
+        runPendingTasks()
+
+        // verify
+        verify(claimService, never()).save(claim)
+        verify(player).sendMessage("${ChatColor.RED}Blocked")
+    }
+
+    @Test
+    fun testOnCommand_claimTooFarFromExistingClaimsIsRefused() {
+        // prepare — factions.maxClaimDistance is exceeded (#1619)
+        val player = fixture.player
+        val command = fixture.command
+        stubMembershipOf(player)
+        stubSenderChunk(player, 0, 0)
+        val claim = stubClaimSave(0, 0)
+        val chunk = MfChunkPosition(worldId, 0, 0)
+        `when`(claimService.exceedsMaxClaimDistance(factionId, chunk)).thenReturn(true)
+        `when`(config.getInt("factions.maxClaimDistance")).thenReturn(5)
+        `when`(language["CommandFactionClaimTooFarFromClaims", "5"]).thenReturn("Too far")
+
+        // execute
+        uut.onCommand(player, command, "label", arrayOf())
+        runPendingTasks()
+
+        // verify
+        verify(claimService, never()).save(claim)
+        verify(player).sendMessage("${ChatColor.RED}Too far")
     }
 
     @Test
