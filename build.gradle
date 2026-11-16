@@ -29,6 +29,13 @@ repositories {
     maven { url 'https://repo.maven.apache.org/maven2/' }
     maven { url 'https://repo.rpkit.com/repository/maven-public/' }
     maven {
+        // WorldGuard and WorldEdit (optional claim-blocking integration, #1630)
+        url 'https://maven.enginehub.org/repo/'
+        content {
+            includeGroupByRegex 'com\\.sk89q\\..*'
+        }
+    }
+    maven {
         url 'https://jitpack.io'
         content {
             includeGroupByRegex 'com\\.github\\..*'
@@ -83,6 +90,22 @@ dependencies {
     // module also loads on current Slimefun development builds.
     compileOnly('com.github.Slimefun:Slimefun4:RC-37') { transitive = false }
     testImplementation('com.github.Slimefun:Slimefun4:RC-37') { transitive = false }
+    // WorldGuard is an optional soft dependency (#1630): compiled against, never shaded. Transitive
+    // dependencies are skipped because they pull Paper/Spigot artifacts this build already provides.
+    // 7.0.9 / 7.2.14 are the newest releases built for Java 17; the region API used is unchanged
+    // through 7.0.x, so the integration runs against newer WorldGuard 7 servers too.
+    def worldGuardDependencies = [
+            'com.sk89q.worldguard:worldguard-core:7.0.9',
+            'com.sk89q.worldguard:worldguard-bukkit:7.0.9',
+            'com.sk89q.worldedit:worldedit-core:7.2.14',
+            'com.sk89q.worldedit:worldedit-bukkit:7.2.14'
+    ]
+    worldGuardDependencies.each {
+        compileOnly(it) { transitive = false }
+        testImplementation(it) { transitive = false }
+    }
+    // WorldGuard's region classes reference WorldEdit's text API at construction, so the tests need it too
+    testImplementation('com.sk89q.worldedit.worldedit-libs:core:7.2.14') { transitive = false }
 
     // Use the Kotlin JUnit 5 integration.
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

@@ -208,6 +208,8 @@ Fill unclaimed gaps surrounded by your claims:
 /f claim fill
 ```
 
+> **Protected regions:** on servers that turn on `worldGuard.blockClaimsInRegions`, chunks that overlap a WorldGuard region (spawn, a market, a road) cannot be claimed. A radius or fill claim skips them and says how many were skipped; autoclaim walks over them. See [CONFIG.md](CONFIG.md#worldguard-integration).
+
 #### Setting Your Faction Home
 
 1. **Stand where you want your home** (must be in claimed territory):
@@ -725,6 +727,28 @@ flowchart TD
 - Everyone else is refused, including other members of the faction that owns the claim.
 - A server operator with the `mf.bypass` permission who has turned on `/f bypass` can open any locked block, and is warned. So can a player whose faction role has the `BYPASS_LOCKS` permission.
 - Only the player who locked the block can break it, which also removes the lock. Other players are refused, unless they have `mf.force.unlock` and could break blocks at that spot anyway (for example as a member of the owning faction, or with `/f bypass` on).
+
+**Locking armour stands and item frames:**
+
+Armour stands and item frames (glow item frames included) can be locked the same way: run `/lock` and right-click the armour stand or frame. The same rules apply as for blocks: you must be in a faction, the entity must stand in your faction's territory, and the lock is removed if the land is unclaimed or you leave the faction. `/unlock`, `/accessors list`, `/accessors add` and `/accessors remove` work on them by right-clicking them too.
+
+- Players with access (the owner and the access list) can use the entity: put on or take off armour, put an item in a frame, rotate it, or knock the item out of it.
+- Only the owner can break the armour stand or knock the frame off its wall, which also removes the lock. Other players need `mf.force.unlock`. Arrows and other projectiles count as the player who shot them.
+- Everyone else is refused, including members of the owning faction. `/f bypass` with `mf.bypass`, and the `BYPASS_LOCKS` role permission, let a player use a locked entity, with a warning, as for blocks.
+- Damage that does not come from a player, such as a creeper explosion, is not stopped by the lock, just as explosions are not stopped by block locks.
+
+```mermaid
+flowchart TD
+    A[A player acts on a locked armour stand or item frame] --> K{What kind of action?}
+    K -- "right-click, armour swap,<br/>knock the item out of a frame" --> U{Owner or on the access list?}
+    U -- yes --> OK[Allowed]
+    U -- no --> B{"/f bypass with mf.bypass,<br/>or a BYPASS_LOCKS role?"}
+    B -- yes --> W[Allowed, with a warning]
+    B -- no --> X[Refused: locked by the owner]
+    K -- "break the stand,<br/>knock the frame off the wall" --> O{Owner, or mf.force.unlock?}
+    O -- yes --> R[Broken, and the lock is removed]
+    O -- no --> X
+```
 
 **Lock Tips:**
 - Lock your personal chests to prevent faction member theft

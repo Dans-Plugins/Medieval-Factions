@@ -6,6 +6,7 @@ import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.locks.MfLockedBlock
 import com.dansplugins.factionsystem.locks.MfLockedBlockId
+import com.dansplugins.factionsystem.locks.MfLockedEntity
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.google.gson.JsonParser
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -172,5 +173,57 @@ class JsonMfLockRepositoryTest {
         assertEquals(listOf(accessor), read?.accessors)
         assertEquals(emptyList<MfFactionRoleId>(), read?.accessorRoleIds)
         assertEquals(emptyList<MfFactionRoleId>(), reloaded.getLockedBlocks().single().accessorRoleIds)
+    }
+
+    // --- locked entities (#1679) ---
+
+    private fun lockedEntity(entityId: UUID = UUID.randomUUID(), accessors: List<MfPlayerId> = emptyList()) = MfLockedEntity(
+        entityId = entityId,
+        worldId = worldId,
+        chunkX = 0,
+        chunkZ = 0,
+        playerId = MfPlayerId(UUID.randomUUID().toString()),
+        accessors = accessors
+    )
+
+    @Test
+    fun `round trips a locked entity`() {
+        val accessor = MfPlayerId(UUID.randomUUID().toString())
+        val saved = repository.upsertLockedEntity(lockedEntity(accessors = listOf(accessor)))
+        assertEquals(1, saved.version)
+
+        val read = JsonMfLockRepository(plugin, JsonStorageManager(plugin, tempDir.toString())).getLockedEntities().single()
+        assertEquals(saved, read)
+        assertEquals(listOf(accessor), read.accessors)
+    }
+
+    @Test
+    fun `rejects a stale locked entity and a second lock on the same entity`() {
+        val saved = repository.upsertLockedEntity(lockedEntity())
+        repository.upsertLockedEntity(saved.copy(accessors = listOf(MfPlayerId(UUID.randomUUID().toString()))))
+
+        assertThrows<OptimisticLockingFailureException> { repository.upsertLockedEntity(saved) }
+        assertThrows<OptimisticLockingFailureException> { repository.upsertLockedEntity(lockedEntity(entityId = saved.entityId)) }
+        assertEquals(2, repository.getLockedEntities().single().version)
+    }
+
+    @Test
+    fun `deletes a locked entity by entity id and leaves block locks alone`() {
+        val block = repository.upsert(lockedBlock())
+        val doomed = repository.upsertLockedEntity(lockedEntity())
+        val kept = repository.upsertLockedEntity(lockedEntity())
+
+        repository.deleteLockedEntity(doomed.entityId)
+
+        assertEquals(listOf(kept.entityId), repository.getLockedEntities().map { it.entityId })
+        assertNotNull(repository.getLockedBlock(block.id))
+    }
+
+    @Test
+    fun `storage written before entity locks existed has none`() {
+        repository.upsert(lockedBlock())
+
+        assertTrue(repository.getLockedEntities().isEmpty())
+        assertEquals(1, repository.getLockedBlocks().size)
     }
 }

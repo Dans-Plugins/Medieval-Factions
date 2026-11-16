@@ -127,6 +127,7 @@ medieval_factions_data/
 ├── relationships.json
 ├── claimed_chunks.json
 ├── locks.json
+├── locked_entities.json
 ├── locked_areas.json
 ├── interaction_statuses.json
 ├── gates.json

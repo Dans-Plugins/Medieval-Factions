@@ -18,6 +18,7 @@ This document provides detailed information about all configuration options avai
 - [Duels](#duels)
 - [Dynmap Integration](#dynmap-integration)
 - [Slimefun Integration](#slimefun-integration)
+- [WorldGuard Integration](#worldguard-integration)
 - [Gates](#gates)
 - [Developer Options](#developer-options)
 - [REST API](#rest-api)
@@ -556,6 +557,10 @@ flowchart TD
     L -- no --> S["Chunks claimed"]
 ```
 
+![Chat: a claim succeeds, a claim inside a blocked chunk is refused with "This chunk cannot be claimed.", and a claim six chunks away is refused with "New claims must be within 2 chunks of your faction's existing claims in this world."](docs/images/claims/claim-restrictions.png)
+
+*`blockedClaimChunks: ["world:-16:-6:-15:-3"]` and `maxClaimDistance: 2`. A normal claim, then one inside the blocked rectangle, then one six chunks from the faction's land. Captured with scripted bot clients on a throwaway Spigot 1.21.1 test server running a pre-release build of Medieval Factions; the server's real chat output, drawn as Minecraft chat.*
+
 ### `factions.actionBarTerritoryIndicator`
 **Type:** Boolean  
 **Default:** `true`  
@@ -735,6 +740,10 @@ factions:
   - allowFriendlyFire
   - neutral
 ```
+
+![Chat: /f flag set allowFriendlyFire true is refused with "The allowFriendlyFire flag is set by the server for every faction and cannot be changed."; /f flag list shows allowMobGriefing (Boolean): true](docs/images/flags/forced-flag.png)
+
+*`forcedFlags: [allowFriendlyFire]`. Changing the forced flag is refused, and the new `allowMobGriefing` flag appears in `/f flag list` with its default. Captured with scripted bot clients on a throwaway Spigot 1.21.1 test server running a pre-release build of Medieval Factions; the server's real chat output, drawn as Minecraft chat.*
 
 ## Power Scoreboard
 
@@ -931,6 +940,44 @@ flowchart TD
 **Type:** Boolean  
 **Default:** `false`  
 **Description:** When `true` and Slimefun is installed, Medieval Factions registers a protection module with Slimefun. In claimed land, a player whom the claim rules above do not allow cannot use, break or place Slimefun blocks, or use Slimefun items on entities there. The wartime lists (`factions.wartimeBreakableBlocks`, `factions.wartimeInteractableBlocks`) and `factions.nonMembersCanInteractWithDoors` apply to Slimefun blocks by their block type, exactly as they do to ordinary blocks. Placing a Slimefun block is refused to outsiders even in wartime, because Slimefun does not say which block is being placed. Wilderness is not restricted. The option is read at startup, so a restart is needed after changing it. If it is on but Slimefun is not installed, a warning is logged at startup.
+
+## WorldGuard Integration
+
+These options keep factions from claiming land that WorldGuard already protects, such as spawn or a market (#1630). They need WorldGuard 7 installed and do nothing without it; Medieval Factions loads and runs normally when WorldGuard is absent. Existing claims are never changed: a chunk claimed before the option was turned on stays claimed.
+
+When the option is on, every way of claiming checks each chunk: `/f claim` (with or without a radius), `/f claim square`, `/f claim rectangle`, `/f claim fill` and autoclaim (`/f claim auto`). A chunk counts as overlapping a region when any part of the region lies inside the chunk's full column, from the bottom of the world to the top. The world's `__global__` region is ignored.
+
+```mermaid
+flowchart TD
+    A[Claim requested for a chunk] --> B{worldGuard.blockClaimsInRegions?}
+    B -- false --> OK[Claim checks continue as before]
+    B -- true --> C{WorldGuard installed?}
+    C -- no --> OK
+    C -- yes --> D{Any region overlaps the chunk column?<br/>__global__ ignored}
+    D -- no --> OK
+    D -- yes --> E{Every overlapping region exempt?<br/>listed in exemptRegions, or<br/>sets a flag in exemptFlags}
+    E -- yes --> OK
+    E -- no --> R[Chunk refused]
+    R --> R1["/f claim, square, rectangle, fill: chunk skipped, player told;<br/>refused outright if every chunk is in a region"]
+    R --> R2[Autoclaim: chunk silently skipped]
+```
+
+### `worldGuard.blockClaimsInRegions`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true` and WorldGuard is installed, new claims are refused in chunks that overlap a WorldGuard region. A radius or fill claim skips those chunks, claims the rest and tells the player how many were skipped. Autoclaim walks over them without claiming. If the option is on but WorldGuard is not installed, a warning is logged at startup and claiming is not restricted.
+
+### `worldGuard.exemptRegions`
+**Type:** List of Strings  
+**Default:** `[]` (empty list)  
+**Description:** IDs of WorldGuard regions that never block claims, matched without regard to case.  
+**Example:** `["market", "farmland"]`
+
+### `worldGuard.exemptFlags`
+**Type:** List of Strings  
+**Default:** `[]` (empty list)  
+**Description:** A region that sets any of these WorldGuard flags never blocks claims. A state flag, such as `build`, only counts when it is set to `allow`; any other flag counts when it is set to any value. This lets regions that are open to building, or that carry a marker flag, stay claimable without listing each one.  
+**Example:** `["build"]`
 
 ## Gates
 

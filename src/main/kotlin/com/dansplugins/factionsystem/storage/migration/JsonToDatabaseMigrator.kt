@@ -137,6 +137,12 @@ class JsonToDatabaseMigrator(
             }
             totalMigrated += locks.size
             plugin.logger.info("Migrated ${locks.size} locked blocks")
+            val lockedEntities = sourceLockRepo.getLockedEntities()
+            lockedEntities.forEach { lockedEntity ->
+                targetLockRepo.upsertLockedEntity(lockedEntity)
+            }
+            totalMigrated += lockedEntities.size
+            plugin.logger.info("Migrated ${lockedEntities.size} locked entities")
             if (sourceLockedAreaRepo != null && targetLockedAreaRepo != null) {
                 val lockedAreas = sourceLockedAreaRepo.getLockedAreas()
                 lockedAreas.forEach { targetLockedAreaRepo.upsert(it) }
@@ -248,6 +254,7 @@ class JsonToDatabaseMigrator(
         targetRivalRepo?.getRivals()?.size?.takeIf { it > 0 }?.let { existing += "$it faction rivals" }
         targetClaimRepo.getClaims().size.takeIf { it > 0 }?.let { existing += "$it claims" }
         targetLockRepo.getLockedBlocks().size.takeIf { it > 0 }?.let { existing += "$it locked blocks" }
+        targetLockRepo.getLockedEntities().size.takeIf { it > 0 }?.let { existing += "$it locked entities" }
         targetLockedAreaRepo?.getLockedAreas()?.size?.takeIf { it > 0 }?.let { existing += "$it locked areas" }
         targetGateRepo.getGates().size.takeIf { it > 0 }?.let { existing += "$it gates" }
         targetDuelRepo.getDuels().size.takeIf { it > 0 }?.let { existing += "$it duels" }

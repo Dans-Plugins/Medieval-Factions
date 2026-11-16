@@ -163,6 +163,12 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 - On a side of even length the extra row or column is on the east (positive X) or south (positive Z) side of your chunk.
 - Power, contiguity and contested-chunk rules are the same as for `/f claim [radius]`, and with `mf.force.claim` a faction name can be given before the size (`/f claim square FactionName 3`).
 
+![Top-down render: a 3x3 square of claimed chunks on the left and a 5x2 rectangle on the right, touching](docs/images/claims/claim-shapes.jpg)
+
+![Chat: /f claim square 3 claims 9 chunks, /f claim rectangle 5 2 claims 10 chunks, and /f claim square 99 is refused with "must be between 1 and 7 chunks along each side"](docs/images/claims/claim-shapes-chat.png)
+
+*One faction ran `/f claim square 3` and a second ran `/f claim rectangle 5 2` from the chunk next to it (north is up). The square is centred on the sender; the 5x2 rectangle has its extra row on the south side. The render is the test world and the plugin's stored claims after the run, drawn with Strata. Captured with scripted bot clients on a throwaway Spigot 1.21.1 test server running a pre-release build of Medieval Factions; the server's real chat output, drawn as Minecraft chat.*
+
 ### `/faction claim auto` or `/f claim auto`
 **Permission:** `mf.claim.auto` or `mf.autoclaim` (default: true)  
 **Description:** Toggles automatic claiming. When enabled, chunks are automatically claimed as you walk through them.  
@@ -221,6 +227,12 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Description:** Marks the borders of claims within 4 chunks of you with wool for 15 seconds: lime for your own faction's land, red for any other faction's. The markers replace the top block of each border column, are visible only to you, and change nothing in the world; the real blocks reappear when the time is up.  
 **Usage:** `/f claim show`  
 **Notes:** Borders between two chunks held by the same faction are not marked, so each faction's territory is outlined as a whole.
+
+![Side by side: left, the stored claims (a 3x3 square and a 5x2 rectangle); right, lime wool around the viewer's own faction and red wool around the other faction](docs/images/claims/claim-show-pair.jpg)
+
+![Chat: /f claim show replies "Claim borders within 4 chunks are marked with wool for 15 seconds: lime for your faction, red for others. Only you can see them."](docs/images/claims/claim-show-chat.png)
+
+*Left: the stored claims. Right: the wool markers the player's client was actually sent, read from the bot's own view of the world and drawn into a copy of it with Strata (in game only that player sees them, and no world block changes). Gaps in the lines are where the top block is foliage. Captured with scripted bot clients on a throwaway Spigot 1.21.1 test server running a pre-release build of Medieval Factions; the server's real chat output, drawn as Minecraft chat.*
 
 ### `/faction claim check` or `/f claim check`
 **Permission:** `mf.claim.check` or `mf.checkclaim` (default: true)  
@@ -489,7 +501,7 @@ Laws are numbered from 1 in the order `/f law list` shows them. Where a command 
 ### `/lock [cancel]`
 **Permission:** `mf.lock` (default: true)  
 **Aliases:** `/verschlieBen`, `/verschliessen`, `/verrouiller`  
-**Description:** Enables lock mode. Right-click on a block to lock it.  
+**Description:** Enables lock mode. Right-click on a block, armour stand or item frame to lock it.  
 **Usage:**
 - `/lock` - Enables lock mode
 - `/lock cancel` - Cancels lock mode
@@ -503,6 +515,11 @@ Laws are numbered from 1 in the order `/f law list` shows them. Where a command 
 - `/unlock cancel` - Cancels unlock mode
 
 **Notes:** Normally you can only unlock blocks you locked yourself. With `mf.force.unlock` (default: op), unlock mode also works on blocks locked by another player — a message naming the lock owner whose protection was bypassed is shown — and breaking another player's locked block unlocks it instead of being refused. (A faction role can also grant a lock bypass for unlock mode, independently of this permission.)
+
+Armour stands and item frames are identified by entity id instead of coordinates. Right-clicking one in an accessor mode runs these forms for you:
+- `/accessors list entity [entity id] (page)`
+- `/accessors add entity [entity id] (player)`
+- `/accessors remove entity [entity id] (player)`
 
 ### `/accessors list`
 **Permission:** `mf.accessors.list` (default: true)  

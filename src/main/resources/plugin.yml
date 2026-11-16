@@ -24,6 +24,7 @@ softdepend:
 - Mailboxes
 - Multiverse-Core
 - Slimefun
+- WorldGuard
 description: Allows players to organise themselves into feudal, diplomatic, lawful groups akin to nations.
 commands:
   faction:
