@@ -258,6 +258,27 @@ flowchart TD
 **Description:** Breaks an existing alliance with another faction.  
 **Usage:** `/f breakalliance OtherFaction`
 
+### `/faction rival [faction]` or `/f rival [faction]`
+**Permission:** `mf.rival` (default: true)  
+**Description:** Names another faction as one of your faction's rivals. A rivalry is one-sided (the other faction does not have to agree) and is for show: it is listed under "Rivals" in `/f info` and the other faction is told, but it does not change war, protection, power or any other rule. It needs the same faction role permission as declaring war (`DECLARE_WAR`). An ally cannot be named as a rival.  
+**Usage:** `/f rival OtherFaction`
+
+### `/faction unrival [faction]` or `/f unrival [faction]`
+**Permission:** `mf.rival` (default: true)  
+**Description:** Ends a rivalry your faction named. With `factions.minimumRivalryHours` above `0`, a rivalry can only be ended once it is that old.  
+**Usage:** `/f unrival OtherFaction`
+
+```mermaid
+stateDiagram-v2
+    [*] --> NoRivalry
+    NoRivalry --> Rival: /f rival B (A not allied with B)
+    Rival --> Rival: /f unrival B before minimumRivalryHours
+    Rival --> NoRivalry: /f unrival B
+    Rival --> [*]: A or B disbanded
+```
+
+Rivals are stored apart from alliances, wars and vassalage (table `mf_faction_rival`, or `rivals.json` with JSON storage), so they do not appear in `/f relationship view`, the REST API's `/api/relationships`, PlaceholderAPI relationship placeholders or the DPC sync.
+
 ### `/faction declarewar [faction]` or `/f declarewar [faction]`
 **Permission:** `mf.declarewar` (default: true)  
 **Description:** Declares war on another faction. If `factions.warDeclarationRequiresApproval` is enabled in config, the declaration will be held for moderator approval. When approval is required, you can optionally include a reason: `/f declarewar EnemyFaction -- reason for war`. If `factions.truceDurationMinutes` is above `0`, war cannot be declared on a faction you made peace with until the truce ends.  

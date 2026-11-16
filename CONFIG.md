@@ -424,6 +424,11 @@ flowchart TD
     P[Power cycle: offline decay] -.never checks.-> E
 ```
 
+### `factions.minimumRivalryHours`
+**Type:** Number  
+**Default:** `0`  
+**Description:** How many hours a rivalry named with `/f rival` must last before `/f unrival` can end it. `0` lets a rivalry be ended at any time.
+
 ### `factions.vassalPowerContributionMultiplier`
 **Type:** Float  
 **Default:** `0.75`  

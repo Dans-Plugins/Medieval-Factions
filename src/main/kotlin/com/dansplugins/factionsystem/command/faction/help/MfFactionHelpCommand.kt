@@ -37,6 +37,8 @@ class MfFactionHelpCommand(private val plugin: MedievalFactions) : CommandExecut
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionAutounclaim"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionBonusPower"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionBreakAlliance"]).apply { color = SpigotChatColor.GRAY }),
+                arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionRival"]).apply { color = SpigotChatColor.GRAY }),
+                arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionUnrival"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionBypass"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionChat"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionChatHistory"]).apply { color = SpigotChatColor.GRAY }),
