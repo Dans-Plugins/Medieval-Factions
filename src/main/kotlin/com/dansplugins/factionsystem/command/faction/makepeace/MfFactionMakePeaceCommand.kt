@@ -1,6 +1,7 @@
 package com.dansplugins.factionsystem.command.faction.makepeace
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.command.faction.MfForcedDiplomacy
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType.AT_WAR
@@ -16,6 +17,8 @@ import java.util.logging.Level
 
 class MfFactionMakePeaceCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
+    private val forcedDiplomacy = MfForcedDiplomacy(plugin)
+
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.makepeace")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionMakePeaceNoPermission"]}")
@@ -29,9 +32,19 @@ class MfFactionMakePeaceCommand(private val plugin: MedievalFactions) : CommandE
             sender.sendMessage("$RED${plugin.language["CommandFactionMakePeaceNotAPlayer"]}")
             return true
         }
+        val hasForcePermission = sender.hasPermission("mf.force.makepeace")
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
+                // With mf.force.makepeace, `<faction> <target>` acts for both factions at once (#1898).
+                when (val forced = forcedDiplomacy.parse(sender, args, hasForcePermission)) {
+                    is MfForcedDiplomacy.Parse.Resolved -> {
+                        forcedDiplomacy.makePeace(sender, forced.faction, forced.target)
+                        return@Runnable
+                    }
+                    MfForcedDiplomacy.Parse.Refused -> return@Runnable
+                    MfForcedDiplomacy.Parse.NotForced -> Unit
+                }
                 val playerService = plugin.services.playerService
                 val mfPlayer = playerService.getPlayer(sender)
                     ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
