@@ -404,6 +404,25 @@ factions:
 **Default:** `false`  
 **Description:** When `true`, factions with zero or negative total power are automatically disbanded.
 
+### `factions.leaderZeroPowerDisbandsFaction`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, a faction is disbanded when a member holding its `Owner` role (the role `/faction admin setleader` assigns, matched by name regardless of case) is brought to 0 power by a death. Only a death that takes the leader from above 0 to 0 counts: power lost while offline (`players.hoursToReachMinPower`), set with `/power set`, or already at 0 before the death never disbands a faction. With several `Owner` members, any one of them is enough. The disband goes through the same path as `/faction disband` (the `FactionDisbandEvent` is raised and can be cancelled by another plugin, claims and gates are released), the faction's members are notified, and the server log records which leader's death caused it. If `factions.zeroPowerFactionsGetDisbanded` already disbands the faction on that death, this setting adds nothing.
+
+```mermaid
+flowchart TD
+    D[Player dies] --> L{Power lost on death?}
+    L -- no --> X[Nothing]
+    L -- yes --> Z{zeroPowerFactionsGetDisbanded<br/>and faction power <= 0?}
+    Z -- yes --> DZ[Disband: faction at 0 power]
+    Z -- no --> E{leaderZeroPowerDisbandsFaction?}
+    E -- no --> X
+    E -- yes --> O{"Victim has the Owner role,<br/>power was > 0 and is now <= 0?"}
+    O -- no --> X
+    O -- yes --> DL["Disband: FactionDisbandEvent,<br/>claims and gates released,<br/>members notified, logged"]
+    P[Power cycle: offline decay] -.never checks.-> E
+```
+
 ### `factions.vassalPowerContributionMultiplier`
 **Type:** Float  
 **Default:** `0.75`  
