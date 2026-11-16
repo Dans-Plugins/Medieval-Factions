@@ -48,6 +48,10 @@ To set a flag value for your faction:
 
 A boolean flag also accepts the words for true and false in the server's language (`language` in `config.yml`): `wahr`/`falsch` in German, `vrai`/`faux` in French, `verdadeiro`/`falso` in Brazilian Portuguese, ignoring case. `true` and `false` are always accepted, whatever the language. `/f flag list` and the confirmation after setting a flag show boolean values in the server's language, and tab completion suggests them. The words come from the `FlagValueTrue` and `FlagValueFalse` keys in the language file.
 
+![Chat in German: /f flag set acceptBonusPower falsch is confirmed, and the flag list that follows shows every boolean flag as wahr or falsch](docs/images/flag-values/flag-list-de.png)
+
+*`/f flag set acceptBonusPower falsch` on a server with `language: de-DE`, after `/f flag set allowFriendlyFire wahr`. Captured with a scripted bot client on a throwaway Spigot 1.21.1 test server running Medieval Factions 10.2.1-SNAPSHOT; the server's real chat output, drawn as Minecraft chat. The page-links line under the list is left out of the image.*
+
 ```mermaid
 flowchart TD
     A["/f flag set &lt;boolean flag&gt; &lt;value&gt;"] --> B{"value is exactly<br/>true or false?"}

@@ -46,6 +46,37 @@ class JsonMfLawRepositoryTest {
     ) = MfLaw(id, version, faction, text, number)
 
     @Test
+    fun `round trips a law's section, and saving it again can clear it`() {
+        val saved = repository.upsert(law(text = "Tax is ten percent").copy(section = "Trade"))
+        assertEquals("Trade", repository.getLaw(saved.id)?.section)
+
+        val cleared = repository.upsert(saved.copy(section = null))
+        assertNull(repository.getLaw(cleared.id)?.section)
+        assertEquals("Tax is ten percent", repository.getLaw(cleared.id)?.text)
+    }
+
+    @Test
+    fun `reads a laws file written before law sections existed as laws with no section`() {
+        // laws.json as written by a release before #1650: no "section" field on any law.
+        val lawId = MfLawId.generate()
+        File(tempDir.toFile(), "laws.json").writeText(
+            """{"laws":[{"id":"${lawId.value}","version":3,"factionId":"${factionId.value}","text":"No griefing","number":1}]}"""
+        )
+
+        val read = repository.getLaw(lawId)
+
+        assertNotNull(read)
+        requireNotNull(read)
+        assertEquals("No griefing", read.text)
+        assertEquals(1, read.number)
+        assertEquals(3, read.version)
+        assertNull(read.section)
+        // and the law can still be saved, which writes the section field from then on
+        assertEquals(4, repository.upsert(read.copy(section = "General")).version)
+        assertEquals("General", repository.getLaw(lawId)?.section)
+    }
+
+    @Test
     fun `round trips a law`() {
         val saved = repository.upsert(law(text = "Pay your taxes", number = 3))
         assertEquals(1, saved.version)

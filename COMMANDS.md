@@ -148,6 +148,7 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 - Each chunk claimed requires power. Your faction must have enough power to claim land. By default a chunk costs one power; servers can change this, per world too, with `factions.claimPowerCost` and `factions.claimPowerCostByWorld` (see [CONFIG.md](CONFIG.md)).
 - Maximum claim radius is configurable (default: 3).
 - The claimed area is a circle (chunks within the given radius of your current chunk), not a square.
+- Servers can restrict where claims go: chunks listed in `factions.blockedClaimChunks` are skipped, `factions.maxClaimDistance` keeps new claims near the faction's existing land, and `factions.preventConqueringSurroundedChunks` stops an enemy chunk enclosed by its owner's claims from being conquered until a neighbouring chunk is taken (see [CONFIG.md](CONFIG.md)).
 - With `mf.force.claim` (default: op), a faction name or ID can be given before the radius (`/f claim FactionName [radius]`, or `/f claim circle FactionName [radius]`) to claim land on behalf of any faction, including one you are not in. The target faction's own claim role permission is not checked; its power limit, contiguity and contested-chunk rules still apply. A lone number is always read as a radius. Quote a multi-word faction name (`/f claim "My Faction" 2`). `/f claim auto` and `/f claim fill` do not take a faction.
 
 ### `/faction claim square <size>` / `/faction claim rectangle <sizeX> <sizeZ>`
@@ -263,6 +264,27 @@ flowchart TD
 **Description:** Breaks an existing alliance with another faction.  
 **Usage:** `/f breakalliance OtherFaction`
 
+### `/faction rival [faction]` or `/f rival [faction]`
+**Permission:** `mf.rival` (default: true)  
+**Description:** Names another faction as one of your faction's rivals. A rivalry is one-sided (the other faction does not have to agree) and is for show: it is listed under "Rivals" in `/f info` and the other faction is told, but it does not change war, protection, power or any other rule. It needs the same faction role permission as declaring war (`DECLARE_WAR`). An ally cannot be named as a rival.  
+**Usage:** `/f rival OtherFaction`
+
+### `/faction unrival [faction]` or `/f unrival [faction]`
+**Permission:** `mf.rival` (default: true)  
+**Description:** Ends a rivalry your faction named. With `factions.minimumRivalryHours` above `0`, a rivalry can only be ended once it is that old.  
+**Usage:** `/f unrival OtherFaction`
+
+```mermaid
+stateDiagram-v2
+    [*] --> NoRivalry
+    NoRivalry --> Rival: /f rival B (A not allied with B)
+    Rival --> Rival: /f unrival B before minimumRivalryHours
+    Rival --> NoRivalry: /f unrival B
+    Rival --> [*]: A or B disbanded
+```
+
+Rivals are stored apart from alliances, wars and vassalage (table `mf_faction_rival`, or `rivals.json` with JSON storage), so they do not appear in `/f relationship view`, the REST API's `/api/relationships`, PlaceholderAPI relationship placeholders or the DPC sync.
+
 ### `/faction declarewar [faction]` or `/f declarewar [faction]`
 **Permission:** `mf.declarewar` (default: true)  
 **Description:** Declares war on another faction. If `factions.warDeclarationRequiresApproval` is enabled in config, the declaration will be held for moderator approval. When approval is required, you can optionally include a reason: `/f declarewar EnemyFaction -- reason for war`. If `factions.truceDurationMinutes` is above `0`, war cannot be declared on a faction you made peace with until the truce ends.  
@@ -360,6 +382,10 @@ flowchart TD
 **Description:** Moves a role one place up or down your faction's role list, for example to list a new role above an older one. The order only changes how roles are listed; it does not grant or remove anything. Moving a role needs the same faction permission as renaming it: `MODIFY_ROLE` for that role.  
 **Usage:** `/f role move Duke up`
 
+![Animation: /f role list shows Owner, Officer, Member, Duke; after /f role move Duke up, the list shows Owner, Officer, Duke, Member](docs/images/role-move/role-move.gif)
+
+*`/f role move Duke up` moves Duke one place up, above Member. Captured with a scripted bot client on a throwaway Spigot 1.21.1 test server running Medieval Factions 10.2.1-SNAPSHOT; the server's real chat output, drawn as Minecraft chat.*
+
 ### `/faction role setprefix [role] (prefix)` or `/f role setprefix [role] (prefix)`
 **Permission:** `mf.role.setprefix` (default: true)  
 **Description:** Sets the prefix shown for a role's members, such as `[Knight]`, or clears it when no prefix is given. `&` colour codes are allowed, and a prefix can be up to 32 characters long, colour codes included. Roles have no prefix until one is set, and a role without one changes nothing in chat. Once set, the prefix appears in front of the member's name in faction, ally and vassal chat and, when `chat.enableDefaultChatFormatting` is on, in public chat (see [Chat Settings](CONFIG.md#chat-settings)). It is also available to other plugins as the PlaceholderAPI placeholder `%medievalfactions_faction_role_prefix%` (alias `%medievalfactions_faction_rank_prefix%`), which is empty for a role without a prefix or a player without a faction. Setting a prefix needs the same faction permission as renaming the role: `MODIFY_ROLE` for that role. `/f role view` shows the prefix and, to those who may set it, a `[Set prefix]` button that fills in this command.  
@@ -377,7 +403,7 @@ flowchart TD
 
 ## Laws
 
-Laws are numbered from 1 in the order `/f law list` shows them. Where a command takes a law, it can be given by that number or by the law's ID. Each command also needs the matching faction role permission (`ADD_LAW`, `LIST_LAWS`, `REMOVE_LAW`, `EDIT_LAW`, `MOVE_LAW`).
+Laws are numbered from 1 in the order `/f law list` shows them. Where a command takes a law, it can be given by that number or by the law's ID. Each command also needs the matching faction role permission (`ADD_LAW`, `LIST_LAWS`, `REMOVE_LAW`, `EDIT_LAW`, `MOVE_LAW`; `/f law section` uses `EDIT_LAW`).
 
 ### `/faction law add [law]` or `/f law add [law]`
 **Permission:** `mf.law.add` and `mf.addlaw` (both required; default: true)  
@@ -386,8 +412,12 @@ Laws are numbered from 1 in the order `/f law list` shows them. Where a command 
 
 ### `/faction law list` or `/f law list`
 **Permission:** `mf.law.list` and `mf.laws` (both required; default: true)  
-**Description:** Lists the laws of your faction, or of the named faction, ten to a page with links to the previous and next pages. A single number is read as a page of your own faction's laws unless a faction has that name.  
+**Description:** Lists the laws of your faction, or of the named faction, ten to a page with links to the previous and next pages. Laws with no section are listed first, as before; each section set with `/f law section` follows under its own heading, in the order of its lowest-numbered law, and every law keeps its global number. A single number is read as a page of your own faction's laws unless a faction has that name.  
 **Usage:** `/f law list [faction] [page]`
+
+![Chat: /f law list shows laws 1 to 10 with remove, edit and move buttons and Previous page / Page 1 / Next page links; /f law list 2 shows laws 11 and 12](docs/images/law-list/law-list.png)
+
+*A faction with twelve laws: page 1 holds ten, `/f law list 2` shows the rest. Captured with a scripted bot client on a throwaway Spigot 1.21.1 test server running Medieval Factions 10.2.1-SNAPSHOT; the server's real chat output, drawn as Minecraft chat.*
 
 ### `/faction law remove [number]` or `/f law remove [number]`
 **Permission:** `mf.law.remove` and `mf.removelaw` (both required; default: true)  
@@ -403,6 +433,11 @@ Laws are numbered from 1 in the order `/f law list` shows them. Where a command 
 **Permission:** `mf.law.move` (default: true)  
 **Description:** Moves a law to a new position in the list; the laws in between shift up or down by one. The new position must be a whole number from 1 to the faction's number of laws. If only the law is given, the new position is asked for in chat.  
 **Usage:** `/f law move 3 1`
+
+### `/faction law section [number] [section]` or `/f law section [number] [section]`
+**Permission:** `mf.law.section` (default: true)  
+**Description:** Puts a law under a free-text section, such as `Trade` or `Warfare`, or, when no section is given, takes it out of its section. Sections only group the laws in `/f law list`: law numbers stay global, so law 3 is still law 3 whichever section it is in, and `/f law move` still moves a law by its global number. A section name can be up to 64 characters long; laws are grouped by section ignoring case. Needs the `EDIT_LAW` faction role permission, the same as `/f law edit`.  
+**Usage:** `/f law section 3 Trade` sets law 3's section; `/f law section 3` clears it.
 
 ## Gates
 
@@ -463,13 +498,21 @@ Laws are numbered from 1 in the order `/f law list` shows them. Where a command 
 **Permission:** `mf.accessors.add` or `mf.grantaccess` (default: true)  
 **Aliases:** `/accessoren add`, `/accesseurs add`  
 **Description:** Right-click on a locked block, then click on a player to grant them access.  
-**Usage:** `/accessors add`
+**Usage:**
+- `/accessors add` - Enables add mode
+- `/accessors add [x] [y] [z] [player]` - Grants a player access to the locked block at those coordinates
+- `/accessors add [x] [y] [z] role [role]` - Grants access to every member of the lock owner's faction who holds that role (by name or id). Only roles of the lock owner's own faction can be added, and only the lock owner or a player on the block's access list can add one. The **Add role** button under `/accessors list` fills in this command.
+
+**Notes:** A role accessor follows the role: a member given the role gets access, a member whose role changes loses it, and the role grants nothing if it is deleted or the lock owner leaves the faction (which also removes the owner's locks). Holding a listed role does not let a player manage the access list; that stays with the owner and the players listed by name.
 
 ### `/accessors remove`
 **Permission:** `mf.accessors.remove` or `mf.revokeaccess` (default: true)  
 **Aliases:** `/accessoren remove`, `/accesseurs remove`  
 **Description:** Right-click on a locked block, then click on a player to revoke their access.  
-**Usage:** `/accessors remove`
+**Usage:**
+- `/accessors remove` - Enables remove mode
+- `/accessors remove [x] [y] [z] [player]` - Revokes a player's access to the locked block at those coordinates
+- `/accessors remove [x] [y] [z] role [role]` - Takes a role off the block's access list. A role that has since been deleted can be removed by its id, which is what the ✖ button next to it in `/accessors list` does.
 
 ## Duels
 

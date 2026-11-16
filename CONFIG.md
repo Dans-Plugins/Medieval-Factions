@@ -424,6 +424,11 @@ flowchart TD
     P[Power cycle: offline decay] -.never checks.-> E
 ```
 
+### `factions.minimumRivalryHours`
+**Type:** Number  
+**Default:** `0`  
+**Description:** How many hours a rivalry named with `/f rival` must last before `/f unrival` can end it. `0` lets a rivalry be ended at any time.
+
 ### `factions.vassalPowerContributionMultiplier`
 **Type:** Float  
 **Default:** `0.75`  
@@ -505,6 +510,51 @@ claimPowerCostByWorld:
 **Default:** `[]` (empty list)  
 **Description:** List of world names where claiming is not allowed.  
 **Example:** `["world_nether", "world_the_end"]`
+
+### `factions.blockedClaimChunks`
+**Type:** List of Strings  
+**Default:** `[]` (empty list)  
+**Description:** Chunks that can never be claimed, for example a server's spawn. Each entry is either a single chunk, `world:x:z`, or an inclusive rectangle of chunks, `world:x1:z1:x2:z2`. The numbers are chunk coordinates, not block coordinates (a block's chunk coordinate is its block coordinate divided by 16 and rounded down; the F3 debug screen shows it). `/f claim` (including a radius or `circle` claim), `/f claim fill` and auto-claiming all skip these chunks, and they cannot be conquered either. Chunks that were claimed before being listed stay claimed until they are unclaimed. Entries that do not match either form are ignored.  
+**Example:** `["world:-2:-2:1:1", "world_nether:0:0"]` blocks the 4x4 chunks around the overworld origin and one chunk in the nether.
+
+### `factions.maxClaimDistance`
+**Type:** Integer  
+**Default:** `-1` (no limit)  
+**Description:** The furthest, in chunks, that a new claim may be from the faction's nearest existing claim in the same world. Distance is measured in a straight line between chunk coordinates (one chunk is 16 blocks). A claim of several chunks at once is allowed if any one of them is within the distance. A faction's first claim in a world is not limited. Applies to `/f claim`, conquering, and auto-claiming (auto-claiming is switched off when a chunk is too far). `-1` disables the limit.  
+**Example:** `10` keeps every new claim within 160 blocks of the faction's existing land.
+
+### `factions.preventConqueringSurroundedChunks`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, an enemy chunk that is surrounded on all four sides (north, south, east and west) by its owner's other claims cannot be conquered. Attackers have to take the chunks on the edge of the enemy's territory first and work inwards. The player is told why when every chunk they tried to take was refused for this reason.
+
+#### How `/f claim` decides which chunks it takes
+
+The claim options above are checked in this order for `/f claim` (any radius). `/f claim fill` follows the same steps without the contiguity and distance checks, and auto-claim applies the world, blocked-chunk, power, contiguity and distance checks to the chunk being walked into.
+
+```mermaid
+flowchart TD
+    A["/f claim [radius]"] --> B{"World in<br/>blockedClaimWorlds?"}
+    B -- yes --> R1["Refused: claims not allowed in this world"]
+    B -- no --> C["Chunks in the radius"]
+    C --> D["Drop chunks listed in blockedClaimChunks"]
+    D --> E{"Chunk already<br/>claimed?"}
+    E -- no --> K["Claimable"]
+    E -- "yes, by an enemy" --> F{"preventConqueringSurroundedChunks<br/>and enclosed by its owner?"}
+    F -- yes --> X["Skipped"]
+    F -- no --> G{"At war, and the owner's power is no<br/>more than the claims it would keep?"}
+    G -- yes --> K
+    G -- no --> X
+    K --> H{"Anything claimable?"}
+    H -- no --> R2["Refused, saying why:<br/>surrounded, blocked, or nothing to claim"]
+    H -- yes --> I{"limitLand and not<br/>enough power?"}
+    I -- yes --> R3["Refused: demesne limit"]
+    I -- no --> J{"contiguousClaims and<br/>not adjacent?"}
+    J -- yes --> R4["Refused: not contiguous"]
+    J -- no --> L{"Further than maxClaimDistance<br/>from the faction's claims?"}
+    L -- yes --> R5["Refused: too far"]
+    L -- no --> S["Chunks claimed"]
+```
 
 ### `factions.actionBarTerritoryIndicator`
 **Type:** Boolean  
@@ -692,6 +742,12 @@ factions:
 **Type:** Boolean  
 **Default:** `false`  
 **Description:** When `true`, each online player sees a sidebar scoreboard with their own power and, if they are in a faction, the faction's power and max power. A player whose scoreboard has already been set by another plugin is left alone, so the sidebar never replaces a scoreboard Medieval Factions did not create. When the plugin is disabled, players showing the sidebar get the server's main scoreboard back. The setting is read at startup, so a change needs a restart.
+
+| `language: en-US` | `language: de-DE` |
+|---|---|
+| ![Sidebar titled Power: Faction max power 20, Faction power 5, Your power 5](docs/images/power-scoreboard/sidebar-en.png) | ![Sidebar titled Macht: Max. Fraktionsmacht 20, Deine Macht 5, Fraktionsmacht 5](docs/images/power-scoreboard/sidebar-de.png) |
+
+*The power sidebar of a faction's founder just after `/f create`, with `powerScoreboard.enabled: true`. Captured with a scripted bot client on a throwaway Spigot 1.21.1 test server running Medieval Factions 10.2.1-SNAPSHOT. The titles, lines and scores are the ones the server sent to the bot; the client sorts lines by score, highest first, so lines with equal scores can appear in either order.*
 
 ### `powerScoreboard.updateIntervalSeconds`
 **Type:** Integer  

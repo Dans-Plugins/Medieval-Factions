@@ -41,6 +41,7 @@ import com.dansplugins.factionsystem.command.faction.migrate.MfFactionMigrateCom
 import com.dansplugins.factionsystem.command.faction.pendingactions.MfFactionPendingActionsCommand
 import com.dansplugins.factionsystem.command.faction.power.MfFactionPowerCommand
 import com.dansplugins.factionsystem.command.faction.relationship.MfFactionRelationshipCommand
+import com.dansplugins.factionsystem.command.faction.rival.MfFactionRivalCommand
 import com.dansplugins.factionsystem.command.faction.role.MfFactionRoleCommand
 import com.dansplugins.factionsystem.command.faction.set.MfFactionSetCommand
 import com.dansplugins.factionsystem.command.faction.set.name.MfFactionSetNameCommand
@@ -67,6 +68,8 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val factionLawCommand = MfFactionLawCommand(plugin)
     private val factionAllyCommand = MfFactionAllyCommand(plugin)
     private val factionBreakAllianceCommand = MfFactionBreakAllianceCommand(plugin)
+    private val factionRivalCommand = MfFactionRivalCommand(plugin, remove = false)
+    private val factionUnrivalCommand = MfFactionRivalCommand(plugin, remove = true)
     private val factionInviteCommand = MfFactionInviteCommand(plugin)
     private val factionJoinCommand = MfFactionJoinCommand(plugin)
     private val factionDeclareWarCommand = MfFactionDeclareWarCommand(plugin)
@@ -118,6 +121,8 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val lawAliases = listOf("law", plugin.language["CmdFactionLaw"])
     private val allyAliases = listOf("ally", plugin.language["CmdFactionAlly"])
     private val breakAllianceAliases = listOf("breakalliance", "ba", plugin.language["CmdFactionBreakAlliance"])
+    private val rivalAliases = listOf("rival", plugin.language["CmdFactionRival"])
+    private val unrivalAliases = listOf("unrival", plugin.language["CmdFactionUnrival"])
     private val inviteAliases = listOf("invite", plugin.language["CmdFactionInvite"])
     private val joinAliases = listOf("join", plugin.language["CmdFactionJoin"])
     private val declareWarAliases = listOf("declarewar", "dw", plugin.language["CmdFactionDeclareWar"])
@@ -169,6 +174,8 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
         lawAliases +
         allyAliases +
         breakAllianceAliases +
+        rivalAliases +
+        unrivalAliases +
         inviteAliases +
         joinAliases +
         declareWarAliases +
@@ -222,6 +229,8 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in lawAliases -> factionLawCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in allyAliases -> factionAllyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in breakAllianceAliases -> factionBreakAllianceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in rivalAliases -> factionRivalCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in unrivalAliases -> factionUnrivalCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in inviteAliases -> factionInviteCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in joinAliases -> factionJoinCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in declareWarAliases -> factionDeclareWarCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -295,6 +304,8 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in lawAliases -> factionLawCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in allyAliases -> factionAllyCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in breakAllianceAliases -> factionBreakAllianceCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in rivalAliases -> factionRivalCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in unrivalAliases -> factionUnrivalCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in inviteAliases -> factionInviteCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in joinAliases -> factionJoinCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in declareWarAliases -> factionDeclareWarCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
