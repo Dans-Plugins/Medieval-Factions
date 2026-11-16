@@ -47,6 +47,7 @@ import org.jooq.impl.DSL
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions.assumeTrue
@@ -357,6 +358,24 @@ abstract class VersionedRepositoryContract {
         assertEquals(first.version + 1, edited.version)
         assertEquals(1, edited.number)
         assertEquals("first, edited", edited.text)
+    }
+
+    @Test
+    fun `law - a section is stored on create and on update, and a law without one reads as none`() {
+        val faction = parentFactions.upsert(newFaction(name = "LawSections"))
+        val plain = laws.upsert(MfLaw(faction, "no section"))
+        assertNull(plain.section)
+
+        val created = laws.upsert(MfLaw(faction, "tax").copy(section = "Trade"))
+        assertEquals("Trade", laws.getLaw(created.id)!!.section)
+
+        val moved = laws.upsert(plain.copy(section = "Warfare"))
+        assertEquals("Warfare", moved.section)
+        assertEquals(1, moved.number, "setting a section keeps the law's global number")
+
+        val cleared = laws.upsert(moved.copy(section = null))
+        assertNull(laws.getLaw(cleared.id)!!.section)
+        assertEquals("no section", cleared.text)
     }
 
     @Test
