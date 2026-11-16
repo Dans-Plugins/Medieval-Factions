@@ -43,7 +43,7 @@ class MfFactionBonusPowerCommand(private val plugin: MedievalFactions) : Command
                     sender.sendMessage("$RED${plugin.language["CommandFactionBonusPowerInvalidBonusPower"]}")
                     return@Runnable
                 }
-                val updatedFaction = factionService.save(faction.copy(bonusPower = bonusPower)).onFailure {
+                val updatedFaction = factionService.update(faction.id) { it.copy(bonusPower = bonusPower) }.onFailure {
                     sender.sendMessage("$RED${plugin.language["CommandFactionBonusPowerFailedToSaveFaction"]}")
                     plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
                     return@Runnable
