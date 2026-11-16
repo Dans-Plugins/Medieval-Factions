@@ -344,6 +344,28 @@ abstract class VersionedRepositoryContract {
         assertEquals(listOf(accessor.id), locks.getLockedBlock(existing.id)!!.accessors)
     }
 
+    @Test
+    fun `lock - role accessors round trip and a stale save leaves them untouched`() {
+        val owner = players.upsert(newPlayer())
+        val officer = MfFactionRoleId.generate()
+        val steward = MfFactionRoleId.generate()
+        val original = locks.upsert(newLockedBlock(owner.id).copy(accessorRoleIds = listOf(officer)))
+        assertEquals(listOf(officer), original.accessorRoleIds)
+        assertEquals(listOf(officer), locks.getLockedBlock(original.id)!!.accessorRoleIds)
+        assertEquals(listOf(officer), locks.getLockedBlocks().single { it.id == original.id }.accessorRoleIds)
+
+        val newer = locks.upsert(original.copy(accessorRoleIds = listOf(officer, steward)))
+        assertEquals(setOf(officer, steward), locks.getLockedBlock(original.id)!!.accessorRoleIds.toSet())
+
+        assertThrows(OptimisticLockingFailureException::class.java) {
+            locks.upsert(original.copy(accessorRoleIds = emptyList()))
+        }
+        assertEquals(setOf(officer, steward), locks.getLockedBlock(newer.id)!!.accessorRoleIds.toSet(), "the stale save must not replace the role accessors")
+
+        locks.upsert(newer.copy(accessorRoleIds = listOf(steward)))
+        assertEquals(listOf(steward), locks.getLockedBlock(original.id)!!.accessorRoleIds)
+    }
+
     // --- laws ---
 
     @Test
