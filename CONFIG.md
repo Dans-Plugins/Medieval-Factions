@@ -556,6 +556,10 @@ flowchart TD
     L -- no --> S["Chunks claimed"]
 ```
 
+![Chat: a claim succeeds, a claim inside a blocked chunk is refused with "This chunk cannot be claimed.", and a claim six chunks away is refused with "New claims must be within 2 chunks of your faction's existing claims in this world."](docs/images/claims/claim-restrictions.png)
+
+*`blockedClaimChunks: ["world:-16:-6:-15:-3"]` and `maxClaimDistance: 2`. A normal claim, then one inside the blocked rectangle, then one six chunks from the faction's land. Captured with scripted bot clients on a throwaway Spigot 1.21.1 test server running a pre-release build of Medieval Factions; the server's real chat output, drawn as Minecraft chat.*
+
 ### `factions.actionBarTerritoryIndicator`
 **Type:** Boolean  
 **Default:** `true`  
@@ -735,6 +739,10 @@ factions:
   - allowFriendlyFire
   - neutral
 ```
+
+![Chat: /f flag set allowFriendlyFire true is refused with "The allowFriendlyFire flag is set by the server for every faction and cannot be changed."; /f flag list shows allowMobGriefing (Boolean): true](docs/images/flags/forced-flag.png)
+
+*`forcedFlags: [allowFriendlyFire]`. Changing the forced flag is refused, and the new `allowMobGriefing` flag appears in `/f flag list` with its default. Captured with scripted bot clients on a throwaway Spigot 1.21.1 test server running a pre-release build of Medieval Factions; the server's real chat output, drawn as Minecraft chat.*
 
 ## Power Scoreboard
 
