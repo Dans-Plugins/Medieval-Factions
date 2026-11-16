@@ -106,6 +106,10 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
             sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetInvalidFlag"]}")
             return true
         }
+        if (plugin.flags.isForced(flag)) {
+            sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetFlagForced", flag.name]}")
+            return true
+        }
 
         if (parsedCommand.flagValue == null) {
             startConversation(sender, flag, parsedCommand.targetFaction, parsedCommand.returnPage)
