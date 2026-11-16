@@ -710,8 +710,24 @@ factions:
 - `${factionColor}` - Faction's color
 - `${faction}` - Faction name
 - `${role}` - Player's role
+- `${rolePrefix}` - The prefix of the player's role, set with `/f role setprefix`, or nothing when the role has none
 - `${displayName}` - Player's display name
 - `${message}` - The chat message
+
+**Role prefixes:** when the sender's role has a prefix (`/f role setprefix`), it is shown in front of `${displayName}` in all three channel formats, followed by a space, and the colour the format gives the name is restored after it. A format that contains `${rolePrefix}` puts the prefix there instead, and gets no second copy in front of the name. A role without a prefix, which is every role until one is set, leaves every message exactly as before. With `chat.enableDefaultChatFormatting` on, public chat shows the prefix between the faction tag and the name in the same way: `[Faction] [Knight] Alice: hello`.
+
+```mermaid
+flowchart TD
+    M[Member sends a chat message] --> P{Role has a prefix?}
+    P -- no --> U[Message formatted exactly as before]
+    P -- yes --> C{Faction, ally or vassal channel?}
+    C -- yes --> T{"Format contains ${rolePrefix}?"}
+    T -- yes --> X["Prefix placed at ${rolePrefix}"]
+    T -- no --> N["Prefix placed in front of ${displayName}"]
+    C -- "no: public chat" --> D{chat.enableDefaultChatFormatting?}
+    D -- yes --> F["[Faction] [Knight] Alice: message"]
+    D -- no --> O[Message left to the server and other chat plugins]
+```
 
 ### `chat.vassals.format`
 **Type:** String  
