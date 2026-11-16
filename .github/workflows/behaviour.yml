@@ -69,7 +69,8 @@ jobs:
           echo "baseline: $url"
           echo "baseline_url=$url" >> "$GITHUB_OUTPUT"
 
-  build:
+  candidate-jar:
+    name: candidate jar
     needs: decide
     if: needs.decide.outputs.run == 'true'
     runs-on: ubuntu-latest
@@ -93,7 +94,7 @@ jobs:
           if-no-files-found: error
 
   behaviour:
-    needs: [decide, build]
+    needs: [decide, candidate-jar]
     if: needs.decide.outputs.run == 'true'
     uses: Dans-Plugins/release-gates/.github/workflows/behaviour-gate.yml@v23
     with:

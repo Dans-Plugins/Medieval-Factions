@@ -503,6 +503,11 @@ claimPowerCostByWorld:
 **Default:** `false`  
 **Description:** When `true`, war declarations require moderator approval before taking effect. Players with the `mf.approve` permission can approve or deny pending war declarations using `/faction approve` and `/faction deny`. Players can optionally include a reason by appending `-- <reason>` after the faction name.
 
+### `factions.truceDurationMinutes`
+**Type:** Integer  
+**Default:** `0`  
+**Description:** Length of the truce, in minutes, that starts when two factions make peace (both sides have run `/faction makepeace`). During the truce neither faction can declare war on the other; `/faction declarewar` tells the player how many minutes are left. `0` or less turns truces off, which is the default, so existing servers see no change. Truce end times are kept in `truces.yml` in the plugin's data folder so that a restart does not end them. The truce is checked by `/faction declarewar`, by `/faction approve` for a pending war declaration (the request is kept, so it can be approved once the truce ends), and by `/faction invoke` when the ally being called in is under truce with the enemy. Operator commands that set relationships directly are not blocked.
+
 ### `factions.allyDeclarationRequiresApproval`
 **Type:** Boolean  
 **Default:** `false`  
@@ -611,6 +616,27 @@ These settings define the default values for faction flags when a new faction is
 **Description:** Default setting for whether hostile mobs are protected from damage by non-members in faction territory. While the flag is available for factions to set, this config option is not currently implemented in the default config file.  
 **Note:** Factions can still set this flag individually using `/f flag set enableMobProtection [true/false]`.
 
+### `factions.defaults.flags.allowMobGriefing`
+**Type:** Boolean  
+**Default:** `true`  
+**Description:** Default setting for whether mobs can change blocks in faction territory (endermen taking blocks, zombies breaking doors, ravagers and other mobs trampling crops and farmland, withers breaking blocks, sheep eating grass). Existing factions that never set the flag use this value. See `FACTION_FLAGS.md`.
+
+### `factions.forcedFlags`
+**Type:** List of flag names  
+**Default:** `[]`  
+**Description:** Flags that are fixed for every faction. A forced flag always reads as its value under `factions.defaults.flags`, whatever a faction set before, and `/faction flag set` refuses to change it, including for holders of `mf.force.flag`. The value each faction stored is left in place, so taking a flag off the list restores every faction's own setting. Names are case-insensitive; unknown names are ignored. `color` cannot be forced. Read at startup.  
+**Example:**
+```yaml
+factions:
+  defaults:
+    flags:
+      allowFriendlyFire: true
+      neutral: false
+  forcedFlags:
+  - allowFriendlyFire
+  - neutral
+```
+
 ## Power Scoreboard
 
 ### `powerScoreboard.enabled`
@@ -629,6 +655,12 @@ These settings define the default values for faction flags when a new faction is
 **Type:** Boolean  
 **Default:** `true`  
 **Description:** When `true`, enables Medieval Factions custom chat formatting.
+
+### `chat.prefixWorlds`
+**Type:** List of Strings  
+**Default:** `[]` (empty list: everyone sees the prefix)  
+**Description:** The worlds whose players see the faction prefix (`[FactionName]`, or the faction's prefix if it has one) that `chat.enableDefaultChatFormatting` adds to public chat. When the list is not empty, a player in any other world sees the same message without the prefix, in the format the message had before Medieval Factions added its prefix (the server's normal `<Player> message` unless another chat plugin changed it first). It is the reader's world that counts, not the speaker's. Useful on a multi-world server where factions only matter in some worlds. Faction, ally and vassal chat channels are not affected. Has no effect when `chat.enableDefaultChatFormatting` is `false`. A chat plugin that changes the message format after Medieval Factions has handled the message does not affect what players outside these worlds see.  
+**Example:** `["Factions", "Factions_nether"]`
 
 ### `chat.faction.format`
 **Type:** String  

@@ -68,6 +68,7 @@ import com.dansplugins.factionsystem.listener.HangingPlaceListener
 import com.dansplugins.factionsystem.listener.InventoryClickListener
 import com.dansplugins.factionsystem.listener.InventoryMoveItemListener
 import com.dansplugins.factionsystem.listener.LingeringPotionSplashListener
+import com.dansplugins.factionsystem.listener.MobGriefingListener
 import com.dansplugins.factionsystem.listener.PlayerBucketListener
 import com.dansplugins.factionsystem.listener.PlayerDeathListener
 import com.dansplugins.factionsystem.listener.PlayerInteractAtEntityListener
@@ -101,6 +102,7 @@ import com.dansplugins.factionsystem.potion.MfPotionService
 import com.dansplugins.factionsystem.relationship.JooqMfFactionRelationshipRepository
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipRepository
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
+import com.dansplugins.factionsystem.relationship.MfTruceService
 import com.dansplugins.factionsystem.scoreboard.MfPowerScoreboard
 import com.dansplugins.factionsystem.service.Services
 import com.dansplugins.factionsystem.teleport.MfTeleportService
@@ -126,6 +128,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.flywaydb.core.Flyway
 import org.jooq.conf.Settings
 import org.jooq.impl.DSL
+import java.io.File
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalTime
@@ -142,6 +145,7 @@ class MedievalFactions : JavaPlugin() {
     lateinit var flags: MfFlags
     lateinit var factionPermissions: MfFactionPermissions
     lateinit var services: Services
+    lateinit var truceService: MfTruceService
     private var powerScoreboard: MfPowerScoreboard? = null
     lateinit var language: Language
 
@@ -225,6 +229,7 @@ class MedievalFactions : JavaPlugin() {
             mapService,
             approvalRequestService
         )
+        truceService = MfTruceService({ config.getLong("factions.truceDurationMinutes") }, File(dataFolder, "truces.yml"))
         setupRpkLockService()
 
         val metrics = Metrics(this, 8929)
@@ -383,6 +388,7 @@ class MedievalFactions : JavaPlugin() {
             EntityDamageByEntityListener(this),
             EntityDamageListener(this),
             EntityExplodeListener(this),
+            MobGriefingListener(this),
             EntityPlaceListener(worldActionProtection),
             HangingPlaceListener(worldActionProtection),
             InventoryClickListener(this),

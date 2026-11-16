@@ -48,7 +48,8 @@ class MfFlagsTest {
                 "acceptBonusPower",
                 "enableMobProtection",
                 "liegeChainCanInteractWithLand",
-                "protectVillagerTrade"
+                "protectVillagerTrade",
+                "allowMobGriefing"
             ),
             flags.map { it.name }
         )
