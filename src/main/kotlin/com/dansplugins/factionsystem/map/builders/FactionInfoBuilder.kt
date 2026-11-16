@@ -85,7 +85,9 @@ class FactionInfoBuilder(private val plugin: MedievalFactions) {
             if (plugin.config.getBoolean("dynmap.showDemesne")) {
                 append("<h2>Demesne</h2>")
                 val claims = claimService.getClaims(faction.id)
-                append("${claims.size}/${floor(faction.power).roundToInt()}")
+                // Capacity at the claim power cost of the faction's home world, or of its first claim's world
+                val worldId = faction.home?.worldId ?: claims.firstOrNull()?.worldId
+                append("${claims.size}/${claimService.getClaimLimit(faction.id, faction.power, worldId).roundToInt()}")
             }
         }
     }

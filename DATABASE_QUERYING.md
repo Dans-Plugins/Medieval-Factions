@@ -200,6 +200,7 @@ Medieval Factions uses the following tables:
 | `mf_gate` | Gate structures with coordinates and status |
 | `mf_locked_block` | Player-locked blocks/containers |
 | `mf_locked_block_accessor` | Access list for locked blocks |
+| `mf_locked_block_role_accessor` | Faction roles (of the lock owner's faction) whose holders may access a locked block |
 | `mf_locked_entity` | Locked armour stands and item frames, by entity id |
 | `mf_locked_entity_accessor` | Access list for locked armour stands and item frames |
 | `mf_player_interaction_status` | Player interaction state |

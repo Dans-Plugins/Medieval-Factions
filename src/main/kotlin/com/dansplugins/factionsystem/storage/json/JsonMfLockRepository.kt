@@ -24,6 +24,16 @@ class JsonMfLockRepository(
 
     private fun loadData(): LockData =
         storageManager.loadJsonData(fileName, "locks", gson, LockData::class.java) { LockData() }
+            .also { data -> data.locks.replaceAll(::withRoleAccessorsPresent) }
+
+    /**
+     * Gson builds [MfLockedBlock] without calling its constructor, so a lock written before role
+     * accessors existed (#1569) is read back with a null `accessorRoleIds` despite the non-null type.
+     * Such a lock has no role accessors.
+     */
+    @Suppress("SENSELESS_COMPARISON")
+    private fun withRoleAccessorsPresent(lockedBlock: MfLockedBlock): MfLockedBlock =
+        if (lockedBlock.accessorRoleIds == null) lockedBlock.copy(accessorRoleIds = emptyList()) else lockedBlock
 
     private fun saveData(data: LockData) {
         storageManager.writeJsonFile(fileName, data, null)

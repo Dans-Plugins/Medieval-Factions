@@ -69,6 +69,7 @@ import com.dansplugins.factionsystem.listener.HangingPlaceListener
 import com.dansplugins.factionsystem.listener.InventoryClickListener
 import com.dansplugins.factionsystem.listener.InventoryMoveItemListener
 import com.dansplugins.factionsystem.listener.LingeringPotionSplashListener
+import com.dansplugins.factionsystem.listener.MobGriefingListener
 import com.dansplugins.factionsystem.listener.PlayerBucketListener
 import com.dansplugins.factionsystem.listener.PlayerDeathListener
 import com.dansplugins.factionsystem.listener.PlayerInteractAtEntityListener
@@ -79,6 +80,7 @@ import com.dansplugins.factionsystem.listener.PlayerMoveListener
 import com.dansplugins.factionsystem.listener.PlayerQuitListener
 import com.dansplugins.factionsystem.listener.PlayerRespawnListener
 import com.dansplugins.factionsystem.listener.PlayerTeleportListener
+import com.dansplugins.factionsystem.listener.PortalCreateListener
 import com.dansplugins.factionsystem.listener.PotionSplashListener
 import com.dansplugins.factionsystem.listener.StructureGrowListener
 import com.dansplugins.factionsystem.listener.WorldActionProtection
@@ -103,8 +105,13 @@ import com.dansplugins.factionsystem.relationship.JooqMfFactionRelationshipRepos
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipRepository
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
 import com.dansplugins.factionsystem.relationship.MfTruceService
+import com.dansplugins.factionsystem.relationship.rival.JooqMfFactionRivalRepository
+import com.dansplugins.factionsystem.relationship.rival.MfFactionRivalRepository
+import com.dansplugins.factionsystem.relationship.rival.MfFactionRivalService
 import com.dansplugins.factionsystem.scoreboard.MfPowerScoreboard
 import com.dansplugins.factionsystem.service.Services
+import com.dansplugins.factionsystem.slimefun.MfSlimefunProtectionModule
+import com.dansplugins.factionsystem.slimefun.MfSlimefunProtectionPolicy
 import com.dansplugins.factionsystem.teleport.MfTeleportService
 import com.dansplugins.factionsystem.trace.TraceClient
 import com.dansplugins.factionsystem.update.MfUpdateNotifier
@@ -132,6 +139,7 @@ import java.io.File
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalTime
+import java.util.logging.Level
 import java.util.logging.Level.SEVERE
 import javax.sql.DataSource
 import kotlin.math.floor
@@ -211,6 +219,7 @@ class MedievalFactions : JavaPlugin() {
         val potionService = MfPotionService(this)
         val teleportService = MfTeleportService(this)
         val approvalRequestService = MfApprovalRequestService()
+        val factionRivalService = MfFactionRivalService(this, repositories.factionRivalRepository)
 
         services = Services(
             playerService,
@@ -227,7 +236,8 @@ class MedievalFactions : JavaPlugin() {
             potionService,
             teleportService,
             mapService,
-            approvalRequestService
+            approvalRequestService,
+            factionRivalService
         )
         truceService = MfTruceService({ config.getLong("factions.truceDurationMinutes") }, File(dataFolder, "truces.yml"))
         setupRpkLockService()
@@ -356,6 +366,8 @@ class MedievalFactions : JavaPlugin() {
             MedievalFactionsPlaceholderExpansion(this).register()
         }
 
+        setupSlimefunProtection()
+
         if (config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
             logger.info(language["DynmapOnlyRenderTerritoriesUponStartupEnabled"])
         }
@@ -388,6 +400,7 @@ class MedievalFactions : JavaPlugin() {
             EntityDamageByEntityListener(this),
             EntityDamageListener(this),
             EntityExplodeListener(this),
+            MobGriefingListener(this),
             EntityLockListener(this),
             EntityPlaceListener(worldActionProtection),
             HangingPlaceListener(worldActionProtection),
@@ -404,6 +417,7 @@ class MedievalFactions : JavaPlugin() {
             PlayerQuitListener(this, entityInteractionProtection),
             PlayerRespawnListener(this),
             PlayerTeleportListener(this),
+            PortalCreateListener(this),
             PotionSplashListener(this),
             StructureGrowListener(growthBorderTrimmer)
         ).forEach { server.pluginManager.registerEvents(it, this) }
@@ -570,7 +584,8 @@ class MedievalFactions : JavaPlugin() {
         val gateCreationContextRepository: MfGateCreationContextRepository,
         val chatMessageRepository: MfChatChannelMessageRepository,
         val duelRepository: MfDuelRepository,
-        val duelInviteRepository: MfDuelInviteRepository
+        val duelInviteRepository: MfDuelInviteRepository,
+        val factionRivalRepository: MfFactionRivalRepository
     )
 
     private fun initializeDatabaseRepositories(gson: Gson): Repositories {
@@ -617,7 +632,8 @@ class MedievalFactions : JavaPlugin() {
             gateCreationContextRepository = JooqMfGateCreationContextRepository(dsl),
             chatMessageRepository = JooqMfChatChannelMessageRepository(dsl),
             duelRepository = JooqMfDuelRepository(dsl),
-            duelInviteRepository = JooqMfDuelInviteRepository(dsl)
+            duelInviteRepository = JooqMfDuelInviteRepository(dsl),
+            factionRivalRepository = JooqMfFactionRivalRepository(dsl)
         )
     }
 
@@ -639,7 +655,8 @@ class MedievalFactions : JavaPlugin() {
             gateCreationContextRepository = com.dansplugins.factionsystem.storage.json.JsonMfGateCreationContextRepository(this, storageManager),
             chatMessageRepository = com.dansplugins.factionsystem.storage.json.JsonMfChatChannelMessageRepository(this, storageManager),
             duelRepository = com.dansplugins.factionsystem.storage.json.JsonMfDuelRepository(this, storageManager),
-            duelInviteRepository = com.dansplugins.factionsystem.storage.json.JsonMfDuelInviteRepository(this, storageManager)
+            duelInviteRepository = com.dansplugins.factionsystem.storage.json.JsonMfDuelInviteRepository(this, storageManager),
+            factionRivalRepository = com.dansplugins.factionsystem.storage.json.JsonMfFactionRivalRepository(this, storageManager)
         )
     }
 
@@ -743,6 +760,21 @@ class MedievalFactions : JavaPlugin() {
             executor.onCommand(sender, cmd, label, args)
         }
         command.tabCompleter = executor
+    }
+
+    // Slimefun is a soft dependency: its classes are only loaded when it is enabled and the option is on (#1750)
+    private fun setupSlimefunProtection() {
+        if (!config.getBoolean("slimefun.protection.enabled")) return
+        if (server.pluginManager.getPlugin("Slimefun")?.isEnabled != true) {
+            logger.warning("slimefun.protection.enabled is on, but Slimefun is not installed, so no Slimefun protection module was registered.")
+            return
+        }
+        try {
+            MfSlimefunProtectionModule.register(this, server.pluginManager, MfSlimefunProtectionPolicy(this))
+            logger.info("Registered the Medieval Factions protection module with Slimefun.")
+        } catch (e: LinkageError) {
+            logger.log(Level.WARNING, "This Slimefun version's protection API is not supported, so Slimefun blocks are not protected by Medieval Factions.", e)
+        }
     }
 
     private fun setupRpkLockService() {

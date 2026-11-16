@@ -1,6 +1,10 @@
 package com.dansplugins.factionsystem.command.faction.law
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.command.faction.law.MfFactionLawListCommand.LawListEntry
+import com.dansplugins.factionsystem.faction.MfFactionId
+import com.dansplugins.factionsystem.law.MfLaw
+import com.dansplugins.factionsystem.law.MfLawId
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
@@ -52,5 +56,64 @@ class MfFactionLawListCommandTest {
     fun `page links quote the faction name so it survives spaces`() {
         assertEquals("", MfFactionLawListCommand.ParsedArgs(null, 0).factionCommandArgument)
         assertEquals(" \"Two Words\"", MfFactionLawListCommand.ParsedArgs("Two Words", 0).factionCommandArgument)
+    }
+
+    // --- sections (#1650) ---
+
+    private val factionId = MfFactionId.generate()
+    private fun law(number: Int, text: String, section: String? = null) =
+        MfLaw(MfLawId.generate(), 1, factionId, text, number, section)
+
+    private fun rendered(entries: List<LawListEntry>) = entries.map {
+        when (it) {
+            is LawListEntry.Heading -> "# ${it.section}"
+            is LawListEntry.Law -> "${it.number}. ${it.law.text}"
+        }
+    }
+
+    @Test
+    fun `laws with no section are listed exactly as before, with no headings`() {
+        val laws = listOf(law(1, "a"), law(2, "b"), law(3, "c"))
+        assertEquals(listOf("1. a", "2. b", "3. c"), rendered(uut.arrangeBySection(laws)))
+    }
+
+    @Test
+    fun `unsectioned laws come first, then each section under a heading, keeping global numbers`() {
+        val laws = listOf(
+            law(1, "No griefing"),
+            law(2, "Tax is ten percent", "Trade"),
+            law(3, "Help defend"),
+            law(4, "No raids in truce", "Warfare"),
+            law(5, "Market on Sundays", "Trade")
+        )
+        assertEquals(
+            listOf(
+                "1. No griefing",
+                "3. Help defend",
+                "# Trade",
+                "2. Tax is ten percent",
+                "5. Market on Sundays",
+                "# Warfare",
+                "4. No raids in truce"
+            ),
+            rendered(uut.arrangeBySection(laws))
+        )
+    }
+
+    @Test
+    fun `sections are grouped ignoring case and spacing, under the first law's spelling`() {
+        val laws = listOf(law(1, "a", "Trade"), law(2, "b", " trade "), law(3, "c", "TRADE"))
+        assertEquals(listOf("# Trade", "1. a", "2. b", "3. c"), rendered(uut.arrangeBySection(laws)))
+    }
+
+    @Test
+    fun `a blank section counts as no section`() {
+        val laws = listOf(law(1, "a", "  "), law(2, "b", "Trade"))
+        assertEquals(listOf("1. a", "# Trade", "2. b"), rendered(uut.arrangeBySection(laws)))
+    }
+
+    @Test
+    fun `an empty law list has no entries`() {
+        assertEquals(emptyList<String>(), rendered(uut.arrangeBySection(emptyList())))
     }
 }

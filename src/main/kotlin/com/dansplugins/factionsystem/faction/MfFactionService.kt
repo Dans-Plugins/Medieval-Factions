@@ -18,8 +18,10 @@ import com.dansplugins.factionsystem.failure.ServiceFailure
 import com.dansplugins.factionsystem.failure.ServiceFailureType
 import com.dansplugins.factionsystem.failure.ServiceFailureType.CONFLICT
 import com.dansplugins.factionsystem.failure.ServiceFailureType.GENERAL
+import com.dansplugins.factionsystem.failure.ServiceFailureType.NOT_FOUND
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
+import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Result4k
 import dev.forkhandles.result4k.mapFailure
 import dev.forkhandles.result4k.onFailure
@@ -29,6 +31,11 @@ import java.util.concurrent.CopyOnWriteArrayList
 import java.util.logging.Level.SEVERE
 
 class MfFactionService(private val plugin: MedievalFactions, private val repository: MfFactionRepository) {
+
+    companion object {
+        /** How many times [update] tries to save before reporting a conflict. */
+        const val MAX_UPDATE_ATTEMPTS = 3
+    }
 
     private val factionsById: MutableMap<MfFactionId, MfFaction> = ConcurrentHashMap()
     val factions: List<MfFaction>
@@ -121,7 +128,9 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
             }
         }
         val result = repository.upsert(factionToSave)
-        factionsById[result.id] = result
+        // A write that lost a race and was retried by update() can finish caching after the retry did, so an older
+        // version never replaces a newer one in the cache.
+        factionsById.merge(result.id, result) { cached, saved -> if (saved.version >= cached.version) saved else cached }
         leavingMembers.forEach(::deleteLocksOfFormerMember)
         val mapService = plugin.services.mapService
         if (mapService != null && !plugin.config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
@@ -135,6 +144,41 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
         return@resultFrom result
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+    }
+
+    /**
+     * Applies [change] to the current state of the faction and saves the result.
+     *
+     * Use this rather than reading a faction and later passing a copy of it to [save]. Commands read and save in their
+     * own asynchronous tasks, so a save that lands between the read and the write leaves the copy one version behind,
+     * and [save] refuses it with a [CONFLICT] (#2121). When that happens here, the faction is read again from storage
+     * and [change] is applied to that state, up to [MAX_UPDATE_ATTEMPTS] times in all. [change] may therefore run more
+     * than once and should only compute the new state.
+     *
+     * Fails with [NOT_FOUND] if no faction has [factionId], and with the failure of the last attempt otherwise.
+     */
+    @JvmName("updateFactionByFactionId")
+    fun update(factionId: MfFactionId, change: (MfFaction) -> MfFaction): Result4k<MfFaction, ServiceFailure> {
+        var current = getFaction(factionId) ?: return notFound(factionId)
+        var attempt = 1
+        while (true) {
+            val result = save(change(current))
+            if (result is Failure && result.reason.type == CONFLICT && attempt < MAX_UPDATE_ATTEMPTS) {
+                attempt++
+                current = try {
+                    repository.getFaction(factionId)
+                } catch (exception: Exception) {
+                    return Failure(ServiceFailure(GENERAL, "Service error: ${exception.message}", exception))
+                } ?: return notFound(factionId)
+                continue
+            }
+            return result
+        }
+    }
+
+    private fun notFound(factionId: MfFactionId): Result4k<MfFaction, ServiceFailure> {
+        val message = "Faction not found: ${factionId.value}"
+        return Failure(ServiceFailure(NOT_FOUND, message, NoSuchElementException(message)))
     }
 
     /**

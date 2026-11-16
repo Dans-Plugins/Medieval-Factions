@@ -2,9 +2,11 @@ package com.dansplugins.factionsystem.locks
 
 import com.dansplugins.factionsystem.area.MfBlockPosition
 import com.dansplugins.factionsystem.db.MfVersionedWrite
+import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.jooq.Tables.MF_LOCKED_BLOCK
 import com.dansplugins.factionsystem.jooq.Tables.MF_LOCKED_BLOCK_ACCESSOR
+import com.dansplugins.factionsystem.jooq.Tables.MF_LOCKED_BLOCK_ROLE_ACCESSOR
 import com.dansplugins.factionsystem.jooq.Tables.MF_LOCKED_ENTITY
 import com.dansplugins.factionsystem.jooq.Tables.MF_LOCKED_ENTITY_ACCESSOR
 import com.dansplugins.factionsystem.jooq.tables.records.MfLockedBlockRecord
@@ -34,11 +36,20 @@ class JooqMfLockRepository(private val dsl: DSLContext) : MfLockRepository {
         ).where(condition).fetch()
         val lockedBlockRecord = results.into(MF_LOCKED_BLOCK).firstOrNull() ?: return null
         val accessorRecords = results.into(MF_LOCKED_BLOCK_ACCESSOR)
-        val accessors = accessorRecords.map { record -> record.playerId.let(::MfPlayerId) }
-        return lockedBlockRecord.toDomain(accessors)
+        // A lock with no player accessors comes back from the left join as one all-null accessor row.
+        val accessors = accessorRecords.mapNotNull { record -> record.playerId?.let(::MfPlayerId) }
+        return lockedBlockRecord.toDomain(accessors, getRoleAccessors(lockedBlockRecord.id))
     }
 
+    private fun getRoleAccessors(lockedBlockId: String): List<MfFactionRoleId> =
+        dsl.selectFrom(MF_LOCKED_BLOCK_ROLE_ACCESSOR)
+            .where(MF_LOCKED_BLOCK_ROLE_ACCESSOR.LOCKED_BLOCK_ID.eq(lockedBlockId))
+            .fetch()
+            .map { it.roleId.let(::MfFactionRoleId) }
+
     override fun getLockedBlocks(): List<DomainMfLockedBlock> {
+        val roleAccessors = dsl.selectFrom(MF_LOCKED_BLOCK_ROLE_ACCESSOR).fetch()
+            .groupBy({ it.lockedBlockId }, { it.roleId.let(::MfFactionRoleId) })
         return dsl.selectFrom(
             MF_LOCKED_BLOCK
                 .leftJoin(MF_LOCKED_BLOCK_ACCESSOR)
@@ -48,7 +59,8 @@ class JooqMfLockRepository(private val dsl: DSLContext) : MfLockRepository {
             .map { (_, records) ->
                 val accessors = records.filter { it[MF_LOCKED_BLOCK_ACCESSOR.PLAYER_ID] != null }
                     .map { it.into(MF_LOCKED_BLOCK_ACCESSOR).playerId.let(::MfPlayerId) }
-                records.first().into(MF_LOCKED_BLOCK).toDomain(accessors)
+                val lockedBlockRecord = records.first().into(MF_LOCKED_BLOCK)
+                lockedBlockRecord.toDomain(accessors, roleAccessors[lockedBlockRecord.id].orEmpty())
             }
     }
 
@@ -68,8 +80,12 @@ class JooqMfLockRepository(private val dsl: DSLContext) : MfLockRepository {
             deleteAccessors(transactionalDsl, lockedBlock.id)
             val newAccessors = lockedBlock.accessors.map { upsertAccessor(transactionalDsl, lockedBlock.id, it) }
 
+            deleteRoleAccessors(transactionalDsl, lockedBlock.id)
+            lockedBlock.accessorRoleIds.distinctBy { it.value }.forEach { insertRoleAccessor(transactionalDsl, lockedBlock.id, it) }
+
             return@transactionResult newState.copy(
-                accessors = newAccessors
+                accessors = newAccessors,
+                accessorRoleIds = lockedBlock.accessorRoleIds.distinctBy { it.value }
             )
         }
     }
@@ -132,6 +148,19 @@ class JooqMfLockRepository(private val dsl: DSLContext) : MfLockRepository {
             .execute()
     }
 
+    private fun deleteRoleAccessors(dsl: DSLContext, lockedBlockId: MfLockedBlockId) {
+        dsl.deleteFrom(MF_LOCKED_BLOCK_ROLE_ACCESSOR)
+            .where(MF_LOCKED_BLOCK_ROLE_ACCESSOR.LOCKED_BLOCK_ID.eq(lockedBlockId.value))
+            .execute()
+    }
+
+    private fun insertRoleAccessor(dsl: DSLContext, lockedBlockId: MfLockedBlockId, roleId: MfFactionRoleId) {
+        dsl.insertInto(MF_LOCKED_BLOCK_ROLE_ACCESSOR)
+            .set(MF_LOCKED_BLOCK_ROLE_ACCESSOR.LOCKED_BLOCK_ID, lockedBlockId.value)
+            .set(MF_LOCKED_BLOCK_ROLE_ACCESSOR.ROLE_ID, roleId.value)
+            .execute()
+    }
+
     private fun upsertAccessor(dsl: DSLContext, lockedBlockId: MfLockedBlockId, playerId: MfPlayerId): MfPlayerId {
         dsl.insertInto(MF_LOCKED_BLOCK_ACCESSOR)
             .set(MF_LOCKED_BLOCK_ACCESSOR.LOCKED_BLOCK_ID, lockedBlockId.value)
@@ -147,7 +176,10 @@ class JooqMfLockRepository(private val dsl: DSLContext) : MfLockRepository {
             .let(::MfPlayerId)
     }
 
-    private fun MfLockedBlockRecord.toDomain(accessors: List<MfPlayerId> = emptyList()) = DomainMfLockedBlock(
+    private fun MfLockedBlockRecord.toDomain(
+        accessors: List<MfPlayerId> = emptyList(),
+        accessorRoleIds: List<MfFactionRoleId> = emptyList()
+    ) = DomainMfLockedBlock(
         id = id.let(::MfLockedBlockId),
         version = version,
         block = MfBlockPosition(
@@ -159,7 +191,8 @@ class JooqMfLockRepository(private val dsl: DSLContext) : MfLockRepository {
         chunkX = chunkX,
         chunkZ = chunkZ,
         playerId = playerId.let(::MfPlayerId),
-        accessors = accessors
+        accessors = accessors,
+        accessorRoleIds = accessorRoleIds
     )
 
     // --- locked entities (#1679) ---

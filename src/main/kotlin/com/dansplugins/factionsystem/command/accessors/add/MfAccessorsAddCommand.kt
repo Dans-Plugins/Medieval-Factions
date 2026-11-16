@@ -5,6 +5,7 @@ import com.dansplugins.factionsystem.area.MfBlockPosition
 import com.dansplugins.factionsystem.command.accessors.MfEntityAccessors
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.ADDING_ACCESSOR
 import com.dansplugins.factionsystem.player.MfPlayer
+import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
 import org.bukkit.ChatColor.RED
@@ -149,8 +150,9 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
             conversation.begin()
             return true
         }
-        val player = plugin.server.getOfflinePlayer(args[3])
-        if (!player.isOnline && !player.hasPlayedBefore()) {
+        val isRole = args.size >= 5 && args[3].lowercase() in roleAliases
+        val player = if (isRole) null else plugin.server.getOfflinePlayer(args[3])
+        if (player != null && !player.isOnline && !player.hasPlayedBefore()) {
             sender.sendMessage("$RED${plugin.language["CommandAccessorsAddInvalidPlayer"]}")
             return true
         }
@@ -170,8 +172,67 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
         } else {
             listOf(block)
         }
-        addAccessor(sender, blocks, player)
+        if (player == null) {
+            addRoleAccessor(sender, blocks, args.drop(4).joinToString(" "))
+        } else {
+            addAccessor(sender, blocks, player)
+        }
         return true
+    }
+
+    private val roleAliases = listOf(plugin.language["CmdAccessorsRole"].lowercase(), "role")
+
+    /**
+     * Gives every member of the lock owner's faction who holds [roleName] access to the block (#1569).
+     * Only roles of the lock owner's own faction can be added, and the same players who may add a
+     * player accessor (the owner and the players on the access list) may add a role.
+     */
+    private fun addRoleAccessor(sender: Player, blocks: List<Block>, roleName: String) {
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSavePlayer"]}")
+                        plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val lockService = plugin.services.lockService
+                val lockedBlock = blocks.firstNotNullOfOrNull { lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
+                if (lockedBlock == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandAccessorsAddBlockNotLocked"]}")
+                    return@Runnable
+                }
+                if (lockedBlock.playerId.value != mfPlayer.id.value && lockedBlock.accessors.none { it.value == mfPlayer.id.value }) {
+                    sender.sendMessage("$RED${plugin.language["CommandAccessorsAddMustHaveAccess"]}")
+                    return@Runnable
+                }
+                val ownerFaction = plugin.services.factionService.getFaction(lockedBlock.playerId)
+                if (ownerFaction == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandAccessorsAddRoleOwnerNotInFaction"]}")
+                    return@Runnable
+                }
+                val role = ownerFaction.getRole(roleName)
+                if (role == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandAccessorsAddRoleInvalidRole", ownerFaction.name]}")
+                    return@Runnable
+                }
+                val accessorRoleIds = (lockedBlock.accessorRoleIds + role.id).distinctBy { it.value }
+                lockService.save(lockedBlock.copy(accessorRoleIds = accessorRoleIds)).onFailure {
+                    sender.sendMessage("$RED${plugin.language["CommandAccessorsAddFailedToSaveLockedBlock"]}")
+                    plugin.logger.log(SEVERE, "Failed to save locked block: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                sender.sendMessage("$GREEN${plugin.language["CommandAccessorsAddRoleSuccess", role.name]}")
+                plugin.server.scheduler.runTask(
+                    plugin,
+                    Runnable {
+                        sender.performCommand("accessors list ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z}")
+                    }
+                )
+            }
+        )
     }
 
     private fun addAccessor(sender: Player, blocks: List<Block>, accessor: OfflinePlayer) {
@@ -226,9 +287,17 @@ class MfAccessorsAddCommand(private val plugin: MedievalFactions) : CommandExecu
     ) = when {
         args.size <= 3 -> emptyList()
         args.size == 4 ->
-            plugin.server.offlinePlayers
-                .filter { it.name?.lowercase()?.startsWith(args[3].lowercase()) == true }
-                .mapNotNull(OfflinePlayer::getName)
+            (
+                plugin.server.offlinePlayers.mapNotNull(OfflinePlayer::getName) +
+                    roleAliases.first()
+                )
+                .filter { it.lowercase().startsWith(args[3].lowercase()) }
+        args.size == 5 && args[3].lowercase() in roleAliases && sender is Player ->
+            plugin.services.factionService.getFaction(MfPlayerId(sender.uniqueId.toString()))
+                ?.roles
+                ?.map { it.name }
+                ?.filter { it.lowercase().startsWith(args[4].lowercase()) }
+                .orEmpty()
         else -> emptyList()
     }
 }

@@ -5,6 +5,8 @@ import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.flag.MfFlag
 import com.dansplugins.factionsystem.faction.flag.MfFlagValues
 import com.dansplugins.factionsystem.faction.flag.MfFlags
+import com.dansplugins.factionsystem.faction.role.MfFactionRole
+import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.lang.Language
 import com.dansplugins.factionsystem.placeholder.MfPlaceholderResolver
 import com.dansplugins.factionsystem.player.MfPlayer
@@ -161,6 +163,70 @@ class MfChatServiceTest {
             ),
             result
         )
+    }
+
+    // --- role prefixes (#1525) ---
+
+    private fun givenRole(prefix: String?) {
+        val role = MfFactionRole(plugin, MfFactionRoleId("r1"), "Knight", emptyMap(), prefix)
+        `when`(faction.getRole(mfPlayer.id)).thenReturn(role)
+        `when`(config.getString("chat.faction.format")).thenReturn(DISPLAY_NAME_CHAT_FORMAT)
+    }
+
+    private fun translated(text: String) = ChatColor.translateAlternateColorCodes('&', text)
+
+    @Test
+    fun formatMessage_RoleWithoutAPrefix_ShouldLeaveTheMessageAsBefore() {
+        givenRole(null)
+        val uut = MfChatService(plugin, repo, RecordingPlaceholderResolver())
+
+        val result = uut.formatMessage(mfPlayer, faction, MfFactionChatChannel.FACTION, "hello")
+
+        assertEquals(translated("&7[${ChatColor.of(FACTION_COLOR)}TestFaction&7] [Knight] &fBilbo: hello"), result)
+    }
+
+    @Test
+    fun formatMessage_RoleWithAPrefix_ShouldPutItInFrontOfTheNameAndRestoreTheNameColour() {
+        givenRole("&6[K]")
+        val uut = MfChatService(plugin, repo, RecordingPlaceholderResolver())
+
+        val result = uut.formatMessage(mfPlayer, faction, MfFactionChatChannel.FACTION, "hello")
+
+        assertEquals(translated("&7[${ChatColor.of(FACTION_COLOR)}TestFaction&7] [Knight] &f&6[K]&r&f Bilbo: hello"), result)
+    }
+
+    @Test
+    fun formatMessage_FormatWithRolePrefixVariable_ShouldPlaceThePrefixThereOnly() {
+        givenRole("[K]")
+        `when`(config.getString("chat.faction.format")).thenReturn("&7\${rolePrefix} \${displayName}: \${message}")
+        val uut = MfChatService(plugin, repo, RecordingPlaceholderResolver())
+
+        val result = uut.formatMessage(mfPlayer, faction, MfFactionChatChannel.FACTION, "hello")
+
+        assertEquals(translated("&7[K] Bilbo: hello"), result)
+    }
+
+    @Test
+    fun formatMessage_FormatWithRolePrefixVariable_RoleWithoutAPrefix_ShouldLeaveItEmpty() {
+        givenRole(null)
+        `when`(config.getString("chat.faction.format")).thenReturn("&7\${rolePrefix}\${displayName}: \${message}")
+        val uut = MfChatService(plugin, repo, RecordingPlaceholderResolver())
+
+        val result = uut.formatMessage(mfPlayer, faction, MfFactionChatChannel.FACTION, "hello")
+
+        assertEquals(translated("&7Bilbo: hello"), result)
+    }
+
+    @Test
+    fun formatMessage_PlaceholderInARolePrefix_ShouldNotBeResolved() {
+        givenRole("%testplugin_card_name%")
+        val resolver = RecordingPlaceholderResolver { text -> text.replace("%testplugin_card_name%", "Bilbo Baggins") }
+        val uut = MfChatService(plugin, repo, resolver)
+
+        val result = uut.formatMessage(mfPlayer, faction, MfFactionChatChannel.FACTION, "hello")
+
+        assertTrue(result.contains("%testplugin_card_name%"), "Expected the role prefix to be left alone in: $result")
+        assertFalse(result.contains("Bilbo Baggins"), "Expected no resolved role prefix in: $result")
     }
 
     private class RecordingPlaceholderResolver(

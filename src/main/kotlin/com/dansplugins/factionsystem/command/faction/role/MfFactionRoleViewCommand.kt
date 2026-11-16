@@ -7,8 +7,10 @@ import com.dansplugins.factionsystem.pagination.PaginatedView
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.onFailure
+import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.ClickEvent
 import net.md_5.bungee.api.chat.ClickEvent.Action.RUN_COMMAND
+import net.md_5.bungee.api.chat.ClickEvent.Action.SUGGEST_COMMAND
 import net.md_5.bungee.api.chat.HoverEvent
 import net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT
 import net.md_5.bungee.api.chat.TextComponent
@@ -90,12 +92,30 @@ class MfFactionRoleViewCommand(private val plugin: MedievalFactions) : CommandEx
                 val view = PaginatedView(
                     plugin.language,
                     lazy {
-                        arrayOf(
-                            TextComponent(plugin.language["CommandFactionRoleViewTitle", targetRole.name]).apply {
-                                color = SpigotChatColor.AQUA
-                                isBold = true
+                        val title = TextComponent(plugin.language["CommandFactionRoleViewTitle", targetRole.name]).apply {
+                            color = SpigotChatColor.AQUA
+                            isBold = true
+                        }
+                        // The role's prefix (#1525), with a button that fills in /f role setprefix for those who may modify
+                        // the role. A role without a prefix shows the button alone, and only to those who may set one.
+                        val canSetPrefix = can(plugin.factionPermissions.modifyRole(targetRole.id))
+                        val prefixComponents = buildList<BaseComponent> {
+                            if (targetRole.prefix != null) {
+                                add(TextComponent(" "))
+                                addAll(TextComponent.fromLegacyText(plugin.language["CommandFactionRoleViewPrefix", targetRole.displayPrefix]).asList())
                             }
-                        )
+                            if (canSetPrefix) {
+                                add(
+                                    TextComponent(" " + plugin.language["CommandFactionRoleViewSetPrefixButton"]).apply {
+                                        color = SpigotChatColor.YELLOW
+                                        isBold = false
+                                        clickEvent = ClickEvent(SUGGEST_COMMAND, "$prefix setprefix ${targetRole.id.value} ")
+                                        hoverEvent = HoverEvent(SHOW_TEXT, Text(plugin.language["CommandFactionRoleViewSetPrefixHover", targetRole.name]))
+                                    }
+                                )
+                            }
+                        }
+                        arrayOf(title, *prefixComponents.toTypedArray())
                     },
                     plugin.factionPermissions.permissionsFor(faction).map { permission ->
                         lazy {
