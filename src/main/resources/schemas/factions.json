@@ -171,6 +171,10 @@
           "additionalProperties": {
             "type": ["boolean", "null"]
           }
+        },
+        "prefix": {
+          "type": ["string", "null"],
+          "description": "The role's chat prefix, such as [Knight]; absent when the role has none"
         }
       },
       "required": ["id", "name", "permissionsByName"],

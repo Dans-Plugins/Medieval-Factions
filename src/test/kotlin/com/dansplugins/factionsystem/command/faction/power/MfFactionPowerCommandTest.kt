@@ -103,6 +103,7 @@ class MfFactionPowerCommandTest {
         `when`(claimService.getClaims(faction.id)).thenReturn(
             listOf(mock(MfClaimedChunk::class.java), mock(MfClaimedChunk::class.java), mock(MfClaimedChunk::class.java))
         )
+        `when`(claimService.getClaimLimit(faction.id, 5.0, null)).thenReturn(5.0)
         `when`(language["CommandFactionPowerFactionClaims", "3", "5"]).thenReturn("Faction claims: 3/5")
 
         // execute
@@ -111,6 +112,37 @@ class MfFactionPowerCommandTest {
         // verify — the claims line reports used-of-capacity (capacity = floor(power))
         assertTrue(result)
         verify(player).sendMessage("${ChatColor.GRAY}Faction claims: 3/5")
+    }
+
+    @Test
+    fun testOnCommand_capacityUsesTheClaimPowerCostOfTheSendersWorld() {
+        // prepare — 5 power at 2 power per chunk in the sender's world holds 2 chunks, not 5
+        val player = fixture.player
+        val command = fixture.command
+        val mfPlayer = mock(MfPlayer::class.java)
+        val faction = mock(MfFaction::class.java)
+        val worldId = java.util.UUID.randomUUID()
+        val world = mock(org.bukkit.World::class.java)
+        `when`(world.uid).thenReturn(worldId)
+        `when`(player.world).thenReturn(world)
+        `when`(player.hasPermission("mf.power")).thenReturn(true)
+        `when`(player.hasPermission("mf.power.view.other")).thenReturn(false)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(factionService.getFaction(mfPlayer.id)).thenReturn(faction)
+        stubFactionPower(faction, power = 5.0)
+        `when`(config.getBoolean("factions.limitLand")).thenReturn(true)
+        `when`(claimService.getClaims(faction.id)).thenReturn(
+            listOf(mock(MfClaimedChunk::class.java), mock(MfClaimedChunk::class.java))
+        )
+        `when`(claimService.getClaimLimit(faction.id, 5.0, worldId)).thenReturn(2.0)
+        `when`(language["CommandFactionPowerFactionClaims", "2", "2"]).thenReturn("Faction claims: 2/2")
+
+        // execute
+        val result = uut.onCommand(player, command, "label", arrayOf())
+
+        // verify
+        assertTrue(result)
+        verify(player).sendMessage("${ChatColor.GRAY}Faction claims: 2/2")
     }
 
     @Test

@@ -1,6 +1,9 @@
 package com.dansplugins.factionsystem.command.faction.set.description
 
 import com.dansplugins.factionsystem.MedievalFactions
+import com.dansplugins.factionsystem.command.unquote
+import com.dansplugins.factionsystem.faction.MfFaction
+import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.player.MfPlayer
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor.GREEN
@@ -68,11 +71,20 @@ class MfFactionSetDescriptionCommand(private val plugin: MedievalFactions) : Com
             conversationFactory.buildConversation(sender).begin()
             return true
         }
+        // With mf.force.desc, `<faction> -- <description>` sets the description of the named faction (by ID or name,
+        // quoted if it has spaces) without its role check (#1898). The `--` keeps every description a member could
+        // already type (which may start with any word, including a faction name) meaning their own faction's.
+        val separatorIndex = if (sender.hasPermission("mf.force.desc")) args.indexOf("--") else -1
+        if (separatorIndex > 0) {
+            val forcedFactionName = args.take(separatorIndex).toTypedArray().unquote().joinToString(" ")
+            setFactionDescription(sender, args.drop(separatorIndex + 1).joinToString(" "), forcedFactionName)
+            return true
+        }
         setFactionDescription(sender, args.joinToString(" "))
         return true
     }
 
-    private fun setFactionDescription(player: Player, description: String) {
+    private fun setFactionDescription(player: Player, description: String, forcedFactionName: String? = null) {
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
@@ -84,15 +96,24 @@ class MfFactionSetDescriptionCommand(private val plugin: MedievalFactions) : Com
                         return@Runnable
                     }
                 val factionService = plugin.services.factionService
-                val faction = factionService.getFaction(mfPlayer.id)
-                if (faction == null) {
-                    player.sendMessage("$RED${plugin.language["CommandFactionSetDescriptionMustBeInAFaction"]}")
-                    return@Runnable
-                }
-                val role = faction.getRole(mfPlayer.id)
-                if (role == null || !role.hasPermission(faction, plugin.factionPermissions.changeDescription)) {
-                    player.sendMessage("$RED${plugin.language["CommandFactionSetDescriptionNoFactionPermission"]}")
-                    return@Runnable
+                val faction: MfFaction?
+                if (forcedFactionName != null) {
+                    faction = factionService.getFaction(MfFactionId(forcedFactionName)) ?: factionService.getFaction(forcedFactionName)
+                    if (faction == null) {
+                        player.sendMessage("$RED${plugin.language["CommandFactionForceInvalidFaction", forcedFactionName]}")
+                        return@Runnable
+                    }
+                } else {
+                    faction = factionService.getFaction(mfPlayer.id)
+                    if (faction == null) {
+                        player.sendMessage("$RED${plugin.language["CommandFactionSetDescriptionMustBeInAFaction"]}")
+                        return@Runnable
+                    }
+                    val role = faction.getRole(mfPlayer.id)
+                    if (role == null || !role.hasPermission(faction, plugin.factionPermissions.changeDescription)) {
+                        player.sendMessage("$RED${plugin.language["CommandFactionSetDescriptionNoFactionPermission"]}")
+                        return@Runnable
+                    }
                 }
                 factionService.save(
                     faction.copy(
@@ -101,6 +122,11 @@ class MfFactionSetDescriptionCommand(private val plugin: MedievalFactions) : Com
                 ).onFailure {
                     player.sendMessage("$RED${plugin.language["CommandFactionSetDescriptionFailedToSaveFaction"]}")
                     plugin.logger.log(Level.SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                if (forcedFactionName != null) {
+                    player.sendMessage("$GREEN${plugin.language["CommandFactionForceSetDescriptionSuccess", faction.name, description]}")
+                    plugin.logger.info("${player.name} set the description of ${faction.name} (${faction.id.value}) with mf.force.desc")
                     return@Runnable
                 }
                 player.sendMessage("$GREEN${plugin.language["CommandFactionSetDescriptionSuccess", description]}")

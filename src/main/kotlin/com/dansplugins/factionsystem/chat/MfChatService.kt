@@ -84,7 +84,8 @@ class MfChatService(
         val bukkitPlayer = mfPlayer.toBukkit()
         val name = bukkitPlayer.name ?: plugin.language["UnknownPlayer"]
         val displayName = bukkitPlayer.player?.displayName ?: bukkitPlayer.name ?: plugin.language["UnknownPlayer"]
-        return (
+        val role = faction.getRole(mfPlayer.id)
+        val template = (
             plugin.config.getString("chat.${channel.toString().lowercase()}.format") ?: when (channel) {
                 FACTION -> "&7[faction] [\${factionColor}\${faction}&7] [\${role}] &f\${displayName}: \${message}"
                 VASSALS -> "&7[vassals] [\${factionColor}\${faction}&7] [\${role}] &f\${displayName}: \${message}"
@@ -94,13 +95,30 @@ class MfChatService(
             // Resolved against the operator's format template only, before any player-controlled text is substituted
             // in. Moving this below the replacements would let a player expand placeholders through chat.
             .let { placeholderResolver.resolve(bukkitPlayer, it) }
+        return template
             .replace("\${factionColor}", ChatColor.of(faction.flags[plugin.flags.color]).toString())
             .replace("\${faction}", faction.name)
-            .replace("\${role}", faction.getRole(mfPlayer.id)?.name ?: plugin.language["NoRole"])
+            .replace("\${rolePrefix}", role?.prefix ?: "")
+            .replace("\${role}", role?.name ?: plugin.language["NoRole"])
             .replace("\${name}", name)
-            .replace("\${displayName}", displayName)
+            .replace("\${displayName}", withRolePrefix(template, role?.prefix, displayName))
             .replace("\${message}", message)
             .let { ChatColor.translateAlternateColorCodes('&', it) }
+    }
+
+    /**
+     * The display name as it is substituted into a chat format, with the sender's role prefix in front of it (#1525).
+     *
+     * A role with no prefix, the default, leaves the display name, and so the message, exactly as before. A format that
+     * places `${rolePrefix}` itself gets no second copy. After the prefix, the colour the format gave the name is
+     * restored, so a coloured prefix does not recolour the name.
+     */
+    internal fun withRolePrefix(template: String, rolePrefix: String?, displayName: String): String {
+        if (rolePrefix.isNullOrEmpty() || template.contains("\${rolePrefix}")) return displayName
+        val nameColour = org.bukkit.ChatColor.getLastColors(
+            ChatColor.translateAlternateColorCodes('&', template.substringBefore("\${displayName}"))
+        )
+        return "$rolePrefix&r$nameColour $displayName"
     }
 
     @JvmName("getChatChannelMessagesByFactionId")

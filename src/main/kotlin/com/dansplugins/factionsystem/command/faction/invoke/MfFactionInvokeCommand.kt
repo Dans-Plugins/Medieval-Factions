@@ -94,6 +94,11 @@ class MfFactionInvokeCommand(private val plugin: MedievalFactions) : CommandExec
                     sender.sendMessage("$RED${plugin.language["CommandFactionInvokeAllyAlreadyAtWarWithEnemy"]}")
                     return@Runnable
                 }
+                val minutesLeft = plugin.truceService.getRemainingTruceMinutes(ally.id, enemy.id)
+                if (minutesLeft != null) {
+                    sender.sendMessage("$RED${plugin.language["CommandFactionInvokeAllyTruceActive", ally.name, enemy.name, minutesLeft.toString()]}")
+                    return@Runnable
+                }
                 val isAllyAlliedToEnemy = existingAllyEnemyRelationships.any { it.type == ALLY } && existingEnemyAllyRelationships.any { it.type == ALLY }
                 val isEnemyVassalOfAlly = existingAllyEnemyRelationships.any { it.type == VASSAL } && existingEnemyAllyRelationships.any { it.type == LIEGE }
                 if (isAllyAlliedToEnemy || isEnemyVassalOfAlly) {
