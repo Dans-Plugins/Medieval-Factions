@@ -82,6 +82,16 @@ Every plugin is listed on [dansplugins.com](https://dansplugins.com), and [Dan's
 - [Database Querying Guide](DATABASE_QUERYING.md) - How to query the database directly
 - [REST API Usage Guide](API_USAGE.md) - The opt-in HTTP API for integrating other plugins and tools
 
+### Screenshots
+
+| Seen at an angle | Seen from above (north up) |
+|---|---|
+| ![A 3D render of grassland and forest: a diamond-shaped blue territory on the left and a diamond-shaped orange territory on the right, each tinted and outlined in its faction's colour](docs/images/gallery/two-factions-oblique.jpg) | ![The same two territories from directly above: Westmarch in blue on the open grassland, Eastholm in orange at the forest edge, touching in the middle](docs/images/gallery/two-factions-top-down.jpg) |
+
+![The /f map output for the same claims: a grid of green wilderness squares with Westmarch's 13 chunks in blue and Eastholm's 13 in orange, the player's chunk marked](docs/images/gallery/two-factions-map.png)
+
+*Two factions, Westmarch and Eastholm, each ran `/f claim 2` (13 chunks in a circle) side by side, played by scripted bot clients on a throwaway Spigot 1.21.1 server running Medieval Factions 10.2.1-SNAPSHOT (main at e1b6bf1f) on a copy of a preview world. The world folder and the plugin's JSON storage were then exported with [Minecraft-USD-Exporter](https://github.com/Dans-Plugins/Minecraft-USD-Exporter) and rendered headless with [Strata](https://github.com/Preponderous-Software/strata); the territory drawn is what the plugin stored. Below, the real `/f map` output the bot received for the same claims, drawn as Minecraft chat.*
+
 ### Wiki & Additional Resources
 - [Wiki Guide](https://github.com/Dans-Plugins/Medieval-Factions/wiki/Guide)
 - [FAQ](https://github.com/Dans-Plugins/Medieval-Factions/wiki/FAQ)

@@ -26,6 +26,21 @@ class BlockBreakListener(private val plugin: MedievalFactions) : Listener {
             return
         }
 
+        // factions.allowBuildingEverywhere lifts territory and wilderness protection for breaking blocks (#1804).
+        // Locked blocks stay protected: their owner still has to unlock them, or break them to unlock them.
+        if (plugin.config.getBoolean("factions.allowBuildingEverywhere")) {
+            val lockService = plugin.services.lockService
+            if (lockService.getLockedBlock(blockPosition) == null) return
+            val mfPlayer = plugin.services.playerService.getPlayer(event.player)
+            if (mfPlayer == null) {
+                // Without a player record the lock owner cannot be told apart, so the break is refused
+                event.isCancelled = true
+                return
+            }
+            handleLockedBlock(event, blockPosition, mfPlayer)
+            return
+        }
+
         val claimService = plugin.services.claimService
         val claim = claimService.getClaim(event.block.chunk)
         if (claim == null) {
@@ -65,7 +80,12 @@ class BlockBreakListener(private val plugin: MedievalFactions) : Listener {
             }
         }
 
-        // if block locked and breaker is owner, unlock
+        handleLockedBlock(event, blockPosition, mfPlayer)
+    }
+
+    // if block locked and breaker is owner, unlock
+    private fun handleLockedBlock(event: BlockBreakEvent, blockPosition: MfBlockPosition, mfPlayer: MfPlayer) {
+        val playerService = plugin.services.playerService
         val lockService = plugin.services.lockService
         val lockedBlock = lockService.getLockedBlock(blockPosition) ?: return
         if (lockedBlock.playerId != mfPlayer.id) {
