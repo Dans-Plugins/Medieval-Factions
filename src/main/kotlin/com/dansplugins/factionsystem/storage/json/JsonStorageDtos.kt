@@ -54,7 +54,9 @@ internal data class JsonCuboidAreaDto(
 internal data class JsonFactionRoleDto(
     val id: String,
     val name: String,
-    val permissionsByName: Map<String, Boolean?> = emptyMap()
+    val permissionsByName: Map<String, Boolean?> = emptyMap(),
+    // Absent from files written before #1525, and read as no prefix.
+    val prefix: String? = null
 )
 
 internal data class JsonFactionRolesDto(
@@ -111,7 +113,7 @@ internal fun MfBlockPosition.toDto() = JsonBlockPositionDto(worldId.toString(), 
 
 internal fun MfCuboidArea.toDto() = JsonCuboidAreaDto(position1.toDto(), position2.toDto())
 
-internal fun MfFactionRole.toDto() = JsonFactionRoleDto(id.value, name, permissionsByName)
+internal fun MfFactionRole.toDto() = JsonFactionRoleDto(id.value, name, permissionsByName, prefix)
 
 internal fun MfFactionRoles.toDto() = JsonFactionRolesDto(defaultRoleId.value, roles.map(MfFactionRole::toDto))
 
@@ -152,7 +154,7 @@ internal fun JsonBlockPositionDto.toDomain() = MfBlockPosition(UUID.fromString(w
 internal fun JsonCuboidAreaDto.toDomain() = MfCuboidArea(position1.toDomain(), position2.toDomain())
 
 internal fun JsonFactionRoleDto.toDomain(plugin: MedievalFactions) =
-    MfFactionRole(plugin, MfFactionRoleId(id), name, permissionsByName)
+    MfFactionRole(plugin, MfFactionRoleId(id), name, permissionsByName, prefix)
 
 internal fun JsonFactionRolesDto.toDomain(plugin: MedievalFactions) = MfFactionRoles(
     defaultRoleId = MfFactionRoleId(defaultRoleId),

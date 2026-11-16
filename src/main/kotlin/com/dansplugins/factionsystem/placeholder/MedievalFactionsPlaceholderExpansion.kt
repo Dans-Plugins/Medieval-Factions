@@ -43,6 +43,7 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
             "faction_liege" -> getFactionLiege(player)
             "faction_population" -> getFactionPopulation(player)
             "faction_rank" -> getFactionRole(player)
+            "faction_role_prefix", "faction_rank_prefix" -> getFactionRolePrefix(player)
             "faction_player_power" -> getPower(player)
             "faction_player_max_power" -> getMaxPower()
             "faction_player_power_full" -> getFormattedPlayerPower(player)
@@ -180,6 +181,14 @@ class MedievalFactionsPlaceholderExpansion(private val plugin: MedievalFactions)
         val faction = getPlayerFaction(player)
             ?: return (plugin.config.getString("factions.factionlessFactionName") ?: "Factionless")
         return faction.members.size.toString()
+    }
+
+    // The player's role prefix (#1525), with colour codes translated; empty when the player has no faction, or their
+    // role has no prefix, so that it can be placed in a chat format without leaving stray text behind.
+    private fun getFactionRolePrefix(player: OfflinePlayer): String {
+        val mfPlayer = plugin.services.playerService.getPlayer(player) ?: return ""
+        val faction = getPlayerFaction(player) ?: return ""
+        return faction.getRole(mfPlayer.id)?.displayPrefix ?: ""
     }
 
     private fun getFactionRole(player: OfflinePlayer): String {
