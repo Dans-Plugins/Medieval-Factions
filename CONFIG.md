@@ -17,6 +17,7 @@ This document provides detailed information about all configuration options avai
 - [Chat Settings](#chat-settings)
 - [Duels](#duels)
 - [Dynmap Integration](#dynmap-integration)
+- [Slimefun Integration](#slimefun-integration)
 - [Gates](#gates)
 - [Developer Options](#developer-options)
 - [REST API](#rest-api)
@@ -836,6 +837,36 @@ Dynmap integration allows faction claims to be displayed on a dynamic web map.
 **Default:** `0.35`  
 **Description:** Controls transparency of territory fill color.  
 **Range:** 0.0 (invisible) to 1.0 (solid)
+
+## Slimefun Integration
+
+Slimefun checks with every protection plugin it knows before a player uses, breaks or places one of its blocks or items. With this option on, Medieval Factions registers itself with Slimefun as one of those plugins, so outsiders cannot use or break Slimefun machines in claimed land (#1750). It needs Slimefun installed and does nothing without it; Medieval Factions loads and runs normally when Slimefun is absent.
+
+Slimefun's checks follow the rules Medieval Factions already applies to ordinary blocks; no new option decides who may do what:
+
+```mermaid
+flowchart TD
+    A[Slimefun asks: may this player do this here?] --> B{slimefun.protection.enabled?}
+    B -- false --> Y[Allowed: Medieval Factions does not object]
+    B -- true --> C{Attack on a player?}
+    C -- yes --> Y2[Allowed here; Medieval Factions' PvP rules<br/>decide when the damage happens]
+    C -- no --> D{Location claimed?}
+    D -- no, wilderness --> Y
+    D -- yes --> M{Attack on a mob, and the claim's faction<br/>has enableMobProtection off?}
+    M -- yes --> Y
+    M -- no --> E{"Same claim rules as ordinary blocks:<br/>member, vassal/liege flags, alliesCanInteractWithLand,<br/>at war with pvp.enableWartimeBlockDestruction"}
+    E -- allowed --> Y
+    E -- not allowed --> F{Bypass on and mf.bypass?}
+    F -- yes --> Y
+    F -- no --> G{"Break: block in factions.wartimeBreakableBlocks?<br/>Use: door with factions.nonMembersCanInteractWithDoors,<br/>or block in factions.wartimeInteractableBlocks?"}
+    G -- yes --> Y
+    G -- no --> N[Refused by Slimefun]
+```
+
+### `slimefun.protection.enabled`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true` and Slimefun is installed, Medieval Factions registers a protection module with Slimefun. In claimed land, a player whom the claim rules above do not allow cannot use, break or place Slimefun blocks, or use Slimefun items on entities there. The wartime lists (`factions.wartimeBreakableBlocks`, `factions.wartimeInteractableBlocks`) and `factions.nonMembersCanInteractWithDoors` apply to Slimefun blocks by their block type, exactly as they do to ordinary blocks. Placing a Slimefun block is refused to outsiders even in wartime, because Slimefun does not say which block is being placed. Wilderness is not restricted. The option is read at startup, so a restart is needed after changing it. If it is on but Slimefun is not installed, a warning is logged at startup.
 
 ## Gates
 

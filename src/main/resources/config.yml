@@ -153,6 +153,10 @@ dynmap:
   fillClaims: true
   # fillOpacity: 0.0-1.0, controls how transparent the territory fill is (0.0 = invisible, 1.0 = solid)
   fillOpacity: 0.35
+slimefun:
+  protection:
+    # Stop non-members from using or breaking Slimefun blocks in claimed land, following the same rules as ordinary blocks. Needs Slimefun installed. Takes effect on restart.
+    enabled: false
 gates:
   minHeight: 3
   maxBlocks: 64
