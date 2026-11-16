@@ -40,7 +40,27 @@ class AsyncPlayerChatListener(private val plugin: MedievalFactions) : Listener {
                 }
             )
         } else if (isDefaultChatFormattingEnabled) {
-            event.format = "${ChatColor.WHITE}[${ChatColor.of(faction.flags[plugin.flags.color])}${faction.prefix ?: faction.name}${ChatColor.WHITE}] %s: %s"
+            // With chat.prefixWorlds set, only players in those worlds see the faction prefix (#1196). Everyone else
+            // is taken off the event and sent the message in the format it had before the prefix was added.
+            val prefixWorlds = plugin.config.getStringList("chat.prefixWorlds")
+            if (prefixWorlds.isNotEmpty()) {
+                val plainRecipients = event.recipients.filter { it.world.name !in prefixWorlds }
+                if (plainRecipients.isNotEmpty()) {
+                    val plainMessage = String.format(event.format, event.player.displayName, event.message)
+                    event.recipients.removeAll(plainRecipients.toSet())
+                    plainRecipients.forEach { it.sendMessage(plainMessage) }
+                }
+            }
+            event.format = "${ChatColor.WHITE}[${ChatColor.of(faction.flags[plugin.flags.color])}${faction.prefix ?: faction.name}${ChatColor.WHITE}] " +
+                "${rolePrefixFormat(faction.getRole(mfPlayer.id)?.displayPrefix)}%s: %s"
         }
     }
+
+    /**
+     * The sender's role prefix (#1525) as it goes into the public chat format, followed by a colour reset and a space, or
+     * nothing when the role has no prefix, which leaves the format exactly as before. A `%` in the prefix is escaped, as
+     * the format is a [String.format] pattern.
+     */
+    internal fun rolePrefixFormat(displayPrefix: String?): String =
+        if (displayPrefix.isNullOrEmpty()) "" else "${displayPrefix.replace("%", "%%")}${ChatColor.WHITE} "
 }

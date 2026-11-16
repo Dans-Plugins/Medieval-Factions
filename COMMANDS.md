@@ -116,6 +116,8 @@ With `mf.force.rename` (default: op), a faction name or ID can be given before t
 - Two or more arguments are always a target faction followed by the new name: `/f set name FactionName New Name`. Quote a multi-word faction name (`/f set name "Old Name" NewName`), or give its ID.
 - A target that matches no faction is refused with a hint; it never falls back to renaming your own faction (as with `/f kick` and `/f unclaimall`). For example, `/f set name Xlnd NewName` with no faction called "Xlnd" changes nothing.
 
+With `mf.force.desc` (default: op), `/f set description FactionName -- New description` sets the description of any faction (by name or ID; quote a multi-word name), without checking that faction's change-description role permission. The `--` is what marks the faction: a description without it, such as `/f set description Rivals beware`, still sets your own faction's description, even when it starts with a faction's name. A name before `--` that matches no faction is refused. The base `mf.desc` node is still required.
+
 ### `/faction flag [list|set]` or `/f flag [list|set]`
 **Permissions:** 
 - `mf.flag.list` (default: true)
@@ -143,10 +145,23 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 - `/f claim circle 2` - Same as above; `circle` is an explicit alias for the default radius-claiming behavior
 
 **Notes:** 
-- Each chunk claimed requires power. Your faction must have enough power to claim land.
+- Each chunk claimed requires power. Your faction must have enough power to claim land. By default a chunk costs one power; servers can change this, per world too, with `factions.claimPowerCost` and `factions.claimPowerCostByWorld` (see [CONFIG.md](CONFIG.md)).
 - Maximum claim radius is configurable (default: 3).
 - The claimed area is a circle (chunks within the given radius of your current chunk), not a square.
+- Servers can restrict where claims go: chunks listed in `factions.blockedClaimChunks` are skipped, `factions.maxClaimDistance` keeps new claims near the faction's existing land, and `factions.preventConqueringSurroundedChunks` stops an enemy chunk enclosed by its owner's claims from being conquered until a neighbouring chunk is taken (see [CONFIG.md](CONFIG.md)).
 - With `mf.force.claim` (default: op), a faction name or ID can be given before the radius (`/f claim FactionName [radius]`, or `/f claim circle FactionName [radius]`) to claim land on behalf of any faction, including one you are not in. The target faction's own claim role permission is not checked; its power limit, contiguity and contested-chunk rules still apply. A lone number is always read as a radius. Quote a multi-word faction name (`/f claim "My Faction" 2`). `/f claim auto` and `/f claim fill` do not take a faction.
+
+### `/faction claim square <size>` / `/faction claim rectangle <sizeX> <sizeZ>`
+**Permission:** `mf.claim.square` / `mf.claim.rectangle`, or `mf.claim` (default: true)  
+**Description:** Claims a square or rectangle of chunks centred on the chunk you are standing in. Sizes are side lengths in chunks.  
+**Usage:**
+- `/f claim square 3` - Claims the 3x3 chunks around you
+- `/f claim rectangle 5 2` - Claims 5 chunks east-west by 2 chunks north-south
+
+**Notes:**
+- Each side may be from 1 up to `factions.maxClaimRadius` x 2 + 1 chunks (7 at the default radius of 3), so a square can reach as far as the widest `/f claim [radius]` circle.
+- On a side of even length the extra row or column is on the east (positive X) or south (positive Z) side of your chunk.
+- Power, contiguity and contested-chunk rules are the same as for `/f claim [radius]`, and with `mf.force.claim` a faction name can be given before the size (`/f claim square FactionName 3`).
 
 ### `/faction claim auto` or `/f claim auto`
 **Permission:** `mf.claim.auto` or `mf.autoclaim` (default: true)  
@@ -205,6 +220,8 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Usage:** `/f sethome`  
 **Notes:** The home must be set in your faction's claimed territory.
 
+**Admin usage:** with `mf.force.sethome` (default: op), `/f sethome FactionName` (name or ID; quote a multi-word name) sets the named faction's home at your location without checking its set-home role permission. The location must still be in that faction's territory. A name that matches no faction is refused.
+
 ### `/faction home` or `/f home`
 **Permission:** `mf.home` (default: true)  
 **Description:** Teleports you to your faction's home location.  
@@ -212,6 +229,24 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Notes:** There is a configurable teleport delay (default: 5 seconds).
 
 ## Diplomacy & Warfare
+
+**Forced diplomacy (admins):** each diplomacy command below has a force node — `mf.force.declarewar`, `mf.force.makepeace`, `mf.force.ally`, `mf.force.breakalliance`, `mf.force.vassalize` and `mf.force.grantindependence` (all default: op). With it, naming two factions acts for both of them at once: `/f declarewar FactionA FactionB`, `/f vassalize Liege Vassal`, and so on. Quote multi-word names (`/f ally "Red Kingdom" Blue`) or give a faction ID.
+
+- No role permission, consent from the other faction or moderator approval is needed: an alliance, peace or vassalage takes effect immediately, and a half-finished one (a pending alliance request, a one-sided war) is completed.
+- The rules that keep relationships consistent still apply: no war between allies or between liege and vassal (or with a pending vassalization request between them), no war on a neutral faction, no alliance while at war, no vassal with two lieges and no vassalage cycles. Break the alliance, make peace or grant independence first.
+- Both factions get the usual notifications, the sender gets a summary, and the change is written to the server log.
+- Arguments the normal command already accepts keep their normal meaning: when the whole text names a faction (`/f declarewar Red Kingdom` with a faction called "Red Kingdom"), you act for your own faction as before. The base node (`mf.declarewar`, `mf.ally`, ...) is still required.
+
+```mermaid
+flowchart TD
+    A["/f declarewar A B<br/>(sender has mf.force.declarewar)"] --> B{"Does the whole text<br/>name one faction?"}
+    B -- yes --> N["Normal command:<br/>your own faction acts"]
+    B -- no --> C{"A and B both<br/>resolve to factions?"}
+    C -- no --> R["Refused: no such faction"]
+    C -- yes --> D{"Relationship rules<br/>(ally, vassal, neutral)"}
+    D -- broken --> R2["Refused with the reason"]
+    D -- ok --> W["A ⇄ B at war, both notified,<br/>logged to console"]
+```
 
 ### `/faction ally [faction]` or `/f ally [faction]`
 **Permission:** `mf.ally` (default: true)  
@@ -222,6 +257,27 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Permission:** `mf.breakalliance` (default: true)  
 **Description:** Breaks an existing alliance with another faction.  
 **Usage:** `/f breakalliance OtherFaction`
+
+### `/faction rival [faction]` or `/f rival [faction]`
+**Permission:** `mf.rival` (default: true)  
+**Description:** Names another faction as one of your faction's rivals. A rivalry is one-sided (the other faction does not have to agree) and is for show: it is listed under "Rivals" in `/f info` and the other faction is told, but it does not change war, protection, power or any other rule. It needs the same faction role permission as declaring war (`DECLARE_WAR`). An ally cannot be named as a rival.  
+**Usage:** `/f rival OtherFaction`
+
+### `/faction unrival [faction]` or `/f unrival [faction]`
+**Permission:** `mf.rival` (default: true)  
+**Description:** Ends a rivalry your faction named. With `factions.minimumRivalryHours` above `0`, a rivalry can only be ended once it is that old.  
+**Usage:** `/f unrival OtherFaction`
+
+```mermaid
+stateDiagram-v2
+    [*] --> NoRivalry
+    NoRivalry --> Rival: /f rival B (A not allied with B)
+    Rival --> Rival: /f unrival B before minimumRivalryHours
+    Rival --> NoRivalry: /f unrival B
+    Rival --> [*]: A or B disbanded
+```
+
+Rivals are stored apart from alliances, wars and vassalage (table `mf_faction_rival`, or `rivals.json` with JSON storage), so they do not appear in `/f relationship view`, the REST API's `/api/relationships`, PlaceholderAPI relationship placeholders or the DPC sync.
 
 ### `/faction declarewar [faction]` or `/f declarewar [faction]`
 **Permission:** `mf.declarewar` (default: true)  
@@ -320,6 +376,15 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Description:** Moves a role one place up or down your faction's role list, for example to list a new role above an older one. The order only changes how roles are listed; it does not grant or remove anything. Moving a role needs the same faction permission as renaming it: `MODIFY_ROLE` for that role.  
 **Usage:** `/f role move Duke up`
 
+![Animation: /f role list shows Owner, Officer, Member, Duke; after /f role move Duke up, the list shows Owner, Officer, Duke, Member](docs/images/role-move/role-move.gif)
+
+*`/f role move Duke up` moves Duke one place up, above Member. Captured with a scripted bot client on a throwaway Spigot 1.21.1 test server running Medieval Factions 10.2.1-SNAPSHOT; the server's real chat output, drawn as Minecraft chat.*
+
+### `/faction role setprefix [role] (prefix)` or `/f role setprefix [role] (prefix)`
+**Permission:** `mf.role.setprefix` (default: true)  
+**Description:** Sets the prefix shown for a role's members, such as `[Knight]`, or clears it when no prefix is given. `&` colour codes are allowed, and a prefix can be up to 32 characters long, colour codes included. Roles have no prefix until one is set, and a role without one changes nothing in chat. Once set, the prefix appears in front of the member's name in faction, ally and vassal chat and, when `chat.enableDefaultChatFormatting` is on, in public chat (see [Chat Settings](CONFIG.md#chat-settings)). It is also available to other plugins as the PlaceholderAPI placeholder `%medievalfactions_faction_role_prefix%` (alias `%medievalfactions_faction_rank_prefix%`), which is empty for a role without a prefix or a player without a faction. Setting a prefix needs the same faction permission as renaming the role: `MODIFY_ROLE` for that role. `/f role view` shows the prefix and, to those who may set it, a `[Set prefix]` button that fills in this command.  
+**Usage:** `/f role setprefix Knight &6[Knight]` sets it; `/f role setprefix Knight` clears it. Quote a role name with spaces: `/f role setprefix "High Priest" [HP]`.
+
 ### `/faction role setdefault [name]` or `/f role setdefault [name]`
 **Permission:** `mf.role.setdefault` (default: true)  
 **Description:** Sets a role as the default role for new members.  
@@ -343,6 +408,10 @@ Laws are numbered from 1 in the order `/f law list` shows them. Where a command 
 **Permission:** `mf.law.list` and `mf.laws` (both required; default: true)  
 **Description:** Lists the laws of your faction, or of the named faction, ten to a page with links to the previous and next pages. Laws with no section are listed first, as before; each section set with `/f law section` follows under its own heading, in the order of its lowest-numbered law, and every law keeps its global number. A single number is read as a page of your own faction's laws unless a faction has that name.  
 **Usage:** `/f law list [faction] [page]`
+
+![Chat: /f law list shows laws 1 to 10 with remove, edit and move buttons and Previous page / Page 1 / Next page links; /f law list 2 shows laws 11 and 12](docs/images/law-list/law-list.png)
+
+*A faction with twelve laws: page 1 holds ten, `/f law list 2` shows the rest. Captured with a scripted bot client on a throwaway Spigot 1.21.1 test server running Medieval Factions 10.2.1-SNAPSHOT; the server's real chat output, drawn as Minecraft chat.*
 
 ### `/faction law remove [number]` or `/f law remove [number]`
 **Permission:** `mf.law.remove` and `mf.removelaw` (both required; default: true)  
@@ -635,17 +704,25 @@ The `mf.force.*` nodes (all `default: op`) do not add new commands — each one 
 |------------|---------|--------|
 | `mf.force.addmember` | [`/f addmember`](#faction-addmember-faction-player-or-f-addmember-faction-player) | Forcefully adds a player to a faction. |
 | `mf.force.bonuspower` | [`/f bonuspower`](#faction-bonuspower-faction-amount-or-f-bonuspower-faction-amount) | Sets a faction's bonus power. |
+| `mf.force.ally` | [`/f ally`](#diplomacy--warfare) | Allies two named factions at once (`/f ally A B`), without consent or approval. |
+| `mf.force.breakalliance` | [`/f breakalliance`](#diplomacy--warfare) | Breaks the alliance between two named factions. |
 | `mf.force.claim` | [`/f claim`](#faction-claim-radius-or-f-claim-radius) | Claims land on behalf of another faction, bypassing its role permissions. |
+| `mf.force.declarewar` | [`/f declarewar`](#diplomacy--warfare) | Puts two named factions at war (`/f declarewar A B`), without approval. |
+| `mf.force.desc` | [`/f set description`](#faction-set-namedescriptionprefix-value-or-f-set-namedescriptionprefix-value) | Sets another faction's description (`/f set description Faction -- text`), bypassing its role permissions. |
 | `mf.force.flag` | [`/f flag list`, `/f flag set`](#faction-flag-listset-or-f-flag-listset) | Lists/sets flags on another faction, bypassing its role permissions. |
 | `mf.force.join` | [`/f join`](#faction-join-faction-or-f-join-faction), [`/f addmember`](#faction-addmember-faction-player-or-f-addmember-faction-player) | Joins a faction without an invite (confirmation prompt, or `-f` to skip it). Also grants `/f addmember`. |
 | `mf.force.kick` | [`/f kick`](#faction-kick-player-or-f-kick-player) | Kicks a member from another faction, bypassing its role permissions. |
+| `mf.force.grantindependence` | [`/f grantindependence`](#diplomacy--warfare) | Releases a vassal from its liege (`/f grantindependence Liege Vassal`). |
+| `mf.force.makepeace` | [`/f makepeace`](#diplomacy--warfare) | Makes peace between two named factions at once. |
 | `mf.force.power` | [`/power set`](#power-set-player-amount) | Sets a player's power (alternative to `mf.power.set`). |
 | `mf.force.role` | [`/f role`](#roles--permissions) | Views and edits another faction's roles, role permissions and member roles (`/f role FactionName <subcommand> ...`), bypassing its role permissions. |
 | `mf.force.rename` | [`/f set name`](#faction-set-namedescriptionprefix-value-or-f-set-namedescriptionprefix-value) | Renames another faction, bypassing its role permissions. |
+| `mf.force.sethome` | [`/f sethome`](#faction-sethome-or-f-sethome) | Sets another faction's home at your location (inside its territory), bypassing its role permissions. |
 | `mf.force.unclaim` | [`/f unclaim`](#faction-unclaim-radius-or-f-unclaim-radius), [`/f unclaimall`](#faction-unclaimall-or-f-unclaimall) | Unclaims another faction's land (around you, or all of it), bypassing its role permissions. |
 | `mf.force.unlock` | [`/unlock`](#unlock-cancel), block breaking | Unlocks blocks locked by another player. |
+| `mf.force.vassalize` | [`/f vassalize`](#diplomacy--warfare) | Makes one named faction the vassal of another at once (`/f vassalize Liege Vassal`), without consent or approval. |
 
-Every `mf.force.*` node that lets a faction be named follows the same rule: when a faction is named, the force permission replaces that faction's own role-permission check, so an admin does not need to be a member. The command's base node (`mf.kick`, `mf.rename`, `mf.claim`, `mf.unclaim`, `mf.unclaimall`, `mf.flag.*`, `mf.role.*`) is still required.
+Every `mf.force.*` node that lets a faction be named follows the same rule: when a faction is named, the force permission replaces that faction's own role-permission check, so an admin does not need to be a member. The command's base node (`mf.kick`, `mf.rename`, `mf.desc`, `mf.sethome`, `mf.claim`, `mf.unclaim`, `mf.unclaimall`, `mf.flag.*`, `mf.role.*`, and the diplomacy commands' own nodes) is still required. The forced diplomacy nodes go one step further and act for both factions, as described under [Diplomacy & Warfare](#diplomacy--warfare).
 
 ## Notes
 
