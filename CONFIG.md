@@ -738,6 +738,12 @@ factions:
 **Default:** `false`  
 **Description:** When `true`, each online player sees a sidebar scoreboard with their own power and, if they are in a faction, the faction's power and max power. A player whose scoreboard has already been set by another plugin is left alone, so the sidebar never replaces a scoreboard Medieval Factions did not create. When the plugin is disabled, players showing the sidebar get the server's main scoreboard back. The setting is read at startup, so a change needs a restart.
 
+| `language: en-US` | `language: de-DE` |
+|---|---|
+| ![Sidebar titled Power: Faction max power 20, Faction power 5, Your power 5](docs/images/power-scoreboard/sidebar-en.png) | ![Sidebar titled Macht: Max. Fraktionsmacht 20, Deine Macht 5, Fraktionsmacht 5](docs/images/power-scoreboard/sidebar-de.png) |
+
+*The power sidebar of a faction's founder just after `/f create`, with `powerScoreboard.enabled: true`. Captured with a scripted bot client on a throwaway Spigot 1.21.1 test server running Medieval Factions 10.2.1-SNAPSHOT. The titles, lines and scores are the ones the server sent to the bot; the client sorts lines by score, highest first, so lines with equal scores can appear in either order.*
+
 ### `powerScoreboard.updateIntervalSeconds`
 **Type:** Integer  
 **Default:** `5`  
