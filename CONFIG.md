@@ -196,8 +196,15 @@ The power system determines how much land a faction can claim and player impact 
 ### `players.maxPower`
 **Type:** Integer  
 **Default:** `20`  
-**Description:** The maximum power a player can accumulate.  
+**Description:** The maximum power a player can accumulate. Faction leaders use `players.leaderMaxPower` instead when it is set.  
 **Range:** Any positive integer
+
+### `players.leaderMaxPower`
+**Type:** Number  
+**Default:** Not set (commented out in `config.yml`)  
+**Description:** A separate maximum power for faction leaders, the members holding their faction's `Owner` role (the role `/faction admin setleader` assigns; a faction can have several). When it is not set, leaders use `players.maxPower` like everyone else, so nothing changes until a server opts in. When it is set, it replaces `players.maxPower` for leaders everywhere a maximum applies: power gained over time, power gained on a kill, the highest value `/power set` accepts, the player max power shown by `/faction power` and the `%medievalfactions_faction_player_max_power%` and `%medievalfactions_faction_player_power_full%` placeholders, and the faction's maximum member power (which feeds its maximum power), which counts each leader at this value. Players in no faction always use `players.maxPower`. It may be higher or lower than `players.maxPower`.  
+A player who stops being a leader (a role change, leaving the faction, or the faction being disbanded) keeps the power they had until the next scheduled power update (see `players.powerUpdateIntervalMinutes`); that update lowers anything above `players.maxPower` down to `players.maxPower`. Their power is lowered to the cap, never reset. The same happens to a leader above a `players.leaderMaxPower` that was lowered. Removing the setting again does not lower anyone: as when `players.maxPower` is lowered today, a player above the cap keeps that power, does not gain more, and decays to below it while offline.  
+**Range:** Any number above 0; a value of 0 or less, or one that is not a number, counts as not set
 
 ### `players.minPower`
 **Type:** Integer  

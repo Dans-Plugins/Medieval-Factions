@@ -8,6 +8,7 @@ import com.dansplugins.factionsystem.faction.role.MfFactionRole
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.faction.role.MfFactionRoles
 import com.dansplugins.factionsystem.notification.MfNotification
+import com.dansplugins.factionsystem.player.MfMaxPower
 import com.dansplugins.factionsystem.player.MfPlayerId
 import java.util.Collections.emptyList
 
@@ -34,7 +35,7 @@ data class MfFaction(
     val memberPower
         get() = members.sumOf { plugin.services.playerService.getPlayer(it.playerId)?.power ?: 0.0 }
     val maxMemberPower
-        get() = members.size * plugin.config.getDouble("players.maxPower")
+        get() = members.sumOf { MfMaxPower.forPlayer(plugin.config, this, it.playerId) }
     val vassalPower
         get() = plugin.services.factionRelationshipService.getVassals(id)
             .mapNotNull(plugin.services.factionService::getFaction)
@@ -100,3 +101,11 @@ data class MfFaction(
         private val ROLE_MANAGEMENT = Regex("(SET_MEMBER_ROLE|MODIFY_ROLE|DELETE_ROLE)\\(.+\\)")
     }
 }
+
+/**
+ * Whether [playerId] leads this faction: they hold the role named [MfFactionRoles.OWNER_ROLE_NAME], matched ignoring
+ * case as `/faction admin setleader` matches it. A faction can have several leaders. It is an extension, built only on
+ * [MfFaction.getRole], so it gives the same answer for a faction whose roles are stubbed in a test.
+ */
+fun MfFaction.isLeader(playerId: MfPlayerId): Boolean =
+    getRole(playerId)?.name.equals(MfFactionRoles.OWNER_ROLE_NAME, ignoreCase = true)

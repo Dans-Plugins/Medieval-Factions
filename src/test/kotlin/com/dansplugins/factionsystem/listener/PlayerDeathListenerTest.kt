@@ -16,6 +16,7 @@ import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.scheduler.BukkitScheduler
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -77,6 +78,7 @@ class PlayerDeathListenerTest {
         `when`(plugin.services).thenReturn(services)
         playerService = mock(MfPlayerService::class.java)
         `when`(services.playerService).thenReturn(playerService)
+        `when`(playerService.getMaxPower(victimId)).thenReturn(20.0)
         factionService = mock(MfFactionService::class.java)
         `when`(services.factionService).thenReturn(factionService)
         `when`(factionService.delete(factionId)).thenReturn(Success(Unit))
@@ -178,16 +180,41 @@ class PlayerDeathListenerTest {
         verify(factionService, never()).delete(factionId)
     }
 
-    private fun givenVictim(role: String, power: Double) {
+    @Test
+    fun aLeaderDeathIsCappedAtTheLeadersOwnMaxPower() {
+        // players.leaderMaxPower (#1945): a leader above players.maxPower keeps the power the death leaves them
+        `when`(config.getBoolean("factions.leaderZeroPowerDisbandsFaction")).thenReturn(false)
+        `when`(playerService.getMaxPower(victimId)).thenReturn(30.0)
+        val updated = givenVictim(role = "Owner", power = 25.0)
+
+        die()
+
+        assertEquals(24.0, updated.single().power)
+    }
+
+    @Test
+    fun aDeathCapsPowerAtThePlayersMaxPower() {
+        `when`(config.getBoolean("factions.leaderZeroPowerDisbandsFaction")).thenReturn(false)
+        val updated = givenVictim(role = "Owner", power = 25.0)
+
+        die()
+
+        assertEquals(20.0, updated.single().power)
+    }
+
+    /** @return the players the death saved, filled in when [die] runs. */
+    private fun givenVictim(role: String, power: Double): List<MfPlayer> {
+        val updated = mutableListOf<MfPlayer>()
         val mfPlayer = MfPlayer(victimId, power = power)
         `when`(playerService.getPlayer(victim)).thenReturn(mfPlayer)
         `when`(playerService.update(eqPlayer(mfPlayer), anyTransform())).thenAnswer { invocation ->
             @Suppress("UNCHECKED_CAST")
             val transform = invocation.arguments[1] as (MfPlayer) -> MfPlayer
-            Success(transform(mfPlayer))
+            Success(transform(mfPlayer).also(updated::add))
         }
         val factionRole = MfFactionRole(plugin, name = role)
         `when`(faction.getRole(victimId)).thenReturn(factionRole)
+        return updated
     }
 
     private fun die() {
