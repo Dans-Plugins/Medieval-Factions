@@ -41,6 +41,7 @@ commands:
       /f law add [law] - Create a law for your faction
       /f law list - List your faction's laws
       /f law remove [id] - Remove a law from your faction
+      /f area [pos1|pos2|create|delete|list|add|remove] - Locked areas in your territory
       /f role view [role] - Views a role
       /f role setpermission [role] [permission] [value] - Sets a permission for a role
       /f role list - Lists roles
@@ -319,6 +320,9 @@ permissions:
     default: true
   mf.lock:
     description: Allows locking blocks
+    default: true
+  mf.area:
+    description: Allows using /faction area to set up locked areas (the faction role also needs MANAGE_LOCKED_AREAS to change them)
     default: true
   mf.unlock:
     description: Allows unlocking blocks

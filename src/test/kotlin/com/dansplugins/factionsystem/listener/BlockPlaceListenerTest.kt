@@ -3,6 +3,7 @@ package com.dansplugins.factionsystem.listener
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.TestUtils
 import com.dansplugins.factionsystem.area.MfBlockPosition
+import com.dansplugins.factionsystem.area.MfCuboidArea
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.faction.MfFaction
@@ -11,6 +12,8 @@ import com.dansplugins.factionsystem.faction.MfFactionService
 import com.dansplugins.factionsystem.gate.MfGate
 import com.dansplugins.factionsystem.gate.MfGateService
 import com.dansplugins.factionsystem.lang.Language
+import com.dansplugins.factionsystem.lockedarea.MfLockedArea
+import com.dansplugins.factionsystem.lockedarea.MfLockedAreaService
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerService
@@ -20,6 +23,7 @@ import org.bukkit.World
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.event.block.BlockPlaceEvent
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
@@ -39,6 +43,7 @@ class BlockPlaceListenerTest {
     private lateinit var factionService: MfFactionService
     private lateinit var playerService: MfPlayerService
     private lateinit var relationshipService: MfFactionRelationshipService
+    private lateinit var lockedAreaService: MfLockedAreaService
     private lateinit var uut: BlockPlaceListener
 
     @BeforeEach
@@ -210,6 +215,54 @@ class BlockPlaceListenerTest {
         verify(player).sendMessage("${ChatColor.RED}Cannot place block in faction territory")
     }
 
+    @Test
+    fun onBlockPlace_Claimed_InteractionAllowed_InsideLockedAreaNotListed_ShouldCancelAndInformPlayer() {
+        val (event, area) = placeAsMemberInsideArea(refused = true)
+
+        uut.onBlockPlace(event)
+
+        verify(event).isCancelled = true
+        verify(fixture.player).sendMessage("${ChatColor.RED}Cannot place block in faction territory")
+        assertEquals("Vault", area?.name)
+    }
+
+    @Test
+    fun onBlockPlace_Claimed_InteractionAllowed_NoLockedAreaRefuses_ShouldAllow() {
+        // Control for the test above: same member and claim, no area refusing them (#1393).
+        val (event, _) = placeAsMemberInsideArea(refused = false)
+
+        uut.onBlockPlace(event)
+
+        verify(event, never()).isCancelled = true
+    }
+
+    private fun placeAsMemberInsideArea(refused: Boolean): Pair<BlockPlaceEvent, MfLockedArea?> {
+        val block = fixture.block
+        val player = fixture.player
+        val playerId = UUID.randomUUID()
+        `when`(player.uniqueId).thenReturn(playerId)
+        val claimFactionId = MfFactionId("claim-faction")
+        val claim = mock(MfClaimedChunk::class.java)
+        `when`(claim.factionId).thenReturn(claimFactionId)
+        `when`(claimService.getClaim(block.chunk)).thenReturn(claim)
+        val claimFaction = mock(MfFaction::class.java)
+        `when`(claimFaction.name).thenReturn("Own Faction")
+        `when`(factionService.getFaction(claimFactionId)).thenReturn(claimFaction)
+        val mfPlayer = mock(MfPlayer::class.java)
+        val mfPlayerId = MfPlayerId(playerId.toString())
+        `when`(mfPlayer.id).thenReturn(mfPlayerId)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(claimService.isInteractionAllowed(mfPlayerId, claim)).thenReturn(true)
+        val position = MfBlockPosition.fromBukkitBlock(block)
+        val area = if (refused) {
+            MfLockedArea(factionId = claimFactionId, name = "Vault", area = MfCuboidArea(position, position))
+        } else {
+            null
+        }
+        `when`(lockedAreaService.getRefusingArea(mfPlayer, player, claim, position)).thenReturn(area)
+        return fixture.event to area
+    }
+
     // Helper functions
 
     private fun createBasicFixture(): BlockPlaceListenerTestFixture {
@@ -236,6 +289,8 @@ class BlockPlaceListenerTest {
 
         val services = mock(com.dansplugins.factionsystem.service.Services::class.java)
         `when`(medievalFactions.services).thenReturn(services)
+        lockedAreaService = mock(MfLockedAreaService::class.java)
+        `when`(services.lockedAreaService).thenReturn(lockedAreaService)
         `when`(services.gateService).thenReturn(gateService)
         `when`(services.claimService).thenReturn(claimService)
         `when`(services.factionService).thenReturn(factionService)

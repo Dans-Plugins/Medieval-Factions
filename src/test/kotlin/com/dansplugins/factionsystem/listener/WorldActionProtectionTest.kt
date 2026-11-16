@@ -51,6 +51,7 @@ class WorldActionProtectionTest {
         playerService = mock(MfPlayerService::class.java)
         val services = mock(Services::class.java)
         `when`(plugin.services).thenReturn(services)
+        `when`(services.lockedAreaService).thenReturn(org.mockito.Mockito.mock(com.dansplugins.factionsystem.lockedarea.MfLockedAreaService::class.java))
         `when`(services.claimService).thenReturn(claimService)
         `when`(services.factionService).thenReturn(factionService)
         `when`(services.playerService).thenReturn(playerService)
@@ -64,6 +65,10 @@ class WorldActionProtectionTest {
 
         player = mock(Player::class.java)
         block = mock(Block::class.java)
+        // Locked areas (#1393) look the block's position up, which reads its world.
+        val world = mock(org.bukkit.World::class.java)
+        `when`(world.uid).thenReturn(java.util.UUID.randomUUID())
+        `when`(block.world).thenReturn(world)
         chunk = mock(Chunk::class.java)
         `when`(block.chunk).thenReturn(chunk)
         event = mock(Cancellable::class.java)

@@ -8,6 +8,7 @@ import com.dansplugins.factionsystem.command.faction.ally.MfFactionAllyCommand
 import com.dansplugins.factionsystem.command.faction.apply.MfFactionApplyCommand
 import com.dansplugins.factionsystem.command.faction.approve.MfFactionApproveCommand
 import com.dansplugins.factionsystem.command.faction.approveapp.MfFactionApproveAppCommand
+import com.dansplugins.factionsystem.command.faction.area.MfFactionAreaCommand
 import com.dansplugins.factionsystem.command.faction.bonuspower.MfFactionBonusPowerCommand
 import com.dansplugins.factionsystem.command.faction.breakalliance.MfFactionBreakAllianceCommand
 import com.dansplugins.factionsystem.command.faction.bypass.MfFactionBypassCommand
@@ -66,6 +67,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val factionCreateCommand = MfFactionCreateCommand(plugin)
     private val factionClaimCommand = MfFactionClaimCommand(plugin)
     private val factionLawCommand = MfFactionLawCommand(plugin)
+    private val factionAreaCommand = MfFactionAreaCommand(plugin)
     private val factionAllyCommand = MfFactionAllyCommand(plugin)
     private val factionBreakAllianceCommand = MfFactionBreakAllianceCommand(plugin)
     private val factionRivalCommand = MfFactionRivalCommand(plugin, remove = false)
@@ -119,6 +121,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
     private val createAliases = listOf("create", plugin.language["CmdFactionCreate"])
     private val claimAliases = listOf("claim", plugin.language["CmdFactionClaim"])
     private val lawAliases = listOf("law", plugin.language["CmdFactionLaw"])
+    private val areaAliases = listOf("area", plugin.language["CmdFactionArea"])
     private val allyAliases = listOf("ally", plugin.language["CmdFactionAlly"])
     private val breakAllianceAliases = listOf("breakalliance", "ba", plugin.language["CmdFactionBreakAlliance"])
     private val rivalAliases = listOf("rival", plugin.language["CmdFactionRival"])
@@ -172,6 +175,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
         createAliases +
         claimAliases +
         lawAliases +
+        areaAliases +
         allyAliases +
         breakAllianceAliases +
         rivalAliases +
@@ -227,6 +231,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in createAliases -> factionCreateCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in claimAliases -> factionClaimCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in lawAliases -> factionLawCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in areaAliases -> factionAreaCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in allyAliases -> factionAllyCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in breakAllianceAliases -> factionBreakAllianceCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in rivalAliases -> factionRivalCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
@@ -302,6 +307,7 @@ class MfFactionCommand(private val plugin: MedievalFactions) : CommandExecutor, 
             in helpAliases -> factionHelpCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in createAliases -> factionCreateCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in lawAliases -> factionLawCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+            in areaAliases -> factionAreaCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in allyAliases -> factionAllyCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in breakAllianceAliases -> factionBreakAllianceCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
             in rivalAliases -> factionRivalCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())

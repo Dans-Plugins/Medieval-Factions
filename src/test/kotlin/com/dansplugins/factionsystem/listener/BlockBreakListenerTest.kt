@@ -242,6 +242,7 @@ class BlockBreakListenerTest {
     private fun mockServices() {
         val services = mock(Services::class.java)
         `when`(plugin.services).thenReturn(services)
+        `when`(services.lockedAreaService).thenReturn(org.mockito.Mockito.mock(com.dansplugins.factionsystem.lockedarea.MfLockedAreaService::class.java))
 
         gateService = mock(MfGateService::class.java)
         `when`(services.gateService).thenReturn(gateService)

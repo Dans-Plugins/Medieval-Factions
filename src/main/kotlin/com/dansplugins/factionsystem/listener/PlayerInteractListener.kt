@@ -287,7 +287,13 @@ class PlayerInteractListener(
         val claimFaction = factionService.getFaction(claim.factionId) ?: return
 
         // Check if player is allowed to interact based on faction relationships
-        if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
+        if (claimService.isInteractionAllowed(mfPlayer.id, claim)) {
+            // A locked area (#1393) narrows who may use blocks inside it, on top of the claim.
+            val lockedArea = plugin.services.lockedAreaService.getRefusingArea(mfPlayer, event.player, claim, MfBlockPosition.fromBukkitBlock(clickedBlock))
+            if (lockedArea != null && denyInteraction(event) && !suppressProtectionMessages) {
+                event.player.sendMessage("$RED${plugin.language["CannotInteractInLockedArea", lockedArea.name]}")
+            }
+        } else {
             if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
                 if (!suppressProtectionMessages) {
                     event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")

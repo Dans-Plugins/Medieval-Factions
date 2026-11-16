@@ -58,7 +58,14 @@ class BlockPlaceListener(private val plugin: MedievalFactions) : Listener {
             return
         }
         val playerFaction = factionService.getFaction(mfPlayer.id)
-        if (!claimService.isInteractionAllowed(mfPlayer.id, claim)) {
+        if (claimService.isInteractionAllowed(mfPlayer.id, claim)) {
+            // A locked area (#1393) narrows who may build inside it, on top of the claim.
+            val lockedArea = plugin.services.lockedAreaService.getRefusingArea(mfPlayer, event.player, claim, MfBlockPosition.fromBukkitBlock(event.block))
+            if (lockedArea != null) {
+                event.isCancelled = true
+                event.player.sendMessage("$RED${plugin.language["CannotPlaceBlockInLockedArea", lockedArea.name]}")
+            }
+        } else {
             if (mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) {
                 event.player.sendMessage("$RED${plugin.language["FactionTerritoryProtectionBypassed"]}")
             } else if (playerFaction != null && relationshipService.getFactionsAtWarWith(playerFaction.id).contains(claimFaction.id)) {
