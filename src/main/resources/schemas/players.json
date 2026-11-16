@@ -53,6 +53,10 @@
             }
           ],
           "description": "Current chat channel"
+        },
+        "fixedPower": {
+          "type": ["number", "null"],
+          "description": "Power an admin has fixed this player at with /power setfixed; absent or null means power changes normally"
         }
       },
       "required": ["id", "version", "power", "powerAtLogout", "isBypassEnabled"],

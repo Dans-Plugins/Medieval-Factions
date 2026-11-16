@@ -128,6 +128,8 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
         victimMfPlayer: MfPlayer,
         powerLostOnDeath: Double
     ): MfPlayer? {
+        // An admin has fixed this player's power (/power setfixed): dying does not lower it.
+        if (victimMfPlayer.isPowerFixed) return null
         val maxPower = playerService.getMaxPower(victimMfPlayer.id)
         val newPower = (victimMfPlayer.power - powerLostOnDeath)
             .coerceAtLeast(0.0)
@@ -136,6 +138,7 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
             return null
         }
         val updatedVictim = playerService.update(victimMfPlayer) { current ->
+            if (current.isPowerFixed) return@update current
             current.copy(
                 power = (current.power - powerLostOnDeath)
                     .coerceAtLeast(0.0)
@@ -156,6 +159,8 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
         killerMfPlayer: MfPlayer,
         powerGainedOnKill: Double
     ) {
+        // An admin has fixed this player's power (/power setfixed): killing does not raise it.
+        if (killerMfPlayer.isPowerFixed) return
         val maxPower = playerService.getMaxPower(killerMfPlayer.id)
         val newPower = (killerMfPlayer.power + powerGainedOnKill)
             .coerceAtLeast(0.0)
@@ -164,6 +169,7 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
             return
         }
         playerService.update(killerMfPlayer) { current ->
+            if (current.isPowerFixed) return@update current
             current.copy(
                 power = (current.power + powerGainedOnKill)
                     .coerceAtLeast(0.0)

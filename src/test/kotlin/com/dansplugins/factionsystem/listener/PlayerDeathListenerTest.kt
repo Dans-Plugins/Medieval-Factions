@@ -23,6 +23,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyList
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.doCallRealMethod
 import org.mockito.Mockito.mock
@@ -202,10 +203,51 @@ class PlayerDeathListenerTest {
         assertEquals(20.0, updated.single().power)
     }
 
+    @Test
+    fun aVictimWhosePowerIsFixedLosesNoPowerOnDeath() {
+        // #1682: an admin has fixed the victim's power with /power setfixed
+        givenVictim(role = "Owner", power = 1.0, fixedPower = 1.0)
+
+        die()
+
+        verify(playerService, never()).update(any(MfPlayer::class.java) ?: MfPlayer(victimId), anyTransform())
+        verify(factionService, never()).delete(factionId)
+    }
+
+    @Test
+    fun aKillerWhosePowerIsFixedGainsNoPowerOnAKill() {
+        `when`(config.getDouble("players.powerGainedOnKill")).thenReturn(2.0)
+        givenVictim(role = "Officer", power = 10.0)
+        val killer = mock(Player::class.java)
+        `when`(victim.killer).thenReturn(killer)
+        val killerMfPlayer = MfPlayer(MfPlayerId(UUID.randomUUID().toString()), power = 5.0, fixedPower = 5.0)
+        `when`(playerService.getPlayer(killer)).thenReturn(killerMfPlayer)
+
+        die()
+
+        verify(playerService, never()).update(eqPlayer(killerMfPlayer), anyTransform())
+        verify(killer, never()).sendMessage(anyString())
+    }
+
+    @Test
+    fun aKillerWhosePowerIsNotFixedStillGainsPowerOnAKill() {
+        `when`(config.getDouble("players.powerGainedOnKill")).thenReturn(2.0)
+        givenVictim(role = "Officer", power = 10.0)
+        val killer = mock(Player::class.java)
+        `when`(victim.killer).thenReturn(killer)
+        val killerMfPlayer = MfPlayer(MfPlayerId(UUID.randomUUID().toString()), power = 5.0)
+        `when`(playerService.getPlayer(killer)).thenReturn(killerMfPlayer)
+        `when`(playerService.update(eqPlayer(killerMfPlayer), anyTransform())).thenReturn(Success(killerMfPlayer.copy(power = 7.0)))
+
+        die()
+
+        verify(playerService).update(eqPlayer(killerMfPlayer), anyTransform())
+    }
+
     /** @return the players the death saved, filled in when [die] runs. */
-    private fun givenVictim(role: String, power: Double): List<MfPlayer> {
+    private fun givenVictim(role: String, power: Double, fixedPower: Double? = null): List<MfPlayer> {
         val updated = mutableListOf<MfPlayer>()
-        val mfPlayer = MfPlayer(victimId, power = power)
+        val mfPlayer = MfPlayer(victimId, power = power, fixedPower = fixedPower)
         `when`(playerService.getPlayer(victim)).thenReturn(mfPlayer)
         `when`(playerService.update(eqPlayer(mfPlayer), anyTransform())).thenAnswer { invocation ->
             @Suppress("UNCHECKED_CAST")

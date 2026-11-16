@@ -594,7 +594,21 @@ Armour stands and item frames are identified by entity id instead of coordinates
 **Permission:** `mf.power.set` or `mf.force.power` (default: op)  
 **Aliases:** `/macht set`, `/pouvoir set`  
 **Description:** Sets a player's power level (admin command).  
-**Usage:** `/power set PlayerName 15`
+**Usage:** `/power set PlayerName 15`  
+**Notes:** A player whose power is fixed (see `/power setfixed`) is refused; set a new fixed amount or clear it first.
+
+### `/power setfixed [player] [amount]`
+**Permission:** `mf.power.fixed` or `mf.force.power` (default: op)  
+**Aliases:** `/macht setfixed`, `/pouvoir setfixed`  
+**Description:** Fixes a player's power at an amount that never increases or decreases while it is set (admin command). The player's power becomes that amount, and power gained online and lost offline over time, power gained on a kill, power lost on death and `/power set` all leave it unchanged. Running it again replaces the fixed amount. `/f power` shows that the player's power is fixed.  
+**Usage:** `/power setfixed PlayerName 15`  
+**Notes:** The amount must lie between `players.minPower` and `players.maxPower` when it is set, as for `/power set`. A fixed amount is not adjusted afterwards if those settings change. Faction power, claim limits and the power scoreboard use the fixed amount like any other power value.
+
+### `/power clearfixed [player]`
+**Permission:** `mf.power.fixed` or `mf.force.power` (default: op)  
+**Aliases:** `/macht clearfixed`, `/pouvoir clearfixed`  
+**Description:** Removes a fixed power set with `/power setfixed` (admin command). The player keeps the fixed amount as their current power, and it changes normally from there.  
+**Usage:** `/power clearfixed PlayerName`
 
 ### `/faction bonuspower [faction] [amount]` or `/f bonuspower [faction] [amount]`
 **Permission:** `mf.force.bonuspower` (default: op)  
@@ -754,6 +768,7 @@ The `mf.admin` permission grants access to all admin commands including:
 - `mf.bypass` - Bypass protections
 - `mf.relationship.*` - Manage relationships
 - `mf.power.set` - Set player power
+- `mf.power.fixed` - Fix a player's power and clear it (`/power setfixed`, `/power clearfixed`)
 - `mf.admin.create` - Create leaderless factions
 - `mf.admin.setleader` - Set faction leaders
 - `mf.migrate` - Migrate between storage backends
@@ -778,7 +793,7 @@ The `mf.force.*` nodes (all `default: op`) do not add new commands — each one 
 | `mf.force.kick` | [`/f kick`](#faction-kick-player-or-f-kick-player) | Kicks a member from another faction, bypassing its role permissions. |
 | `mf.force.grantindependence` | [`/f grantindependence`](#diplomacy--warfare) | Releases a vassal from its liege (`/f grantindependence Liege Vassal`). |
 | `mf.force.makepeace` | [`/f makepeace`](#diplomacy--warfare) | Makes peace between two named factions at once. |
-| `mf.force.power` | [`/power set`](#power-set-player-amount) | Sets a player's power (alternative to `mf.power.set`). |
+| `mf.force.power` | [`/power set`](#power-set-player-amount), [`/power setfixed`](#power-setfixed-player-amount), [`/power clearfixed`](#power-clearfixed-player) | Sets a player's power (alternative to `mf.power.set`), and fixes or clears a player's fixed power (alternative to `mf.power.fixed`). |
 | `mf.force.role` | [`/f role`](#roles--permissions) | Views and edits another faction's roles, role permissions and member roles (`/f role FactionName <subcommand> ...`), bypassing its role permissions. |
 | `mf.force.rename` | [`/f set name`](#faction-set-namedescriptionprefix-value-or-f-set-namedescriptionprefix-value) | Renames another faction, bypassing its role permissions. |
 | `mf.force.sethome` | [`/f sethome`](#faction-sethome-or-f-sethome) | Sets another faction's home at your location (inside its territory), bypassing its role permissions. |

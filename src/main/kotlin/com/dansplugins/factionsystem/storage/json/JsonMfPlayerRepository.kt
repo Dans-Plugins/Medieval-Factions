@@ -82,9 +82,10 @@ class JsonMfPlayerRepository(
         val hoursToReachMax = plugin.config.getDouble("players.hoursToReachMaxPower")
         val timeIncrementHours = MfPowerUpdateSettings.intervalHours(plugin.config)
 
+        // A player whose power an admin has fixed (/power setfixed) neither gains nor loses power.
         data.players.forEachIndexed { index, player ->
             val maxPower = maxPowerOf(player.id, leaderIds, configMaxPower, leaderMaxPower)
-            if (player.id in onlinePlayerIds && player.power < maxPower) {
+            if (player.id in onlinePlayerIds && player.power < maxPower && !player.isPowerFixed) {
                 val currentPower = player.power
                 // Replicate the power increase formula from JooqMfPlayerRepository
                 val normalizedPower = currentPower / maxPower
@@ -120,7 +121,7 @@ class JsonMfPlayerRepository(
             val maxPower = maxPowerOf(player.id, leaderIds, configMaxPower, leaderMaxPower)
             // The argument lists the ONLINE players (MfPlayerService passes them, as JooqMfPlayerRepository expects);
             // decay applies to everyone else.
-            if (player.id !in onlinePlayerIds && player.powerAtLogout > minPower && player.power > minPower) {
+            if (player.id !in onlinePlayerIds && player.powerAtLogout > minPower && player.power > minPower && !player.isPowerFixed) {
                 // Replicate the power decrease formula from JooqMfPlayerRepository
                 // This uses powerAtLogout to calculate the correct power decay over time
                 val currentPower = kotlin.math.min(player.power, kotlin.math.min(player.powerAtLogout, maxPower))
@@ -165,7 +166,7 @@ class JsonMfPlayerRepository(
         var changed = false
         data.players.forEachIndexed { index, player ->
             val maxPower = maxPowerOf(player.id, leaderIds, configMaxPower, leaderMaxPower)
-            if (player.power > maxPower) {
+            if (player.power > maxPower && !player.isPowerFixed) {
                 data.players[index] = player.copy(power = maxPower, version = player.version + 1)
                 changed = true
             }
