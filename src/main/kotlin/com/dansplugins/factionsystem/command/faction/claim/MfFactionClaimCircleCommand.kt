@@ -18,14 +18,21 @@ import org.bukkit.entity.Player
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.logging.Level
-import kotlin.math.floor
 
-class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
+/**
+ * Claims the sender's chunk, or an area around it: a circle of chunks within a radius (`/f claim [radius]`,
+ * `/f claim circle [radius]`), a square (`/f claim square <size>`) or a rectangle (`/f claim rectangle <sizeX> <sizeZ>`),
+ * centred on the sender's chunk. Square and rectangle sizes are side lengths in chunks (#1653).
+ */
+class MfFactionClaimCircleCommand(
+    private val plugin: MedievalFactions,
+    private val shape: MfClaimShape = MfClaimShape.CIRCLE
+) : CommandExecutor, TabCompleter {
 
     private val decimalFormat = DecimalFormat("0", DecimalFormatSymbols.getInstance(plugin.language.locale))
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (!sender.hasPermission("mf.claim.circle") && !sender.hasPermission("mf.claim")) {
+        if (!sender.hasPermission(shape.permission) && !sender.hasPermission("mf.claim")) {
             sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimNoPermission"]}")
             return true
         }
@@ -85,14 +92,45 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
                 }
                 val radius = radiusArgs.firstOrNull()?.toIntOrNull()
                 val maxClaimRadius = plugin.config.getInt("factions.maxClaimRadius")
-                if (radius != null && (radius < 0 || radius > maxClaimRadius)) {
-                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimMaxClaimRadius", maxClaimRadius.toString()]}")
-                    return@Runnable
+                // A square or rectangle may span as many chunks along each side as the widest circle
+                val maxClaimSize = maxClaimRadius * 2 + 1
+                val sizeX: Int
+                val sizeZ: Int
+                when (shape) {
+                    MfClaimShape.CIRCLE -> {
+                        if (radius != null && (radius < 0 || radius > maxClaimRadius)) {
+                            sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimMaxClaimRadius", maxClaimRadius.toString()]}")
+                            return@Runnable
+                        }
+                        sizeX = 0
+                        sizeZ = 0
+                    }
+                    MfClaimShape.SQUARE, MfClaimShape.RECTANGLE -> {
+                        val parsedX = radius
+                        val parsedZ = if (shape == MfClaimShape.SQUARE) radius else radiusArgs.getOrNull(1)?.toIntOrNull()
+                        if (parsedX == null || parsedZ == null) {
+                            sender.sendMessage("${ChatColor.RED}${plugin.language[shape.usageKey ?: "CommandFactionClaimSquareUsage"]}")
+                            return@Runnable
+                        }
+                        if (parsedX !in 1..maxClaimSize || parsedZ !in 1..maxClaimSize) {
+                            sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimMaxClaimSize", maxClaimSize.toString()]}")
+                            return@Runnable
+                        }
+                        sizeX = parsedX
+                        sizeZ = parsedZ
+                    }
                 }
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
-                        val chunks = if (radius == null) {
+                        val chunks = if (shape != MfClaimShape.CIRCLE) {
+                            // The sender's chunk is the centre, or just past it on a side of even length
+                            val minX = senderChunkX - (sizeX - 1) / 2
+                            val minZ = senderChunkZ - (sizeZ - 1) / 2
+                            (minX until minX + sizeX).flatMap { x ->
+                                (minZ until minZ + sizeZ).map { z -> MfChunkPosition(senderWorld.uid, x, z) }
+                            }
+                        } else if (radius == null) {
                             listOf(MfChunkPosition(senderWorld.uid, senderChunkX, senderChunkZ))
                         } else {
                             (senderChunkX - radius..senderChunkX + radius).flatMap { x ->
@@ -118,7 +156,7 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
                                         val relationships = relationshipService.getRelationships(faction.id, claimFactionId)
                                         val reverseRelationships = relationshipService.getRelationships(claimFactionId, faction.id)
                                         return@filter (relationships + reverseRelationships).any { it.type == MfFactionRelationshipType.AT_WAR } &&
-                                            claimFaction.power <= claimService.getClaims(claimFactionId).size - claims.size
+                                            claimFaction.power <= claimService.getClaimPowerUsed(claimFactionId) - claimService.getClaimPowerCost(claims.map { (chunk, _) -> chunk })
                                     }
                                     .flatMap { it.value.map { (chunk, _) -> chunk } }
                                 val claimableChunks = unclaimedChunks + contestedChunks
@@ -126,8 +164,8 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
                                     sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimNoClaimableChunks"]}")
                                     return@saveChunks
                                 }
-                                if (plugin.config.getBoolean("factions.limitLand") && claimableChunks.size + claimService.getClaims(faction.id).size > faction.power) {
-                                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimReachedDemesneLimit", decimalFormat.format(floor(faction.power))]}")
+                                if (plugin.config.getBoolean("factions.limitLand") && claimService.getClaimPowerCost(claimableChunks) + claimService.getClaimPowerUsed(faction.id) > faction.power) {
+                                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimReachedDemesneLimit", decimalFormat.format(claimService.getClaimLimit(faction.id, faction.power, senderWorld.uid))]}")
                                     return@saveChunks
                                 }
                                 // Checks if the attempted claim is connected to an already existing claim. Will make an exception if the faction has no claims.

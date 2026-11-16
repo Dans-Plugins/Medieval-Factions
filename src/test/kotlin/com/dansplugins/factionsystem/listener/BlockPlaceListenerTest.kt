@@ -45,9 +45,34 @@ class BlockPlaceListenerTest {
     fun setUp() {
         fixture = createBasicFixture()
         medievalFactions = mock(MedievalFactions::class.java)
+        `when`(medievalFactions.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
         mockServices()
         mockLanguageSystem()
         uut = BlockPlaceListener(medievalFactions)
+    }
+
+    @Test
+    fun onBlockPlace_allowBuildingEverywhere_placeInAnotherFactionsTerritoryIsAllowed() {
+        // #1804: with the option on, the claim is not even looked up
+        val event = fixture.event
+        `when`(medievalFactions.config.getBoolean("factions.allowBuildingEverywhere")).thenReturn(true)
+
+        uut.onBlockPlace(event)
+
+        verify(event, never()).isCancelled = true
+        verify(claimService, never()).getClaim(fixture.block.chunk)
+    }
+
+    @Test
+    fun onBlockPlace_allowBuildingEverywhere_gateStaysProtected() {
+        val event = fixture.event
+        `when`(medievalFactions.config.getBoolean("factions.allowBuildingEverywhere")).thenReturn(true)
+        val blockPosition = MfBlockPosition.fromBukkitBlock(fixture.block)
+        `when`(gateService.getGatesAt(blockPosition)).thenReturn(listOf(mock(MfGate::class.java)))
+
+        uut.onBlockPlace(event)
+
+        verify(event).isCancelled = true
     }
 
     @Test

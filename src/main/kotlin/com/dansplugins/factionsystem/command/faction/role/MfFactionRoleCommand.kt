@@ -20,6 +20,7 @@ class MfFactionRoleCommand(private val plugin: MedievalFactions) : CommandExecut
     private val factionRoleRenameCommand = MfFactionRoleRenameCommand(plugin)
     private val factionRoleSetDefaultCommand = MfFactionRoleSetDefaultCommand(plugin)
     private val factionRoleMoveCommand = MfFactionRoleMoveCommand(plugin)
+    private val factionRoleSetPrefixCommand = MfFactionRoleSetPrefixCommand(plugin)
 
     private val viewAliases = listOf("view", plugin.language["CmdFactionRoleView"])
     private val setPermissionAliases = listOf("setpermission", plugin.language["CmdFactionRoleSetPermission"])
@@ -30,6 +31,7 @@ class MfFactionRoleCommand(private val plugin: MedievalFactions) : CommandExecut
     private val renameAliases = listOf("rename", "setname", plugin.language["CmdFactionRoleRename"])
     private val setDefaultAliases = listOf("setdefault", plugin.language["CmdFactionRoleSetDefault"])
     private val moveAliases = listOf("move", plugin.language["CmdFactionRoleMove"])
+    private val setPrefixAliases = listOf("setprefix", plugin.language["CmdFactionRoleSetPrefix"])
 
     private val subcommands = viewAliases +
         setPermissionAliases +
@@ -39,7 +41,8 @@ class MfFactionRoleCommand(private val plugin: MedievalFactions) : CommandExecut
         deleteAliases +
         renameAliases +
         setDefaultAliases +
-        moveAliases
+        moveAliases +
+        setPrefixAliases
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         val first = args.firstOrNull()
@@ -90,6 +93,7 @@ class MfFactionRoleCommand(private val plugin: MedievalFactions) : CommandExecut
             in renameAliases -> factionRoleRenameCommand.execute(sender, subcommandArgs, forcedFactionId)
             in setDefaultAliases -> factionRoleSetDefaultCommand.execute(sender, subcommandArgs, forcedFactionId)
             in moveAliases -> factionRoleMoveCommand.execute(sender, subcommandArgs, forcedFactionId)
+            in setPrefixAliases -> factionRoleSetPrefixCommand.execute(sender, subcommandArgs, forcedFactionId)
             else -> {
                 sender.sendMessage("$RED${plugin.language["CommandFactionRoleUsage"]}")
                 true
@@ -128,6 +132,7 @@ class MfFactionRoleCommand(private val plugin: MedievalFactions) : CommandExecut
                 in renameAliases -> factionRoleRenameCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
                 in setDefaultAliases -> factionRoleSetDefaultCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
                 in moveAliases -> factionRoleMoveCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
+                in setPrefixAliases -> factionRoleSetPrefixCommand.onTabComplete(sender, command, label, args.drop(1).toTypedArray())
                 else -> emptyList()
             }
         }
