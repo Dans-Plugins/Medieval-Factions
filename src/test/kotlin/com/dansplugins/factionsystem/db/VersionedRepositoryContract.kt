@@ -564,6 +564,7 @@ abstract class VersionedRepositoryContract {
             challengedLocation = null
         )
     }
+
     @Test
     fun `locked entity - a stale save is rejected and leaves the accessors untouched`() {
         val owner = players.upsert(newPlayer())

@@ -174,6 +174,7 @@ class JsonMfLockRepositoryTest {
         assertEquals(emptyList<MfFactionRoleId>(), read?.accessorRoleIds)
         assertEquals(emptyList<MfFactionRoleId>(), reloaded.getLockedBlocks().single().accessorRoleIds)
     }
+
     // --- locked entities (#1679) ---
 
     private fun lockedEntity(entityId: UUID = UUID.randomUUID(), accessors: List<MfPlayerId> = emptyList()) = MfLockedEntity(
