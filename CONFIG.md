@@ -212,8 +212,36 @@ The power system determines how much land a faction can claim and player impact 
 ### `players.hoursToReachMinPower`
 **Type:** Integer  
 **Default:** `72`  
-**Description:** Number of hours required to reach minimum power from initial power through deaths.  
+**Description:** Number of hours an offline player takes to decay from the power they had at logout down to `players.minPower`. A faction's power is the sum of its members' power, so a faction whose members are all offline loses some power at every power update.  
 **Range:** Any positive integer
+
+### `players.powerUpdateIntervalMinutes`
+**Type:** Integer  
+**Default:** `15`  
+**Description:** Minutes between scheduled power updates, the moment online players gain power and offline players lose it. Changing the interval changes how often power moves, not how fast: each update advances the gain and decay curves by the interval, so `hoursToReachMaxPower` and `hoursToReachMinPower` still hold. Takes effect after a server restart. A value of 0 or below falls back to 15.  
+**Range:** Any positive integer
+
+### `players.disablePowerGainOverTime`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, online players no longer gain power at each power update. Power still changes through deaths, kills (`powerLostOnDeath`, `powerGainedOnKill`) and `/power set`.  
+**Values:** `true` or `false`
+
+### `players.disablePowerDecayOverTime`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, offline players no longer lose power at each power update, so a faction whose members are all offline keeps its power.  
+**Values:** `true` or `false`
+
+**Fixed power.** To give every player a power value that only changes when an operator or another plugin sets it (for example a rank plugin that runs `power set <player> <amount>` from the console on each promotion), combine:
+
+```yaml
+players:
+  disablePowerGainOverTime: true
+  disablePowerDecayOverTime: true
+  powerLostOnDeath: 0
+  powerGainedOnKill: 0
+```
 
 ### `players.powerLostOnDeath`
 **Type:** Integer  
@@ -430,6 +458,23 @@ flowchart TD
 **Default:** `true`  
 **Description:** When `true`, limits the amount of land a faction can claim based on their total power.
 
+### `factions.claimPowerCost`
+**Type:** Decimal  
+**Default:** `1.0`  
+**Description:** How much power each claimed chunk counts against the faction's power when `factions.limitLand` is `true`. A faction may claim another chunk only while the cost of all its claims, plus the new ones, does not exceed its power. At the default of `1.0` each chunk costs one power, which is how claiming worked before this option existed. A higher value makes land scarcer (at `2.0` a faction with 10 power can hold 5 chunks); a lower one makes it more plentiful. The same cost decides when an enemy faction holds more land than its power and so can be conquered during war. Negative values are treated as `0`, which makes claims free. Has no effect when `factions.limitLand` is `false`.  
+**Note:** `/f power` and the Dynmap demesne line show a faction's claims against the number of chunks it could hold: the chunks it has, plus as many more as its unused power buys at the cost in the viewer's world (`/f power`) or the faction's home world (Dynmap; the world of its first claim if it has no home). The console uses `factions.claimPowerCost`. At the default cost of `1.0` that number is the faction's power rounded down, as before.
+
+### `factions.claimPowerCostByWorld`
+**Type:** Map of world name to Decimal  
+**Default:** `{}` (empty; every world uses `factions.claimPowerCost`)  
+**Description:** Overrides `factions.claimPowerCost` for individual worlds, for example to make land in the nether, where distances are shorter, cost more. A world not listed uses `factions.claimPowerCost`. To stop claiming in a world altogether, use `factions.blockedClaimWorlds` instead.  
+**Example:**
+```yaml
+claimPowerCostByWorld:
+  world_nether: 4.0
+  world_the_end: 2.0
+```
+
 ### `factions.contiguousClaims`
 **Type:** Boolean  
 **Default:** `false`  
@@ -478,6 +523,11 @@ flowchart TD
 **Type:** Boolean  
 **Default:** `false`  
 **Description:** When `true`, war declarations require moderator approval before taking effect. Players with the `mf.approve` permission can approve or deny pending war declarations using `/faction approve` and `/faction deny`. Players can optionally include a reason by appending `-- <reason>` after the faction name.
+
+### `factions.truceDurationMinutes`
+**Type:** Integer  
+**Default:** `0`  
+**Description:** Length of the truce, in minutes, that starts when two factions make peace (both sides have run `/faction makepeace`). During the truce neither faction can declare war on the other; `/faction declarewar` tells the player how many minutes are left. `0` or less turns truces off, which is the default, so existing servers see no change. Truce end times are kept in `truces.yml` in the plugin's data folder so that a restart does not end them. The truce is checked by `/faction declarewar`, by `/faction approve` for a pending war declaration (the request is kept, so it can be approved once the truce ends), and by `/faction invoke` when the ally being called in is under truce with the enemy. Operator commands that set relationships directly are not blocked.
 
 ### `factions.allyDeclarationRequiresApproval`
 **Type:** Boolean  
@@ -587,6 +637,27 @@ These settings define the default values for faction flags when a new faction is
 **Description:** Default setting for whether hostile mobs are protected from damage by non-members in faction territory. While the flag is available for factions to set, this config option is not currently implemented in the default config file.  
 **Note:** Factions can still set this flag individually using `/f flag set enableMobProtection [true/false]`.
 
+### `factions.defaults.flags.allowMobGriefing`
+**Type:** Boolean  
+**Default:** `true`  
+**Description:** Default setting for whether mobs can change blocks in faction territory (endermen taking blocks, zombies breaking doors, ravagers and other mobs trampling crops and farmland, withers breaking blocks, sheep eating grass). Existing factions that never set the flag use this value. See `FACTION_FLAGS.md`.
+
+### `factions.forcedFlags`
+**Type:** List of flag names  
+**Default:** `[]`  
+**Description:** Flags that are fixed for every faction. A forced flag always reads as its value under `factions.defaults.flags`, whatever a faction set before, and `/faction flag set` refuses to change it, including for holders of `mf.force.flag`. The value each faction stored is left in place, so taking a flag off the list restores every faction's own setting. Names are case-insensitive; unknown names are ignored. `color` cannot be forced. Read at startup.  
+**Example:**
+```yaml
+factions:
+  defaults:
+    flags:
+      allowFriendlyFire: true
+      neutral: false
+  forcedFlags:
+  - allowFriendlyFire
+  - neutral
+```
+
 ## Power Scoreboard
 
 ### `powerScoreboard.enabled`
@@ -605,6 +676,12 @@ These settings define the default values for faction flags when a new faction is
 **Type:** Boolean  
 **Default:** `true`  
 **Description:** When `true`, enables Medieval Factions custom chat formatting.
+
+### `chat.prefixWorlds`
+**Type:** List of Strings  
+**Default:** `[]` (empty list: everyone sees the prefix)  
+**Description:** The worlds whose players see the faction prefix (`[FactionName]`, or the faction's prefix if it has one) that `chat.enableDefaultChatFormatting` adds to public chat. When the list is not empty, a player in any other world sees the same message without the prefix, in the format the message had before Medieval Factions added its prefix (the server's normal `<Player> message` unless another chat plugin changed it first). It is the reader's world that counts, not the speaker's. Useful on a multi-world server where factions only matter in some worlds. Faction, ally and vassal chat channels are not affected. Has no effect when `chat.enableDefaultChatFormatting` is `false`. A chat plugin that changes the message format after Medieval Factions has handled the message does not affect what players outside these worlds see.  
+**Example:** `["Factions", "Factions_nether"]`
 
 ### `chat.faction.format`
 **Type:** String  

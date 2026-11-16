@@ -176,6 +176,10 @@ class MfFactionClaimFillCommandTest {
         `when`(claimService.getClaim(worldId, 0, 0)).thenReturn(enemyClaim)
         `when`(claimService.getClaim(MfChunkPosition(worldId, 0, 0))).thenReturn(enemyClaim)
         `when`(claimService.getClaims(enemyId)).thenReturn(listOf(enemyClaim))
+        // At one power per chunk the enemy uses 1 power and taking the chunk frees 1: 0 power <= 1 - 1
+        `when`(claimService.getClaimPowerUsed(enemyId)).thenReturn(1.0)
+        `when`(claimService.getClaimPowerCost(listOf(MfChunkPosition(worldId, 0, 0)))).thenReturn(1.0)
+        `when`(faction.power).thenReturn(100.0)
         val relationshipService = plugin.services.factionRelationshipService
         `when`(relationshipService.getRelationships(factionId, enemyId))
             .thenReturn(listOf(MfFactionRelationship(factionId = factionId, targetId = enemyId, type = MfFactionRelationshipType.AT_WAR)))
