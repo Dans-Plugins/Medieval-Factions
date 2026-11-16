@@ -116,6 +116,8 @@ With `mf.force.rename` (default: op), a faction name or ID can be given before t
 - Two or more arguments are always a target faction followed by the new name: `/f set name FactionName New Name`. Quote a multi-word faction name (`/f set name "Old Name" NewName`), or give its ID.
 - A target that matches no faction is refused with a hint; it never falls back to renaming your own faction (as with `/f kick` and `/f unclaimall`). For example, `/f set name Xlnd NewName` with no faction called "Xlnd" changes nothing.
 
+With `mf.force.desc` (default: op), `/f set description FactionName -- New description` sets the description of any faction (by name or ID; quote a multi-word name), without checking that faction's change-description role permission. The `--` is what marks the faction: a description without it, such as `/f set description Rivals beware`, still sets your own faction's description, even when it starts with a faction's name. A name before `--` that matches no faction is refused. The base `mf.desc` node is still required.
+
 ### `/faction flag [list|set]` or `/f flag [list|set]`
 **Permissions:** 
 - `mf.flag.list` (default: true)
@@ -217,6 +219,8 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Usage:** `/f sethome`  
 **Notes:** The home must be set in your faction's claimed territory.
 
+**Admin usage:** with `mf.force.sethome` (default: op), `/f sethome FactionName` (name or ID; quote a multi-word name) sets the named faction's home at your location without checking its set-home role permission. The location must still be in that faction's territory. A name that matches no faction is refused.
+
 ### `/faction home` or `/f home`
 **Permission:** `mf.home` (default: true)  
 **Description:** Teleports you to your faction's home location.  
@@ -224,6 +228,24 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Notes:** There is a configurable teleport delay (default: 5 seconds).
 
 ## Diplomacy & Warfare
+
+**Forced diplomacy (admins):** each diplomacy command below has a force node — `mf.force.declarewar`, `mf.force.makepeace`, `mf.force.ally`, `mf.force.breakalliance`, `mf.force.vassalize` and `mf.force.grantindependence` (all default: op). With it, naming two factions acts for both of them at once: `/f declarewar FactionA FactionB`, `/f vassalize Liege Vassal`, and so on. Quote multi-word names (`/f ally "Red Kingdom" Blue`) or give a faction ID.
+
+- No role permission, consent from the other faction or moderator approval is needed: an alliance, peace or vassalage takes effect immediately, and a half-finished one (a pending alliance request, a one-sided war) is completed.
+- The rules that keep relationships consistent still apply: no war between allies or between liege and vassal (or with a pending vassalization request between them), no war on a neutral faction, no alliance while at war, no vassal with two lieges and no vassalage cycles. Break the alliance, make peace or grant independence first.
+- Both factions get the usual notifications, the sender gets a summary, and the change is written to the server log.
+- Arguments the normal command already accepts keep their normal meaning: when the whole text names a faction (`/f declarewar Red Kingdom` with a faction called "Red Kingdom"), you act for your own faction as before. The base node (`mf.declarewar`, `mf.ally`, ...) is still required.
+
+```mermaid
+flowchart TD
+    A["/f declarewar A B<br/>(sender has mf.force.declarewar)"] --> B{"Does the whole text<br/>name one faction?"}
+    B -- yes --> N["Normal command:<br/>your own faction acts"]
+    B -- no --> C{"A and B both<br/>resolve to factions?"}
+    C -- no --> R["Refused: no such faction"]
+    C -- yes --> D{"Relationship rules<br/>(ally, vassal, neutral)"}
+    D -- broken --> R2["Refused with the reason"]
+    D -- ok --> W["A ⇄ B at war, both notified,<br/>logged to console"]
+```
 
 ### `/faction ally [faction]` or `/f ally [faction]`
 **Permission:** `mf.ally` (default: true)  
@@ -642,17 +664,25 @@ The `mf.force.*` nodes (all `default: op`) do not add new commands — each one 
 |------------|---------|--------|
 | `mf.force.addmember` | [`/f addmember`](#faction-addmember-faction-player-or-f-addmember-faction-player) | Forcefully adds a player to a faction. |
 | `mf.force.bonuspower` | [`/f bonuspower`](#faction-bonuspower-faction-amount-or-f-bonuspower-faction-amount) | Sets a faction's bonus power. |
+| `mf.force.ally` | [`/f ally`](#diplomacy--warfare) | Allies two named factions at once (`/f ally A B`), without consent or approval. |
+| `mf.force.breakalliance` | [`/f breakalliance`](#diplomacy--warfare) | Breaks the alliance between two named factions. |
 | `mf.force.claim` | [`/f claim`](#faction-claim-radius-or-f-claim-radius) | Claims land on behalf of another faction, bypassing its role permissions. |
+| `mf.force.declarewar` | [`/f declarewar`](#diplomacy--warfare) | Puts two named factions at war (`/f declarewar A B`), without approval. |
+| `mf.force.desc` | [`/f set description`](#faction-set-namedescriptionprefix-value-or-f-set-namedescriptionprefix-value) | Sets another faction's description (`/f set description Faction -- text`), bypassing its role permissions. |
 | `mf.force.flag` | [`/f flag list`, `/f flag set`](#faction-flag-listset-or-f-flag-listset) | Lists/sets flags on another faction, bypassing its role permissions. |
 | `mf.force.join` | [`/f join`](#faction-join-faction-or-f-join-faction), [`/f addmember`](#faction-addmember-faction-player-or-f-addmember-faction-player) | Joins a faction without an invite (confirmation prompt, or `-f` to skip it). Also grants `/f addmember`. |
 | `mf.force.kick` | [`/f kick`](#faction-kick-player-or-f-kick-player) | Kicks a member from another faction, bypassing its role permissions. |
+| `mf.force.grantindependence` | [`/f grantindependence`](#diplomacy--warfare) | Releases a vassal from its liege (`/f grantindependence Liege Vassal`). |
+| `mf.force.makepeace` | [`/f makepeace`](#diplomacy--warfare) | Makes peace between two named factions at once. |
 | `mf.force.power` | [`/power set`](#power-set-player-amount) | Sets a player's power (alternative to `mf.power.set`). |
 | `mf.force.role` | [`/f role`](#roles--permissions) | Views and edits another faction's roles, role permissions and member roles (`/f role FactionName <subcommand> ...`), bypassing its role permissions. |
 | `mf.force.rename` | [`/f set name`](#faction-set-namedescriptionprefix-value-or-f-set-namedescriptionprefix-value) | Renames another faction, bypassing its role permissions. |
+| `mf.force.sethome` | [`/f sethome`](#faction-sethome-or-f-sethome) | Sets another faction's home at your location (inside its territory), bypassing its role permissions. |
 | `mf.force.unclaim` | [`/f unclaim`](#faction-unclaim-radius-or-f-unclaim-radius), [`/f unclaimall`](#faction-unclaimall-or-f-unclaimall) | Unclaims another faction's land (around you, or all of it), bypassing its role permissions. |
 | `mf.force.unlock` | [`/unlock`](#unlock-cancel), block breaking | Unlocks blocks locked by another player. |
+| `mf.force.vassalize` | [`/f vassalize`](#diplomacy--warfare) | Makes one named faction the vassal of another at once (`/f vassalize Liege Vassal`), without consent or approval. |
 
-Every `mf.force.*` node that lets a faction be named follows the same rule: when a faction is named, the force permission replaces that faction's own role-permission check, so an admin does not need to be a member. The command's base node (`mf.kick`, `mf.rename`, `mf.claim`, `mf.unclaim`, `mf.unclaimall`, `mf.flag.*`, `mf.role.*`) is still required.
+Every `mf.force.*` node that lets a faction be named follows the same rule: when a faction is named, the force permission replaces that faction's own role-permission check, so an admin does not need to be a member. The command's base node (`mf.kick`, `mf.rename`, `mf.desc`, `mf.sethome`, `mf.claim`, `mf.unclaim`, `mf.unclaimall`, `mf.flag.*`, `mf.role.*`, and the diplomacy commands' own nodes) is still required. The forced diplomacy nodes go one step further and act for both factions, as described under [Diplomacy & Warfare](#diplomacy--warfare).
 
 ## Notes
 

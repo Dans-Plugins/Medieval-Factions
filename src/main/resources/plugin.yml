@@ -413,6 +413,30 @@ permissions:
   mf.force.role:
     description: Allows managing another faction's roles (/f role <faction> <view|list|setpermission|create|delete|rename|set|setdefault> ...), bypassing that faction's role permissions
     default: op
+  mf.force.desc:
+    description: Allows setting another faction's description (/f set description <faction> -- <description>), bypassing that faction's role permissions
+    default: op
+  mf.force.sethome:
+    description: Allows setting another faction's home (/f sethome <faction>), bypassing that faction's role permissions
+    default: op
+  mf.force.declarewar:
+    description: Allows putting two factions at war (/f declarewar <faction> <target>), bypassing role permissions and approval
+    default: op
+  mf.force.makepeace:
+    description: Allows making peace between two factions at once (/f makepeace <faction> <target>), bypassing role permissions
+    default: op
+  mf.force.ally:
+    description: Allows allying two factions at once (/f ally <faction> <target>), bypassing role permissions, consent and approval
+    default: op
+  mf.force.breakalliance:
+    description: Allows breaking the alliance between two factions (/f breakalliance <faction> <target>), bypassing role permissions
+    default: op
+  mf.force.vassalize:
+    description: Allows making one faction the vassal of another at once (/f vassalize <liege> <vassal>), bypassing role permissions, consent and approval
+    default: op
+  mf.force.grantindependence:
+    description: Allows releasing a vassal from its liege (/f grantindependence <liege> <vassal>), bypassing role permissions
+    default: op
   mf.force.*:
     description: Allows all force commands
     default: op
@@ -428,6 +452,14 @@ permissions:
     - mf.force.flag
     - mf.force.addmember
     - mf.force.role
+    - mf.force.desc
+    - mf.force.sethome
+    - mf.force.declarewar
+    - mf.force.makepeace
+    - mf.force.ally
+    - mf.force.breakalliance
+    - mf.force.vassalize
+    - mf.force.grantindependence
   mf.approve:
     description: Allows approving and denying pending faction actions (war declarations, alliances, vassalizations)
     default: op
