@@ -12,8 +12,18 @@ data class MfPlayer(
     val power: Double = 0.0,
     val powerAtLogout: Double = 0.0,
     val isBypassEnabled: Boolean = false,
-    val chatChannel: MfFactionChatChannel? = null
+    val chatChannel: MfFactionChatChannel? = null,
+    /**
+     * The amount an admin has pinned this player's power to with `/power setfixed`, or null when
+     * the player's power changes normally. While it is set, [power] holds this value and nothing
+     * (power gain and decay over time, kills, deaths, `/power set`) changes it.
+     */
+    val fixedPower: Double? = null
 ) {
+    /** Whether an admin has pinned this player's power, so it must not be changed. */
+    val isPowerFixed: Boolean
+        get() = fixedPower != null
+
     fun toBukkit() = id.toBukkitPlayer()
 
     constructor(

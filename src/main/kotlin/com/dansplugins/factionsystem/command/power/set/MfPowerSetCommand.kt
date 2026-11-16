@@ -51,7 +51,16 @@ class MfPowerSetCommand(private val plugin: MedievalFactions) : CommandExecutor,
             Runnable {
                 val playerService = plugin.services.playerService
                 val targetMfPlayer = playerService.getPlayer(target) ?: MfPlayer(plugin, target)
-                playerService.update(targetMfPlayer) { it.copy(power = power) }.onFailure {
+                val fixedPower = targetMfPlayer.fixedPower
+                if (fixedPower != null) {
+                    // An admin has fixed this player's power (/power setfixed); it is changed only by
+                    // setting a new fixed amount or clearing it first.
+                    sender.sendMessage(
+                        "$RED${plugin.language["CommandPowerSetTargetPowerFixed", target.name ?: plugin.language["UnknownPlayer"], decimalFormat.format(fixedPower)]}"
+                    )
+                    return@Runnable
+                }
+                playerService.update(targetMfPlayer) { if (it.isPowerFixed) it else it.copy(power = power) }.onFailure {
                     sender.sendMessage("$RED${plugin.language["CommandPowerSetFailedToSaveTargetPlayer"]}")
                     plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
                     return@Runnable

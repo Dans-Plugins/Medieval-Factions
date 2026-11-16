@@ -25,6 +25,7 @@ import com.dansplugins.factionsystem.gate.MfGate
 import com.dansplugins.factionsystem.gate.MfGateCreationContext
 import com.dansplugins.factionsystem.gate.MfGateId
 import com.dansplugins.factionsystem.gate.MfGateStatus
+import com.dansplugins.factionsystem.jooq.Tables.MF_PLAYER
 import com.dansplugins.factionsystem.law.JooqMfLawRepository
 import com.dansplugins.factionsystem.law.MfLaw
 import com.dansplugins.factionsystem.law.MfLawId
@@ -180,6 +181,42 @@ abstract class VersionedRepositoryContract {
             players.upsert(MfPlayer(existing.id, power = 5.0, powerAtLogout = 5.0))
         }
         assertEquals(12.0, players.getPlayer(existing.id)!!.power)
+    }
+
+    @Test
+    fun `player - a row written without fixed power reads as not fixed`() {
+        // Every row stored before #1682 (V15) has no fixed_power value.
+        val id = UUID.randomUUID().toString()
+        dsl.insertInto(MF_PLAYER)
+            .set(MF_PLAYER.ID, id)
+            .set(MF_PLAYER.VERSION, 3)
+            .set(MF_PLAYER.NAME, "OldTimer")
+            .set(MF_PLAYER.POWER, 7.5)
+            .set(MF_PLAYER.POWER_AT_LOGOUT, 6.0)
+            .set(MF_PLAYER.BYPASS_ENABLED, false)
+            .execute()
+
+        val loaded = players.getPlayer(MfPlayerId(id))!!
+
+        assertNull(loaded.fixedPower)
+        assertEquals(7.5, loaded.power)
+        assertEquals(3, loaded.version)
+    }
+
+    @Test
+    fun `player - fixed power round trips and a stale save that only fixes power is rejected`() {
+        val original = players.upsert(newPlayer())
+        val fixed = players.upsert(original.copy(fixedPower = 5.0))
+        assertEquals(5.0, players.getPlayer(original.id)!!.fixedPower)
+
+        assertThrows(OptimisticLockingFailureException::class.java) {
+            players.upsert(original.copy(fixedPower = 8.0))
+        }
+        assertEquals(5.0, players.getPlayer(original.id)!!.fixedPower)
+
+        val cleared = players.upsert(fixed.copy(fixedPower = null))
+        assertNull(cleared.fixedPower)
+        assertNull(players.getPlayer(original.id)!!.fixedPower)
     }
 
     // --- factions ---

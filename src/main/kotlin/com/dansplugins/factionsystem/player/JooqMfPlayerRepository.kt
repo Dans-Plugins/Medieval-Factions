@@ -39,12 +39,14 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
             .set(MF_PLAYER.POWER_AT_LOGOUT, player.powerAtLogout)
             .set(MF_PLAYER.BYPASS_ENABLED, player.isBypassEnabled)
             .set(MF_PLAYER.CHAT_CHANNEL, player.chatChannel?.name)
+            .set(MF_PLAYER.FIXED_POWER, player.fixedPower)
             .onConflict(MF_PLAYER.ID).doUpdate()
             .set(MF_PLAYER.NAME, player.name)
             .set(MF_PLAYER.POWER, player.power)
             .set(MF_PLAYER.POWER_AT_LOGOUT, player.powerAtLogout)
             .set(MF_PLAYER.BYPASS_ENABLED, player.isBypassEnabled)
             .set(MF_PLAYER.CHAT_CHANNEL, player.chatChannel?.name)
+            .set(MF_PLAYER.FIXED_POWER, player.fixedPower)
             .set(MF_PLAYER.VERSION, player.version + 1)
             .where(MF_PLAYER.ID.eq(player.id.value))
             .and(MF_PLAYER.VERSION.eq(player.version))
@@ -69,7 +71,8 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
         power == written.power &&
             powerAtLogout == written.powerAtLogout &&
             isBypassEnabled == written.isBypassEnabled &&
-            chatChannel == written.chatChannel
+            chatChannel == written.chatChannel &&
+            fixedPower == written.fixedPower
 
     override fun increaseOnlinePlayerPower(onlinePlayerIds: List<MfPlayerId>) {
         val minPower = plugin.config.getDouble("players.minPower")
@@ -104,6 +107,8 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
             .set(MF_PLAYER.VERSION, MF_PLAYER.VERSION.plus(1))
             .where(MF_PLAYER.ID.`in`(onlinePlayerIds.map { it.value }))
             .and(MF_PLAYER.POWER.lt(maxPower))
+            // A player whose power an admin has fixed (/power setfixed) does not gain power.
+            .and(MF_PLAYER.FIXED_POWER.isNull)
             .execute()
     }
 
@@ -143,6 +148,8 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
             .where(MF_PLAYER.ID.notIn(onlinePlayerIds.map { it.value }))
             .and(MF_PLAYER.POWER_AT_LOGOUT.gt(minPower))
             .and(MF_PLAYER.POWER.gt(minPower))
+            // A player whose power an admin has fixed (/power setfixed) does not lose power.
+            .and(MF_PLAYER.FIXED_POWER.isNull)
             .execute()
     }
 
@@ -153,6 +160,7 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
         power,
         powerAtLogout,
         bypassEnabled,
-        chatChannel?.let(MfFactionChatChannel::valueOf)
+        chatChannel?.let(MfFactionChatChannel::valueOf),
+        fixedPower
     )
 }

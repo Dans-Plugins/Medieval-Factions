@@ -133,7 +133,8 @@ class MfPlayerService(private val plugin: MedievalFactions, private val playerRe
             player.power == initialPower &&
             player.powerAtLogout == initialPower &&
             !player.isBypassEnabled &&
-            player.chatChannel == null
+            player.chatChannel == null &&
+            player.fixedPower == null
     }
 
     @JvmName("updatePlayerPower")

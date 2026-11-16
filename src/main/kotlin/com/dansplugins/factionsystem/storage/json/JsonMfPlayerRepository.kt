@@ -76,8 +76,9 @@ class JsonMfPlayerRepository(
         val hoursToReachMax = plugin.config.getDouble("players.hoursToReachMaxPower")
         val timeIncrementHours = MfPowerUpdateSettings.intervalHours(plugin.config)
 
+        // A player whose power an admin has fixed (/power setfixed) neither gains nor loses power.
         data.players.forEachIndexed { index, player ->
-            if (player.id in onlinePlayerIds && player.power < maxPower) {
+            if (player.id in onlinePlayerIds && player.power < maxPower && !player.isPowerFixed) {
                 val currentPower = player.power
                 // Replicate the power increase formula from JooqMfPlayerRepository
                 val normalizedPower = currentPower / maxPower
@@ -109,7 +110,7 @@ class JsonMfPlayerRepository(
         val timeIncrementHours = MfPowerUpdateSettings.intervalHours(plugin.config)
 
         data.players.forEachIndexed { index, player ->
-            if (player.id in offlinePlayerIds && player.powerAtLogout > minPower && player.power > minPower) {
+            if (player.id in offlinePlayerIds && player.powerAtLogout > minPower && player.power > minPower && !player.isPowerFixed) {
                 // Replicate the power decrease formula from JooqMfPlayerRepository
                 // This uses powerAtLogout to calculate the correct power decay over time
                 val currentPower = kotlin.math.min(player.power, kotlin.math.min(player.powerAtLogout, maxPower))

@@ -11,6 +11,8 @@ import com.dansplugins.factionsystem.gate.MfGateRepository
 import com.dansplugins.factionsystem.interaction.MfInteractionStatusRepository
 import com.dansplugins.factionsystem.law.MfLawRepository
 import com.dansplugins.factionsystem.locks.MfLockRepository
+import com.dansplugins.factionsystem.player.JooqMfPlayerRepository
+import com.dansplugins.factionsystem.player.JooqMfPlayerRepositoryTest
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerRepository
@@ -19,6 +21,7 @@ import com.dansplugins.factionsystem.storage.json.JsonMfPlayerRepository
 import com.dansplugins.factionsystem.storage.json.JsonStorageManager
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -55,7 +58,10 @@ class DatabaseToJsonMigratorTest {
     }
 
     /** Builds a migrator whose targets are real JSON repositories and whose sources are inert mocks. */
-    private fun migratorWith(targetPlayerRepo: MfPlayerRepository): DatabaseToJsonMigrator {
+    private fun migratorWith(
+        targetPlayerRepo: MfPlayerRepository,
+        sourcePlayerRepo: MfPlayerRepository = mock(MfPlayerRepository::class.java)
+    ): DatabaseToJsonMigrator {
         val emptyFactionRepo = mock(MfFactionRepository::class.java).also { `when`(it.getFactions()).thenReturn(emptyList()) }
         val emptyRelationshipRepo = mock(MfFactionRelationshipRepository::class.java)
             .also { `when`(it.getFactionRelationships()).thenReturn(emptyList()) }
@@ -65,7 +71,7 @@ class DatabaseToJsonMigratorTest {
         val emptyDuelRepo = mock(MfDuelRepository::class.java).also { `when`(it.getDuels()).thenReturn(emptyList()) }
         return DatabaseToJsonMigrator(
             plugin,
-            mock(MfPlayerRepository::class.java), mock(MfFactionRepository::class.java),
+            sourcePlayerRepo, mock(MfFactionRepository::class.java),
             mock(MfLawRepository::class.java), mock(MfFactionRelationshipRepository::class.java),
             mock(MfClaimedChunkRepository::class.java), mock(MfLockRepository::class.java),
             mock(MfInteractionStatusRepository::class.java), mock(MfGateRepository::class.java),
@@ -109,5 +115,20 @@ class DatabaseToJsonMigratorTest {
         // The sources are inert mocks returning empty lists, so this migrates nothing but must not be
         // blocked by the pre-flight guard.
         assertTrue(result.success, "an empty target must not trip the guard, was: ${result.message}")
+    }
+
+    @Test
+    fun `carries a player's fixed power, and its absence, from the database to JSON`() {
+        val dsl = JooqMfPlayerRepositoryTest.migratedH2Dsl()
+        val sourcePlayerRepo = JooqMfPlayerRepository(JooqMfPlayerRepositoryTest.powerConfiguredPlugin(), dsl)
+        val fixed = sourcePlayerRepo.upsert(MfPlayer(MfPlayerId(UUID.randomUUID().toString()), power = 12.0, powerAtLogout = 12.0, fixedPower = 12.0))
+        val normal = sourcePlayerRepo.upsert(MfPlayer(MfPlayerId(UUID.randomUUID().toString()), power = 4.0, powerAtLogout = 4.0))
+        val targetPlayerRepo = JsonMfPlayerRepository(plugin, storageManager)
+
+        val result = migratorWith(targetPlayerRepo, sourcePlayerRepo).migrate()
+
+        assertTrue(result.success, result.message)
+        assertEquals(12.0, targetPlayerRepo.getPlayer(fixed.id)!!.fixedPower)
+        assertNull(targetPlayerRepo.getPlayer(normal.id)!!.fixedPower)
     }
 }

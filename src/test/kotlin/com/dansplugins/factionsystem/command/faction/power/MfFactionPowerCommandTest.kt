@@ -11,6 +11,7 @@ import com.dansplugins.factionsystem.faction.flag.MfFlagValues
 import com.dansplugins.factionsystem.faction.flag.MfFlags
 import com.dansplugins.factionsystem.lang.Language
 import com.dansplugins.factionsystem.player.MfPlayer
+import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerService
 import com.dansplugins.factionsystem.service.Services
 import org.bukkit.ChatColor
@@ -24,9 +25,11 @@ import org.junit.jupiter.api.TestInstance
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import java.util.Locale
+import java.util.UUID
 import java.util.logging.Logger
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -188,6 +191,40 @@ class MfFactionPowerCommandTest {
         `when`(flags.acceptBonusPower).thenReturn(acceptBonusPowerFlag)
         `when`(faction.flags).thenReturn(flagValues)
         `when`(flagValues[acceptBonusPowerFlag]).thenReturn(false)
+    }
+
+    @Test
+    fun testOnCommand_showsWhenThePlayersPowerIsFixed() {
+        // prepare — an admin has fixed the player's power with /power setfixed (#1682)
+        val player = fixture.player
+        val mfPlayer = MfPlayer(MfPlayerId(UUID.randomUUID().toString()), power = 12.0, powerAtLogout = 12.0, fixedPower = 12.0)
+        `when`(player.hasPermission("mf.power")).thenReturn(true)
+        `when`(player.hasPermission("mf.power.view.other")).thenReturn(false)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(language["CommandFactionPowerPlayerPowerFixed", "12"]).thenReturn("Power fixed at 12")
+
+        // execute
+        uut.onCommand(player, fixture.command, "label", arrayOf())
+
+        // verify
+        verify(player).sendMessage("${ChatColor.GRAY}Power fixed at 12")
+    }
+
+    @Test
+    fun testOnCommand_saysNothingAboutFixedPowerWhenItIsNotFixed() {
+        // prepare
+        val player = fixture.player
+        val mfPlayer = MfPlayer(MfPlayerId(UUID.randomUUID().toString()), power = 12.0, powerAtLogout = 12.0)
+        `when`(player.hasPermission("mf.power")).thenReturn(true)
+        `when`(player.hasPermission("mf.power.view.other")).thenReturn(false)
+        `when`(playerService.getPlayer(player)).thenReturn(mfPlayer)
+        `when`(language["CommandFactionPowerPlayerPowerFixed", "12"]).thenReturn("Power fixed at 12")
+
+        // execute
+        uut.onCommand(player, fixture.command, "label", arrayOf())
+
+        // verify
+        verify(player, never()).sendMessage("${ChatColor.GRAY}Power fixed at 12")
     }
 
     private fun mockServices() {

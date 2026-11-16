@@ -11,13 +11,17 @@ import org.jooq.SQLDialect
 import org.jooq.conf.Settings
 import org.jooq.impl.DSL
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import java.util.UUID
 import java.util.logging.Logger
+import javax.sql.DataSource
 
 /**
  * Runs the jOOQ player repository against a real H2 database migrated with the plugin's own
@@ -94,6 +98,63 @@ class JooqMfPlayerRepositoryTest {
         assertEquals(12.0, repository.getPlayer(id)!!.power)
     }
 
+    @Test
+    fun `a player stored before fixed power existed loads with no fixed power after the migration`() {
+        // A database at V14, the last schema before #1682, holding a player row.
+        val dataSource = JdbcDataSource().apply {
+            setURL("jdbc:h2:mem:mf_${UUID.randomUUID()};MODE=MYSQL;DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1")
+        }
+        flyway(dataSource, target = "14").migrate()
+        val id = UUID.randomUUID().toString()
+        dataSource.connection.use { connection ->
+            connection.createStatement().use { statement ->
+                statement.executeUpdate(
+                    "insert into `mf_player` (`id`, `version`, `name`, `power`, `power_at_logout`, `bypass_enabled`, `chat_channel`) " +
+                        "values ('$id', 4, 'OldTimer', 7.5, 6.0, false, null)"
+                )
+            }
+        }
+
+        flyway(dataSource, target = null).migrate()
+        val upgraded = JooqMfPlayerRepository(powerConfiguredPlugin(), DSL.using(dataSource, SQLDialect.H2, Settings().withRenderSchema(false)))
+        val loaded = upgraded.getPlayer(MfPlayerId(id))!!
+
+        assertNull(loaded.fixedPower)
+        assertFalse(loaded.isPowerFixed)
+        assertEquals(7.5, loaded.power)
+        assertEquals(6.0, loaded.powerAtLogout)
+        assertEquals(4, loaded.version)
+        assertEquals("OldTimer", loaded.name)
+    }
+
+    @Test
+    fun `fixed power round trips and can be cleared`() {
+        val saved = repository.upsert(newPlayer(power = 5.0).copy(fixedPower = 5.0))
+
+        assertEquals(5.0, repository.getPlayer(saved.id)!!.fixedPower)
+
+        val cleared = repository.upsert(saved.copy(fixedPower = null))
+        assertNull(cleared.fixedPower)
+        assertNull(repository.getPlayer(saved.id)!!.fixedPower)
+    }
+
+    @Test
+    fun `the power cycle skips players whose power is fixed`() {
+        val fixedOnline = repository.upsert(newPlayer(power = 5.0).copy(fixedPower = 5.0))
+        val normalOnline = repository.upsert(newPlayer(power = 5.0))
+        val fixedOffline = repository.upsert(newPlayer(power = 15.0).copy(fixedPower = 15.0))
+        val normalOffline = repository.upsert(newPlayer(power = 15.0))
+        val online = listOf(fixedOnline.id, normalOnline.id)
+
+        repository.increaseOnlinePlayerPower(online)
+        repository.decreaseOfflinePlayerPower(online)
+
+        assertEquals(fixedOnline, repository.getPlayer(fixedOnline.id), "a fixed player must not gain power or be touched")
+        assertEquals(fixedOffline, repository.getPlayer(fixedOffline.id), "a fixed player must not lose power or be touched")
+        assertTrue(repository.getPlayer(normalOnline.id)!!.power > 5.0, "an unfixed online player still gains power")
+        assertTrue(repository.getPlayer(normalOffline.id)!!.power < 15.0, "an unfixed offline player still loses power")
+    }
+
     private fun newPlayer(power: Double) =
         MfPlayer(MfPlayerId(UUID.randomUUID().toString()), name = "Steve", power = power, powerAtLogout = power)
 
@@ -115,6 +176,12 @@ class JooqMfPlayerRepositoryTest {
             val dataSource = JdbcDataSource().apply {
                 setURL("jdbc:h2:mem:mf_${UUID.randomUUID()};MODE=MYSQL;DATABASE_TO_UPPER=false;DB_CLOSE_DELAY=-1")
             }
+            flyway(dataSource, target = null).migrate()
+            return DSL.using(dataSource, SQLDialect.H2, Settings().withRenderSchema(false))
+        }
+
+        /** The plugin's Flyway setup; [target] stops at that version, null runs every migration. */
+        private fun flyway(dataSource: DataSource, target: String?): Flyway =
             Flyway.configure()
                 .dataSource(dataSource)
                 .locations("classpath:com/dansplugins/factionsystem/db/migration")
@@ -122,9 +189,7 @@ class JooqMfPlayerRepositoryTest {
                 .baselineOnMigrate(true)
                 .baselineVersion("0")
                 .validateOnMigrate(false)
+                .apply { if (target != null) target(target) }
                 .load()
-                .migrate()
-            return DSL.using(dataSource, SQLDialect.H2, Settings().withRenderSchema(false))
-        }
     }
 }

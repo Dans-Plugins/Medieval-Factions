@@ -101,8 +101,10 @@ commands:
     description: |
       Power management command
       /power set [player] [power] - Sets a player's power.
+      /power setfixed [player] [power] - Fixes a player's power so it never changes.
+      /power clearfixed [player] - Lets a player's fixed power change normally again.
     aliases: [macht, pouvoir]
-    usage: /<command> [set]
+    usage: /<command> [set|setfixed|clearfixed]
   gate:
     description: |
       Gate management command
@@ -351,6 +353,9 @@ permissions:
   mf.power.set:
     description: Allows setting player power
     default: op
+  mf.power.fixed:
+    description: Allows fixing a player's power so it never changes, and clearing it (/power setfixed, /power clearfixed)
+    default: op
   mf.sethome:
     description: Allows you to set your faction's home location
     default: true
@@ -412,7 +417,7 @@ permissions:
     description: Allows setting faction bonus power
     default: op
   mf.force.power:
-    description: Allows setting player power
+    description: Allows setting player power, and fixing or clearing a player's fixed power
     default: op
   mf.force.rename:
     description: Allows renaming another faction (/f set name <faction> <name>), bypassing that faction's role permissions
@@ -514,6 +519,7 @@ permissions:
     - mf.relationship.add
     - mf.relationship.remove
     - mf.power.set
+    - mf.power.fixed
     - mf.admin.create
     - mf.admin.setleader
     - mf.approve

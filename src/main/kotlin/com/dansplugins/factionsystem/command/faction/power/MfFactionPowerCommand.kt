@@ -105,6 +105,12 @@ class MfFactionPowerCommand(private val plugin: MedievalFactions) : CommandExecu
                                 }"
                             )
                         }
+                        val fixedPower = mfPlayer.fixedPower
+                        if (fixedPower != null) {
+                            sender.sendMessage(
+                                "$GRAY${plugin.language["CommandFactionPowerPlayerPowerFixed", decimalFormat.format(floor(fixedPower))]}"
+                            )
+                        }
                     }
                     if (faction != null) {
                         sender.sendMessage(
