@@ -22,6 +22,7 @@ import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.failure.ServiceFailure
 import com.dansplugins.factionsystem.failure.ServiceFailureType.CONFLICT
 import com.dansplugins.factionsystem.failure.ServiceFailureType.GENERAL
+import com.dansplugins.factionsystem.failure.ServiceFailureType.NOT_FOUND
 import com.dansplugins.factionsystem.gate.MfGateService
 import com.dansplugins.factionsystem.lang.Language
 import com.dansplugins.factionsystem.locks.MfLockService
@@ -77,6 +78,9 @@ class MfFactionServiceTest {
         val deleted = mutableListOf<MfFactionId>()
         var failure: Exception? = null
 
+        /** When set, a write whose version is not the stored one is refused, as both real repositories refuse it. */
+        var checkVersions = false
+
         override fun getFaction(id: MfFactionId) = factions[id]
         override fun getFaction(name: String) = factions.values.firstOrNull { it.name == name }
         override fun getFaction(playerId: MfPlayerId) = factions.values.firstOrNull { faction ->
@@ -86,6 +90,10 @@ class MfFactionServiceTest {
 
         override fun upsert(faction: MfFaction): MfFaction {
             failure?.let { throw it }
+            val stored = factions[faction.id]
+            if (checkVersions && stored != null && stored.version != faction.version) {
+                throw OptimisticLockingFailureException("Invalid version: ${faction.version}")
+            }
             upserted += faction
             val saved = faction.copy(version = faction.version + 1)
             factions[saved.id] = saved
@@ -735,6 +743,107 @@ class MfFactionServiceTest {
         assertFailsWith<OptimisticLockingFailureException> {
             service.cancelAllApplicationsForPlayer(MfPlayer(MfPlayerId("applicant"), name = "Applicant"))
         }
+    }
+
+    // Updating (#2121)
+
+    @Test
+    fun updateAppliesTheChangeToTheCachedFaction() {
+        val stored = faction()
+        val repository = FakeRepository(stored).apply { checkVersions = true }
+        val service = MfFactionService(plugin, repository)
+
+        val updated = valueOf(service.update(factionId) { it.copy(bonusPower = 5.0) })
+
+        assertEquals(5.0, updated.bonusPower)
+        assertEquals(stored.version + 1, updated.version)
+        assertEquals(1, repository.upserted.size)
+        assertSame(updated, service.getFaction(factionId))
+    }
+
+    @Test
+    fun updateRetriesAgainstTheStoredFactionWhenAnotherWriteLandedFirst() {
+        val stored = faction()
+        val repository = FakeRepository(stored).apply { checkVersions = true }
+        val service = MfFactionService(plugin, repository)
+        // Another task has written the faction, and the cache does not hold that write yet.
+        repository.factions[factionId] = stored.copy(bonusPower = 7.0, version = stored.version + 1)
+
+        val updated = valueOf(service.update(factionId) { it.copy(prefix = "NEW") })
+
+        assertEquals("NEW", updated.prefix)
+        assertEquals(7.0, updated.bonusPower, "the other write is kept, not overwritten")
+        assertEquals(stored.version + 2, updated.version)
+        assertEquals(updated, service.getFaction(factionId))
+    }
+
+    @Test
+    fun updateReportsAConflictAfterTheLastAttempt() {
+        val repository = FakeRepository(faction())
+        val service = MfFactionService(plugin, repository)
+        repository.failure = OptimisticLockingFailureException("stale")
+        var attempts = 0
+
+        val failure = failureOf(
+            service.update(factionId) {
+                attempts++
+                it.copy(bonusPower = 5.0)
+            }
+        )
+
+        assertEquals(CONFLICT, failure.type)
+        assertEquals(MfFactionService.MAX_UPDATE_ATTEMPTS, attempts)
+    }
+
+    @Test
+    fun updateDoesNotRetryAFailureOtherThanAConflict() {
+        val repository = FakeRepository(faction())
+        val service = MfFactionService(plugin, repository)
+        repository.failure = IllegalStateException("disk full")
+        var attempts = 0
+
+        val failure = failureOf(
+            service.update(factionId) {
+                attempts++
+                it
+            }
+        )
+
+        assertEquals(GENERAL, failure.type)
+        assertEquals(1, attempts)
+    }
+
+    @Test
+    fun updatingAnUnknownFactionFailsWithoutWriting() {
+        val repository = FakeRepository()
+        val service = MfFactionService(plugin, repository)
+
+        val failure = failureOf(service.update(factionId) { fail("no faction to change") })
+
+        assertEquals(NOT_FOUND, failure.type)
+        assertTrue(repository.upserted.isEmpty())
+    }
+
+    @Test
+    fun anOlderVersionNeverReplacesANewerOneInTheCache() {
+        val stored = faction().copy(version = 5)
+        val service = MfFactionService(plugin, FakeRepository(stored))
+
+        // A write that started from version 1 finishes after the cache already holds version 5.
+        valueOf(service.save(stored.copy(version = 1)))
+
+        assertEquals(5, service.getFaction(factionId)?.version)
+    }
+
+    @Test
+    fun updateIsCallableFromJava() {
+        val method = MfFactionService::class.java.getMethod(
+            "updateFactionByFactionId",
+            String::class.java,
+            Function1::class.java
+        )
+
+        assertEquals(Result4k::class.java, method.returnType)
     }
 
     @Test

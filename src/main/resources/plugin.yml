@@ -23,6 +23,7 @@ softdepend:
 - rpk-selection-lib-bukkit
 - Mailboxes
 - Multiverse-Core
+- Slimefun
 description: Allows players to organise themselves into feudal, diplomatic, lawful groups akin to nations.
 commands:
   faction:
@@ -45,6 +46,7 @@ commands:
       /f role set [player] [role] - Sets a player to a given role
       /f role rename [name] (new name) - Renames a role
       /f role setdefault [name] - Sets a role to be the default role
+      /f role setprefix [role] (prefix) - Sets or clears a role's prefix
       /f list - Lists factions
       /f claim (radius) - Claims land
       /f unclaim (radius) - Unclaims land
@@ -215,6 +217,9 @@ permissions:
   mf.role.move:
     description: Allows moving roles up or down the role list
     default: true
+  mf.role.setprefix:
+    description: Allows setting the prefix shown for a role's members (/f role setprefix)
+    default: true
   mf.list:
     description: Allows listing factions
     default: true
@@ -223,6 +228,12 @@ permissions:
     default: true
   mf.claim.circle:
     description: Allows claiming land in a circle
+    default: true
+  mf.claim.square:
+    description: Allows claiming land in a square
+    default: true
+  mf.claim.rectangle:
+    description: Allows claiming land in a rectangle
     default: true
   mf.claim.auto:
     description: Allows toggling autoclaim for your faction
@@ -408,7 +419,31 @@ permissions:
     description: Allows forcefully adding a member to a faction.
     default: op
   mf.force.role:
-    description: Allows managing another faction's roles (/f role <faction> <view|list|setpermission|create|delete|rename|set|setdefault> ...), bypassing that faction's role permissions
+    description: Allows managing another faction's roles (/f role <faction> <view|list|setpermission|create|delete|rename|set|setdefault|setprefix> ...), bypassing that faction's role permissions
+    default: op
+  mf.force.desc:
+    description: Allows setting another faction's description (/f set description <faction> -- <description>), bypassing that faction's role permissions
+    default: op
+  mf.force.sethome:
+    description: Allows setting another faction's home (/f sethome <faction>), bypassing that faction's role permissions
+    default: op
+  mf.force.declarewar:
+    description: Allows putting two factions at war (/f declarewar <faction> <target>), bypassing role permissions and approval
+    default: op
+  mf.force.makepeace:
+    description: Allows making peace between two factions at once (/f makepeace <faction> <target>), bypassing role permissions
+    default: op
+  mf.force.ally:
+    description: Allows allying two factions at once (/f ally <faction> <target>), bypassing role permissions, consent and approval
+    default: op
+  mf.force.breakalliance:
+    description: Allows breaking the alliance between two factions (/f breakalliance <faction> <target>), bypassing role permissions
+    default: op
+  mf.force.vassalize:
+    description: Allows making one faction the vassal of another at once (/f vassalize <liege> <vassal>), bypassing role permissions, consent and approval
+    default: op
+  mf.force.grantindependence:
+    description: Allows releasing a vassal from its liege (/f grantindependence <liege> <vassal>), bypassing role permissions
     default: op
   mf.force.*:
     description: Allows all force commands
@@ -425,6 +460,14 @@ permissions:
     - mf.force.flag
     - mf.force.addmember
     - mf.force.role
+    - mf.force.desc
+    - mf.force.sethome
+    - mf.force.declarewar
+    - mf.force.makepeace
+    - mf.force.ally
+    - mf.force.breakalliance
+    - mf.force.vassalize
+    - mf.force.grantindependence
   mf.approve:
     description: Allows approving and denying pending faction actions (war declarations, alliances, vassalizations)
     default: op
