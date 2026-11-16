@@ -247,6 +247,12 @@ permissions:
   mf.claim.check:
     description: Allows checking claims
     default: true
+  mf.claim.show:
+    description: Allows showing nearby claim borders
+    default: true
+  mf.showclaim:
+    description: Allows showing nearby claim borders
+    default: true
   mf.autoclaim:
     description: Allows toggling autoclaim for your faction
     default: true

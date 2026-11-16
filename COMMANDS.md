@@ -200,6 +200,12 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Admin usage:** with `mf.force.unclaim` (default: op), `/f unclaimall FactionName` unclaims all land owned by the named faction (name or ID), without disbanding it and without checking that faction's role permissions. A name that matches no faction is refused; it never falls back to your own faction.  
 **Notes:** This action requires confirmation and cannot be undone. Run without `confirm`, the command removes nothing: it reports how many chunks the faction holds and offers a **[Confirm]** button, which re-runs it with `confirm` appended (for the admin form, the button names the faction by ID). Adding `confirm` as the last argument yourself (`/f unclaimall confirm`, `/f unclaimall FactionName confirm`) unclaims immediately.
 
+### `/faction claim show` or `/f claim show`
+**Permission:** `mf.claim.show` or `mf.showclaim` (default: true)  
+**Description:** Marks the borders of claims within 4 chunks of you with wool for 15 seconds: lime for your own faction's land, red for any other faction's. The markers replace the top block of each border column, are visible only to you, and change nothing in the world; the real blocks reappear when the time is up.  
+**Usage:** `/f claim show`  
+**Notes:** Borders between two chunks held by the same faction are not marked, so each faction's territory is outlined as a whole.
+
 ### `/faction claim check` or `/f claim check`
 **Permission:** `mf.claim.check` or `mf.checkclaim` (default: true)  
 **Description:** Displays information about who owns the chunk you are standing in.  
