@@ -137,14 +137,37 @@ class MfPlayerService(private val plugin: MedievalFactions, private val playerRe
             player.fixedPower == null
     }
 
+    /**
+     * The maximum power of the player [id]: `players.leaderMaxPower` when it is set and the player holds their
+     * faction's Owner role, otherwise `players.maxPower` (also for a player in no faction). See [MfMaxPower].
+     */
+    @JvmName("getMaxPowerByPlayerId")
+    fun getMaxPower(id: MfPlayerId): Double {
+        if (MfMaxPower.leaderMaxPower(plugin.config) == null) return MfMaxPower.maxPower(plugin.config)
+        return MfMaxPower.forPlayer(plugin.config, plugin.services.factionService.getFaction(id), id)
+    }
+
+    @JvmName("getMaxPowerByBukkitPlayer")
+    fun getMaxPower(player: OfflinePlayer): Double = getMaxPower(MfPlayerId(player.uniqueId.toString()))
+
     @JvmName("updatePlayerPower")
     fun updatePlayerPower(onlinePlayerIds: List<MfPlayerId>): Result4k<Unit, ServiceFailure> {
         return resultFrom {
+            // With players.leaderMaxPower unset, leaderIds is empty and nothing below differs from before (#1945).
+            val leaderMaxPowerSet = MfMaxPower.leaderMaxPower(plugin.config) != null
+            val leaderIds = if (leaderMaxPowerSet) {
+                MfMaxPower.leaderIds(plugin.config, plugin.services.factionService.factions)
+            } else {
+                emptySet()
+            }
+            if (leaderMaxPowerSet) {
+                playerRepository.clampPowerToMax(leaderIds)
+            }
             if (MfPowerUpdateSettings.isGainOverTimeEnabled(plugin.config)) {
-                playerRepository.increaseOnlinePlayerPower(onlinePlayerIds)
+                playerRepository.increaseOnlinePlayerPower(onlinePlayerIds, leaderIds)
             }
             if (MfPowerUpdateSettings.isDecayOverTimeEnabled(plugin.config)) {
-                playerRepository.decreaseOfflinePlayerPower(onlinePlayerIds)
+                playerRepository.decreaseOfflinePlayerPower(onlinePlayerIds, leaderIds)
             }
             playersById.putAll(playerRepository.getPlayers().associateBy(MfPlayer::id))
             val mapService = plugin.services.mapService

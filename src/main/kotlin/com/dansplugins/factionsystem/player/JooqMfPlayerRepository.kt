@@ -5,6 +5,7 @@ import com.dansplugins.factionsystem.chat.MfFactionChatChannel
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.jooq.Tables.MF_PLAYER
 import com.dansplugins.factionsystem.jooq.tables.records.MfPlayerRecord
+import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.impl.DSL.greatest
 import org.jooq.impl.DSL.least
@@ -74,9 +75,21 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
             chatChannel == written.chatChannel &&
             fixedPower == written.fixedPower
 
-    override fun increaseOnlinePlayerPower(onlinePlayerIds: List<MfPlayerId>) {
+    override fun increaseOnlinePlayerPower(onlinePlayerIds: List<MfPlayerId>, leaderIds: Set<MfPlayerId>) {
+        val maxPower = MfMaxPower.maxPower(plugin.config)
+        val leaderMaxPower = MfMaxPower.leaderMaxPower(plugin.config)
+        if (leaderMaxPower == null) {
+            increasePower(onlinePlayerIds, maxPower)
+            return
+        }
+        val (leaders, others) = onlinePlayerIds.partition { it in leaderIds }
+        increasePower(others, maxPower)
+        increasePower(leaders, leaderMaxPower)
+    }
+
+    private fun increasePower(onlinePlayerIds: List<MfPlayerId>, maxPower: Double) {
+        if (onlinePlayerIds.isEmpty()) return
         val minPower = plugin.config.getDouble("players.minPower")
-        val maxPower = plugin.config.getDouble("players.maxPower")
         val hoursToReachMax = plugin.config.getDouble("players.hoursToReachMaxPower")
         val timeIncrementHours = MfPowerUpdateSettings.intervalHours(plugin.config)
         dsl.update(MF_PLAYER)
@@ -112,8 +125,42 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
             .execute()
     }
 
-    override fun decreaseOfflinePlayerPower(onlinePlayerIds: List<MfPlayerId>) {
-        val maxPower = plugin.config.getDouble("players.maxPower")
+    override fun decreaseOfflinePlayerPower(onlinePlayerIds: List<MfPlayerId>, leaderIds: Set<MfPlayerId>) {
+        val maxPower = MfMaxPower.maxPower(plugin.config)
+        val leaderMaxPower = MfMaxPower.leaderMaxPower(plugin.config)
+        val offline = MF_PLAYER.ID.notIn(onlinePlayerIds.map { it.value })
+        if (leaderMaxPower == null) {
+            decreasePower(offline, maxPower)
+            return
+        }
+        val leaderIdValues = leaderIds.map { it.value }
+        decreasePower(offline.and(MF_PLAYER.ID.notIn(leaderIdValues)), maxPower)
+        if (leaderIdValues.isNotEmpty()) {
+            decreasePower(offline.and(MF_PLAYER.ID.`in`(leaderIdValues)), leaderMaxPower)
+        }
+    }
+
+    override fun clampPowerToMax(leaderIds: Set<MfPlayerId>) {
+        val leaderIdValues = leaderIds.map { it.value }
+        clampPower(MF_PLAYER.ID.notIn(leaderIdValues), MfMaxPower.maxPower(plugin.config))
+        val leaderMaxPower = MfMaxPower.leaderMaxPower(plugin.config) ?: return
+        if (leaderIdValues.isNotEmpty()) {
+            clampPower(MF_PLAYER.ID.`in`(leaderIdValues), leaderMaxPower)
+        }
+    }
+
+    private fun clampPower(players: Condition, maxPower: Double) {
+        dsl.update(MF_PLAYER)
+            .set(MF_PLAYER.POWER, maxPower)
+            .set(MF_PLAYER.VERSION, MF_PLAYER.VERSION.plus(1))
+            .where(players)
+            .and(MF_PLAYER.POWER.gt(maxPower))
+            // A fixed power (/power setfixed, #1682) never changes
+            .and(MF_PLAYER.FIXED_POWER.isNull)
+            .execute()
+    }
+
+    private fun decreasePower(players: Condition, maxPower: Double) {
         val minPower = plugin.config.getDouble("players.minPower")
         val hoursToReachMin = plugin.config.getDouble("players.hoursToReachMinPower")
         val timeIncrementHours = MfPowerUpdateSettings.intervalHours(plugin.config)
@@ -145,7 +192,7 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
                 )
             )
             .set(MF_PLAYER.VERSION, MF_PLAYER.VERSION.plus(1))
-            .where(MF_PLAYER.ID.notIn(onlinePlayerIds.map { it.value }))
+            .where(players)
             .and(MF_PLAYER.POWER_AT_LOGOUT.gt(minPower))
             .and(MF_PLAYER.POWER.gt(minPower))
             // A player whose power an admin has fixed (/power setfixed) does not lose power.

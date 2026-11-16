@@ -4,6 +4,7 @@ import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import org.bukkit.configuration.file.FileConfiguration
+import org.bukkit.configuration.file.YamlConfiguration
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -249,11 +250,44 @@ class JsonMfPlayerRepositoryTest {
         val normalOffline = repository.upsert(MfPlayer(MfPlayerId(UUID.randomUUID().toString()), power = 15.0, powerAtLogout = 15.0))
 
         repository.increaseOnlinePlayerPower(listOf(fixedOnline.id, normalOnline.id))
-        repository.decreaseOfflinePlayerPower(listOf(fixedOffline.id, normalOffline.id))
+        // decreaseOfflinePlayerPower takes the ONLINE players' ids, as MfPlayerService passes them
+        repository.decreaseOfflinePlayerPower(listOf(fixedOnline.id, normalOnline.id))
 
         assertEquals(fixedOnline, repository.getPlayer(fixedOnline.id), "a fixed player must not gain power or be touched")
         assertEquals(fixedOffline, repository.getPlayer(fixedOffline.id), "a fixed player must not lose power or be touched")
         assertTrue(repository.getPlayer(normalOnline.id)!!.power > 5.0, "an unfixed online player still gains power")
         assertTrue(repository.getPlayer(normalOffline.id)!!.power < 15.0, "an unfixed offline player still loses power")
+    }
+
+    @Test
+    fun `offline decay lowers offline players and leaves online players alone`() {
+        val config = YamlConfiguration()
+        config.set("players.minPower", -5.0)
+        config.set("players.maxPower", 20.0)
+        config.set("players.hoursToReachMinPower", 72.0)
+        config.set("players.powerUpdateIntervalMinutes", 60)
+        `when`(plugin.config).thenReturn(config)
+        val online = repository.upsert(MfPlayer(MfPlayerId(UUID.randomUUID().toString()), 0, "Online", 10.0, 10.0, false, null))
+        val offline = repository.upsert(MfPlayer(MfPlayerId(UUID.randomUUID().toString()), 0, "Offline", 10.0, 10.0, false, null))
+
+        // MfPlayerService passes the ONLINE players' ids, as JooqMfPlayerRepository expects
+        repository.decreaseOfflinePlayerPower(listOf(online.id))
+
+        assertEquals(10.0, repository.getPlayer(online.id)!!.power, "an online player must not decay")
+        assertTrue(repository.getPlayer(offline.id)!!.power < 10.0, "an offline player must decay")
+    }
+
+    @Test
+    fun `clamping to max power leaves a fixed power alone`() {
+        val config = YamlConfiguration()
+        config.set("players.maxPower", 20.0)
+        `when`(plugin.config).thenReturn(config)
+        val fixed = repository.upsert(MfPlayer(MfPlayerId(UUID.randomUUID().toString()), power = 25.0, powerAtLogout = 25.0, fixedPower = 25.0))
+        val normal = repository.upsert(MfPlayer(MfPlayerId(UUID.randomUUID().toString()), power = 25.0, powerAtLogout = 25.0))
+
+        repository.clampPowerToMax(emptySet())
+
+        assertEquals(25.0, repository.getPlayer(fixed.id)!!.power, "a fixed power must not be clamped")
+        assertEquals(20.0, repository.getPlayer(normal.id)!!.power)
     }
 }

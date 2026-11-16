@@ -12,6 +12,7 @@ database:
 players:
   initialPower: 5
   maxPower: 20
+  # leaderMaxPower: 30 # Separate maximum power for faction leaders (members with the Owner role). Unset: leaders use maxPower.
   minPower: -5
   hoursToReachMaxPower: 12
   hoursToReachMinPower: 72

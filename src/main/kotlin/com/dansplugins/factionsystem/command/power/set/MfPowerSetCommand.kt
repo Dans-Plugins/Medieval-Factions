@@ -41,7 +41,8 @@ class MfPowerSetCommand(private val plugin: MedievalFactions) : CommandExecutor,
             sender.sendMessage("$RED${plugin.language["CommandPowerSetInvalidPowerTooLow", decimalFormat.format(minPower)]}")
             return true
         }
-        val maxPower = plugin.config.getDouble("players.maxPower")
+        // A leader may go up to players.leaderMaxPower when it is set (#1945)
+        val maxPower = plugin.services.playerService.getMaxPower(target)
         if (power > maxPower) {
             sender.sendMessage("$RED${plugin.language["CommandPowerSetInvalidPowerTooHigh", decimalFormat.format(maxPower)]}")
             return true

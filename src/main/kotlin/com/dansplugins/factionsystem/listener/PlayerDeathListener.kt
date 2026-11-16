@@ -3,6 +3,7 @@ package com.dansplugins.factionsystem.listener
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.MfFactionService
+import com.dansplugins.factionsystem.faction.isLeader
 import com.dansplugins.factionsystem.faction.role.MfFactionRoles.Companion.OWNER_ROLE_NAME
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
@@ -129,9 +130,10 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
     ): MfPlayer? {
         // An admin has fixed this player's power (/power setfixed): dying does not lower it.
         if (victimMfPlayer.isPowerFixed) return null
+        val maxPower = playerService.getMaxPower(victimMfPlayer.id)
         val newPower = (victimMfPlayer.power - powerLostOnDeath)
             .coerceAtLeast(0.0)
-            .coerceAtMost(plugin.config.getDouble("players.maxPower"))
+            .coerceAtMost(maxPower)
         if (abs(newPower - victimMfPlayer.power) < 0.00001) {
             return null
         }
@@ -140,7 +142,7 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
             current.copy(
                 power = (current.power - powerLostOnDeath)
                     .coerceAtLeast(0.0)
-                    .coerceAtMost(plugin.config.getDouble("players.maxPower"))
+                    .coerceAtMost(maxPower)
             )
         }.onFailure {
             plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
@@ -159,9 +161,10 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
     ) {
         // An admin has fixed this player's power (/power setfixed): killing does not raise it.
         if (killerMfPlayer.isPowerFixed) return
+        val maxPower = playerService.getMaxPower(killerMfPlayer.id)
         val newPower = (killerMfPlayer.power + powerGainedOnKill)
             .coerceAtLeast(0.0)
-            .coerceAtMost(plugin.config.getDouble("players.maxPower"))
+            .coerceAtMost(maxPower)
         if (abs(newPower - killerMfPlayer.power) < 0.00001) {
             return
         }
@@ -170,7 +173,7 @@ class PlayerDeathListener(private val plugin: MedievalFactions) : Listener {
             current.copy(
                 power = (current.power + powerGainedOnKill)
                     .coerceAtLeast(0.0)
-                    .coerceAtMost(plugin.config.getDouble("players.maxPower"))
+                    .coerceAtMost(maxPower)
             )
         }.onFailure {
             plugin.logger.log(SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
@@ -193,5 +196,5 @@ internal fun isLeaderDeathAtZeroPower(
     powerAfterDeath: Double?
 ): Boolean {
     if (powerAfterDeath == null || powerBeforeDeath <= 0.0 || powerAfterDeath > 0.0) return false
-    return faction.getRole(playerId)?.name.equals(OWNER_ROLE_NAME, ignoreCase = true)
+    return faction.isLeader(playerId)
 }
