@@ -18,7 +18,6 @@ import org.bukkit.entity.Player
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.logging.Level
-import kotlin.math.floor
 
 class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
@@ -126,7 +125,7 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
                                         val relationships = relationshipService.getRelationships(faction.id, claimFactionId)
                                         val reverseRelationships = relationshipService.getRelationships(claimFactionId, faction.id)
                                         return@filter (relationships + reverseRelationships).any { it.type == MfFactionRelationshipType.AT_WAR } &&
-                                            claimFaction.power <= claimService.getClaims(claimFactionId).size - claims.size
+                                            claimFaction.power <= claimService.getClaimPowerUsed(claimFactionId) - claimService.getClaimPowerCost(claims.map { (chunk, _) -> chunk })
                                     }
                                     .flatMap { it.value.map { (chunk, _) -> chunk } }
                                 val claimableChunks = unclaimedChunks + contestedChunks
@@ -139,8 +138,8 @@ class MfFactionClaimCircleCommand(private val plugin: MedievalFactions) : Comman
                                     sender.sendMessage("${ChatColor.RED}${plugin.language[reason]}")
                                     return@saveChunks
                                 }
-                                if (plugin.config.getBoolean("factions.limitLand") && claimableChunks.size + claimService.getClaims(faction.id).size > faction.power) {
-                                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimReachedDemesneLimit", decimalFormat.format(floor(faction.power))]}")
+                                if (plugin.config.getBoolean("factions.limitLand") && claimService.getClaimPowerCost(claimableChunks) + claimService.getClaimPowerUsed(faction.id) > faction.power) {
+                                    sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimReachedDemesneLimit", decimalFormat.format(claimService.getClaimLimit(faction.id, faction.power, senderWorld.uid))]}")
                                     return@saveChunks
                                 }
                                 // Checks if the attempted claim is connected to an already existing claim. Will make an exception if the faction has no claims.

@@ -19,7 +19,6 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
 import java.util.logging.Level.SEVERE
-import kotlin.math.floor
 
 class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
@@ -107,7 +106,7 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                                 val relationships = relationshipService.getRelationships(faction.id, claimFactionId)
                                 val reverseRelationships = relationshipService.getRelationships(claimFactionId, faction.id)
                                 return@filter (relationships + reverseRelationships).any { it.type == AT_WAR } &&
-                                    claimFaction.power <= claimService.getClaims(claimFactionId).size - claims.size
+                                    claimFaction.power <= claimService.getClaimPowerUsed(claimFactionId) - claimService.getClaimPowerCost(claims.map { (chunk, _) -> chunk })
                             }
                             .flatMap { it.value.map { (chunk, _) -> chunk } }
                         val claimableChunks = unclaimedChunks + contestedChunks
@@ -120,8 +119,8 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                             sender.sendMessage("$RED${plugin.language[reason]}")
                             return@saveChunks
                         }
-                        if (plugin.config.getBoolean("factions.limitLand") && claimableChunks.size + claimService.getClaims(faction.id).size > faction.power) {
-                            sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillReachedDemesneLimit", decimalFormat.format(floor(faction.power))]}")
+                        if (plugin.config.getBoolean("factions.limitLand") && claimService.getClaimPowerCost(claimableChunks) + claimService.getClaimPowerUsed(faction.id) > faction.power) {
+                            sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillReachedDemesneLimit", decimalFormat.format(claimService.getClaimLimit(faction.id, faction.power, senderWorld.uid))]}")
                             return@saveChunks
                         }
                         claimableChunks.forEach { chunk ->
@@ -158,7 +157,7 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
         if (claim?.factionId == faction.id) return chunksToFill
         if (chunksToFill.contains(MfChunkPosition(worldId, startChunkX, startChunkZ))) return chunksToFill
         val newChunks = mutableSetOf(*chunksToFill.toTypedArray(), MfChunkPosition(worldId, startChunkX, startChunkZ))
-        if (newChunks.size + claimService.getClaims(faction.id).size > faction.power) return null
+        if (claimService.getClaimPowerCost(newChunks) + claimService.getClaimPowerUsed(faction.id) > faction.power) return null
         if (claimFillMaxChunks > 0 && newChunks.size > claimFillMaxChunks) {
             throw ClaimFillLimitReachedException()
         }

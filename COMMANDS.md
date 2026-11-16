@@ -143,7 +143,7 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 - `/f claim circle 2` - Same as above; `circle` is an explicit alias for the default radius-claiming behavior
 
 **Notes:** 
-- Each chunk claimed requires power. Your faction must have enough power to claim land.
+- Each chunk claimed requires power. Your faction must have enough power to claim land. By default a chunk costs one power; servers can change this, per world too, with `factions.claimPowerCost` and `factions.claimPowerCostByWorld` (see [CONFIG.md](CONFIG.md)).
 - Maximum claim radius is configurable (default: 3).
 - The claimed area is a circle (chunks within the given radius of your current chunk), not a square.
 - Servers can restrict where claims go: chunks listed in `factions.blockedClaimChunks` are skipped, `factions.maxClaimDistance` keeps new claims near the faction's existing land, and `factions.preventConqueringSurroundedChunks` stops an enemy chunk enclosed by its owner's claims from being conquered until a neighbouring chunk is taken (see [CONFIG.md](CONFIG.md)).
@@ -226,7 +226,7 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 
 ### `/faction declarewar [faction]` or `/f declarewar [faction]`
 **Permission:** `mf.declarewar` (default: true)  
-**Description:** Declares war on another faction. If `factions.warDeclarationRequiresApproval` is enabled in config, the declaration will be held for moderator approval. When approval is required, you can optionally include a reason: `/f declarewar EnemyFaction -- reason for war`.  
+**Description:** Declares war on another faction. If `factions.warDeclarationRequiresApproval` is enabled in config, the declaration will be held for moderator approval. When approval is required, you can optionally include a reason: `/f declarewar EnemyFaction -- reason for war`. If `factions.truceDurationMinutes` is above `0`, war cannot be declared on a faction you made peace with until the truce ends.  
 **Usage:** `/f declarewar EnemyFaction`
 
 ### `/faction makepeace [faction]` or `/f makepeace [faction]`
