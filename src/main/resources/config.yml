@@ -80,8 +80,12 @@ factions:
   nonMembersCanInteractWithDoors: false
   nonMembersCanInteractWithEntities: false # When true, non-members can right-click entities (minecarts, boats, item frames, animals, armour stands) in faction territory. Villager trading is governed separately by the protectVillagerTrade faction flag.
   allowHopperTransfersBetweenSameOwnerLocks: false # When true, hoppers may move items between two locked blocks that are locked by the same player (e.g. a player's locked hopper pulling from their own locked chest). Transfers involving an unlocked block, or locks of different players, stay blocked.
+  allowBuildingEverywhere: false # When true, anyone can place and break blocks in any faction's territory and in the wilderness. Gates and locked blocks stay protected.
+  preventPortalGenerationInClaims: false # When true, the exit portal of a nether portal trip is not generated in a faction's territory unless the traveller could build there.
   maxClaimRadius: 3
   limitLand: true
+  claimPowerCost: 1.0 # Power each claimed chunk counts against the faction's power when limitLand is true.
+  claimPowerCostByWorld: {} # Per-world overrides of claimPowerCost, by world name. Example: {world_nether: 4.0}
   contiguousClaims: false
   blockedClaimWorlds: [] # List of world names where claiming is not allowed. Example: ["world_nether", "world_the_end"]
   actionBarTerritoryIndicator: true
@@ -112,11 +116,14 @@ factions:
       allowFriendlyFire: false
       acceptBonusPower: true
       protectVillagerTrade: true
+      allowMobGriefing: true
+  forcedFlags: [] # Flags that always use the value under defaults.flags for every faction and cannot be changed with /faction flag set. Example: ["allowFriendlyFire", "neutral"]. 'color' cannot be forced.
 powerScoreboard:
   enabled: false  # Show each player's power and their faction's power and max power on a sidebar scoreboard. Players whose scoreboard another plugin has set are left alone.
   updateIntervalSeconds: 5
 chat:
   enableDefaultChatFormatting: true
+  prefixWorlds: [] # When not empty, only players in these worlds see the faction prefix in public chat; players elsewhere see the message without it. Example: ["Factions"]
   faction:
     format: '&7[faction] [${factionColor}${faction}&7] [${role}] &f${displayName}: ${message}'
   vassals:

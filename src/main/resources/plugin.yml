@@ -221,6 +221,12 @@ permissions:
   mf.claim.circle:
     description: Allows claiming land in a circle
     default: true
+  mf.claim.square:
+    description: Allows claiming land in a square
+    default: true
+  mf.claim.rectangle:
+    description: Allows claiming land in a rectangle
+    default: true
   mf.claim.auto:
     description: Allows toggling autoclaim for your faction
     default: true

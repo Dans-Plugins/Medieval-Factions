@@ -68,6 +68,7 @@ import com.dansplugins.factionsystem.listener.HangingPlaceListener
 import com.dansplugins.factionsystem.listener.InventoryClickListener
 import com.dansplugins.factionsystem.listener.InventoryMoveItemListener
 import com.dansplugins.factionsystem.listener.LingeringPotionSplashListener
+import com.dansplugins.factionsystem.listener.MobGriefingListener
 import com.dansplugins.factionsystem.listener.PlayerBucketListener
 import com.dansplugins.factionsystem.listener.PlayerDeathListener
 import com.dansplugins.factionsystem.listener.PlayerInteractAtEntityListener
@@ -78,6 +79,7 @@ import com.dansplugins.factionsystem.listener.PlayerMoveListener
 import com.dansplugins.factionsystem.listener.PlayerQuitListener
 import com.dansplugins.factionsystem.listener.PlayerRespawnListener
 import com.dansplugins.factionsystem.listener.PlayerTeleportListener
+import com.dansplugins.factionsystem.listener.PortalCreateListener
 import com.dansplugins.factionsystem.listener.PotionSplashListener
 import com.dansplugins.factionsystem.listener.StructureGrowListener
 import com.dansplugins.factionsystem.listener.WorldActionProtection
@@ -387,6 +389,7 @@ class MedievalFactions : JavaPlugin() {
             EntityDamageByEntityListener(this),
             EntityDamageListener(this),
             EntityExplodeListener(this),
+            MobGriefingListener(this),
             EntityPlaceListener(worldActionProtection),
             HangingPlaceListener(worldActionProtection),
             InventoryClickListener(this),
@@ -402,6 +405,7 @@ class MedievalFactions : JavaPlugin() {
             PlayerQuitListener(this, entityInteractionProtection),
             PlayerRespawnListener(this),
             PlayerTeleportListener(this),
+            PortalCreateListener(this),
             PotionSplashListener(this),
             StructureGrowListener(growthBorderTrimmer)
         ).forEach { server.pluginManager.registerEvents(it, this) }

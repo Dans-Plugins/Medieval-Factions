@@ -145,10 +145,22 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 - `/f claim circle 2` - Same as above; `circle` is an explicit alias for the default radius-claiming behavior
 
 **Notes:** 
-- Each chunk claimed requires power. Your faction must have enough power to claim land.
+- Each chunk claimed requires power. Your faction must have enough power to claim land. By default a chunk costs one power; servers can change this, per world too, with `factions.claimPowerCost` and `factions.claimPowerCostByWorld` (see [CONFIG.md](CONFIG.md)).
 - Maximum claim radius is configurable (default: 3).
 - The claimed area is a circle (chunks within the given radius of your current chunk), not a square.
 - With `mf.force.claim` (default: op), a faction name or ID can be given before the radius (`/f claim FactionName [radius]`, or `/f claim circle FactionName [radius]`) to claim land on behalf of any faction, including one you are not in. The target faction's own claim role permission is not checked; its power limit, contiguity and contested-chunk rules still apply. A lone number is always read as a radius. Quote a multi-word faction name (`/f claim "My Faction" 2`). `/f claim auto` and `/f claim fill` do not take a faction.
+
+### `/faction claim square <size>` / `/faction claim rectangle <sizeX> <sizeZ>`
+**Permission:** `mf.claim.square` / `mf.claim.rectangle`, or `mf.claim` (default: true)  
+**Description:** Claims a square or rectangle of chunks centred on the chunk you are standing in. Sizes are side lengths in chunks.  
+**Usage:**
+- `/f claim square 3` - Claims the 3x3 chunks around you
+- `/f claim rectangle 5 2` - Claims 5 chunks east-west by 2 chunks north-south
+
+**Notes:**
+- Each side may be from 1 up to `factions.maxClaimRadius` x 2 + 1 chunks (7 at the default radius of 3), so a square can reach as far as the widest `/f claim [radius]` circle.
+- On a side of even length the extra row or column is on the east (positive X) or south (positive Z) side of your chunk.
+- Power, contiguity and contested-chunk rules are the same as for `/f claim [radius]`, and with `mf.force.claim` a faction name can be given before the size (`/f claim square FactionName 3`).
 
 ### `/faction claim auto` or `/f claim auto`
 **Permission:** `mf.claim.auto` or `mf.autoclaim` (default: true)  

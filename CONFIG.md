@@ -426,6 +426,27 @@ factions:
 **Default:** `false`  
 **Description:** Hoppers cannot move items into or out of a locked block. When `true`, a transfer is allowed if both blocks involved are locked and every lock on them belongs to the same player, so a player can lock a chest and the hoppers of their own sorter or storage system and still have items flow between them. A transfer between a locked block and an unlocked one (including a hopper minecart), or between blocks locked by different players, is still refused. Accessors added with `/accessors add` do not count: only the player who placed the lock does.
 
+### `factions.allowBuildingEverywhere`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, anyone can place and break blocks anywhere: in every faction's territory, whatever its flags and relationships, and in the wilderness, whatever the `wilderness.place.prevent` and `wilderness.break.prevent` settings. It takes precedence over those options. Only placing and breaking blocks are opened up; everything else stays protected as configured, including opening chests and doors, buckets, setting fire, and right-clicking entities. Gate blocks still cannot be placed into or broken, and a locked block can still only be broken by its owner (or with `mf.force.unlock`), which unlocks it as usual.
+
+```mermaid
+flowchart TD
+    A["Player places or breaks a block"] --> B{"Block is part of a gate?"}
+    B -- yes --> R1["Refused"]
+    B -- no --> C{"allowBuildingEverywhere?"}
+    C -- no --> N["Normal territory and wilderness rules"]
+    C -- yes --> D{"Breaking a block that<br/>another player has locked?"}
+    D -- "yes, without mf.force.unlock" --> R2["Refused"]
+    D -- no --> OK["Allowed (a lock of the breaker's own is removed)"]
+```
+
+### `factions.preventPortalGenerationInClaims`
+**Type:** Boolean  
+**Default:** `false`  
+**Description:** When `true`, when a player travels through a nether portal and the game would generate the matching portal on the other side inside a faction's territory, the portal is not generated, unless the player could build in that territory anyway (a member, or someone the faction's flags or a war let build there) or is in bypass mode. The player is told whose territory stopped it. Existing portals are unaffected, and so are portals players light themselves. What the player experiences when the portal is refused (whether they are still moved to the other world) is decided by the server software, and has not been checked in game.
+
 ### `factions.maxClaimRadius`
 **Type:** Integer  
 **Default:** `3`  
@@ -436,6 +457,23 @@ factions:
 **Type:** Boolean  
 **Default:** `true`  
 **Description:** When `true`, limits the amount of land a faction can claim based on their total power.
+
+### `factions.claimPowerCost`
+**Type:** Decimal  
+**Default:** `1.0`  
+**Description:** How much power each claimed chunk counts against the faction's power when `factions.limitLand` is `true`. A faction may claim another chunk only while the cost of all its claims, plus the new ones, does not exceed its power. At the default of `1.0` each chunk costs one power, which is how claiming worked before this option existed. A higher value makes land scarcer (at `2.0` a faction with 10 power can hold 5 chunks); a lower one makes it more plentiful. The same cost decides when an enemy faction holds more land than its power and so can be conquered during war. Negative values are treated as `0`, which makes claims free. Has no effect when `factions.limitLand` is `false`.  
+**Note:** `/f power` and the Dynmap demesne line show a faction's claims against the number of chunks it could hold: the chunks it has, plus as many more as its unused power buys at the cost in the viewer's world (`/f power`) or the faction's home world (Dynmap; the world of its first claim if it has no home). The console uses `factions.claimPowerCost`. At the default cost of `1.0` that number is the faction's power rounded down, as before.
+
+### `factions.claimPowerCostByWorld`
+**Type:** Map of world name to Decimal  
+**Default:** `{}` (empty; every world uses `factions.claimPowerCost`)  
+**Description:** Overrides `factions.claimPowerCost` for individual worlds, for example to make land in the nether, where distances are shorter, cost more. A world not listed uses `factions.claimPowerCost`. To stop claiming in a world altogether, use `factions.blockedClaimWorlds` instead.  
+**Example:**
+```yaml
+claimPowerCostByWorld:
+  world_nether: 4.0
+  world_the_end: 2.0
+```
 
 ### `factions.contiguousClaims`
 **Type:** Boolean  
@@ -599,6 +637,27 @@ These settings define the default values for faction flags when a new faction is
 **Description:** Default setting for whether hostile mobs are protected from damage by non-members in faction territory. While the flag is available for factions to set, this config option is not currently implemented in the default config file.  
 **Note:** Factions can still set this flag individually using `/f flag set enableMobProtection [true/false]`.
 
+### `factions.defaults.flags.allowMobGriefing`
+**Type:** Boolean  
+**Default:** `true`  
+**Description:** Default setting for whether mobs can change blocks in faction territory (endermen taking blocks, zombies breaking doors, ravagers and other mobs trampling crops and farmland, withers breaking blocks, sheep eating grass). Existing factions that never set the flag use this value. See `FACTION_FLAGS.md`.
+
+### `factions.forcedFlags`
+**Type:** List of flag names  
+**Default:** `[]`  
+**Description:** Flags that are fixed for every faction. A forced flag always reads as its value under `factions.defaults.flags`, whatever a faction set before, and `/faction flag set` refuses to change it, including for holders of `mf.force.flag`. The value each faction stored is left in place, so taking a flag off the list restores every faction's own setting. Names are case-insensitive; unknown names are ignored. `color` cannot be forced. Read at startup.  
+**Example:**
+```yaml
+factions:
+  defaults:
+    flags:
+      allowFriendlyFire: true
+      neutral: false
+  forcedFlags:
+  - allowFriendlyFire
+  - neutral
+```
+
 ## Power Scoreboard
 
 ### `powerScoreboard.enabled`
@@ -617,6 +676,12 @@ These settings define the default values for faction flags when a new faction is
 **Type:** Boolean  
 **Default:** `true`  
 **Description:** When `true`, enables Medieval Factions custom chat formatting.
+
+### `chat.prefixWorlds`
+**Type:** List of Strings  
+**Default:** `[]` (empty list: everyone sees the prefix)  
+**Description:** The worlds whose players see the faction prefix (`[FactionName]`, or the faction's prefix if it has one) that `chat.enableDefaultChatFormatting` adds to public chat. When the list is not empty, a player in any other world sees the same message without the prefix, in the format the message had before Medieval Factions added its prefix (the server's normal `<Player> message` unless another chat plugin changed it first). It is the reader's world that counts, not the speaker's. Useful on a multi-world server where factions only matter in some worlds. Faction, ally and vassal chat channels are not affected. Has no effect when `chat.enableDefaultChatFormatting` is `false`. A chat plugin that changes the message format after Medieval Factions has handled the message does not affect what players outside these worlds see.  
+**Example:** `["Factions", "Factions_nether"]`
 
 ### `chat.faction.format`
 **Type:** String  
