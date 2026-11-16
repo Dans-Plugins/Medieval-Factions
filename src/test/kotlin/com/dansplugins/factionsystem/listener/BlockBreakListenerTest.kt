@@ -43,10 +43,42 @@ class BlockBreakListenerTest {
     fun setUp() {
         fixture = createFixture()
         plugin = mock(MedievalFactions::class.java)
+        `when`(plugin.config).thenReturn(mock(org.bukkit.configuration.file.FileConfiguration::class.java))
         mockServices()
         mockLanguageSystem()
         mockScheduler()
         uut = BlockBreakListener(plugin)
+    }
+
+    @Test
+    fun onBlockBreak_allowBuildingEverywhere_breakInAnotherFactionsTerritoryIsAllowed() {
+        // #1804: with the option on, the claim is not even looked up
+        val event = fixture.event
+        `when`(plugin.config.getBoolean("factions.allowBuildingEverywhere")).thenReturn(true)
+
+        uut.onBlockBreak(event)
+
+        verify(event, never()).isCancelled = true
+        verify(claimService, never()).getClaim(fixture.block.chunk)
+    }
+
+    @Test
+    fun onBlockBreak_allowBuildingEverywhere_lockedBlockOfAnotherPlayerStaysProtected() {
+        val event = fixture.event
+        val player = fixture.player
+        `when`(plugin.config.getBoolean("factions.allowBuildingEverywhere")).thenReturn(true)
+        val blockPosition = com.dansplugins.factionsystem.area.MfBlockPosition.fromBukkitBlock(fixture.block)
+        val lockedBlock = mock(com.dansplugins.factionsystem.locks.MfLockedBlock::class.java)
+        val ownerId = com.dansplugins.factionsystem.player.MfPlayerId(java.util.UUID.randomUUID().toString())
+        `when`(lockedBlock.playerId).thenReturn(ownerId)
+        `when`(lockService.getLockedBlock(blockPosition)).thenReturn(lockedBlock)
+        val breaker = mock(com.dansplugins.factionsystem.player.MfPlayer::class.java)
+        `when`(breaker.id).thenReturn(com.dansplugins.factionsystem.player.MfPlayerId(java.util.UUID.randomUUID().toString()))
+        `when`(playerService.getPlayer(player)).thenReturn(breaker)
+
+        uut.onBlockBreak(event)
+
+        verify(event).isCancelled = true
     }
 
     @Test

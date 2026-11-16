@@ -24,6 +24,9 @@ class BlockPlaceListener(private val plugin: MedievalFactions) : Listener {
             return
         }
 
+        // factions.allowBuildingEverywhere lifts territory and wilderness protection for placing blocks (#1804)
+        if (plugin.config.getBoolean("factions.allowBuildingEverywhere")) return
+
         val claimService = plugin.services.claimService
         val claim = claimService.getClaim(event.block.chunk)
         if (claim == null) {

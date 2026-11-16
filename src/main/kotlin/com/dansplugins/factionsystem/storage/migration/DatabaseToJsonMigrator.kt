@@ -14,6 +14,7 @@ import com.dansplugins.factionsystem.lockedarea.MfLockedAreaRepository
 import com.dansplugins.factionsystem.locks.MfLockRepository
 import com.dansplugins.factionsystem.player.MfPlayerRepository
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipRepository
+import com.dansplugins.factionsystem.relationship.rival.MfFactionRivalRepository
 
 /**
  * Migrates data from database storage to JSON storage
@@ -44,6 +45,8 @@ class DatabaseToJsonMigrator(
     private val targetChatRepo: MfChatChannelMessageRepository,
     private val targetDuelRepo: MfDuelRepository,
     private val targetDuelInviteRepo: MfDuelInviteRepository,
+    private val sourceRivalRepo: MfFactionRivalRepository? = null,
+    private val targetRivalRepo: MfFactionRivalRepository? = null,
     // Locked areas (#1393). Optional so existing callers keep compiling; the migrate command passes both.
     private val sourceLockedAreaRepo: MfLockedAreaRepository? = null,
     private val targetLockedAreaRepo: MfLockedAreaRepository? = null
@@ -113,6 +116,15 @@ class DatabaseToJsonMigrator(
             }
             totalMigrated += relationships.size
             plugin.logger.info("Migrated ${relationships.size} relationships")
+
+            // Migrate rivals
+            if (sourceRivalRepo != null && targetRivalRepo != null) {
+                plugin.logger.info("Migrating rivals...")
+                val rivals = sourceRivalRepo.getRivals()
+                rivals.forEach { rival -> targetRivalRepo.insert(rival) }
+                totalMigrated += rivals.size
+                plugin.logger.info("Migrated ${rivals.size} rivals")
+            }
 
             // Migrate claims
             plugin.logger.info("Migrating claims...")
@@ -239,6 +251,7 @@ class DatabaseToJsonMigrator(
         targetPlayerRepo.getPlayers().size.takeIf { it > 0 }?.let { existing += "$it players" }
         targetFactionRepo.getFactions().size.takeIf { it > 0 }?.let { existing += "$it factions" }
         targetRelationshipRepo.getFactionRelationships().size.takeIf { it > 0 }?.let { existing += "$it faction relationships" }
+        targetRivalRepo?.getRivals()?.size?.takeIf { it > 0 }?.let { existing += "$it faction rivals" }
         targetClaimRepo.getClaims().size.takeIf { it > 0 }?.let { existing += "$it claims" }
         targetLockRepo.getLockedBlocks().size.takeIf { it > 0 }?.let { existing += "$it locked blocks" }
         targetLockedAreaRepo?.getLockedAreas()?.size?.takeIf { it > 0 }?.let { existing += "$it locked areas" }

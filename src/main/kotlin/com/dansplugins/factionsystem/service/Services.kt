@@ -15,6 +15,7 @@ import com.dansplugins.factionsystem.notification.MfNotificationService
 import com.dansplugins.factionsystem.player.MfPlayerService
 import com.dansplugins.factionsystem.potion.MfPotionService
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
+import com.dansplugins.factionsystem.relationship.rival.MfFactionRivalService
 import com.dansplugins.factionsystem.teleport.MfTeleportService
 
 class Services(
@@ -33,5 +34,6 @@ class Services(
     val teleportService: MfTeleportService,
     val mapService: MapService?,
     val approvalRequestService: MfApprovalRequestService,
+    val factionRivalService: MfFactionRivalService,
     val lockedAreaService: MfLockedAreaService
 )

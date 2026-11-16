@@ -10,7 +10,9 @@ data class MfLaw(
     @get:JvmName("getFactionId")
     val factionId: MfFactionId,
     val text: String,
-    val number: Int?
+    val number: Int?,
+    /** The free-text section the law is listed under, or null for none (#1650). Law numbers stay global across sections. */
+    val section: String? = null
 ) {
     constructor(faction: MfFaction, text: String) : this(
         MfLawId.generate(),
@@ -19,4 +21,9 @@ data class MfLaw(
         text,
         null
     )
+
+    companion object {
+        /** The longest section name that is stored, matching the `mf_law.section` column. */
+        const val MAX_SECTION_LENGTH = 64
+    }
 }

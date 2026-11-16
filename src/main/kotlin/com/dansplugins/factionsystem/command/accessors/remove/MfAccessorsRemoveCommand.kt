@@ -4,6 +4,7 @@ import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfBlockPosition
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.REMOVING_ACCESSOR
 import com.dansplugins.factionsystem.player.MfPlayer
+import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.onFailure
 import org.bukkit.ChatColor
 import org.bukkit.ChatColor.RED
@@ -133,12 +134,17 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
             conversation.begin()
             return true
         }
-        val player = try {
-            plugin.server.getOfflinePlayer(UUID.fromString(args[3]))
-        } catch (exception: IllegalArgumentException) {
-            plugin.server.getOfflinePlayer(args[3])
+        val isRole = args.size >= 5 && args[3].lowercase() in roleAliases
+        val player = if (isRole) {
+            null
+        } else {
+            try {
+                plugin.server.getOfflinePlayer(UUID.fromString(args[3]))
+            } catch (exception: IllegalArgumentException) {
+                plugin.server.getOfflinePlayer(args[3])
+            }
         }
-        if (!player.isOnline && !player.hasPlayedBefore()) {
+        if (player != null && !player.isOnline && !player.hasPlayedBefore()) {
             sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveInvalidPlayer"]}")
             return true
         }
@@ -158,8 +164,62 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
         } else {
             listOf(block)
         }
-        removeAccessor(sender, blocks, player)
+        if (player == null) {
+            removeRoleAccessor(sender, blocks, args.drop(4).joinToString(" "))
+        } else {
+            removeAccessor(sender, blocks, player)
+        }
         return true
+    }
+
+    private val roleAliases = listOf(plugin.language["CmdAccessorsRole"].lowercase(), "role")
+
+    /**
+     * Takes a role off the block's role access list (#1569). [roleName] is a role name or id in the lock
+     * owner's faction; a role id that is on the list but no longer matches a role (the role was deleted,
+     * or the owner left the faction) is accepted as well, so stale entries can be cleared.
+     */
+    private fun removeRoleAccessor(sender: Player, blocks: List<Block>, roleName: String) {
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                val playerService = plugin.services.playerService
+                val mfPlayer = playerService.getPlayer(sender)
+                    ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
+                        sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveFailedToSavePlayer"]}")
+                        plugin.logger.log(Level.SEVERE, "Failed to save player: ${it.reason.message}", it.reason.cause)
+                        return@Runnable
+                    }
+                val lockService = plugin.services.lockService
+                val lockedBlock = blocks.firstNotNullOfOrNull { lockService.getLockedBlock(MfBlockPosition.fromBukkitBlock(it)) }
+                if (lockedBlock == null) {
+                    sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveBlockNotLocked"]}")
+                    return@Runnable
+                }
+                if (lockedBlock.playerId.value != mfPlayer.id.value && lockedBlock.accessors.none { it.value == mfPlayer.id.value }) {
+                    sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveMustHaveAccess"]}")
+                    return@Runnable
+                }
+                val role = plugin.services.factionService.getFaction(lockedBlock.playerId)?.getRole(roleName)
+                val roleId = role?.id?.value ?: roleName
+                if (lockedBlock.accessorRoleIds.none { it.value == roleId }) {
+                    sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveRoleNotAnAccessor"]}")
+                    return@Runnable
+                }
+                lockService.save(lockedBlock.copy(accessorRoleIds = lockedBlock.accessorRoleIds.filter { it.value != roleId })).onFailure {
+                    sender.sendMessage("$RED${plugin.language["CommandAccessorsRemoveFailedToSaveLockedBlock"]}")
+                    plugin.logger.log(Level.SEVERE, "Failed to save locked block: ${it.reason.message}", it.reason.cause)
+                    return@Runnable
+                }
+                sender.sendMessage("${ChatColor.GREEN}${plugin.language["CommandAccessorsRemoveRoleSuccess", role?.name ?: roleName]}")
+                plugin.server.scheduler.runTask(
+                    plugin,
+                    Runnable {
+                        sender.performCommand("accessors list ${lockedBlock.block.x} ${lockedBlock.block.y} ${lockedBlock.block.z}")
+                    }
+                )
+            }
+        )
     }
 
     private fun removeAccessor(sender: Player, blocks: List<Block>, accessor: OfflinePlayer) {
@@ -214,9 +274,14 @@ class MfAccessorsRemoveCommand(private val plugin: MedievalFactions) : CommandEx
     ) = when {
         args.size <= 3 -> emptyList()
         args.size == 4 ->
-            plugin.server.offlinePlayers
-                .filter { it.name?.lowercase()?.startsWith(args[3].lowercase()) == true }
-                .mapNotNull { it.name }
+            (plugin.server.offlinePlayers.mapNotNull { it.name } + roleAliases.first())
+                .filter { it.lowercase().startsWith(args[3].lowercase()) }
+        args.size == 5 && args[3].lowercase() in roleAliases && sender is Player ->
+            plugin.services.factionService.getFaction(MfPlayerId(sender.uniqueId.toString()))
+                ?.roles
+                ?.map { it.name }
+                ?.filter { it.lowercase().startsWith(args[4].lowercase()) }
+                .orEmpty()
         else -> emptyList()
     }
 }

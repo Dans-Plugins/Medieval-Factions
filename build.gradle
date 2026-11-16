@@ -76,6 +76,14 @@ dependencies {
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.15.3'
     jooqGenerator 'org.jooq:jooq-meta-extensions:3.17.4'
 
+    // Slimefun is an optional soft dependency (#1750), compiled against and never shaded (Slimefun is GPL).
+    // Slimefun relocates its protection API (dough) into its own jar, so the integration is compiled against
+    // Slimefun's shaded jar, which JitPack builds from the RC-37 tag. Transitive dependencies are skipped:
+    // they are Slimefun's own provided-scope plugins. The relocated package has not changed since, so the
+    // module also loads on current Slimefun development builds.
+    compileOnly('com.github.Slimefun:Slimefun4:RC-37') { transitive = false }
+    testImplementation('com.github.Slimefun:Slimefun4:RC-37') { transitive = false }
+
     // Use the Kotlin JUnit 5 integration.
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.mockito:mockito-core:4.0.0")
@@ -144,9 +152,13 @@ jooq {
 import org.apache.tools.ant.filters.ReplaceTokens
 
 processResources {
-    filter ReplaceTokens, tokens: [
-            'version': version
-    ]
+    // Only plugin.yml and config.yml carry @version@. Filtering every resource decoded the ISO-8859-1
+    // language files as UTF-8 and wrote each accented byte back as U+FFFD (every German umlaut).
+    filesMatching(['plugin.yml', 'config.yml']) {
+        filter ReplaceTokens, tokens: [
+                'version': version
+        ]
+    }
 }
 
 shadowJar {

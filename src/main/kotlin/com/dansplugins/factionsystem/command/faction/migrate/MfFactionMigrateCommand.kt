@@ -15,12 +15,14 @@ import com.dansplugins.factionsystem.lockedarea.JooqMfLockedAreaRepository
 import com.dansplugins.factionsystem.locks.JooqMfLockRepository
 import com.dansplugins.factionsystem.player.JooqMfPlayerRepository
 import com.dansplugins.factionsystem.relationship.JooqMfFactionRelationshipRepository
+import com.dansplugins.factionsystem.relationship.rival.JooqMfFactionRivalRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfChatChannelMessageRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfClaimedChunkRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfDuelInviteRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfDuelRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfFactionRelationshipRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfFactionRepository
+import com.dansplugins.factionsystem.storage.json.JsonMfFactionRivalRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfGateCreationContextRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfGateRepository
 import com.dansplugins.factionsystem.storage.json.JsonMfInteractionStatusRepository
@@ -142,6 +144,7 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
                         val sourceChatRepo = JooqMfChatChannelMessageRepository(dsl)
                         val sourceDuelRepo = JooqMfDuelRepository(dsl)
                         val sourceDuelInviteRepo = JooqMfDuelInviteRepository(dsl)
+                        val sourceRivalRepo = JooqMfFactionRivalRepository(dsl)
                         val sourceLockedAreaRepo = JooqMfLockedAreaRepository(dsl)
 
                         // Initialize JSON repositories
@@ -161,6 +164,7 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
                         val targetChatRepo = JsonMfChatChannelMessageRepository(plugin, storageManager)
                         val targetDuelRepo = JsonMfDuelRepository(plugin, storageManager)
                         val targetDuelInviteRepo = JsonMfDuelInviteRepository(plugin, storageManager)
+                        val targetRivalRepo = JsonMfFactionRivalRepository(plugin, storageManager)
                         val targetLockedAreaRepo = JsonMfLockedAreaRepository(storageManager)
 
                         // Create and run migrator
@@ -172,6 +176,7 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
                             targetPlayerRepo, targetFactionRepo, targetLawRepo, targetRelationshipRepo,
                             targetClaimRepo, targetLockRepo, targetInteractionRepo, targetGateRepo,
                             targetGateContextRepo, targetChatRepo, targetDuelRepo, targetDuelInviteRepo,
+                            sourceRivalRepo, targetRivalRepo,
                             sourceLockedAreaRepo, targetLockedAreaRepo
                         )
 
@@ -256,6 +261,7 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
                     val sourceChatRepo = JsonMfChatChannelMessageRepository(plugin, storageManager)
                     val sourceDuelRepo = JsonMfDuelRepository(plugin, storageManager)
                     val sourceDuelInviteRepo = JsonMfDuelInviteRepository(plugin, storageManager)
+                    val sourceRivalRepo = JsonMfFactionRivalRepository(plugin, storageManager)
                     val sourceLockedAreaRepo = JsonMfLockedAreaRepository(storageManager)
 
                     // Initialize database repositories
@@ -298,6 +304,7 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
                         val targetChatRepo = JooqMfChatChannelMessageRepository(dsl)
                         val targetDuelRepo = JooqMfDuelRepository(dsl)
                         val targetDuelInviteRepo = JooqMfDuelInviteRepository(dsl)
+                        val targetRivalRepo = JooqMfFactionRivalRepository(dsl)
                         val targetLockedAreaRepo = JooqMfLockedAreaRepository(dsl)
 
                         // Create and run migrator
@@ -309,6 +316,7 @@ class MfFactionMigrateCommand(private val plugin: MedievalFactions) : CommandExe
                             targetPlayerRepo, targetFactionRepo, targetLawRepo, targetRelationshipRepo,
                             targetClaimRepo, targetLockRepo, targetInteractionRepo, targetGateRepo,
                             targetGateContextRepo, targetChatRepo, targetDuelRepo, targetDuelInviteRepo,
+                            sourceRivalRepo, targetRivalRepo,
                             sourceLockedAreaRepo, targetLockedAreaRepo
                         )
 

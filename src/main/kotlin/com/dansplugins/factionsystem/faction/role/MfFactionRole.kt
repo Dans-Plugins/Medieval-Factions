@@ -4,6 +4,7 @@ import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.faction.permission.MfFactionPermission
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.configuration.serialization.ConfigurationSerializable
 
 data class MfFactionRole(
@@ -11,7 +12,12 @@ data class MfFactionRole(
     @get:JvmName("getId")
     val id: MfFactionRoleId = MfFactionRoleId.generate(),
     val name: String,
-    val permissionsByName: Map<String, Boolean?> = emptyMap()
+    val permissionsByName: Map<String, Boolean?> = emptyMap(),
+    /**
+     * A prefix shown for members of this role, such as `[Knight]`, or null for none (#1525). It may hold `&` colour
+     * codes, which are translated where it is shown.
+     */
+    val prefix: String? = null
 ) : ConfigurationSerializable {
 
     val permissions: Map<MfFactionPermission, Boolean?>
@@ -27,13 +33,22 @@ data class MfFactionRole(
 
     fun getPermissionValue(permission: MfFactionPermission) = permissions[permission]
 
-    override fun serialize() = mapOf(
-        "id" to id.value,
-        "name" to name,
-        "permissions" to permissionsByName
-    )
+    /** [prefix] with its `&` colour codes translated, or an empty string when the role has no prefix. */
+    val displayPrefix: String
+        get() = prefix?.let { ChatColor.translateAlternateColorCodes('&', it) } ?: ""
+
+    // The prefix is written only when one is set, so a role without one is stored exactly as before #1525.
+    override fun serialize(): Map<String, Any> = buildMap {
+        put("id", id.value)
+        put("name", name)
+        put("permissions", permissionsByName)
+        if (prefix != null) put("prefix", prefix)
+    }
 
     companion object {
+        /** The longest prefix, colour codes included, that `/faction role setprefix` accepts. */
+        const val MAX_PREFIX_LENGTH = 32
+
         // A permission added after factions already existed has no entry in their roles. Until a role is given one,
         // it takes the value of the permission it pairs with, so existing Owners, who may toggle autoclaim, may
         // also toggle autounclaim (and grant it) without their saved roles being rewritten.
@@ -50,11 +65,14 @@ data class MfFactionRole(
             val id = (serialized["id"] as String).let(::MfFactionRoleId)
             val name = serialized["name"] as String
             val permissionsByName = serialized["permissions"] as Map<String, Boolean?>
+            // Roles saved before #1525 have no prefix entry, and read as having no prefix.
+            val prefix = serialized["prefix"] as? String
             return MfFactionRole(
                 Bukkit.getPluginManager().getPlugin("MedievalFactions") as MedievalFactions,
                 id,
                 name,
-                permissionsByName
+                permissionsByName,
+                prefix
             )
         }
     }

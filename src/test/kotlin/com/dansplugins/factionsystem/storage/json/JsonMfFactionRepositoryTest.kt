@@ -249,6 +249,40 @@ class JsonMfFactionRepositoryTest {
     }
 
     @Test
+    fun `a role's prefix is written to the schema-validated file and read back, and a role without one has none`() {
+        val knight = role("Knight").copy(prefix = "&6[Knight]")
+        val member = role("Member")
+        val saved = repository.upsert(faction(roles = MfFactionRoles(member.id, listOf(knight, member))))
+
+        val read = repository.getFaction(saved.id)!!
+        assertEquals("&6[Knight]", read.roles.getRole(knight.id)?.prefix)
+        assertNull(read.roles.getRole(member.id)?.prefix)
+        assertTrue(
+            !File(tempDir.toFile(), "factions.json").readText().contains("\"prefix\": null"),
+            "a role without a prefix should be written without a prefix field"
+        )
+    }
+
+    @Test
+    fun `reads roles from a factions file written before role prefixes existed as having no prefix`() {
+        // The role shape written before #1525: no "prefix" field.
+        File(tempDir.toFile(), "factions.json").writeText(
+            """
+            {"factions":[{"id":"f1","version":2,"name":"Old","description":"","members":[],"invites":[],
+            "flags":{},"bonusPower":0.0,"autoclaim":false,"roles":{"defaultRoleId":"r1","roles":[
+            {"id":"r1","name":"Member","permissionsByName":{"CLAIM":true}}]},
+            "defaultPermissionsByName":{},"applications":[]}]}
+            """.trimIndent()
+        )
+
+        val role = repository.getFaction(MfFactionId("f1"))!!.roles.getRole(MfFactionRoleId("r1"))!!
+
+        assertEquals("Member", role.name)
+        assertEquals(mapOf("CLAIM" to true), role.permissionsByName)
+        assertNull(role.prefix)
+    }
+
+    @Test
     fun `the members of a new faction get the roles it is saved with`() {
         // What a FactionCreateEvent listener leaves behind when it grants a permission through faction.copy(roles = ...).
         val owner = role("Owner")

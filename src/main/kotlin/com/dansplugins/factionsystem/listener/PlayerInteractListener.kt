@@ -219,7 +219,14 @@ class PlayerInteractListener(
         val lockedBlock = lockedBlocks.firstOrNull()
 
         if (lockedBlock != null) {
-            if (event.player.uniqueId.toString() !in (lockedBlock.accessors + lockedBlock.playerId).map(MfPlayerId::value)) {
+            // The owner's faction is looked up only when the lock lists roles, so locks without role
+            // accessors cost the same per interaction as before (#1569).
+            val lockOwnerFaction = if (lockedBlock.accessorRoleIds.isEmpty()) {
+                null
+            } else {
+                plugin.services.factionService.getFaction(lockedBlock.playerId)
+            }
+            if (!lockedBlock.hasAccess(MfPlayerId(event.player.uniqueId.toString()), lockOwnerFaction)) {
                 // Check if player has bypass permission from mf.bypass or faction permission
                 if ((mfPlayer.isBypassEnabled && event.player.hasPermission("mf.bypass")) || hasLockBypassPermission(mfPlayer)) {
                     // The whole task is skipped when suppressing, not just the message: each one performs
