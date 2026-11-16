@@ -23,6 +23,7 @@ import org.bukkit.Material
 import org.bukkit.World
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.math.floor
 
 class MfClaimService(private val plugin: MedievalFactions, private val repository: MfClaimedChunkRepository) {
 
@@ -54,6 +55,41 @@ class MfClaimService(private val plugin: MedievalFactions, private val repositor
     fun isClaimingBlockedInWorld(world: World): Boolean {
         return isClaimingBlockedInWorld(world.name)
     }
+
+    /**
+     * The power one claimed chunk in the named world counts against a faction's power when `factions.limitLand` is
+     * on: the world's entry in `factions.claimPowerCostByWorld` if it has one, otherwise `factions.claimPowerCost`.
+     * Both default to 1, which is one power per chunk, as before these options existed. Negative values count as 0.
+     */
+    fun getClaimPowerCost(worldName: String?): Double {
+        val defaultCost = plugin.config.getDouble("factions.claimPowerCost", 1.0)
+        val worldCosts = plugin.config.getConfigurationSection("factions.claimPowerCostByWorld")?.getValues(false)
+        val worldCost = worldName?.let { worldCosts?.get(it) as? Number }?.toDouble()
+        return (worldCost ?: defaultCost).coerceAtLeast(0.0)
+    }
+
+    fun getClaimPowerCost(worldId: UUID): Double = getClaimPowerCost(plugin.server.getWorld(worldId)?.name)
+
+    /** The total power the given chunks would count against a faction's power. */
+    fun getClaimPowerCost(chunks: Collection<MfChunkPosition>): Double =
+        chunks.groupingBy { it.worldId }.eachCount().entries.sumOf { (worldId, count) -> getClaimPowerCost(worldId) * count }
+
+    /**
+     * The total number of chunks a faction with the given power could hold if all its further claims were made in the
+     * given world: the denominator wherever claims are shown against what the faction can hold (the "you may not
+     * claim more than N chunks" message, `/f power` and the Dynmap demesne line). At the default cost of 1 this is the
+     * faction's power rounded down, as the message showed before claim costs were configurable.
+     */
+    fun getClaimLimit(factionId: MfFactionId, power: Double, worldId: UUID?): Double {
+        // Without a world (the console, or a map popup for a faction with no land) the default cost is used
+        val cost = if (worldId == null) getClaimPowerCost(null as String?) else getClaimPowerCost(worldId)
+        if (cost <= 0.0) return floor(power)
+        return getClaims(factionId).size + floor((power - getClaimPowerUsed(factionId)) / cost)
+    }
+
+    /** The power a faction's existing claims count against its power, which is its claim count at the default cost. */
+    fun getClaimPowerUsed(factionId: MfFactionId): Double =
+        getClaims(factionId).groupingBy { it.worldId }.eachCount().entries.sumOf { (worldId, count) -> getClaimPowerCost(worldId) * count }
 
     @JvmName("getClaimsByFactionId")
     fun getClaims(factionId: MfFactionId): List<MfClaimedChunk> = claims.filter { it.factionId == factionId }

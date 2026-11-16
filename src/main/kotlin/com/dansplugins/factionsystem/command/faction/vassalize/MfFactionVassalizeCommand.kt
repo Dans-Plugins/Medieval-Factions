@@ -3,6 +3,7 @@ package com.dansplugins.factionsystem.command.faction.vassalize
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.approval.MfApprovalRequest
 import com.dansplugins.factionsystem.approval.MfApprovalRequestType
+import com.dansplugins.factionsystem.command.faction.MfForcedDiplomacy
 import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.relationship.MfFactionRelationship
@@ -21,6 +22,8 @@ import java.util.logging.Level.SEVERE
 
 class MfFactionVassalizeCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
+    private val forcedDiplomacy = MfForcedDiplomacy(plugin)
+
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (!sender.hasPermission("mf.vassalize")) {
             sender.sendMessage("$RED${plugin.language["CommandFactionVassalizeNoPermission"]}")
@@ -34,9 +37,19 @@ class MfFactionVassalizeCommand(private val plugin: MedievalFactions) : CommandE
             sender.sendMessage("$RED${plugin.language["CommandFactionVassalizeNotAPlayer"]}")
             return true
         }
+        val hasForcePermission = sender.hasPermission("mf.force.vassalize")
         plugin.server.scheduler.runTaskAsynchronously(
             plugin,
             Runnable {
+                // With mf.force.vassalize, `<faction> <target>` acts for both factions at once (#1898).
+                when (val forced = forcedDiplomacy.parse(sender, args, hasForcePermission)) {
+                    is MfForcedDiplomacy.Parse.Resolved -> {
+                        forcedDiplomacy.vassalize(sender, forced.faction, forced.target)
+                        return@Runnable
+                    }
+                    MfForcedDiplomacy.Parse.Refused -> return@Runnable
+                    MfForcedDiplomacy.Parse.NotForced -> Unit
+                }
                 val playerService = plugin.services.playerService
                 val mfPlayer = playerService.getPlayer(sender)
                     ?: playerService.save(MfPlayer(plugin, sender)).onFailure {
