@@ -556,7 +556,10 @@ If enemy faction is disbanded or surrenders, war ends automatically.
 /f flag set liegeChainCanInteractWithLand true    (for vassals)
 ```
 
+All of these are also available under one command, `/f vassalage`: `offer`, `accept`, `decline`, `revolt` and `release` do the same as `vassalize`, `swearfealty`, `declinevassalization`, `declareindependence` and `grantindependence`. See [COMMANDS.md](COMMANDS.md#vassalage-system).
+
 **As a Liege:**
+- Withdraw an offer that has not been accepted yet: `/f vassalage rescind [FactionName]`
 - Grant independence to a vassal: `/f grantindependence [VassalName]`
 - Coordinate with vassals using vassal chat: `/f chat vassals`
 

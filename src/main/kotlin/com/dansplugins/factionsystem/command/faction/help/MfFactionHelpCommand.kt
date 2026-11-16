@@ -92,6 +92,7 @@ class MfFactionHelpCommand(private val plugin: MedievalFactions) : CommandExecut
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionSwearFealty"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionUnclaim"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionUnclaimAll"]).apply { color = SpigotChatColor.GRAY }),
+                arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionVassalage"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionVassalize"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpFactionWho"]).apply { color = SpigotChatColor.GRAY }),
                 arrayOf(TextComponent(plugin.language["CommandFactionHelpGate"]).apply { color = SpigotChatColor.GRAY }),
