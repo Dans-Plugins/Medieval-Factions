@@ -76,14 +76,23 @@ factions:
   wartimeInteractableBlocks: [] # List of block types that become interactable in enemy faction territory during war. Example: ["OAK_DOOR", "IRON_DOOR", "OAK_FENCE_GATE", "STONE_BUTTON"]
   maxNameLength: 20
   zeroPowerFactionsGetDisbanded: false
+  leaderZeroPowerDisbandsFaction: false # When true, a faction is disbanded when a member with its Owner role is brought to 0 power by a death. Offline power decay never triggers it.
+  minimumRivalryHours: 0 # How long a rivalry named with /f rival must last before /f unrival can end it. 0 means it can be ended at any time.
   vassalPowerContributionMultiplier: 0.75
   nonMembersCanInteractWithDoors: false
   nonMembersCanInteractWithEntities: false # When true, non-members can right-click entities (minecarts, boats, item frames, animals, armour stands) in faction territory. Villager trading is governed separately by the protectVillagerTrade faction flag.
   allowHopperTransfersBetweenSameOwnerLocks: false # When true, hoppers may move items between two locked blocks that are locked by the same player (e.g. a player's locked hopper pulling from their own locked chest). Transfers involving an unlocked block, or locks of different players, stay blocked.
+  allowBuildingEverywhere: false # When true, anyone can place and break blocks in any faction's territory and in the wilderness. Gates and locked blocks stay protected.
+  preventPortalGenerationInClaims: false # When true, the exit portal of a nether portal trip is not generated in a faction's territory unless the traveller could build there.
   maxClaimRadius: 3
   limitLand: true
+  claimPowerCost: 1.0 # Power each claimed chunk counts against the faction's power when limitLand is true.
+  claimPowerCostByWorld: {} # Per-world overrides of claimPowerCost, by world name. Example: {world_nether: 4.0}
   contiguousClaims: false
   blockedClaimWorlds: [] # List of world names where claiming is not allowed. Example: ["world_nether", "world_the_end"]
+  blockedClaimChunks: [] # Chunks that can never be claimed, as "world:x:z" or an inclusive rectangle "world:x1:z1:x2:z2" in chunk coordinates. Example: ["world:-2:-2:1:1"]
+  maxClaimDistance: -1 # Maximum distance, in chunks, a new claim may be from the faction's nearest existing claim in the same world. -1 disables the limit.
+  preventConqueringSurroundedChunks: false # When true, an enemy chunk surrounded on all four sides by its owner's claims cannot be conquered until a neighbouring chunk is taken.
   actionBarTerritoryIndicator: true
   titleTerritoryIndicator: true
   titleTerritoryFadeInLength: 5  # "Length" is measured in ticks (20 ticks = 1 second).
@@ -91,6 +100,7 @@ factions:
   titleTerritoryFadeOutLength: 5
   allowNeutrality: false
   warDeclarationRequiresApproval: false
+  truceDurationMinutes: 0  # After two factions make peace, neither can declare war on the other for this many minutes. 0 turns truces off.
   allyDeclarationRequiresApproval: false
   vassalizeDeclarationRequiresApproval: false
   factionlessFactionName: Factionless
@@ -111,11 +121,14 @@ factions:
       allowFriendlyFire: false
       acceptBonusPower: true
       protectVillagerTrade: true
+      allowMobGriefing: true
+  forcedFlags: [] # Flags that always use the value under defaults.flags for every faction and cannot be changed with /faction flag set. Example: ["allowFriendlyFire", "neutral"]. 'color' cannot be forced.
 powerScoreboard:
   enabled: false  # Show each player's power and their faction's power and max power on a sidebar scoreboard. Players whose scoreboard another plugin has set are left alone.
   updateIntervalSeconds: 5
 chat:
   enableDefaultChatFormatting: true
+  prefixWorlds: [] # When not empty, only players in these worlds see the faction prefix in public chat; players elsewhere see the message without it. Example: ["Factions"]
   faction:
     format: '&7[faction] [${factionColor}${faction}&7] [${role}] &f${displayName}: ${message}'
   vassals:
@@ -144,6 +157,10 @@ dynmap:
   fillClaims: true
   # fillOpacity: 0.0-1.0, controls how transparent the territory fill is (0.0 = invisible, 1.0 = solid)
   fillOpacity: 0.35
+slimefun:
+  protection:
+    # Stop non-members from using or breaking Slimefun blocks in claimed land, following the same rules as ordinary blocks. Needs Slimefun installed. Takes effect on restart.
+    enabled: false
 gates:
   minHeight: 3
   maxBlocks: 64

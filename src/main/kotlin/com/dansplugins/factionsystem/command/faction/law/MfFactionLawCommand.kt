@@ -14,14 +14,16 @@ class MfFactionLawCommand(private val plugin: MedievalFactions) : CommandExecuto
     private val factionLawMoveCommand = MfFactionLawMoveCommand(plugin)
     private val factionLawRemoveCommand = MfFactionLawRemoveCommand(plugin)
     private val factionLawListCommand = MfFactionLawListCommand(plugin)
+    private val factionLawSectionCommand = MfFactionLawSectionCommand(plugin)
 
     private val addAliases = listOf("add", plugin.language["CmdFactionLawAdd"])
     private val editAliases = listOf("edit", plugin.language["CmdFactionLawEdit"])
     private val moveAliases = listOf("move", plugin.language["CmdFactionLawMove"])
     private val removeAliases = listOf("remove", plugin.language["CmdFactionLawRemove"])
     private val listAliases = listOf("list", plugin.language["CmdFactionLawList"])
+    private val sectionAliases = listOf("section", plugin.language["CmdFactionLawSection"])
 
-    private val subcommands = addAliases + editAliases + moveAliases + removeAliases + listAliases
+    private val subcommands = addAliases + editAliases + moveAliases + removeAliases + listAliases + sectionAliases
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         return when (args.firstOrNull()?.lowercase()) {
@@ -30,6 +32,7 @@ class MfFactionLawCommand(private val plugin: MedievalFactions) : CommandExecuto
             in moveAliases -> factionLawMoveCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in removeAliases -> factionLawRemoveCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             in listAliases -> factionLawListCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
+            in sectionAliases -> factionLawSectionCommand.onCommand(sender, command, label, args.drop(1).toTypedArray())
             else -> {
                 sender.sendMessage("$RED${plugin.language["CommandFactionLawUsage"]}")
                 true

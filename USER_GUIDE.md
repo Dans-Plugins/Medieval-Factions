@@ -180,10 +180,16 @@ Operators can force join any faction:
 
 **Option 1: Radius Claim**
 
-Claim multiple chunks in a square area:
+Claim the chunks within a radius of the one you are standing in (a circle, not a square):
 ```
 /f claim [radius]
-/f claim 2  (claims a 5x5 chunk area)
+/f claim 2  (claims the 13 chunks within 2 chunks of yours)
+```
+
+Or claim a square or rectangle centred on your chunk, giving the side lengths in chunks:
+```
+/f claim square 3        (claims a 3x3 chunk area)
+/f claim rectangle 5 2   (claims 5 chunks east-west by 2 north-south)
 ```
 
 **Option 2: Auto-Claim**
@@ -226,6 +232,7 @@ If you need to unclaim:
 **Tips:**
 - Claim strategically - create a buffer zone around your important structures
 - Claim contiguously if server requires it (`contiguousClaims` in config)
+- Some chunks may be unclaimable (`blockedClaimChunks`), and new claims may have to stay within a set distance of your existing land (`maxClaimDistance`)
 - Remember: you lose claims if faction power drops too low
 
 #### Who Can Claim and Unclaim
@@ -765,6 +772,30 @@ This displays all laws with their numbers.
 ```
 
 The laws in between shift up or down by one. The new number must be between 1 and the number of laws the faction has.
+
+**Grouping Laws into Sections:**
+
+```
+/f law section [number] [section]
+/f law section 2 Trade
+/f law section 4 Warfare
+/f law section 4
+```
+
+A section is a free-text label on a law. `/f law list` shows the laws without a section first, exactly as before, then one heading per section with its laws underneath. Leaving out the section name (the last line above) takes the law out of its section. Law numbers stay global: law 4 is still law 4 in whichever section it sits, so `/f law edit`, `/f law move` and `/f law remove` keep working the same way.
+
+```mermaid
+flowchart TD
+    L["Laws in number order<br/>1. No griefing<br/>2. Tax is 10% (Trade)<br/>3. Help defend (no section)<br/>4. No raids in truce (Warfare)<br/>5. Market on Sundays (Trade)"]
+    L --> U["Laws with no section first<br/>1. No griefing<br/>3. Help defend"]
+    L --> T["Trade:<br/>2. Tax is 10%<br/>5. Market on Sundays"]
+    L --> W["Warfare:<br/>4. No raids in truce"]
+    U --> O["/f law list output, ten lines a page<br/>(headings count as lines)"]
+    T --> O
+    W --> O
+```
+
+Sections appear in the order of their lowest-numbered law, so `/f law move` also controls the order of the sections.
 
 **Removing Laws:**
 

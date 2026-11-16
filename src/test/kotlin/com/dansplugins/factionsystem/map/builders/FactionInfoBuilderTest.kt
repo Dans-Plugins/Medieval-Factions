@@ -209,12 +209,27 @@ class FactionInfoBuilderTest {
     }
 
     @Test
-    fun `build shows demesne as claim count over power rounded down`() {
+    fun `build shows demesne as claim count over the claim limit`() {
+        // At the default claim power cost the limit is the power rounded down (see MfClaimServicePowerCostTest)
         show("showDemesne")
         `when`(faction.power).thenReturn(10.7)
         `when`(claimService.getClaims(factionId)).thenReturn(List(3) { mock(MfClaimedChunk::class.java) })
+        `when`(claimService.getClaimLimit(factionId, 10.7, null)).thenReturn(10.0)
 
         assertEquals("<h1>Avalon</h1><h2>Demesne</h2>3/10", uut.build(faction))
+    }
+
+    @Test
+    fun `build shows demesne capacity at the claim power cost of the home world`() {
+        // factions.claimPowerCostByWorld can make a chunk cost more than one power, so the capacity is not the power
+        show("showDemesne")
+        val homeWorldId = java.util.UUID.randomUUID()
+        `when`(faction.power).thenReturn(5.0)
+        `when`(faction.home).thenReturn(com.dansplugins.factionsystem.area.MfPosition(homeWorldId, 0.0, 64.0, 0.0, 0f, 0f))
+        `when`(claimService.getClaims(factionId)).thenReturn(List(2) { mock(MfClaimedChunk::class.java) })
+        `when`(claimService.getClaimLimit(factionId, 5.0, homeWorldId)).thenReturn(2.0)
+
+        assertEquals("<h1>Avalon</h1><h2>Demesne</h2>2/2", uut.build(faction))
     }
 
     // Issue #2159: player-controlled text must not be interpreted as markup in the popup.
@@ -290,6 +305,7 @@ class FactionInfoBuilderTest {
         `when`(relationshipService.getAllies(factionId)).thenReturn(listOf(ally))
         `when`(relationshipService.getFactionsAtWarWith(factionId)).thenReturn(listOf(enemy))
         `when`(claimService.getClaims(factionId)).thenReturn(emptyList())
+        `when`(claimService.getClaimLimit(factionId, 5.0, null)).thenReturn(5.0)
 
         val result = uut.build(faction)
 
