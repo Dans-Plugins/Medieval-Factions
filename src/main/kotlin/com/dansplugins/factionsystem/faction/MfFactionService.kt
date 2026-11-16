@@ -197,6 +197,16 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
                 return@forEach
             }
         }
+        lockService.getLockedEntities(playerId).forEach { lockedEntity ->
+            lockService.deleteLockedEntity(lockedEntity.entityId).onFailure { failure ->
+                plugin.logger.log(
+                    SEVERE,
+                    "Failed to delete lock on entity ${lockedEntity.entityId} of former member ${playerId.value}: ${failure.reason.message}",
+                    failure.reason.cause
+                )
+                return@forEach
+            }
+        }
     }
 
     @JvmName("deleteFactionByFactionId")

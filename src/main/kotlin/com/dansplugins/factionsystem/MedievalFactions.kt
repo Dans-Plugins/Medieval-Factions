@@ -64,6 +64,7 @@ import com.dansplugins.factionsystem.listener.EntityDamageByEntityListener
 import com.dansplugins.factionsystem.listener.EntityDamageListener
 import com.dansplugins.factionsystem.listener.EntityExplodeListener
 import com.dansplugins.factionsystem.listener.EntityInteractionProtection
+import com.dansplugins.factionsystem.listener.EntityLockListener
 import com.dansplugins.factionsystem.listener.EntityPlaceListener
 import com.dansplugins.factionsystem.listener.GrowthBorderTrimmer
 import com.dansplugins.factionsystem.listener.HangingPlaceListener
@@ -402,6 +403,7 @@ class MedievalFactions : JavaPlugin() {
             EntityDamageListener(this),
             EntityExplodeListener(this),
             MobGriefingListener(this),
+            EntityLockListener(this),
             EntityPlaceListener(worldActionProtection),
             HangingPlaceListener(worldActionProtection),
             InventoryClickListener(this),

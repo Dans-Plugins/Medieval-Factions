@@ -485,7 +485,7 @@ Laws are numbered from 1 in the order `/f law list` shows them. Where a command 
 ### `/lock [cancel]`
 **Permission:** `mf.lock` (default: true)  
 **Aliases:** `/verschlieBen`, `/verschliessen`, `/verrouiller`  
-**Description:** Enables lock mode. Right-click on a block to lock it.  
+**Description:** Enables lock mode. Right-click on a block, armour stand or item frame to lock it.  
 **Usage:**
 - `/lock` - Enables lock mode
 - `/lock cancel` - Cancels lock mode
@@ -499,6 +499,11 @@ Laws are numbered from 1 in the order `/f law list` shows them. Where a command 
 - `/unlock cancel` - Cancels unlock mode
 
 **Notes:** Normally you can only unlock blocks you locked yourself. With `mf.force.unlock` (default: op), unlock mode also works on blocks locked by another player — a message naming the lock owner whose protection was bypassed is shown — and breaking another player's locked block unlocks it instead of being refused. (A faction role can also grant a lock bypass for unlock mode, independently of this permission.)
+
+Armour stands and item frames are identified by entity id instead of coordinates. Right-clicking one in an accessor mode runs these forms for you:
+- `/accessors list entity [entity id] (page)`
+- `/accessors add entity [entity id] (player)`
+- `/accessors remove entity [entity id] (player)`
 
 ### `/accessors list`
 **Permission:** `mf.accessors.list` (default: true)  

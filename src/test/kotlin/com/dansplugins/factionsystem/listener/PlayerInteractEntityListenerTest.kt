@@ -9,7 +9,11 @@ import com.dansplugins.factionsystem.faction.MfFactionService
 import com.dansplugins.factionsystem.faction.flag.MfFlag
 import com.dansplugins.factionsystem.faction.flag.MfFlagValues
 import com.dansplugins.factionsystem.faction.flag.MfFlags
+import com.dansplugins.factionsystem.interaction.MfInteractionService
+import com.dansplugins.factionsystem.interaction.MfInteractionStatus
 import com.dansplugins.factionsystem.lang.Language
+import com.dansplugins.factionsystem.locks.MfLockService
+import com.dansplugins.factionsystem.locks.MfLockedEntity
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerService
@@ -18,8 +22,10 @@ import org.bukkit.Chunk
 import org.bukkit.Location
 import org.bukkit.Server
 import org.bukkit.configuration.file.FileConfiguration
+import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
+import org.bukkit.entity.ItemFrame
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
@@ -49,6 +55,9 @@ class PlayerInteractEntityListenerTest {
     private lateinit var claimService: MfClaimService
     private lateinit var factionService: MfFactionService
     private lateinit var config: FileConfiguration
+    private lateinit var lockService: MfLockService
+    private lateinit var interactionService: MfInteractionService
+    private lateinit var scheduler: BukkitScheduler
     private lateinit var player: Player
     private lateinit var mfPlayer: MfPlayer
     private lateinit var playerUuid: UUID
@@ -277,6 +286,90 @@ class PlayerInteractEntityListenerTest {
         verify(player, times(2)).sendMessage(any(String::class.java))
     }
 
+    // --- entity locks (#1679) ---
+
+    @Test
+    fun onPlayerInteractEntity_LockedArmorStandAndNoAccess_ShouldCancelEvenWhereTerritoryAllows() {
+        val entity = createLockable(ArmorStand::class.java)
+        val event = createEvent(entity)
+        setUpClaim(entity, interactionAllowed = true)
+        lockEntity(entity, accessors = emptyList())
+
+        uut.onPlayerInteractEntity(event)
+
+        verify(event).isCancelled = true
+        // The owner's name is looked up off the main thread, as for locked blocks.
+        verify(scheduler).runTaskAsynchronously(any(), any(Runnable::class.java))
+    }
+
+    @Test
+    fun onPlayerInteractEntity_LockedItemFrameAndPlayerIsAccessor_ShouldAllowEvenWhereTerritoryRefuses() {
+        val entity = createLockable(ItemFrame::class.java)
+        val event = createEvent(entity)
+        setUpClaim(entity, interactionAllowed = false)
+        lockEntity(entity, accessors = listOf(playerId))
+
+        uut.onPlayerInteractEntity(event)
+
+        verify(event, never()).isCancelled = true
+        verify(player, never()).sendMessage(any(String::class.java))
+    }
+
+    @Test
+    fun onPlayerInteractEntity_UnlockedArmorStand_ShouldFallThroughToTerritoryProtection() {
+        val entity = createLockable(ArmorStand::class.java)
+        val event = createEvent(entity)
+        setUpClaim(entity, interactionAllowed = false)
+
+        uut.onPlayerInteractEntity(event)
+
+        verify(event).isCancelled = true
+        verify(player).sendMessage(any(String::class.java))
+    }
+
+    @Test
+    fun onPlayerInteract_InLockMode_ShouldActOnTheInteractAtEventOnlyAndCancelBoth() {
+        val entity = createLockable(ItemFrame::class.java)
+        setUpClaim(entity, interactionAllowed = true)
+        `when`(interactionService.getInteractionStatus(playerId)).thenReturn(MfInteractionStatus.LOCKING)
+        val entityLockInteraction = mock(EntityLockInteraction::class.java)
+        val protection = EntityInteractionProtection(medievalFactions, entityLockInteraction)
+        val atEvent = mock(PlayerInteractAtEntityEvent::class.java)
+        `when`(atEvent.player).thenReturn(player)
+        `when`(atEvent.rightClicked).thenReturn(entity)
+        val plainEvent = createEvent(entity)
+
+        PlayerInteractAtEntityListener(medievalFactions, protection).onPlayerInteractAtEntity(atEvent)
+        PlayerInteractEntityListener(medievalFactions, protection).onPlayerInteractEntity(plainEvent)
+
+        verify(atEvent).isCancelled = true
+        verify(plainEvent).isCancelled = true
+        verify(entityLockInteraction, times(1)).handle(MfInteractionStatus.LOCKING, player, entity)
+    }
+
+    private fun <T : Entity> createLockable(type: Class<T>): T {
+        val chunk = mock(Chunk::class.java)
+        val location = mock(Location::class.java)
+        `when`(location.chunk).thenReturn(chunk)
+        val entity = mock(type)
+        `when`(entity.location).thenReturn(location)
+        `when`(entity.uniqueId).thenReturn(UUID.randomUUID())
+        return entity
+    }
+
+    private fun lockEntity(entity: Entity, accessors: List<MfPlayerId>) {
+        val entityId = entity.uniqueId
+        val lockedEntity = MfLockedEntity(
+            entityId = entityId,
+            worldId = UUID.randomUUID(),
+            chunkX = 0,
+            chunkZ = 0,
+            playerId = MfPlayerId(UUID.randomUUID().toString()),
+            accessors = accessors
+        )
+        `when`(lockService.getLockedEntity(entityId)).thenReturn(lockedEntity)
+    }
+
     private fun assertEntityIsProtected(entityType: EntityType) {
         // Arrange
         val entity = createEntity(entityType)
@@ -345,6 +438,10 @@ class PlayerInteractEntityListenerTest {
         `when`(services.playerService).thenReturn(playerService)
         `when`(services.claimService).thenReturn(claimService)
         `when`(services.factionService).thenReturn(factionService)
+        lockService = mock(MfLockService::class.java)
+        interactionService = mock(MfInteractionService::class.java)
+        `when`(services.lockService).thenReturn(lockService)
+        `when`(services.interactionService).thenReturn(interactionService)
     }
 
     private fun mockConfig() {
@@ -361,7 +458,7 @@ class PlayerInteractEntityListenerTest {
 
     private fun mockScheduler() {
         val server = mock(Server::class.java)
-        val scheduler = mock(BukkitScheduler::class.java)
+        scheduler = mock(BukkitScheduler::class.java)
         `when`(medievalFactions.server).thenReturn(server)
         `when`(server.scheduler).thenReturn(scheduler)
     }

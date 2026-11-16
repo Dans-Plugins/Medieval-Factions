@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.command.accessors.list
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfBlockPosition
+import com.dansplugins.factionsystem.command.accessors.MfEntityAccessors
 import com.dansplugins.factionsystem.interaction.MfInteractionStatus.CHECKING_ACCESS
 import com.dansplugins.factionsystem.pagination.PaginatedView
 import com.dansplugins.factionsystem.player.MfPlayer
@@ -35,6 +36,12 @@ class MfAccessorsListCommand(private val plugin: MedievalFactions) : CommandExec
         }
         if (sender !is Player) {
             sender.sendMessage("${BukkitChatColor.RED}${plugin.language["CommandAccessorsListNotAPlayer"]}")
+            return true
+        }
+        if (args.firstOrNull()?.lowercase() == "entity") {
+            val entityId = MfEntityAccessors(plugin).parseEntityId(sender, args.drop(1), "CommandAccessorsListEntityUsage") ?: return true
+            val pageNumber = args.getOrNull(2)?.toIntOrNull()?.minus(1) ?: 0
+            MfEntityAccessors(plugin).list(sender, entityId, pageNumber)
             return true
         }
         val lockService = plugin.services.lockService

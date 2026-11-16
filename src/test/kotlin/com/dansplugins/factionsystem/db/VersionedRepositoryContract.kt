@@ -30,6 +30,7 @@ import com.dansplugins.factionsystem.law.MfLaw
 import com.dansplugins.factionsystem.law.MfLawId
 import com.dansplugins.factionsystem.locks.JooqMfLockRepository
 import com.dansplugins.factionsystem.locks.MfLockedBlock
+import com.dansplugins.factionsystem.locks.MfLockedEntity
 import com.dansplugins.factionsystem.player.JooqMfPlayerRepository
 import com.dansplugins.factionsystem.player.JooqMfPlayerRepositoryTest
 import com.dansplugins.factionsystem.player.MfPlayer
@@ -562,5 +563,45 @@ abstract class VersionedRepositoryContract {
             challengerLocation = MfPosition(world, 1.0, 64.0, 1.0, 0f, 0f),
             challengedLocation = null
         )
+    }
+
+    @Test
+    fun `locked entity - a stale save is rejected and leaves the accessors untouched`() {
+        val owner = players.upsert(newPlayer())
+        val accessor = players.upsert(newPlayer())
+        val other = players.upsert(newPlayer())
+        val original = locks.upsertLockedEntity(newLockedEntity(owner.id))
+        assertEquals(1, original.version)
+        val newer = locks.upsertLockedEntity(original.copy(accessors = listOf(accessor.id)))
+        assertEquals(2, newer.version)
+
+        assertThrows(OptimisticLockingFailureException::class.java) {
+            locks.upsertLockedEntity(original.copy(accessors = listOf(other.id)))
+        }
+
+        val stored = locks.getLockedEntities().single { it.id == original.id }
+        assertEquals(2, stored.version)
+        assertEquals(listOf(accessor.id), stored.accessors)
+    }
+
+    @Test
+    fun `locked entity - removed by entity id, and with its claim`() {
+        val owner = players.upsert(newPlayer())
+        val deleted = locks.upsertLockedEntity(newLockedEntity(owner.id))
+        val unclaimed = locks.upsertLockedEntity(newLockedEntity(owner.id))
+
+        locks.deleteLockedEntity(deleted.entityId)
+        claims.delete(unclaimed.worldId, unclaimed.chunkX, unclaimed.chunkZ)
+
+        val remaining = locks.getLockedEntities().map { it.id }
+        assertFalse(deleted.id in remaining)
+        assertFalse(unclaimed.id in remaining, "the lock must go with the claim, as block locks do")
+    }
+
+    private fun newLockedEntity(ownerId: MfPlayerId): MfLockedEntity {
+        val world = UUID.randomUUID()
+        val faction = parentFactions.upsert(newFaction(name = "EntityLockOwner"))
+        claims.upsert(MfClaimedChunk(world, 0, 0, faction.id))
+        return MfLockedEntity(entityId = UUID.randomUUID(), worldId = world, chunkX = 0, chunkZ = 0, playerId = ownerId)
     }
 }

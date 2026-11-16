@@ -7,7 +7,10 @@ import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.jooq.Tables.MF_LOCKED_BLOCK
 import com.dansplugins.factionsystem.jooq.Tables.MF_LOCKED_BLOCK_ACCESSOR
 import com.dansplugins.factionsystem.jooq.Tables.MF_LOCKED_BLOCK_ROLE_ACCESSOR
+import com.dansplugins.factionsystem.jooq.Tables.MF_LOCKED_ENTITY
+import com.dansplugins.factionsystem.jooq.Tables.MF_LOCKED_ENTITY_ACCESSOR
 import com.dansplugins.factionsystem.jooq.tables.records.MfLockedBlockRecord
+import com.dansplugins.factionsystem.jooq.tables.records.MfLockedEntityRecord
 import com.dansplugins.factionsystem.player.MfPlayerId
 import org.jooq.Condition
 import org.jooq.DSLContext
@@ -190,5 +193,85 @@ class JooqMfLockRepository(private val dsl: DSLContext) : MfLockRepository {
         playerId = playerId.let(::MfPlayerId),
         accessors = accessors,
         accessorRoleIds = accessorRoleIds
+    )
+
+    // --- locked entities (#1679) ---
+
+    override fun getLockedEntities(): List<MfLockedEntity> {
+        val accessors = dsl.selectFrom(MF_LOCKED_ENTITY_ACCESSOR).fetch()
+            .groupBy({ it.lockedEntityId }, { it.playerId.let(::MfPlayerId) })
+        return dsl.selectFrom(MF_LOCKED_ENTITY).fetch()
+            .map { it.toDomain(accessors[it.id].orEmpty()) }
+    }
+
+    override fun upsertLockedEntity(lockedEntity: MfLockedEntity): MfLockedEntity {
+        // As for blocks, a stale write is signalled with null so the exception is not wrapped by jOOQ.
+        return dsl.transactionResult { config ->
+            val transactionalDsl = config.dsl()
+            if (!writeLockedEntity(transactionalDsl, lockedEntity)) return@transactionResult null
+            transactionalDsl.deleteFrom(MF_LOCKED_ENTITY_ACCESSOR)
+                .where(MF_LOCKED_ENTITY_ACCESSOR.LOCKED_ENTITY_ID.eq(lockedEntity.id.value))
+                .execute()
+            val accessors = lockedEntity.accessors.distinctBy { it.value }
+            accessors.forEach { accessor ->
+                transactionalDsl.insertInto(MF_LOCKED_ENTITY_ACCESSOR)
+                    .set(MF_LOCKED_ENTITY_ACCESSOR.LOCKED_ENTITY_ID, lockedEntity.id.value)
+                    .set(MF_LOCKED_ENTITY_ACCESSOR.PLAYER_ID, accessor.value)
+                    .execute()
+            }
+            transactionalDsl.selectFrom(MF_LOCKED_ENTITY)
+                .where(MF_LOCKED_ENTITY.ID.eq(lockedEntity.id.value))
+                .fetchOne()
+                .let(::requireNotNull)
+                .toDomain(accessors)
+        } ?: throw OptimisticLockingFailureException("Invalid version: ${lockedEntity.version}")
+    }
+
+    /** Writes the locked entity row, or returns false without writing if [lockedEntity] is stale. */
+    private fun writeLockedEntity(dsl: DSLContext, lockedEntity: MfLockedEntity): Boolean =
+        MfVersionedWrite.write(
+            update = {
+                dsl.update(MF_LOCKED_ENTITY)
+                    .set(MF_LOCKED_ENTITY.ENTITY_ID, lockedEntity.entityId.toString())
+                    .set(MF_LOCKED_ENTITY.WORLD_ID, lockedEntity.worldId.toString())
+                    .set(MF_LOCKED_ENTITY.CHUNK_X, lockedEntity.chunkX)
+                    .set(MF_LOCKED_ENTITY.CHUNK_Z, lockedEntity.chunkZ)
+                    .set(MF_LOCKED_ENTITY.PLAYER_ID, lockedEntity.playerId.value)
+                    .set(MF_LOCKED_ENTITY.VERSION, lockedEntity.version + 1)
+                    .where(MF_LOCKED_ENTITY.ID.eq(lockedEntity.id.value))
+                    .and(MF_LOCKED_ENTITY.VERSION.eq(lockedEntity.version))
+                    .execute()
+            },
+            rowExists = {
+                dsl.select(MF_LOCKED_ENTITY.ID).from(MF_LOCKED_ENTITY).where(MF_LOCKED_ENTITY.ID.eq(lockedEntity.id.value)).forUpdate().fetchOne() != null
+            },
+            insert = {
+                dsl.insertInto(MF_LOCKED_ENTITY)
+                    .set(MF_LOCKED_ENTITY.ID, lockedEntity.id.value)
+                    .set(MF_LOCKED_ENTITY.ENTITY_ID, lockedEntity.entityId.toString())
+                    .set(MF_LOCKED_ENTITY.WORLD_ID, lockedEntity.worldId.toString())
+                    .set(MF_LOCKED_ENTITY.CHUNK_X, lockedEntity.chunkX)
+                    .set(MF_LOCKED_ENTITY.CHUNK_Z, lockedEntity.chunkZ)
+                    .set(MF_LOCKED_ENTITY.PLAYER_ID, lockedEntity.playerId.value)
+                    .set(MF_LOCKED_ENTITY.VERSION, 1)
+                    .execute()
+            }
+        )
+
+    override fun deleteLockedEntity(entityId: UUID) {
+        dsl.deleteFrom(MF_LOCKED_ENTITY)
+            .where(MF_LOCKED_ENTITY.ENTITY_ID.eq(entityId.toString()))
+            .execute()
+    }
+
+    private fun MfLockedEntityRecord.toDomain(accessors: List<MfPlayerId>) = MfLockedEntity(
+        id = id.let(::MfLockedEntityId),
+        version = version,
+        entityId = UUID.fromString(entityId),
+        worldId = UUID.fromString(worldId),
+        chunkX = chunkX,
+        chunkZ = chunkZ,
+        playerId = playerId.let(::MfPlayerId),
+        accessors = accessors
     )
 }

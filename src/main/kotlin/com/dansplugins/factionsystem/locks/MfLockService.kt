@@ -22,18 +22,22 @@ import org.bukkit.block.Chest
 import org.bukkit.block.DoubleChest
 import org.bukkit.block.data.Bisected
 import org.bukkit.block.data.Bisected.Half.BOTTOM
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import java.util.logging.Level.SEVERE
 
 class MfLockService(private val plugin: MedievalFactions, private val repository: MfLockRepository) {
 
     private val lockedBlocks: MutableMap<MfBlockPosition, MfLockedBlock> = ConcurrentHashMap()
+    private val lockedEntities: MutableMap<UUID, MfLockedEntity> = ConcurrentHashMap()
 
     init {
         plugin.logger.info("Loading locked blocks...")
         val startTime = System.currentTimeMillis()
         lockedBlocks.putAll(repository.getLockedBlocks().map { it.block to it })
         plugin.logger.info("${lockedBlocks.size} locked blocks loaded (${System.currentTimeMillis() - startTime}ms)")
+        lockedEntities.putAll(repository.getLockedEntities().map { it.entityId to it })
+        plugin.logger.info("${lockedEntities.size} locked entities loaded")
     }
 
     fun lock(block: MfBlockPosition, claim: MfClaimedChunk, player: MfPlayer): Result4k<MfLockedBlock, ServiceFailure> = resultFrom {
@@ -134,7 +138,52 @@ class MfLockService(private val plugin: MedievalFactions, private val repository
 
     internal fun unloadLockedBlocks(claim: MfClaimedChunk) {
         getLockedBlocks(claim).forEach { lockedBlocks.remove(it.block) }
+        // The database removes entity locks with the claim too (#1679).
+        lockedEntities.values
+            .filter { it.worldId == claim.worldId && it.chunkX == claim.x && it.chunkZ == claim.z }
+            .forEach { lockedEntities.remove(it.entityId) }
     }
+
+    // --- locked armour stands and item frames (#1679) ---
+
+    /** Locks the entity with the UUID [entityId], which stands in [claim], for [player]. */
+    fun lockEntity(entityId: UUID, claim: MfClaimedChunk, player: MfPlayer): Result4k<MfLockedEntity, ServiceFailure> = resultFrom {
+        val lockedEntity = repository.upsertLockedEntity(
+            MfLockedEntity(
+                entityId = entityId,
+                worldId = claim.worldId,
+                chunkX = claim.x,
+                chunkZ = claim.z,
+                playerId = player.id
+            )
+        )
+        lockedEntities[entityId] = lockedEntity
+        return@resultFrom lockedEntity
+    }.mapFailure { exception ->
+        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+    }
+
+    fun saveLockedEntity(lockedEntity: MfLockedEntity): Result4k<MfLockedEntity, ServiceFailure> = resultFrom {
+        val saved = repository.upsertLockedEntity(lockedEntity)
+        lockedEntities[saved.entityId] = saved
+        return@resultFrom saved
+    }.mapFailure { exception ->
+        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+    }
+
+    fun deleteLockedEntity(entityId: UUID): Result4k<Unit, ServiceFailure> = resultFrom {
+        repository.deleteLockedEntity(entityId)
+        lockedEntities.remove(entityId)
+        return@resultFrom
+    }.mapFailure { exception ->
+        ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
+    }
+
+    fun getLockedEntity(entityId: UUID): MfLockedEntity? = lockedEntities[entityId]
+
+    @JvmName("getLockedEntitiesByPlayerId")
+    fun getLockedEntities(playerId: MfPlayerId): List<MfLockedEntity> =
+        lockedEntities.values.filter { it.playerId == playerId }
 
     private fun Exception.toServiceFailureType(): ServiceFailureType {
         return when (this) {
