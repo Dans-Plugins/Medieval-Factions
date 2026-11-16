@@ -3,6 +3,7 @@ package com.dansplugins.factionsystem.storage.json
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
+import org.bukkit.configuration.file.YamlConfiguration
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -172,5 +173,23 @@ class JsonMfPlayerRepositoryTest {
         val result = repository.upsert(player)
 
         assertEquals("Player™_😀_Special", result.name)
+    }
+
+    @Test
+    fun `offline decay lowers offline players and leaves online players alone`() {
+        val config = YamlConfiguration()
+        config.set("players.minPower", -5.0)
+        config.set("players.maxPower", 20.0)
+        config.set("players.hoursToReachMinPower", 72.0)
+        config.set("players.powerUpdateIntervalMinutes", 60)
+        `when`(plugin.config).thenReturn(config)
+        val online = repository.upsert(MfPlayer(MfPlayerId(UUID.randomUUID().toString()), 0, "Online", 10.0, 10.0, false, null))
+        val offline = repository.upsert(MfPlayer(MfPlayerId(UUID.randomUUID().toString()), 0, "Offline", 10.0, 10.0, false, null))
+
+        // MfPlayerService passes the ONLINE players' ids, as JooqMfPlayerRepository expects
+        repository.decreaseOfflinePlayerPower(listOf(online.id))
+
+        assertEquals(10.0, repository.getPlayer(online.id)!!.power, "an online player must not decay")
+        assertTrue(repository.getPlayer(offline.id)!!.power < 10.0, "an offline player must decay")
     }
 }

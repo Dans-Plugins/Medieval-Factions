@@ -108,7 +108,7 @@ class JsonMfPlayerRepository(
         saveData(data)
     }
 
-    override fun decreaseOfflinePlayerPower(offlinePlayerIds: List<MfPlayerId>, leaderIds: Set<MfPlayerId>) = storageManager.withFileLock(fileName) {
+    override fun decreaseOfflinePlayerPower(onlinePlayerIds: List<MfPlayerId>, leaderIds: Set<MfPlayerId>) = storageManager.withFileLock(fileName) {
         val data = loadData()
         val minPower = plugin.config.getDouble("players.minPower")
         val configMaxPower = MfMaxPower.maxPower(plugin.config)
@@ -118,7 +118,9 @@ class JsonMfPlayerRepository(
 
         data.players.forEachIndexed { index, player ->
             val maxPower = maxPowerOf(player.id, leaderIds, configMaxPower, leaderMaxPower)
-            if (player.id in offlinePlayerIds && player.powerAtLogout > minPower && player.power > minPower) {
+            // The argument lists the ONLINE players (MfPlayerService passes them, as JooqMfPlayerRepository expects);
+            // decay applies to everyone else.
+            if (player.id !in onlinePlayerIds && player.powerAtLogout > minPower && player.power > minPower) {
                 // Replicate the power decrease formula from JooqMfPlayerRepository
                 // This uses powerAtLogout to calculate the correct power decay over time
                 val currentPower = kotlin.math.min(player.power, kotlin.math.min(player.powerAtLogout, maxPower))
