@@ -48,12 +48,23 @@ class Language(plugin: MedievalFactions, private val language: String) {
         }
     }
 
-    operator fun get(key: String, vararg params: String) =
-        resourceBundles.firstNotNullOfOrNull { resourceBundle ->
+    operator fun get(key: String, vararg params: String): String {
+        val values = resourceBundles.mapNotNull { resourceBundle ->
             try {
-                MessageFormat.format(resourceBundle.getString(key), *params)
+                resourceBundle.getString(key)
             } catch (exception: MissingResourceException) {
                 null
             }
-        } ?: "Missing translation for $language: $key"
+        }
+        // Released builds up to 10.2.0 corrupted the ISO-8859-1 language files while packaging them, replacing every
+        // accented character with U+FFFD, and servers keep the copy made on first run. A value damaged that way
+        // gives way to a later (bundled) one that is intact; any other on-disk value, edited or not, still wins.
+        val value = values.firstOrNull { !it.contains(REPLACEMENT_CHARACTER) } ?: values.firstOrNull()
+            ?: return "Missing translation for $language: $key"
+        return MessageFormat.format(value, *params)
+    }
+
+    private companion object {
+        const val REPLACEMENT_CHARACTER = '�'
+    }
 }

@@ -64,6 +64,11 @@ class MfFlags(
             plugin,
             "protectVillagerTrade",
             plugin.config.getBoolean("factions.defaults.flags.protectVillagerTrade")
+        ),
+        MfFlag.boolean(
+            plugin,
+            "allowMobGriefing",
+            plugin.config.getBoolean("factions.defaults.flags.allowMobGriefing", true)
         )
     )
 ) : MutableList<MfFlag<out Any>> by flags {
@@ -79,6 +84,20 @@ class MfFlags(
     val enableMobProtection = get<Boolean>("enableMobProtection")!!
     val liegeChainCanInteractWithLand = get<Boolean>("liegeChainCanInteractWithLand")!!
     val protectVillagerTrade = get<Boolean>("protectVillagerTrade")!!
+    val allowMobGriefing = get<Boolean>("allowMobGriefing")!!
+
+    /**
+     * Names (lower case) of the flags listed in `factions.forcedFlags`. A forced flag always reads
+     * as its configured default for every faction, and `/faction flag set` refuses to change it.
+     * The value a faction stored is left untouched, so removing a flag from the list restores it.
+     */
+    private val forcedFlagNames: Set<String> by lazy {
+        plugin.config.getStringList("factions.forcedFlags").map { it.lowercase() }.toSet()
+    }
+
+    fun isForced(flag: MfFlag<*>): Boolean =
+        // color's default is usually 'random', a new value on every read, so it cannot be forced.
+        flag.name.lowercase() in forcedFlagNames && flag != color
 
     fun defaults() = MfFlagValues(plugin, flags.associate { it.name to it.defaultValue })
 }
