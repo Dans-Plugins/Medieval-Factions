@@ -292,7 +292,9 @@ class MfFactionFlagSetCommand(private val plugin: MedievalFactions) : CommandExe
         }
 
         val factionService = plugin.services.factionService
-        factionService.save(faction.copy(flags = faction.flags + (flag to value))).onFailure {
+        // update() rather than save(faction.copy(...)): a faction named in the command is read on the main thread, and
+        // kept for as long as a value prompt is open, so it can be older than the stored faction (#2121).
+        factionService.update(faction.id) { it.copy(flags = it.flags + (flag to value)) }.onFailure {
             sender.sendMessage("$RED${plugin.language["CommandFactionFlagSetFailedToSaveFaction"]}")
             plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
             return
