@@ -437,6 +437,23 @@ factions:
 **Default:** `true`  
 **Description:** When `true`, limits the amount of land a faction can claim based on their total power.
 
+### `factions.claimPowerCost`
+**Type:** Decimal  
+**Default:** `1.0`  
+**Description:** How much power each claimed chunk counts against the faction's power when `factions.limitLand` is `true`. A faction may claim another chunk only while the cost of all its claims, plus the new ones, does not exceed its power. At the default of `1.0` each chunk costs one power, which is how claiming worked before this option existed. A higher value makes land scarcer (at `2.0` a faction with 10 power can hold 5 chunks); a lower one makes it more plentiful. The same cost decides when an enemy faction holds more land than its power and so can be conquered during war. Negative values are treated as `0`, which makes claims free. Has no effect when `factions.limitLand` is `false`.  
+**Note:** `/f power` and the Dynmap demesne line show a faction's claims against the number of chunks it could hold: the chunks it has, plus as many more as its unused power buys at the cost in the viewer's world (`/f power`) or the faction's home world (Dynmap; the world of its first claim if it has no home). The console uses `factions.claimPowerCost`. At the default cost of `1.0` that number is the faction's power rounded down, as before.
+
+### `factions.claimPowerCostByWorld`
+**Type:** Map of world name to Decimal  
+**Default:** `{}` (empty; every world uses `factions.claimPowerCost`)  
+**Description:** Overrides `factions.claimPowerCost` for individual worlds, for example to make land in the nether, where distances are shorter, cost more. A world not listed uses `factions.claimPowerCost`. To stop claiming in a world altogether, use `factions.blockedClaimWorlds` instead.  
+**Example:**
+```yaml
+claimPowerCostByWorld:
+  world_nether: 4.0
+  world_the_end: 2.0
+```
+
 ### `factions.contiguousClaims`
 **Type:** Boolean  
 **Default:** `false`  
