@@ -23,6 +23,9 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
     val permissionTypes: List<MfFactionPermissionType>
         get() = Collections.unmodifiableList(_permissionTypes)
 
+    // The types registered through addPermissionType, that is by an expansion after Medieval Factions' own (#1683).
+    private val expansionPermissionTypes = CopyOnWriteArrayList<MfFactionPermissionType>()
+
     init {
         _permissionTypes.addAll(
             listOf(
@@ -77,8 +80,30 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
         )
     }
 
+    /**
+     * Registers a permission type from an expansion. Its permissions are listed in role views and can be set with
+     * `/faction role setpermission`. A role with no entry for one of them takes the faction's default, then the
+     * permission's code default, except for the Owner role, which is granted it, and the permission to set it for
+     * other roles, until the Owner role is given an entry of its own (#1683, #1796).
+     */
     fun addPermissionType(permissionType: MfFactionPermissionType) {
+        expansionPermissionTypes.add(permissionType)
         _permissionTypes.add(permissionType)
+    }
+
+    /**
+     * Whether [permission] was registered by an expansion through [addPermissionType], or is
+     * `SET_ROLE_PERMISSION(...)` for such a permission. Medieval Factions' own permissions never are, so the Owner
+     * role's built-in grants and denials are unchanged.
+     */
+    fun isExpansionPermission(permission: MfFactionPermission): Boolean {
+        val type = permissionTypes.firstOrNull { it.parse(permission.name) != null } ?: return false
+        if (type is SetRolePermission) {
+            val granted = SET_ROLE_PERMISSION_PATTERN.matchEntire(permission.name)?.groupValues?.get(1)?.let(::parse)
+                ?: return false
+            return isExpansionPermission(granted)
+        }
+        return expansionPermissionTypes.any { it === type }
     }
 
     val addLaw = parse("ADD_LAW")!!
@@ -136,6 +161,10 @@ class MfFactionPermissions(private val plugin: MedievalFactions) {
     fun parse(name: String) = permissionTypes.firstNotNullOfOrNull { type -> type.parse(name) }
 
     fun wrapSimplePermission(name: String, translation: String, default: Boolean) = wrapSimplePermission(name, { translation }, default)
+
+    private companion object {
+        val SET_ROLE_PERMISSION_PATTERN = Regex("SET_ROLE_PERMISSION\\((.+)\\)")
+    }
 
     fun wrapSimplePermission(name: String, translate: (faction: MfFaction) -> String, default: Boolean) = object : MfFactionPermissionType() {
         val permission = MfFactionPermission(name, translate, default)

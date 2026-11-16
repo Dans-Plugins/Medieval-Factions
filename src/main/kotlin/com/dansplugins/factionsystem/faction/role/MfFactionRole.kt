@@ -25,13 +25,40 @@ data class MfFactionRole(
             .filter { (key, _) -> key != null }
             .associate { (key, value) -> key!! to value }
 
+    /**
+     * Whether this is the faction's Owner role: the role named [MfFactionRoles.OWNER_ROLE_NAME], ignoring case, which
+     * is how `/faction admin setleader`, faction creation and the leader-death rule find it. Factions store no owner
+     * role id, so a renamed Owner role is not treated as the Owner role.
+     */
+    val isOwner: Boolean
+        get() = name.equals(MfFactionRoles.OWNER_ROLE_NAME, ignoreCase = true)
+
+    /**
+     * Resolves [permission] for this role: its own entry wins, then the entry it inherits from, then (for the Owner
+     * role only) a grant of every permission an expansion registered, then the faction's default, then the
+     * permission's code default.
+     */
     fun hasPermission(faction: MfFaction, permission: MfFactionPermission) =
         permissions[permission]
             ?: INHERITED_FROM[permission.name]?.let { permissionsByName[it] }
+            ?: ownerGrant(permission)
             ?: faction.defaultPermissions[permission]
             ?: permission.default
 
+    // The Owner role holds every expansion permission it has no entry for (#1683, #1796), so an expansion added after
+    // factions already exist need not rewrite their saved roles, and each faction's owner can then grant it onwards.
+    private fun ownerGrant(permission: MfFactionPermission): Boolean? =
+        if (isOwner && plugin.factionPermissions.isExpansionPermission(permission)) true else null
+
     fun getPermissionValue(permission: MfFactionPermission) = permissions[permission]
+
+    /**
+     * Whether a member of this role may give a role the Owner role's name. Because the Owner role is granted every
+     * expansion permission, only a role that may already modify every role in [faction] may do so; otherwise a
+     * lesser role could rename or create a role called Owner, after a faction renamed its own, to gain those grants.
+     */
+    fun mayNameRoleOwner(faction: MfFaction) =
+        faction.roles.all { role -> hasPermission(faction, plugin.factionPermissions.modifyRole(role.id)) }
 
     /** [prefix] with its `&` colour codes translated, or an empty string when the role has no prefix. */
     val displayPrefix: String

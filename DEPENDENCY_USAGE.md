@@ -92,6 +92,30 @@ Add your GitHub credentials to `~/.m2/settings.xml`:
 2. Generate a new token with `read:packages` scope
 3. Use this token as your password/token in the configuration above
 
+## Registering faction role permissions
+
+An add-on can add its own faction role permission. Register it once when the add-on enables:
+
+```kotlin
+val medievalFactions = server.pluginManager.getPlugin("MedievalFactions") as MedievalFactions
+val permissions = medievalFactions.factionPermissions
+permissions.addPermissionType(
+    permissions.wrapSimplePermission("MY_ADDON_ACTION", "Use My Add-on", false)
+)
+// Later, to check it for a member:
+val permission = permissions.parse("MY_ADDON_ACTION")!!
+val allowed = faction.getRole(playerId)?.hasPermission(faction, permission) == true
+```
+
+The permission then appears in `/faction role view` and can be set with `/faction role setpermission`. It is stored in the faction's roles like any built-in permission, so a permission meant only for an external tool reading the database (#1796) needs nothing more than this registration.
+
+Existing factions do not need to be updated. A role with no setting of its own resolves a registered permission as follows (#1683):
+
+1. The **Owner** role is granted it, together with `SET_ROLE_PERMISSION(...)` for it, so each faction's owner can use it at once and grant it to other roles.
+2. Every other role takes the faction's default for it, if one is set, and otherwise the default passed to `wrapSimplePermission` (`false` above).
+
+A setting saved on a role always wins, so an Owner role that was explicitly denied the permission stays denied. The Owner role is the role named `Owner` (ignoring case), the same rule `/faction admin setleader` uses; factions store no separate owner role id, so a renamed Owner role is treated like any other role. Medieval Factions' own permissions are not affected: the Owner role's grants for them come from the role template as before.
+
 ## Notes
 
 - Replace `VERSION` with the specific version you want to use (e.g., `5.7.0-alpha-1`)
