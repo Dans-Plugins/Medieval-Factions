@@ -200,6 +200,12 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Admin usage:** with `mf.force.unclaim` (default: op), `/f unclaimall FactionName` unclaims all land owned by the named faction (name or ID), without disbanding it and without checking that faction's role permissions. A name that matches no faction is refused; it never falls back to your own faction.  
 **Notes:** This action requires confirmation and cannot be undone. Run without `confirm`, the command removes nothing: it reports how many chunks the faction holds and offers a **[Confirm]** button, which re-runs it with `confirm` appended (for the admin form, the button names the faction by ID). Adding `confirm` as the last argument yourself (`/f unclaimall confirm`, `/f unclaimall FactionName confirm`) unclaims immediately.
 
+### `/faction claim show` or `/f claim show`
+**Permission:** `mf.claim.show` or `mf.showclaim` (default: true)  
+**Description:** Marks the borders of claims within 4 chunks of you with wool for 15 seconds: lime for your own faction's land, red for any other faction's. The markers replace the top block of each border column, are visible only to you, and change nothing in the world; the real blocks reappear when the time is up.  
+**Usage:** `/f claim show`  
+**Notes:** Borders between two chunks held by the same faction are not marked, so each faction's territory is outlined as a whole.
+
 ### `/faction claim check` or `/f claim check`
 **Permission:** `mf.claim.check` or `mf.checkclaim` (default: true)  
 **Description:** Displays information about who owns the chunk you are standing in.  
@@ -257,6 +263,27 @@ flowchart TD
 **Permission:** `mf.breakalliance` (default: true)  
 **Description:** Breaks an existing alliance with another faction.  
 **Usage:** `/f breakalliance OtherFaction`
+
+### `/faction rival [faction]` or `/f rival [faction]`
+**Permission:** `mf.rival` (default: true)  
+**Description:** Names another faction as one of your faction's rivals. A rivalry is one-sided (the other faction does not have to agree) and is for show: it is listed under "Rivals" in `/f info` and the other faction is told, but it does not change war, protection, power or any other rule. It needs the same faction role permission as declaring war (`DECLARE_WAR`). An ally cannot be named as a rival.  
+**Usage:** `/f rival OtherFaction`
+
+### `/faction unrival [faction]` or `/f unrival [faction]`
+**Permission:** `mf.rival` (default: true)  
+**Description:** Ends a rivalry your faction named. With `factions.minimumRivalryHours` above `0`, a rivalry can only be ended once it is that old.  
+**Usage:** `/f unrival OtherFaction`
+
+```mermaid
+stateDiagram-v2
+    [*] --> NoRivalry
+    NoRivalry --> Rival: /f rival B (A not allied with B)
+    Rival --> Rival: /f unrival B before minimumRivalryHours
+    Rival --> NoRivalry: /f unrival B
+    Rival --> [*]: A or B disbanded
+```
+
+Rivals are stored apart from alliances, wars and vassalage (table `mf_faction_rival`, or `rivals.json` with JSON storage), so they do not appear in `/f relationship view`, the REST API's `/api/relationships`, PlaceholderAPI relationship placeholders or the DPC sync.
 
 ### `/faction declarewar [faction]` or `/f declarewar [faction]`
 **Permission:** `mf.declarewar` (default: true)  
@@ -376,7 +403,7 @@ flowchart TD
 
 ## Laws
 
-Laws are numbered from 1 in the order `/f law list` shows them. Where a command takes a law, it can be given by that number or by the law's ID. Each command also needs the matching faction role permission (`ADD_LAW`, `LIST_LAWS`, `REMOVE_LAW`, `EDIT_LAW`, `MOVE_LAW`).
+Laws are numbered from 1 in the order `/f law list` shows them. Where a command takes a law, it can be given by that number or by the law's ID. Each command also needs the matching faction role permission (`ADD_LAW`, `LIST_LAWS`, `REMOVE_LAW`, `EDIT_LAW`, `MOVE_LAW`; `/f law section` uses `EDIT_LAW`).
 
 ### `/faction law add [law]` or `/f law add [law]`
 **Permission:** `mf.law.add` and `mf.addlaw` (both required; default: true)  
@@ -385,7 +412,7 @@ Laws are numbered from 1 in the order `/f law list` shows them. Where a command 
 
 ### `/faction law list` or `/f law list`
 **Permission:** `mf.law.list` and `mf.laws` (both required; default: true)  
-**Description:** Lists the laws of your faction, or of the named faction, ten to a page with links to the previous and next pages. A single number is read as a page of your own faction's laws unless a faction has that name.  
+**Description:** Lists the laws of your faction, or of the named faction, ten to a page with links to the previous and next pages. Laws with no section are listed first, as before; each section set with `/f law section` follows under its own heading, in the order of its lowest-numbered law, and every law keeps its global number. A single number is read as a page of your own faction's laws unless a faction has that name.  
 **Usage:** `/f law list [faction] [page]`
 
 ![Chat: /f law list shows laws 1 to 10 with remove, edit and move buttons and Previous page / Page 1 / Next page links; /f law list 2 shows laws 11 and 12](docs/images/law-list/law-list.png)
@@ -406,6 +433,11 @@ Laws are numbered from 1 in the order `/f law list` shows them. Where a command 
 **Permission:** `mf.law.move` (default: true)  
 **Description:** Moves a law to a new position in the list; the laws in between shift up or down by one. The new position must be a whole number from 1 to the faction's number of laws. If only the law is given, the new position is asked for in chat.  
 **Usage:** `/f law move 3 1`
+
+### `/faction law section [number] [section]` or `/f law section [number] [section]`
+**Permission:** `mf.law.section` (default: true)  
+**Description:** Puts a law under a free-text section, such as `Trade` or `Warfare`, or, when no section is given, takes it out of its section. Sections only group the laws in `/f law list`: law numbers stay global, so law 3 is still law 3 whichever section it is in, and `/f law move` still moves a law by its global number. A section name can be up to 64 characters long; laws are grouped by section ignoring case. Needs the `EDIT_LAW` faction role permission, the same as `/f law edit`.  
+**Usage:** `/f law section 3 Trade` sets law 3's section; `/f law section 3` clears it.
 
 ## Gates
 
@@ -466,13 +498,21 @@ Laws are numbered from 1 in the order `/f law list` shows them. Where a command 
 **Permission:** `mf.accessors.add` or `mf.grantaccess` (default: true)  
 **Aliases:** `/accessoren add`, `/accesseurs add`  
 **Description:** Right-click on a locked block, then click on a player to grant them access.  
-**Usage:** `/accessors add`
+**Usage:**
+- `/accessors add` - Enables add mode
+- `/accessors add [x] [y] [z] [player]` - Grants a player access to the locked block at those coordinates
+- `/accessors add [x] [y] [z] role [role]` - Grants access to every member of the lock owner's faction who holds that role (by name or id). Only roles of the lock owner's own faction can be added, and only the lock owner or a player on the block's access list can add one. The **Add role** button under `/accessors list` fills in this command.
+
+**Notes:** A role accessor follows the role: a member given the role gets access, a member whose role changes loses it, and the role grants nothing if it is deleted or the lock owner leaves the faction (which also removes the owner's locks). Holding a listed role does not let a player manage the access list; that stays with the owner and the players listed by name.
 
 ### `/accessors remove`
 **Permission:** `mf.accessors.remove` or `mf.revokeaccess` (default: true)  
 **Aliases:** `/accessoren remove`, `/accesseurs remove`  
 **Description:** Right-click on a locked block, then click on a player to revoke their access.  
-**Usage:** `/accessors remove`
+**Usage:**
+- `/accessors remove` - Enables remove mode
+- `/accessors remove [x] [y] [z] [player]` - Revokes a player's access to the locked block at those coordinates
+- `/accessors remove [x] [y] [z] role [role]` - Takes a role off the block's access list. A role that has since been deleted can be removed by its id, which is what the ✖ button next to it in `/accessors list` does.
 
 ## Duels
 

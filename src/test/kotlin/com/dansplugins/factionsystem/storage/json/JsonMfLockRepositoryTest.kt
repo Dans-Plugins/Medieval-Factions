@@ -2,11 +2,14 @@ package com.dansplugins.factionsystem.storage.json
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfBlockPosition
+import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
 import com.dansplugins.factionsystem.locks.MfLockedBlock
 import com.dansplugins.factionsystem.locks.MfLockedBlockId
 import com.dansplugins.factionsystem.player.MfPlayerId
+import com.google.gson.JsonParser
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -136,5 +139,38 @@ class JsonMfLockRepositoryTest {
     fun `returns null for an unknown lock`() {
         assertNull(repository.getLockedBlock(MfLockedBlockId.generate()))
         assertTrue(repository.getLockedBlocks().isEmpty())
+    }
+
+    @Test
+    fun `round trips role accessors`() {
+        val roles = listOf(MfFactionRoleId.generate(), MfFactionRoleId.generate())
+
+        val saved = repository.upsert(lockedBlock().copy(accessorRoleIds = roles))
+
+        assertEquals(roles, repository.getLockedBlock(saved.id)?.accessorRoleIds)
+        assertEquals(roles, repository.getLockedBlocks().single().accessorRoleIds)
+    }
+
+    /**
+     * A locks.json written before role accessors existed (#1569) has no accessorRoleIds field. Gson
+     * would leave the non-null list null; the lock must load with its accessors and no role accessors.
+     */
+    @Test
+    fun `reads a lock written before role accessors existed`() {
+        val accessor = MfPlayerId(UUID.randomUUID().toString())
+        val saved = repository.upsert(lockedBlock(accessors = listOf(accessor)))
+        val file = tempDir.resolve("locks.json").toFile()
+        val json = JsonParser.parseString(file.readText()).asJsonObject
+        json.getAsJsonArray("locks").forEach { it.asJsonObject.remove("accessorRoleIds") }
+        file.writeText(json.toString())
+        assertFalse(file.readText().contains("accessorRoleIds"), "the file must be in the old format")
+
+        val reloaded = JsonMfLockRepository(plugin, JsonStorageManager(plugin, tempDir.toString()))
+        val read = reloaded.getLockedBlock(saved.id)
+
+        assertNotNull(read)
+        assertEquals(listOf(accessor), read?.accessors)
+        assertEquals(emptyList<MfFactionRoleId>(), read?.accessorRoleIds)
+        assertEquals(emptyList<MfFactionRoleId>(), reloaded.getLockedBlocks().single().accessorRoleIds)
     }
 }

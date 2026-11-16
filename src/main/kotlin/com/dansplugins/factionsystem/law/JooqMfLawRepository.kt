@@ -38,6 +38,7 @@ class JooqMfLawRepository(
                     .set(MF_LAW.VERSION, law.version + 1)
                     .set(MF_LAW.FACTION_ID, law.factionId.value)
                     .set(MF_LAW.TEXT, law.text)
+                    .set(MF_LAW.SECTION, law.section)
                     .where(MF_LAW.ID.eq(law.id.value))
                     .and(MF_LAW.VERSION.eq(law.version))
                     .execute()
@@ -53,6 +54,7 @@ class JooqMfLawRepository(
                     .set(MF_LAW.FACTION_ID, law.factionId.value)
                     .set(MF_LAW.TEXT, law.text)
                     .set(MF_LAW.NUMBER, existingLaws + 1)
+                    .set(MF_LAW.SECTION, law.section)
                     .execute()
             }
         )
@@ -105,6 +107,7 @@ class JooqMfLawRepository(
         version,
         MfFactionId(factionId),
         text,
-        number
+        number,
+        section
     )
 }

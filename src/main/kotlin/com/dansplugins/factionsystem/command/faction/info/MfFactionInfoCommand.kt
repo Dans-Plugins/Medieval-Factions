@@ -168,6 +168,13 @@ class MfFactionInfoCommand(private val plugin: MedievalFactions) : CommandExecut
                     sender.sendMessage("${BukkitChatColor.GRAY}" + atWarWith.joinToString(transform = MfFaction::name))
                 }
 
+                // send rivals information (#1896)
+                val rivals = plugin.services.factionRivalService.getRivals(faction.id).mapNotNull { factionService.getFaction(it.targetId) }
+                if (rivals.isNotEmpty()) {
+                    sender.sendMessage("${BukkitChatColor.WHITE}${plugin.language["CommandFactionInfoRivalsTitle"]}")
+                    sender.sendMessage("${BukkitChatColor.GRAY}" + rivals.joinToString(transform = MfFaction::name))
+                }
+
                 factionService.fields
                     .filter { field -> field.isVisibleFor(faction.id.value, senderMfPlayer?.id?.value ?: return@filter false) }
                     .forEach { field ->

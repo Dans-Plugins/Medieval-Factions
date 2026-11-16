@@ -77,6 +77,7 @@ factions:
   maxNameLength: 20
   zeroPowerFactionsGetDisbanded: false
   leaderZeroPowerDisbandsFaction: false # When true, a faction is disbanded when a member with its Owner role is brought to 0 power by a death. Offline power decay never triggers it.
+  minimumRivalryHours: 0 # How long a rivalry named with /f rival must last before /f unrival can end it. 0 means it can be ended at any time.
   vassalPowerContributionMultiplier: 0.75
   nonMembersCanInteractWithDoors: false
   nonMembersCanInteractWithEntities: false # When true, non-members can right-click entities (minecarts, boats, item frames, animals, armour stands) in faction territory. Villager trading is governed separately by the protectVillagerTrade faction flag.
