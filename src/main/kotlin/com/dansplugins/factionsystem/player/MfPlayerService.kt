@@ -139,8 +139,12 @@ class MfPlayerService(private val plugin: MedievalFactions, private val playerRe
     @JvmName("updatePlayerPower")
     fun updatePlayerPower(onlinePlayerIds: List<MfPlayerId>): Result4k<Unit, ServiceFailure> {
         return resultFrom {
-            playerRepository.increaseOnlinePlayerPower(onlinePlayerIds)
-            playerRepository.decreaseOfflinePlayerPower(onlinePlayerIds)
+            if (MfPowerUpdateSettings.isGainOverTimeEnabled(plugin.config)) {
+                playerRepository.increaseOnlinePlayerPower(onlinePlayerIds)
+            }
+            if (MfPowerUpdateSettings.isDecayOverTimeEnabled(plugin.config)) {
+                playerRepository.decreaseOfflinePlayerPower(onlinePlayerIds)
+            }
             playersById.putAll(playerRepository.getPlayers().associateBy(MfPlayer::id))
             val mapService = plugin.services.mapService
             if (mapService != null && !plugin.config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {

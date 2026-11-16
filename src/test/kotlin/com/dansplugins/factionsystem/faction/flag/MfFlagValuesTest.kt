@@ -68,4 +68,42 @@ class MfFlagValuesTest {
 
         assertEquals(mapOf<MfFlag<out Any>, Any?>(flags.isNeutral to true), flagValues.values)
     }
+
+    @Test
+    fun aForcedFlagReadsAsItsDefaultWhateverTheFactionStored() {
+        `when`(config.getBoolean("factions.defaults.flags.allowFriendlyFire")).thenReturn(true)
+        `when`(config.getStringList("factions.forcedFlags")).thenReturn(listOf("ALLOWFRIENDLYFIRE"))
+        val flags = flags()
+        val stored = MfFlagValues(plugin, mapOf("allowFriendlyFire" to false, "neutral" to true))
+
+        assertEquals(true, stored[flags.allowFriendlyFire])
+        assertEquals(true, stored[flags.isNeutral], "flags that are not forced keep their stored value")
+        assertEquals(false, stored.valuesByName["allowFriendlyFire"], "the stored value is left untouched")
+    }
+
+    @Test
+    fun noFlagIsForcedByDefault() {
+        val flags = flags()
+
+        assertEquals(false, flags.any(flags::isForced))
+        assertEquals(true, MfFlagValues(plugin, mapOf("allowFriendlyFire" to true))[flags.allowFriendlyFire])
+    }
+
+    @Test
+    fun colorCannotBeForced() {
+        `when`(config.getStringList("factions.forcedFlags")).thenReturn(listOf("color"))
+        val flags = flags()
+
+        assertEquals(false, flags.isForced(flags.color))
+        assertEquals("#111111", MfFlagValues(plugin, mapOf("color" to "#111111"))[flags.color])
+    }
+
+    @Test
+    fun allowMobGriefingDefaultsFromConfigForFactionsThatNeverSetIt() {
+        `when`(config.getBoolean("factions.defaults.flags.allowMobGriefing", true)).thenReturn(true)
+        val flags = flags()
+
+        assertEquals(true, MfFlagValues(plugin, mapOf("neutral" to false))[flags.allowMobGriefing])
+        assertEquals(false, MfFlagValues(plugin, mapOf("allowMobGriefing" to false))[flags.allowMobGriefing])
+    }
 }
