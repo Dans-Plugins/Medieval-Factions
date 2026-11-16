@@ -346,6 +346,21 @@ Rivals are stored apart from alliances, wars and vassalage (table `mf_faction_ri
 
 ## Vassalage System
 
+### `/faction vassalage [subcommand]` or `/f vassalage [subcommand]`
+**Description:** Gathers the vassalage commands under one name. Each subcommand except `rescind` runs the existing command listed beside it, with that command's permission, role permission and behaviour, and the existing commands below keep working unchanged.
+
+| Subcommand | Same as | Permission |
+| --- | --- | --- |
+| `/f vassalage offer [faction]` | `/f vassalize [faction]` | `mf.vassalize` |
+| `/f vassalage accept [faction]` | `/f swearfealty [faction]` | `mf.swearfealty` |
+| `/f vassalage decline [faction]` | `/f declinevassalization [faction]` | `mf.declinevassalization` |
+| `/f vassalage revolt` | `/f declareindependence` | `mf.declareindependence` |
+| `/f vassalage release [vassal]` | `/f grantindependence [vassal]` | `mf.grantindependence` |
+| `/f vassalage rescind [faction]` | (new) | `mf.vassalize` |
+
+`rescind` withdraws a vassalization offer your faction sent that the other faction has not yet accepted. It needs the same permissions as sending the offer: `mf.vassalize` and the `VASSALIZE` faction role permission. The other faction is told the offer was withdrawn. An offer still held for moderator approval (`factions.vassalizeDeclarationRequiresApproval`) is withdrawn from the approval queue instead; the other faction was never told of it, so it is not notified. If the offer was already accepted, use `release` instead. Tab-completion lists the factions your faction has a pending offer to.  
+**Usage:** `/f vassalage offer SmallTown`, `/f vassalage rescind SmallTown`
+
 ### `/faction vassalize [faction]` or `/f vassalize [faction]`
 **Permission:** `mf.vassalize` (default: true)  
 **Description:** Sends a vassalization request to another faction, asking them to become your vassal. If `factions.vassalizeDeclarationRequiresApproval` is enabled in config, the request will be held for moderator approval. When approval is required, you can optionally include a reason: `/f vassalize OtherFaction -- reason for vassalization`.  

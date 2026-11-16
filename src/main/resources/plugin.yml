@@ -64,6 +64,7 @@ commands:
       /f declinevassalization [faction] - Declines a vassalization request from a faction
       /f declareindependence - Declares independence from your current liege, triggering a war
       /f grantindependence [vassal] - Grants independence to one of your vassals
+      /f vassalage [offer|accept|decline|revolt|release|rescind] (faction) - Vassalage commands in one place; rescind withdraws an offer you sent
       /f kick (faction) [player] - Kicks a player from your faction, or the specified faction
       /f map (normal|diplomatic) - Shows the faction map
       /f sethome - Sets your faction's home
@@ -80,7 +81,7 @@ commands:
       /f deny [id] - Denies a pending faction action
       /f pendingactions - Lists all pending faction actions awaiting approval
     aliases: [medievalfactions, mf, f, fraktion]
-    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declinevassalization|declareindependence|grantindependence|kick|map|sethome|home|flag|bypass|chat|set|bonuspower|relationship|approve|deny|pendingactions]
+    usage: /<command> [help|ally|breakalliance|declarewar|makepeace|create|invite|join|law|role|list|claim|unclaim|unclaimall|power|who|invoke|leave|vassalize|swearfealty|declinevassalization|declareindependence|grantindependence|vassalage|kick|map|sethome|home|flag|bypass|chat|set|bonuspower|relationship|approve|deny|pendingactions]
   lock:
     description: Enables or disables lock mode. To cancel lock mode, use /lock cancel.
     aliases: [verschlieBen, verschliessen, verrouiller]
