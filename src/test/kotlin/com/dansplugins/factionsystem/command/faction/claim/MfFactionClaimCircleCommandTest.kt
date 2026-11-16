@@ -232,6 +232,49 @@ class MfFactionClaimCircleCommandTest {
     }
 
     @Test
+    fun testOnCommand_blockedChunkIsNotClaimed() {
+        // prepare — the chunk is listed in factions.blockedClaimChunks (#1723)
+        val player = fixture.player
+        val command = fixture.command
+        stubMembershipOf(player)
+        stubSenderChunk(player, 0, 0)
+        val claim = stubClaimSave(0, 0)
+        val chunk = MfChunkPosition(worldId, 0, 0)
+        `when`(claimService.isChunkClaimBlocked(chunk)).thenReturn(true)
+        `when`(language["CommandFactionClaimChunkBlocked"]).thenReturn("Blocked")
+
+        // execute
+        uut.onCommand(player, command, "label", arrayOf())
+        runPendingTasks()
+
+        // verify
+        verify(claimService, never()).save(claim)
+        verify(player).sendMessage("${ChatColor.RED}Blocked")
+    }
+
+    @Test
+    fun testOnCommand_claimTooFarFromExistingClaimsIsRefused() {
+        // prepare — factions.maxClaimDistance is exceeded (#1619)
+        val player = fixture.player
+        val command = fixture.command
+        stubMembershipOf(player)
+        stubSenderChunk(player, 0, 0)
+        val claim = stubClaimSave(0, 0)
+        val chunk = MfChunkPosition(worldId, 0, 0)
+        `when`(claimService.exceedsMaxClaimDistance(factionId, chunk)).thenReturn(true)
+        `when`(config.getInt("factions.maxClaimDistance")).thenReturn(5)
+        `when`(language["CommandFactionClaimTooFarFromClaims", "5"]).thenReturn("Too far")
+
+        // execute
+        uut.onCommand(player, command, "label", arrayOf())
+        runPendingTasks()
+
+        // verify
+        verify(claimService, never()).save(claim)
+        verify(player).sendMessage("${ChatColor.RED}Too far")
+    }
+
+    @Test
     fun testOnCommand_refusesAChunkOverlappingAWorldGuardRegion() {
         // prepare — worldGuard.blockClaimsInRegions reports the sender's chunk as inside a region (#1630)
         val player = fixture.player
@@ -282,6 +325,107 @@ class MfFactionClaimCircleCommandTest {
         listOf(centre, west, north, south).forEach { verify(claimService).save(it) }
         verify(player).sendMessage("${ChatColor.YELLOW}Skipped 1")
         verify(player).sendMessage("${ChatColor.GREEN}Claimed 4 chunks")
+    }
+
+    @Test
+    fun testOnCommand_squareClaimSkipsTheChunksOverlappingAWorldGuardRegion() {
+        // prepare — /f claim square 3 with one chunk of the square inside a WorldGuard region (#1630, #1653)
+        val player = fixture.player
+        val command = fixture.command
+        stubMembershipOf(player)
+        `when`(player.hasPermission("mf.claim.square")).thenReturn(true)
+        stubSenderChunk(player, 10, 20)
+        val square = (9..11).flatMap { x -> (19..21).map { z -> (x to z) to stubClaimSave(x, z) } }.toMap()
+        `when`(claimService.isClaimBlockedByWorldGuard(MfChunkPosition(worldId, 11, 21))).thenReturn(true)
+        `when`(language["CommandFactionClaimWorldGuardRegionSkipped", "1"]).thenReturn("Skipped 1")
+        `when`(language["CommandFactionClaimSuccess", "8"]).thenReturn("Claimed 8 chunks")
+
+        // execute
+        MfFactionClaimCircleCommand(plugin, MfClaimShape.SQUARE).onCommand(player, command, "label", arrayOf("3"))
+        runPendingTasks()
+
+        // verify
+        square.filterKeys { it != (11 to 21) }.values.forEach { verify(claimService).save(it) }
+        verify(claimService, never()).save(square.getValue(11 to 21))
+        verify(player).sendMessage("${ChatColor.YELLOW}Skipped 1")
+        verify(player).sendMessage("${ChatColor.GREEN}Claimed 8 chunks")
+    }
+
+    @Test
+    fun testOnCommand_squareClaimsTheChunksAroundTheSender() {
+        // prepare — /f claim square 3 (#1653)
+        val player = fixture.player
+        val command = fixture.command
+        stubMembershipOf(player)
+        `when`(player.hasPermission("mf.claim.square")).thenReturn(true)
+        stubSenderChunk(player, 10, 20)
+        val square = (9..11).flatMap { x -> (19..21).map { z -> stubClaimSave(x, z) } }
+        val outside = stubClaimSave(12, 20)
+        `when`(language["CommandFactionClaimSuccess", "9"]).thenReturn("Claimed 9 chunks")
+
+        // execute
+        MfFactionClaimCircleCommand(plugin, MfClaimShape.SQUARE).onCommand(player, command, "label", arrayOf("3"))
+        runPendingTasks()
+
+        // verify
+        square.forEach { verify(claimService).save(it) }
+        verify(claimService, never()).save(outside)
+        verify(player).sendMessage("${ChatColor.GREEN}Claimed 9 chunks")
+    }
+
+    @Test
+    fun testOnCommand_rectangleClaimsSizeXBySizeZWithTheExtraRowOnThePositiveSide() {
+        // prepare — /f claim rectangle 2 1: an even side puts the extra column east of the sender
+        val player = fixture.player
+        val command = fixture.command
+        stubMembershipOf(player)
+        stubSenderChunk(player, 0, 0)
+        val own = stubClaimSave(0, 0)
+        val east = stubClaimSave(1, 0)
+        val west = stubClaimSave(-1, 0)
+        `when`(language["CommandFactionClaimSuccess", "2"]).thenReturn("Claimed 2 chunks")
+
+        // execute
+        MfFactionClaimCircleCommand(plugin, MfClaimShape.RECTANGLE).onCommand(player, command, "label", arrayOf("2", "1"))
+        runPendingTasks()
+
+        // verify
+        verify(claimService).save(own)
+        verify(claimService).save(east)
+        verify(claimService, never()).save(west)
+    }
+
+    @Test
+    fun testOnCommand_rectangleWithoutBothSizesShowsUsage() {
+        val player = fixture.player
+        val command = fixture.command
+        stubMembershipOf(player)
+        stubSenderChunk(player, 0, 0)
+        val claim = stubClaimSave(0, 0)
+        `when`(language["CommandFactionClaimRectangleUsage"]).thenReturn("Usage")
+
+        MfFactionClaimCircleCommand(plugin, MfClaimShape.RECTANGLE).onCommand(player, command, "label", arrayOf("2"))
+        runPendingTasks()
+
+        verify(claimService, never()).save(claim)
+        verify(player).sendMessage("${ChatColor.RED}Usage")
+    }
+
+    @Test
+    fun testOnCommand_squareLargerThanTheWidestCircleIsRefused() {
+        // prepare — maxClaimRadius is 10 in this fixture, so a side may be at most 21 chunks
+        val player = fixture.player
+        val command = fixture.command
+        stubMembershipOf(player)
+        stubSenderChunk(player, 0, 0)
+        val claim = stubClaimSave(0, 0)
+        `when`(language["CommandFactionClaimMaxClaimSize", "21"]).thenReturn("Too big")
+
+        MfFactionClaimCircleCommand(plugin, MfClaimShape.SQUARE).onCommand(player, command, "label", arrayOf("22"))
+        runPendingTasks()
+
+        verify(claimService, never()).save(claim)
+        verify(player).sendMessage("${ChatColor.RED}Too big")
     }
 
     // Helper functions

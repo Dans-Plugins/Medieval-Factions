@@ -70,6 +70,7 @@ import com.dansplugins.factionsystem.listener.HangingPlaceListener
 import com.dansplugins.factionsystem.listener.InventoryClickListener
 import com.dansplugins.factionsystem.listener.InventoryMoveItemListener
 import com.dansplugins.factionsystem.listener.LingeringPotionSplashListener
+import com.dansplugins.factionsystem.listener.MobGriefingListener
 import com.dansplugins.factionsystem.listener.PlayerBucketListener
 import com.dansplugins.factionsystem.listener.PlayerDeathListener
 import com.dansplugins.factionsystem.listener.PlayerInteractAtEntityListener
@@ -80,6 +81,7 @@ import com.dansplugins.factionsystem.listener.PlayerMoveListener
 import com.dansplugins.factionsystem.listener.PlayerQuitListener
 import com.dansplugins.factionsystem.listener.PlayerRespawnListener
 import com.dansplugins.factionsystem.listener.PlayerTeleportListener
+import com.dansplugins.factionsystem.listener.PortalCreateListener
 import com.dansplugins.factionsystem.listener.PotionSplashListener
 import com.dansplugins.factionsystem.listener.StructureGrowListener
 import com.dansplugins.factionsystem.listener.WorldActionProtection
@@ -98,12 +100,16 @@ import com.dansplugins.factionsystem.player.JooqMfPlayerRepository
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerRepository
 import com.dansplugins.factionsystem.player.MfPlayerService
+import com.dansplugins.factionsystem.player.MfPowerUpdateSettings
 import com.dansplugins.factionsystem.potion.MfPotionService
 import com.dansplugins.factionsystem.relationship.JooqMfFactionRelationshipRepository
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipRepository
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipService
+import com.dansplugins.factionsystem.relationship.MfTruceService
 import com.dansplugins.factionsystem.scoreboard.MfPowerScoreboard
 import com.dansplugins.factionsystem.service.Services
+import com.dansplugins.factionsystem.slimefun.MfSlimefunProtectionModule
+import com.dansplugins.factionsystem.slimefun.MfSlimefunProtectionPolicy
 import com.dansplugins.factionsystem.teleport.MfTeleportService
 import com.dansplugins.factionsystem.trace.TraceClient
 import com.dansplugins.factionsystem.update.MfUpdateNotifier
@@ -127,9 +133,11 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.flywaydb.core.Flyway
 import org.jooq.conf.Settings
 import org.jooq.impl.DSL
+import java.io.File
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalTime
+import java.util.logging.Level
 import java.util.logging.Level.SEVERE
 import javax.sql.DataSource
 import kotlin.math.floor
@@ -143,6 +151,7 @@ class MedievalFactions : JavaPlugin() {
     lateinit var flags: MfFlags
     lateinit var factionPermissions: MfFactionPermissions
     lateinit var services: Services
+    lateinit var truceService: MfTruceService
     private var powerScoreboard: MfPowerScoreboard? = null
     lateinit var language: Language
 
@@ -226,6 +235,7 @@ class MedievalFactions : JavaPlugin() {
             mapService,
             approvalRequestService
         )
+        truceService = MfTruceService({ config.getLong("factions.truceDurationMinutes") }, File(dataFolder, "truces.yml"))
         setupRpkLockService()
 
         val metrics = Metrics(this, 8929)
@@ -352,6 +362,8 @@ class MedievalFactions : JavaPlugin() {
             MedievalFactionsPlaceholderExpansion(this).register()
         }
 
+        setupSlimefunProtection()
+
         if (config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
             logger.info(language["DynmapOnlyRenderTerritoriesUponStartupEnabled"])
         }
@@ -384,6 +396,7 @@ class MedievalFactions : JavaPlugin() {
             EntityDamageByEntityListener(this),
             EntityDamageListener(this),
             EntityExplodeListener(this),
+            MobGriefingListener(this),
             EntityPlaceListener(worldActionProtection),
             HangingPlaceListener(worldActionProtection),
             InventoryClickListener(this),
@@ -399,6 +412,7 @@ class MedievalFactions : JavaPlugin() {
             PlayerQuitListener(this, entityInteractionProtection),
             PlayerRespawnListener(this),
             PlayerTeleportListener(this),
+            PortalCreateListener(this),
             PotionSplashListener(this),
             StructureGrowListener(growthBorderTrimmer)
         ).forEach { server.pluginManager.registerEvents(it, this) }
@@ -411,6 +425,7 @@ class MedievalFactions : JavaPlugin() {
         registerCommand("gate", MfGateCommand(this))
         registerCommand("duel", MfDuelCommand(this))
 
+        val powerUpdateIntervalMinutes = MfPowerUpdateSettings.intervalMinutes(config)
         server.scheduler.scheduleSyncRepeatingTask(this, {
             val onlinePlayers = server.onlinePlayers
             val onlineMfPlayerIds = onlinePlayers.map(MfPlayerId.Companion::fromBukkitPlayer)
@@ -427,7 +442,7 @@ class MedievalFactions : JavaPlugin() {
                     )
                 }
             )
-        }, (15 - (LocalTime.now().minute % 15)) * 60 * 20L, 18000L)
+        }, (powerUpdateIntervalMinutes - (LocalTime.now().minute % powerUpdateIntervalMinutes)) * 60 * 20L, powerUpdateIntervalMinutes * 60 * 20L)
         server.scheduler.scheduleSyncRepeatingTask(this, {
             val gates = gateService.gates
             gates.filter(MfGate::shouldOpen).forEach(MfGate::open)
@@ -748,6 +763,21 @@ class MedievalFactions : JavaPlugin() {
             executor.onCommand(sender, cmd, label, args)
         }
         command.tabCompleter = executor
+    }
+
+    // Slimefun is a soft dependency: its classes are only loaded when it is enabled and the option is on (#1750)
+    private fun setupSlimefunProtection() {
+        if (!config.getBoolean("slimefun.protection.enabled")) return
+        if (server.pluginManager.getPlugin("Slimefun")?.isEnabled != true) {
+            logger.warning("slimefun.protection.enabled is on, but Slimefun is not installed, so no Slimefun protection module was registered.")
+            return
+        }
+        try {
+            MfSlimefunProtectionModule.register(this, server.pluginManager, MfSlimefunProtectionPolicy(this))
+            logger.info("Registered the Medieval Factions protection module with Slimefun.")
+        } catch (e: LinkageError) {
+            logger.log(Level.WARNING, "This Slimefun version's protection API is not supported, so Slimefun blocks are not protected by Medieval Factions.", e)
+        }
     }
 
     private fun setupRpkLockService() {

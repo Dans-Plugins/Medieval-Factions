@@ -75,7 +75,7 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
         val minPower = plugin.config.getDouble("players.minPower")
         val maxPower = plugin.config.getDouble("players.maxPower")
         val hoursToReachMax = plugin.config.getDouble("players.hoursToReachMaxPower")
-        val timeIncrementHours = 0.25
+        val timeIncrementHours = MfPowerUpdateSettings.intervalHours(plugin.config)
         dsl.update(MF_PLAYER)
             .set(
                 MF_PLAYER.POWER,
@@ -111,7 +111,7 @@ class JooqMfPlayerRepository(private val plugin: MedievalFactions, private val d
         val maxPower = plugin.config.getDouble("players.maxPower")
         val minPower = plugin.config.getDouble("players.minPower")
         val hoursToReachMin = plugin.config.getDouble("players.hoursToReachMinPower")
-        val timeIncrementHours = 0.25
+        val timeIncrementHours = MfPowerUpdateSettings.intervalHours(plugin.config)
         dsl.update(MF_PLAYER)
             .set(
                 MF_PLAYER.POWER,

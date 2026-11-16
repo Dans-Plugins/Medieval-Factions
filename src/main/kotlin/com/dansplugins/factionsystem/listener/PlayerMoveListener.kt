@@ -47,11 +47,16 @@ class PlayerMoveListener(private val plugin: MedievalFactions) : Listener {
                         if (claimService.isClaimingBlockedInWorld(to.world!!)) {
                             return@Runnable
                         }
-                        // Autoclaim silently skips chunks overlapping a WorldGuard region, as it does blocked worlds (#1630)
-                        if (claimService.isClaimBlockedByWorldGuard(MfChunkPosition(to.world!!.uid, to.chunk.x, to.chunk.z))) {
+                        val newChunkPosition = MfChunkPosition(to.world!!.uid, to.chunk.x, to.chunk.z)
+                        // Chunks listed in factions.blockedClaimChunks are walked over without being claimed
+                        if (claimService.isChunkClaimBlocked(newChunkPosition)) {
                             return@Runnable
                         }
-                        if (plugin.config.getBoolean("factions.limitLand") && claimService.getClaims(playerFaction.id).size + 1 > playerFaction.power) {
+                        // Autoclaim silently skips chunks overlapping a WorldGuard region, as it does blocked worlds (#1630)
+                        if (claimService.isClaimBlockedByWorldGuard(newChunkPosition)) {
+                            return@Runnable
+                        }
+                        if (plugin.config.getBoolean("factions.limitLand") && claimService.getClaimPowerUsed(playerFaction.id) + claimService.getClaimPowerCost(to.world!!.uid) > playerFaction.power) {
                             event.player.sendMessage("$RED${plugin.language["AutoclaimPowerLimitReached"]}")
                             val updatedFaction = factionService.save(playerFaction.copy(autoclaim = false)).onFailure {
                                 plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
@@ -68,6 +73,18 @@ class PlayerMoveListener(private val plugin: MedievalFactions) : Listener {
                             claimService.getClaims(playerFaction.id).isNotEmpty()
                         ) {
                             event.player.sendMessage("$RED${plugin.language["CommandFactionClaimNotContiguous"]}")
+                            val updatedFaction = factionService.save(playerFaction.copy(autoclaim = false)).onFailure {
+                                plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
+                                return@Runnable
+                            }
+                            updatedFaction.sendMessage(
+                                plugin.language["AutoclaimDisabledNotificationTitle"],
+                                plugin.language["AutoclaimDisabledNotificationBody"]
+                            )
+                            return@Runnable
+                        }
+                        if (claimService.exceedsMaxClaimDistance(playerFaction.id, newChunkPosition)) {
+                            event.player.sendMessage("$RED${plugin.language["CommandFactionClaimTooFarFromClaims", plugin.config.getInt("factions.maxClaimDistance").toString()]}")
                             val updatedFaction = factionService.save(playerFaction.copy(autoclaim = false)).onFailure {
                                 plugin.logger.log(SEVERE, "Failed to save faction: ${it.reason.message}", it.reason.cause)
                                 return@Runnable

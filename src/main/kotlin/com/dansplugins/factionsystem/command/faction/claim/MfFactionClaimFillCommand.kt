@@ -20,7 +20,6 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
 import java.util.logging.Level.SEVERE
-import kotlin.math.floor
 
 class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandExecutor, TabCompleter {
 
@@ -101,10 +100,16 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                         }
                         val chunks = filledChunks - regionBlockedChunks
                         val claimService = plugin.services.claimService
-                        val claims = chunks.associateWith(claimService::getClaim)
+                        // Chunks listed in factions.blockedClaimChunks are left out of the fill
+                        val blockedChunks = chunks.filter(claimService::isChunkClaimBlocked)
+                        val claims = (chunks - blockedChunks.toSet()).associateWith(claimService::getClaim)
                         val relationshipService = plugin.services.factionRelationshipService
                         val unclaimedChunks = claims.filter { (_, claim) -> claim == null }.keys
+                        val surroundedChunks = claims
+                            .filter { (chunk, claim) -> claim != null && claim.factionId != faction.id && claimService.isConquestBlockedBySurroundingClaims(chunk, claim.factionId) }
+                            .keys
                         val contestedChunks = claims
+                            .filterKeys { it !in surroundedChunks }
                             .mapNotNull { (chunk, claim) -> claim?.let { chunk to it } }
                             .groupBy { (_, claim) -> claim.factionId }
                             .filter { (claimFactionId, claims) ->
@@ -112,16 +117,21 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
                                 val relationships = relationshipService.getRelationships(faction.id, claimFactionId)
                                 val reverseRelationships = relationshipService.getRelationships(claimFactionId, faction.id)
                                 return@filter (relationships + reverseRelationships).any { it.type == AT_WAR } &&
-                                    claimFaction.power <= claimService.getClaims(claimFactionId).size - claims.size
+                                    claimFaction.power <= claimService.getClaimPowerUsed(claimFactionId) - claimService.getClaimPowerCost(claims.map { (chunk, _) -> chunk })
                             }
                             .flatMap { it.value.map { (chunk, _) -> chunk } }
                         val claimableChunks = unclaimedChunks + contestedChunks
                         if (claimableChunks.isEmpty()) {
-                            sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillNoClaimableChunks"]}")
+                            val reason = when {
+                                surroundedChunks.isNotEmpty() -> "CommandFactionClaimSurroundedChunk"
+                                blockedChunks.isNotEmpty() -> "CommandFactionClaimChunkBlocked"
+                                else -> "CommandFactionClaimFillNoClaimableChunks"
+                            }
+                            sender.sendMessage("$RED${plugin.language[reason]}")
                             return@saveChunks
                         }
-                        if (plugin.config.getBoolean("factions.limitLand") && claimableChunks.size + claimService.getClaims(faction.id).size > faction.power) {
-                            sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillReachedDemesneLimit", decimalFormat.format(floor(faction.power))]}")
+                        if (plugin.config.getBoolean("factions.limitLand") && claimService.getClaimPowerCost(claimableChunks) + claimService.getClaimPowerUsed(faction.id) > faction.power) {
+                            sender.sendMessage("$RED${plugin.language["CommandFactionClaimFillReachedDemesneLimit", decimalFormat.format(claimService.getClaimLimit(faction.id, faction.power, senderWorld.uid))]}")
                             return@saveChunks
                         }
                         claimableChunks.forEach { chunk ->
@@ -158,7 +168,7 @@ class MfFactionClaimFillCommand(private val plugin: MedievalFactions) : CommandE
         if (claim?.factionId == faction.id) return chunksToFill
         if (chunksToFill.contains(MfChunkPosition(worldId, startChunkX, startChunkZ))) return chunksToFill
         val newChunks = mutableSetOf(*chunksToFill.toTypedArray(), MfChunkPosition(worldId, startChunkX, startChunkZ))
-        if (newChunks.size + claimService.getClaims(faction.id).size > faction.power) return null
+        if (claimService.getClaimPowerCost(newChunks) + claimService.getClaimPowerUsed(faction.id) > faction.power) return null
         if (claimFillMaxChunks > 0 && newChunks.size > claimFillMaxChunks) {
             throw ClaimFillLimitReachedException()
         }
