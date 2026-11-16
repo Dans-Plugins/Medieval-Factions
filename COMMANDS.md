@@ -408,7 +408,8 @@ Rivals are stored apart from alliances, wars and vassalage (table `mf_faction_ri
 ### `/faction role create [name]` or `/f role create [name]`
 **Permission:** `mf.role.create` (default: true)  
 **Description:** Creates a new role in your faction.  
-**Usage:** `/f role create Guard`
+**Usage:** `/f role create Guard`  
+**Notes:** A role can be named `Owner` (in any case) only when the faction has no Owner role and the creator's role may modify (`MODIFY_ROLE`) every role in the faction, because the Owner role is granted every permission that an add-on registers. `mf.force.role` skips this check.
 
 ### `/faction role delete [name]` or `/f role delete [name]`
 **Permission:** `mf.role.delete` (default: true)  
@@ -418,7 +419,8 @@ Rivals are stored apart from alliances, wars and vassalage (table `mf_faction_ri
 ### `/faction role rename [name] [new name]` or `/f role rename [name] [new name]`
 **Permission:** `mf.role.rename` (default: true)  
 **Description:** Renames a role in your faction.  
-**Usage:** `/f role rename Guard Protector`
+**Usage:** `/f role rename Guard Protector`  
+**Notes:** Renaming a role to `Owner` (in any case) follows the same rule as `/f role create`: the renamer's role must be able to modify every role in the faction. Renaming the Owner role to something else means it is no longer treated as the Owner role, so it stops receiving add-on permissions automatically and `/f admin setleader` creates a new Owner role.
 
 ### `/faction role move [name] [up|down]` or `/f role move [name] [up|down]`
 **Permission:** `mf.role.move` (default: true)  

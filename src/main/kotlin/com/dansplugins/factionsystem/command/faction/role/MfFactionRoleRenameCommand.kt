@@ -5,6 +5,7 @@ import com.dansplugins.factionsystem.command.unquote
 import com.dansplugins.factionsystem.faction.MfFactionId
 import com.dansplugins.factionsystem.faction.role.MfFactionRole
 import com.dansplugins.factionsystem.faction.role.MfFactionRoleId
+import com.dansplugins.factionsystem.faction.role.MfFactionRoles.Companion.OWNER_ROLE_NAME
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import dev.forkhandles.result4k.onFailure
@@ -155,6 +156,13 @@ class MfFactionRoleRenameCommand(private val plugin: MedievalFactions) : Command
                 }
                 if (faction.roles.any { it.name.equals(name, ignoreCase = true) }) {
                     player.sendMessage("$RED${plugin.language["CommandFactionRoleRenameRoleWithNameAlreadyExists"]}")
+                    return@Runnable
+                }
+                if (forcedFactionId == null &&
+                    name.equals(OWNER_ROLE_NAME, ignoreCase = true) &&
+                    faction.getRole(mfPlayer.id)?.mayNameRoleOwner(faction) != true
+                ) {
+                    player.sendMessage("$RED${plugin.language["CommandFactionRoleOwnerNameNoFactionPermission", OWNER_ROLE_NAME]}")
                     return@Runnable
                 }
                 factionService.save(

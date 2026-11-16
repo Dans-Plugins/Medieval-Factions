@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.storage.json
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.failure.OptimisticLockingFailureException
+import com.dansplugins.factionsystem.player.MfMaxPower
 import com.dansplugins.factionsystem.player.MfPlayer
 import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.player.MfPlayerRepository
@@ -69,14 +70,20 @@ class JsonMfPlayerRepository(
         updated
     }
 
-    override fun increaseOnlinePlayerPower(onlinePlayerIds: List<MfPlayerId>) = storageManager.withFileLock(fileName) {
+    /** `players.leaderMaxPower` for the players in [leaderIds] when it is set, else `players.maxPower` ([MfMaxPower]). */
+    private fun maxPowerOf(playerId: MfPlayerId, leaderIds: Set<MfPlayerId>, maxPower: Double, leaderMaxPower: Double?) =
+        if (leaderMaxPower != null && playerId in leaderIds) leaderMaxPower else maxPower
+
+    override fun increaseOnlinePlayerPower(onlinePlayerIds: List<MfPlayerId>, leaderIds: Set<MfPlayerId>) = storageManager.withFileLock(fileName) {
         val data = loadData()
         val minPower = plugin.config.getDouble("players.minPower")
-        val maxPower = plugin.config.getDouble("players.maxPower")
+        val configMaxPower = MfMaxPower.maxPower(plugin.config)
+        val leaderMaxPower = MfMaxPower.leaderMaxPower(plugin.config)
         val hoursToReachMax = plugin.config.getDouble("players.hoursToReachMaxPower")
         val timeIncrementHours = MfPowerUpdateSettings.intervalHours(plugin.config)
 
         data.players.forEachIndexed { index, player ->
+            val maxPower = maxPowerOf(player.id, leaderIds, configMaxPower, leaderMaxPower)
             if (player.id in onlinePlayerIds && player.power < maxPower) {
                 val currentPower = player.power
                 // Replicate the power increase formula from JooqMfPlayerRepository
@@ -101,15 +108,19 @@ class JsonMfPlayerRepository(
         saveData(data)
     }
 
-    override fun decreaseOfflinePlayerPower(offlinePlayerIds: List<MfPlayerId>) = storageManager.withFileLock(fileName) {
+    override fun decreaseOfflinePlayerPower(onlinePlayerIds: List<MfPlayerId>, leaderIds: Set<MfPlayerId>) = storageManager.withFileLock(fileName) {
         val data = loadData()
         val minPower = plugin.config.getDouble("players.minPower")
-        val maxPower = plugin.config.getDouble("players.maxPower")
+        val configMaxPower = MfMaxPower.maxPower(plugin.config)
+        val leaderMaxPower = MfMaxPower.leaderMaxPower(plugin.config)
         val hoursToReachMin = plugin.config.getDouble("players.hoursToReachMinPower")
         val timeIncrementHours = MfPowerUpdateSettings.intervalHours(plugin.config)
 
         data.players.forEachIndexed { index, player ->
-            if (player.id in offlinePlayerIds && player.powerAtLogout > minPower && player.power > minPower) {
+            val maxPower = maxPowerOf(player.id, leaderIds, configMaxPower, leaderMaxPower)
+            // The argument lists the ONLINE players (MfPlayerService passes them, as JooqMfPlayerRepository expects);
+            // decay applies to everyone else.
+            if (player.id !in onlinePlayerIds && player.powerAtLogout > minPower && player.power > minPower) {
                 // Replicate the power decrease formula from JooqMfPlayerRepository
                 // This uses powerAtLogout to calculate the correct power decay over time
                 val currentPower = kotlin.math.min(player.power, kotlin.math.min(player.powerAtLogout, maxPower))
@@ -145,5 +156,20 @@ class JsonMfPlayerRepository(
         }
 
         saveData(data)
+    }
+
+    override fun clampPowerToMax(leaderIds: Set<MfPlayerId>) = storageManager.withFileLock(fileName) {
+        val data = loadData()
+        val configMaxPower = MfMaxPower.maxPower(plugin.config)
+        val leaderMaxPower = MfMaxPower.leaderMaxPower(plugin.config)
+        var changed = false
+        data.players.forEachIndexed { index, player ->
+            val maxPower = maxPowerOf(player.id, leaderIds, configMaxPower, leaderMaxPower)
+            if (player.power > maxPower) {
+                data.players[index] = player.copy(power = maxPower, version = player.version + 1)
+                changed = true
+            }
+        }
+        if (changed) saveData(data)
     }
 }

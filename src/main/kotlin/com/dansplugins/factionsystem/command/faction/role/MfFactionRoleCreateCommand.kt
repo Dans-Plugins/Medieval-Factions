@@ -122,6 +122,10 @@ class MfFactionRoleCreateCommand(private val plugin: MedievalFactions) : Command
                     player.sendMessage("$RED${plugin.language["CommandFactionRoleCreateRoleWithNameAlreadyExists"]}")
                     return@Runnable
                 }
+                if (forcedFactionId == null && name.equals(OWNER_ROLE_NAME, ignoreCase = true) && role?.mayNameRoleOwner(faction) != true) {
+                    player.sendMessage("$RED${plugin.language["CommandFactionRoleOwnerNameNoFactionPermission", OWNER_ROLE_NAME]}")
+                    return@Runnable
+                }
                 val newRole = MfFactionRole(plugin, name = name)
                 factionService.save(
                     faction.copy(
