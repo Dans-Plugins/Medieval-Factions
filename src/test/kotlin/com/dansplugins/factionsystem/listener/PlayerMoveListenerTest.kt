@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.listener
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.TestUtils
+import com.dansplugins.factionsystem.area.MfChunkPosition
 import com.dansplugins.factionsystem.claim.MfClaimService
 import com.dansplugins.factionsystem.claim.MfClaimedChunk
 import com.dansplugins.factionsystem.faction.MfFaction
@@ -17,6 +18,7 @@ import dev.forkhandles.result4k.Success
 import org.bukkit.Chunk
 import org.bukkit.Location
 import org.bukkit.Server
+import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.scheduler.BukkitScheduler
@@ -154,6 +156,45 @@ class PlayerMoveListenerTest {
         runAsyncTasks()
 
         verify(claimService, never()).delete(claim)
+    }
+
+    @Test
+    fun onPlayerMove_autoclaimOn_chunkInWorldGuardRegion_isNotClaimed() {
+        // With worldGuard.blockClaimsInRegions, autoclaim walks over a chunk inside a WorldGuard region (#1630)
+        val claim = stubAutoclaimIntoWilderness()
+        `when`(claimService.isClaimBlockedByWorldGuard(MfChunkPosition(worldId, 1, 0))).thenReturn(true)
+
+        uut.onPlayerMove(event)
+        runAsyncTasks()
+
+        verify(claimService, never()).save(claim)
+    }
+
+    @Test
+    fun onPlayerMove_autoclaimOn_chunkOutsideWorldGuardRegions_isClaimed() {
+        // Control for the test above: the same walk claims the chunk when no region covers it
+        val claim = stubAutoclaimIntoWilderness()
+
+        uut.onPlayerMove(event)
+        runAsyncTasks()
+
+        verify(claimService).save(claim)
+    }
+
+    private fun stubAutoclaimIntoWilderness(): MfClaimedChunk {
+        val claimPermission = MfFactionPermission("CLAIM", "Claim", false)
+        val factionPermissions = plugin.factionPermissions
+        `when`(factionPermissions.claim).thenReturn(claimPermission)
+        `when`(role.getPermissionValue(claimPermission)).thenReturn(true)
+        `when`(player.hasPermission("mf.claim")).thenReturn(true)
+        `when`(faction.autoclaim).thenReturn(true)
+        val destination = event.to!!
+        val world = toChunk.world
+        `when`(destination.world).thenReturn(world)
+        `when`(plugin.config).thenReturn(mock(FileConfiguration::class.java))
+        val claim = MfClaimedChunk(worldId, 1, 0, factionId)
+        `when`(claimService.save(claim)).thenReturn(Success(claim))
+        return claim
     }
 
     private fun stubClaimAtDestination(owningFactionId: MfFactionId): MfClaimedChunk {

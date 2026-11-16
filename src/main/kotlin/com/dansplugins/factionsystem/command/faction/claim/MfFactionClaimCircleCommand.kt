@@ -123,7 +123,7 @@ class MfFactionClaimCircleCommand(
                 plugin.server.scheduler.runTask(
                     plugin,
                     Runnable {
-                        val chunks = if (shape != MfClaimShape.CIRCLE) {
+                        val requestedChunks = if (shape != MfClaimShape.CIRCLE) {
                             // The sender's chunk is the centre, or just past it on a side of even length
                             val minX = senderChunkX - (sizeX - 1) / 2
                             val minZ = senderChunkZ - (sizeZ - 1) / 2
@@ -141,6 +141,16 @@ class MfFactionClaimCircleCommand(
                                 }.map { z -> MfChunkPosition.fromBukkit(senderWorld.getChunkAt(x, z)) }
                             }
                         }
+                        // With worldGuard.blockClaimsInRegions, chunks overlapping a WorldGuard region are left out (#1630)
+                        val regionBlockedChunks = requestedChunks.filter(claimService::isClaimBlockedByWorldGuard)
+                        if (regionBlockedChunks.isNotEmpty()) {
+                            if (regionBlockedChunks.size == requestedChunks.size) {
+                                sender.sendMessage("${ChatColor.RED}${plugin.language["CommandFactionClaimWorldGuardRegion"]}")
+                                return@Runnable
+                            }
+                            sender.sendMessage("${ChatColor.YELLOW}${plugin.language["CommandFactionClaimWorldGuardRegionSkipped", regionBlockedChunks.size.toString()]}")
+                        }
+                        val chunks = requestedChunks - regionBlockedChunks.toSet()
                         plugin.server.scheduler.runTaskAsynchronously(
                             plugin,
                             Runnable saveChunks@{
