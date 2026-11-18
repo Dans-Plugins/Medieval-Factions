@@ -222,6 +222,8 @@ Fill unclaimed gaps surrounded by your claims:
    /f home
    ```
 
+3. **Respawning at home:** on servers that turn on `factions.respawnAtFactionHome`, members who die respawn at the faction home. A bed or respawn anchor still comes first. Servers can also make dying the only way home by taking away `mf.home`, which blocks `/f home` but not the respawn. See the [FAQ](FAQ.md#can-dying-be-the-only-way-to-reach-the-faction-home).
+
 #### Unclaiming Land
 
 If you need to unclaim:
@@ -441,6 +443,7 @@ If relations deteriorate:
 **Before Declaring War:**
 
 1. **Check server PVP rules** - Some servers require wars for PVP between factions.
+   You do not need to name a faction as a rival (`/f rival`) before declaring war on it. A rivalry is for show only; see the [FAQ](FAQ.md#rivalry).
 
 2. **Assess the situation:**
    - Check enemy faction power: `/f power [FactionName]`
@@ -765,10 +768,12 @@ flowchart TD
 
 A lock protects one block, but a wall can be broken around it. A locked area protects a whole room: inside it, only the players and roles you list may place, break or use blocks, even if they are members of your faction.
 
-1. Stand on one corner and run `/f area pos1`, then stand on the opposite corner and run `/f area pos2`. Include the floor and ceiling.
+1. Stand on one corner and run `/f area pos1`, then stand on the opposite corner and run `/f area pos2`. Each command marks the exact block you are standing on; corners do not snap to chunk borders. The area covers only the height between the two corners, so include the floor and ceiling.
 2. Run `/f area create vault`. Every chunk of the area must be claimed by your faction.
-3. Give access: `/f area add vault Steve`, or `/f area add vault role Officer` for every Officer.
-4. `/f area list` shows your areas, and `/f area delete vault` removes one.
+3. Give access: `/f area add vault Steve`, or `/f area add vault role Officer` for every Officer. Each area has its own list, so a vault can admit Officers while an armoury admits Guards.
+4. `/f area list` shows your areas, and `/f area delete vault` removes one you no longer need.
+
+A faction can have as many areas as it needs, each with its own name. Locked areas do not replace block locks: `/f lock` still protects single blocks, and a player listed on a locked chest inside an area can still open it. More answers are in the [FAQ](FAQ.md#locked-areas).
 
 Setting areas up needs the `MANAGE_LOCKED_AREAS` role permission, which the Owner has. Members with that permission, and players with `/f bypass` on, are never refused inside an area. Areas do not stop players from walking in, and they do not protect armour stands, item frames or other entities; they cover placing, breaking and using blocks (doors, chests, buttons and so on).
 
@@ -1044,6 +1049,7 @@ While a duel lasts:
 3. **Be strategic** - Form alliances that benefit your goals
 4. **Stay informed** - Use `/f list` and `/f who` regularly
 5. **Prepare for conflict** - Even in peace, be ready for war
+6. **Name your rivals** - `/f rival [faction]` lists a faction under "Rivals" in your `/f info` and tells them. It is one-sided and changes no rules: no war, protection or power effect, and it is not needed to declare war. `/f unrival [faction]` ends it.
 
 ### Defense
 
@@ -1104,7 +1110,7 @@ While a duel lasts:
 
 1. **In-game help**: `/f help`
 2. **Server staff**: Ask moderators or admins
-3. **Documentation**: Read [COMMANDS.md](COMMANDS.md), [CONFIG.md](CONFIG.md), [FACTION_FLAGS.md](FACTION_FLAGS.md)
+3. **Documentation**: Read the [FAQ](FAQ.md), [COMMANDS.md](COMMANDS.md), [CONFIG.md](CONFIG.md), [FACTION_FLAGS.md](FACTION_FLAGS.md)
 4. **Support Discord**: Check README.md for Discord link
 5. **Bug reports**: Submit issues on GitHub
 

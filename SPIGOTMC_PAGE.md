@@ -104,6 +104,7 @@ Medieval Factions has comprehensive documentation available on GitHub:
 
 ### Quick Start Guides
 - **[User Guide](https://github.com/Dans-Plugins/Medieval-Factions/blob/main/USER_GUIDE.md)** - Getting started, common scenarios, and step-by-step tutorials
+- **[FAQ](https://github.com/Dans-Plugins/Medieval-Factions/blob/main/FAQ.md)** - Rivalries, respawning at the faction home, locked areas, disbanding and more
 - **[Commands Reference](https://github.com/Dans-Plugins/Medieval-Factions/blob/main/COMMANDS.md)** - Complete list of all commands with descriptions and permissions
 - **[Configuration Guide](https://github.com/Dans-Plugins/Medieval-Factions/blob/main/CONFIG.md)** - Detailed server configuration options
 - **[Faction Flags Reference](https://github.com/Dans-Plugins/Medieval-Factions/blob/main/FACTION_FLAGS.md)** - Per-faction settings and customization

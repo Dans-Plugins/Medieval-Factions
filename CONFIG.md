@@ -646,7 +646,8 @@ flowchart TD
 **Type:** Boolean  
 **Default:** `false`  
 **Description:** When `true`, a player who dies respawns at their faction's home instead of the world spawn. Leaving the End is not affected. A bed or respawn anchor still takes priority, and players whose faction has no home (or whose home is in an unloaded world) respawn as usual.  
-**Values:** `true` or `false`
+**Values:** `true` or `false`  
+**Respawn-only homes:** the respawn does not check `mf.home` or the faction's `GO_HOME` role permission. To make dying the only way to reach the faction home, turn this on and take `mf.home` away from players in your permissions plugin, which blocks `/f home`. Use `mf.home` rather than `GO_HOME`, because each faction's owner controls its own role permissions.
 
 ![Chat: /f sethome; /f home teleports to -183.5, 119, -55.5; a second /f home is refused with "You must wait 55 more seconds"; the player is moved away and killed, and the position read back after respawning is the faction home again](docs/images/faction-home/home-cooldown-respawn.png)
 
