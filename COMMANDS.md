@@ -214,6 +214,9 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 - Everything except `list` needs the `MANAGE_LOCKED_AREAS` faction role permission. The Owner role of a new faction is granted it; a role with no setting of its own for it follows its `CLAIM` setting, so owners of existing factions can use it without their roles being changed.
 - An area only adds to territory protection: players who may not build in the claim at all are still refused. Inside the area, members whose role has `MANAGE_LOCKED_AREAS`, and players with `/f bypass` on, are never refused.
 - An area protects only land its faction still holds; unclaimed or lost chunks inside it are not protected. Locked blocks keep their own access lists: an accessor of a locked chest inside an area can still open it.
+- Corners are exact block positions (they do not snap to chunks), and the area covers only the Y levels between them.
+- A faction can have any number of areas, each with its own players and roles. Where areas overlap, a player must be allowed by every area containing the block.
+- More answers are in the [FAQ](FAQ.md#locked-areas).
 
 ### `/faction unclaimall` or `/f unclaimall`
 **Permission:** `mf.unclaimall` (default: true)  
@@ -260,7 +263,7 @@ See [FACTION_FLAGS.md](FACTION_FLAGS.md) for a complete list of available flags.
 **Permission:** `mf.home` (default: true)  
 **Description:** Teleports you to your faction's home location.  
 **Usage:** `/f home`  
-**Notes:** There is a configurable teleport delay (default: 5 seconds).
+**Notes:** There is a configurable teleport delay (default: 5 seconds). With `factions.respawnAtFactionHome` on, players who die also respawn at the faction home. That respawn does not check `mf.home`, so taking `mf.home` away makes dying the only way home (see the [FAQ](FAQ.md#can-dying-be-the-only-way-to-reach-the-faction-home)).
 
 ## Diplomacy & Warfare
 
@@ -316,7 +319,8 @@ Rivals are stored apart from alliances, wars and vassalage (table `mf_faction_ri
 ### `/faction declarewar [faction]` or `/f declarewar [faction]`
 **Permission:** `mf.declarewar` (default: true)  
 **Description:** Declares war on another faction. If `factions.warDeclarationRequiresApproval` is enabled in config, the declaration will be held for moderator approval. When approval is required, you can optionally include a reason: `/f declarewar EnemyFaction -- reason for war`. If `factions.truceDurationMinutes` is above `0`, war cannot be declared on a faction you made peace with until the truce ends.  
-**Usage:** `/f declarewar EnemyFaction`
+**Usage:** `/f declarewar EnemyFaction`  
+**Notes:** A rivalry (`/f rival`) is not needed first; rivalries have no effect on war.
 
 ### `/faction makepeace [faction]` or `/f makepeace [faction]`
 **Permission:** `mf.makepeace` (default: true)  
