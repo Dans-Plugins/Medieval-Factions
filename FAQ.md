@@ -24,6 +24,29 @@ step-by-step walkthroughs see the [User Guide](USER_GUIDE.md).
   - [Can different areas let in different roles?](#can-different-areas-let-in-different-roles)
   - [Can a faction have more than one locked area?](#can-a-faction-have-more-than-one-locked-area)
   - [How do I remove a locked area I no longer need?](#how-do-i-remove-a-locked-area-i-no-longer-need)
+- [Power](#power)
+  - [Can I stop a player's power from changing?](#can-i-stop-a-players-power-from-changing)
+  - [Can players see their power without running a command?](#can-players-see-their-power-without-running-a-command)
+- [War and Peace](#war-and-peace)
+  - [Can two factions go straight back to war after making peace?](#can-two-factions-go-straight-back-to-war-after-making-peace)
+  - [Can an admin start or end a war between two other factions?](#can-an-admin-start-or-end-a-war-between-two-other-factions)
+- [Vassalage](#vassalage)
+  - [What is `/f vassalage`?](#what-is-f-vassalage)
+  - [How do I take back a vassalization offer?](#how-do-i-take-back-a-vassalization-offer)
+- [Locks](#locks)
+  - [Can I give a whole role access to a locked chest?](#can-i-give-a-whole-role-access-to-a-locked-chest)
+  - [Can I lock armour stands and item frames?](#can-i-lock-armour-stands-and-item-frames)
+- [Claims](#claims)
+  - [How can I see where the claim borders are?](#how-can-i-see-where-the-claim-borders-are)
+  - [How do I stop factions claiming spawn?](#how-do-i-stop-factions-claiming-spawn)
+  - [Can I stop factions claiming land far from their territory?](#can-i-stop-factions-claiming-land-far-from-their-territory)
+- [Roles](#roles)
+  - [Can roles have a prefix in chat?](#can-roles-have-a-prefix-in-chat)
+  - [How do I change the order of roles?](#how-do-i-change-the-order-of-roles)
+- [Storage](#storage)
+  - [Do I need a database?](#do-i-need-a-database)
+- [Other Plugins](#other-plugins)
+  - [Does Medieval Factions protect Slimefun machines?](#does-medieval-factions-protect-slimefun-machines)
 
 ## Disbanding Factions
 
@@ -174,6 +197,180 @@ under an area is unclaimed or lost, the area stops protecting those chunks.
 
 See [`/f area` in COMMANDS.md](COMMANDS.md#faction-area-or-f-area) and
 [Locking Important Blocks](USER_GUIDE.md#locking-important-blocks) in the User Guide.
+
+## Power
+
+### Can I stop a player's power from changing?
+
+Yes. `/power setfixed <player> <amount>` fixes a player's power at that amount. While it is fixed, nothing
+changes it: not time online or offline, not kills, not deaths, and not `/power set`. `/f power` shows that the
+power is fixed. This suits servers that hand out power another way, for example by rank.
+
+`/power clearfixed <player>` removes it, and power changes normally again from the fixed amount. Both
+commands need `mf.power.fixed` (default: op) or `mf.force.power`. The amount must lie between
+`players.minPower` and `players.maxPower`.
+
+See [`/power setfixed`](COMMANDS.md#power-setfixed-player-amount) in COMMANDS.md.
+
+### Can players see their power without running a command?
+
+Yes, with the power scoreboard. Set `powerScoreboard.enabled: true` and restart. Each online player then sees a
+sidebar with their own power and, if they are in a faction, the faction's power and max power. It refreshes
+every `powerScoreboard.updateIntervalSeconds` (default `5`). It is off by default, and it never replaces a
+scoreboard that another plugin has already given the player.
+
+See [Power Scoreboard](CONFIG.md#power-scoreboard) in CONFIG.md.
+
+## War and Peace
+
+### Can two factions go straight back to war after making peace?
+
+Only if truces are off, which is the default. Set `factions.truceDurationMinutes` above `0` to turn them on.
+When both factions have run `/f makepeace`, a truce of that many minutes starts. Until it ends:
+
+- `/f declarewar` between the two factions is refused and says how many minutes are left,
+- a moderator cannot `/f approve` a pending war declaration between them (the request is kept for later),
+- `/f invoke` cannot call an ally into a war against a faction it has a truce with.
+
+Truces are saved in `truces.yml`, so a restart does not end them.
+
+See [`factions.truceDurationMinutes`](CONFIG.md#factionstrucedurationminutes) in CONFIG.md.
+
+### Can an admin start or end a war between two other factions?
+
+Yes. Operators hold `mf.force.declarewar` and `mf.force.makepeace` by default, and with them a diplomacy
+command can name two factions:
+
+```
+/f declarewar FactionA FactionB
+/f makepeace FactionA FactionB
+```
+
+This acts for both factions at once, with no role permission, consent or moderator approval needed. Alliances
+and vassalage have the same kind of node: `mf.force.ally`, `mf.force.breakalliance`, `mf.force.vassalize` and
+`mf.force.grantindependence`. The usual rules still apply: for example, allies cannot be put at war with each
+other. Every forced change is written to the server log.
+
+See [Diplomacy & Warfare](COMMANDS.md#diplomacy--warfare) in COMMANDS.md.
+
+## Vassalage
+
+### What is `/f vassalage`?
+
+One command that holds all the vassalage commands:
+
+| Subcommand | What it does | Same as |
+|---|---|---|
+| `/f vassalage offer <faction>` | Offers to make another faction your vassal | `/f vassalize` |
+| `/f vassalage accept <faction>` | Accepts a liege's offer | `/f swearfealty` |
+| `/f vassalage decline <faction>` | Declines a liege's offer | `/f declinevassalization` |
+| `/f vassalage revolt` | Breaks away from your liege | `/f declareindependence` |
+| `/f vassalage release <vassal>` | Frees one of your vassals | `/f grantindependence` |
+| `/f vassalage rescind <faction>` | Takes back an offer that has not been accepted | (new) |
+
+The older commands still work, with the same permissions.
+
+### How do I take back a vassalization offer?
+
+`/f vassalage rescind <faction>`, as long as the other faction has not accepted yet. It needs the same
+permissions as sending the offer. If the offer was already accepted, use `/f vassalage release` instead.
+
+See [Vassalage System](COMMANDS.md#vassalage-system) in COMMANDS.md.
+
+## Locks
+
+### Can I give a whole role access to a locked chest?
+
+Yes. Run `/accessors list` and right-click the block, then use the **Add role** button, or type
+`/accessors add <x> <y> <z> role <role>`. Every member of your faction who holds that role can then open the
+block. The access follows the role: a member who is given the role gets access, and one who loses it loses
+access.
+
+Only roles of the lock owner's own faction can be added. Holding a listed role lets a player open the block,
+but not change who else can.
+
+See [`/accessors add`](COMMANDS.md#accessors-add) in COMMANDS.md.
+
+### Can I lock armour stands and item frames?
+
+Yes. Run `/lock` and right-click the armour stand or item frame (glow item frames too). The same rules as for
+blocks apply: you must be in a faction, and it must be in your faction's land. Only you and the players on its
+access list can swap its armour or take, put or rotate the item, and only you can break it. As with blocks,
+explosions and mobs are not stopped.
+
+See [Locks & Access Control](COMMANDS.md#locks--access-control) in COMMANDS.md.
+
+## Claims
+
+### How can I see where the claim borders are?
+
+`/f claim show` outlines the claims within 4 chunks of you for 15 seconds: lime wool for your own faction, red
+for others. Only you can see the outline, and no blocks in the world are changed.
+
+See [`/f claim show`](COMMANDS.md#faction-claim-show-or-f-claim-show) in COMMANDS.md.
+
+### How do I stop factions claiming spawn?
+
+There are two ways, and both leave existing claims alone:
+
+- List the chunks in `factions.blockedClaimChunks`, for example `world:-2:-2:1:1` for a 4x4 block of chunks.
+  The numbers are chunk coordinates, not block coordinates. Listed chunks cannot be claimed or conquered.
+- If spawn is already a WorldGuard region, set `worldGuard.blockClaimsInRegions: true`. New claims are then
+  refused in any chunk that overlaps a WorldGuard region, apart from the regions or flags you exempt.
+
+See [`factions.blockedClaimChunks`](CONFIG.md#factionsblockedclaimchunks) and
+[WorldGuard Integration](CONFIG.md#worldguard-integration) in CONFIG.md.
+
+### Can I stop factions claiming land far from their territory?
+
+Yes. `factions.maxClaimDistance` sets how far, in chunks, a new claim may be from the faction's nearest claim
+in the same world. A faction's first claim in a world is not limited. The default, `-1`, means no limit.
+
+A related option, `factions.preventConqueringSurroundedChunks`, stops attackers from conquering a chunk in the
+middle of enemy land: they must take the edge chunks first.
+
+See [`factions.maxClaimDistance`](CONFIG.md#factionsmaxclaimdistance) in CONFIG.md.
+
+## Roles
+
+### Can roles have a prefix in chat?
+
+Yes. `/f role setprefix <role> <prefix>` sets one, for example `/f role setprefix Knight &6[Knight]`. Leave out
+the prefix to remove it. The prefix shows before the member's name in faction, ally and vassal chat, and in
+public chat when `chat.enableDefaultChatFormatting` is on. Other plugins can show it through the
+PlaceholderAPI placeholder `%medievalfactions_faction_role_prefix%`.
+
+See [`/f role setprefix`](COMMANDS.md#faction-role-setprefix-role-prefix-or-f-role-setprefix-role-prefix) in
+COMMANDS.md.
+
+### How do I change the order of roles?
+
+`/f role move <role> up` or `/f role move <role> down` moves a role one place in the list, for example to list
+a new Duke role above Member. The order only changes how roles are listed; it grants and removes nothing.
+
+## Storage
+
+### Do I need a database?
+
+No. Set `storage.type: json` to keep data in JSON files instead. The default is still `database`, which suits
+busy servers better, because every JSON save rewrites the whole file for that kind of data.
+
+To move existing data, run `/f migrate toJson` (or `/f migrate toDatabase`) with no players online, then stop
+the server, change `storage.type` and start it again. The target must be empty: the command will not merge two
+sets of data. Back up first.
+
+See [Storage Configuration](CONFIG.md#storage-configuration) in CONFIG.md and the
+[Migration Guide](docs/MIGRATION_GUIDE.md).
+
+## Other Plugins
+
+### Does Medieval Factions protect Slimefun machines?
+
+Yes, if you turn it on. Set `slimefun.protection.enabled: true` and restart. In claimed land, players who
+could not break or use an ordinary block there cannot use, break or place Slimefun blocks either. Wilderness
+is not affected.
+
+See [Slimefun Integration](CONFIG.md#slimefun-integration) in CONFIG.md.
 
 ---
 
