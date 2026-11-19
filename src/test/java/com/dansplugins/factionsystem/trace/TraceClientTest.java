@@ -13,23 +13,31 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.function.IntConsumer;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Drives the client against a real HTTP server on a loopback port -- the
@@ -223,6 +231,58 @@ class TraceClientTest {
     }
 
     @Test
+    void report_aTagsMapChangedMidReadIsDroppedWithoutThrowing() throws Exception {
+        // Arrange
+        // What a HashMap does when another thread changes it during the
+        // copy, without needing to win that race.
+        Map<String, String> beingChanged = new AbstractMap<String, String>() {
+            @Override
+            public Set<Map.Entry<String, String>> entrySet() {
+                throw new ConcurrentModificationException();
+            }
+        };
+        RecordingHandler log = new RecordingHandler();
+        Logger logger = Logger.getLogger("TraceClientTest.unreadableTags");
+        logger.setLevel(Level.ALL);
+        logger.addHandler(log);
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").logger(logger).build();
+
+        // Act
+        assertDoesNotThrow(() -> client.report("command", 1.0, beingChanged));
+        client.report("after", null, null);
+
+        // Assert
+        assertTrue(arrived.await(5, TimeUnit.SECONDS), "the client should keep working");
+        assertEquals(1, client.coalescing(), "only the good report opened a window");
+        client.close();
+        assertEquals(1, received.size(), "the unreadable report is dropped");
+        assertTrue(received.get(0).body.contains("\"name\":\"after\""), received.get(0).body);
+        assertTrue(log.records.isEmpty(), "nothing is logged on the caller's thread: " + log.records);
+    }
+
+    @Test
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    void report_aNonStringTagSmuggledInByARawMapIsDroppedWithoutThrowing() throws Exception {
+        // Arrange
+        // A Bukkit getValues(false) is a Map<String, Object>; one unchecked
+        // cast puts an Integer where json() needs a String.
+        Map raw = new HashMap();
+        raw.put("count", 5);
+        Map<String, String> tags = raw;
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build();
+
+        // Act
+        assertDoesNotThrow(() -> client.report("command", null, tags));
+        client.report("after", null, null);
+
+        // Assert
+        assertTrue(arrived.await(5, TimeUnit.SECONDS), "the client should keep working");
+        client.close();
+        assertEquals(1, received.size(), "the unreadable report is dropped");
+        assertTrue(received.get(0).body.contains("\"name\":\"after\""), received.get(0).body);
+    }
+
+    @Test
     void disabledClient_sendsNothing() throws Exception {
         // Arrange
         TraceClient byFlag = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").enabled(false).build();
@@ -277,6 +337,47 @@ class TraceClientTest {
     }
 
     @Test
+    void builder_namesWhatIsMissingInItsMessage() {
+        // Act
+        IllegalArgumentException noBaseUrl = assertThrows(IllegalArgumentException.class,
+                () -> TraceClient.builder("  ", "MyPlugin", "1.2.3"));
+        IllegalArgumentException noApplication = assertThrows(IllegalArgumentException.class,
+                () -> TraceClient.builder("http://x", null, "1.2.3"));
+        IllegalArgumentException noVersion = assertThrows(IllegalArgumentException.class,
+                () -> TraceClient.builder("http://x", "MyPlugin", ""));
+        IllegalArgumentException allMissing = assertThrows(IllegalArgumentException.class,
+                () -> TraceClient.builder(null, null, null));
+
+        // Assert
+        assertEquals("baseUrl is required", noBaseUrl.getMessage());
+        assertEquals("application is required", noApplication.getMessage());
+        assertEquals("version is required", noVersion.getMessage());
+        assertEquals("baseUrl is required", allMissing.getMessage(), "checked in argument order");
+    }
+
+    @Test
+    void builder_rejectsAnOverlongVersionAndAcceptsOneAtTheLimit() throws Exception {
+        // Arrange
+        StringBuilder max = new StringBuilder();
+        for (int i = 0; i < TraceClient.MAX_TAG_LENGTH; i++) {
+            max.append('9');
+        }
+
+        // Act
+        IllegalArgumentException tooLong = assertThrows(IllegalArgumentException.class,
+                () -> TraceClient.builder(baseUrl(), "MyPlugin", max + "9"));
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "  " + max + "  ").key("k").build();
+        client.report("startup");
+
+        // Assert
+        assertEquals("version is longer than " + TraceClient.MAX_TAG_LENGTH + " characters", tooLong.getMessage());
+        assertTrue(arrived.await(5, TimeUnit.SECONDS), "a version at the limit is accepted");
+        assertTrue(received.get(0).body.contains("\"version\":\"" + max + "\""),
+                "surrounding whitespace does not count and is not sent: " + received.get(0).body);
+        client.close();
+    }
+
+    @Test
     void report_tagsACommandWithTheProgramVersionTrimmed() throws Exception {
         // Arrange
         TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", " 2.0.0-SNAPSHOT ").key("k").build();
@@ -322,6 +423,92 @@ class TraceClientTest {
     }
 
     @Test
+    void withVersion_dropsNullKeysAndValuesAndKeepsTheEventsOwnVersion() {
+        // Arrange
+        Map<String, String> tags = new LinkedHashMap<>();
+        tags.put("name", "home");
+        tags.put("nullValue", null);
+        tags.put(null, "nullKey");
+        tags.put("version", "own");
+
+        // Act
+        Map<String, String> merged = TraceClient.withVersion(tags, "1.2.3");
+
+        // Assert
+        Map<String, String> expected = new LinkedHashMap<>();
+        expected.put("name", "home");
+        expected.put("version", "own");
+        assertEquals(expected, merged);
+        assertEquals(4, tags.size(), "the caller's map is not modified");
+    }
+
+    @Test
+    void withVersion_addsTheVersionEvenToAnEventAlreadyAtMaxTags() {
+        // Characterizes current behaviour, which issue #13 questions: unlike
+        // install and the server-wide tags, version is not held to MAX_TAGS,
+        // so an event with MAX_TAGS tags of its own goes out with one more.
+        // Arrange
+        Map<String, String> tags = new LinkedHashMap<>();
+        for (int i = 0; i < TraceClient.MAX_TAGS; i++) {
+            tags.put("e" + i, "v");
+        }
+
+        // Act
+        Map<String, String> merged = TraceClient.withVersion(tags, "1.2.3");
+
+        // Assert
+        assertEquals(TraceClient.MAX_TAGS + 1, merged.size());
+        assertEquals("1.2.3", merged.get("version"));
+    }
+
+    @Test
+    void withInstall_addsTheIdOnlyWhenThereIsOneAndRoomAndNoneAlready() {
+        // Arrange
+        Map<String, String> tags = new LinkedHashMap<>();
+        tags.put("version", "1.2.3");
+        Map<String, String> own = Collections.singletonMap("install", "the-events-own");
+        Map<String, String> full = new LinkedHashMap<>();
+        for (int i = 0; i < TraceClient.MAX_TAGS; i++) {
+            full.put("e" + i, "v");
+        }
+
+        // Act
+        Map<String, String> added = TraceClient.withInstall(tags, "abc");
+
+        // Assert
+        Map<String, String> expected = new LinkedHashMap<>();
+        expected.put("version", "1.2.3");
+        expected.put("install", "abc");
+        assertEquals(expected, added);
+        assertEquals(Collections.singletonMap("version", "1.2.3"), tags, "the caller's map is not modified");
+        assertSame(tags, TraceClient.withInstall(tags, null), "no ID, nothing added");
+        assertSame(own, TraceClient.withInstall(own, "abc"), "the event's own install tag wins");
+        assertSame(full, TraceClient.withInstall(full, "abc"), "never pushed past MAX_TAGS");
+    }
+
+    @Test
+    void serverWideConfig_anyEnabledLineThatIsNotOnDisables() {
+        assertTrue(TraceClient.parseServerWideConfig(Arrays.asList("enabled: true", "enabled: false")).disables,
+                "a later off wins over an earlier on");
+        assertTrue(TraceClient.parseServerWideConfig(Arrays.asList("enabled: false", "enabled: true")).disables,
+                "and an earlier off wins over a later on");
+        assertFalse(TraceClient.parseServerWideConfig(Arrays.asList("enabled: true", "enabled: yes")).disables);
+        assertTrue(TraceClient.parseServerWideConfig(Arrays.asList("# enabled: true", "enabled: false")).disables,
+                "a commented-out line is not a switch");
+    }
+
+    @Test
+    void serverWideConfig_aValuelessEnabledLineDisables() {
+        // Fails closed (issue #27): an enabled: line with no value, or only a
+        // comment, does not clearly mean "on", so it turns reporting off.
+        assertTrue(TraceClient.parseServerWideConfig(Arrays.asList("enabled:")).disables);
+        assertTrue(TraceClient.parseServerWideConfig(Arrays.asList("enabled:   ")).disables);
+        assertTrue(TraceClient.parseServerWideConfig(Arrays.asList("enabled: # set below", "enabled: true")).disables);
+        assertFalse(TraceClient.parseServerWideConfig(Arrays.asList("enabled: true # on")).disables,
+                "a trailing comment after a value is not part of it");
+    }
+
+    @Test
     void json_escapesControlCharactersAndSkipsNullTags() {
         Map<String, String> tags = new LinkedHashMap<>();
         tags.put("ok", "line\nbreak\ttab\\slash");
@@ -346,6 +533,23 @@ class TraceClientTest {
         assertEquals("{\"application\":\"App\",\"name\":\"n\"}", positive, "Infinity is not JSON and is dropped");
         assertEquals("{\"application\":\"App\",\"name\":\"n\"}", negative, "-Infinity is not JSON and is dropped");
         assertEquals("{\"application\":\"App\",\"name\":\"n\",\"value\":-0.5}", finite);
+    }
+
+    @Test
+    void json_writesValuesAsDoubleToStringDoesWhichIsStillValidJson() {
+        // A value goes out as Double.toString: always with a fraction, and in
+        // exponent form below 1e-3 and from 1e7 up. JSON allows "1.0E20" and
+        // "1.0E-5" (an upper-case E and a signed exponent), so the server
+        // must parse both forms.
+        assertEquals("{\"application\":\"App\",\"name\":\"n\",\"value\":1.0}", TraceClient.json("App", "n", 1.0, null));
+        assertEquals("{\"application\":\"App\",\"name\":\"n\",\"value\":1234567.0}", TraceClient.json("App", "n", 1234567.0, null));
+        assertEquals("{\"application\":\"App\",\"name\":\"n\",\"value\":1.0E7}", TraceClient.json("App", "n", 1e7, null));
+        assertEquals("{\"application\":\"App\",\"name\":\"n\",\"value\":1.0E20}", TraceClient.json("App", "n", 1e20, null));
+        assertEquals("{\"application\":\"App\",\"name\":\"n\",\"value\":0.001}", TraceClient.json("App", "n", 0.001, null));
+        assertEquals("{\"application\":\"App\",\"name\":\"n\",\"value\":1.0E-5}", TraceClient.json("App", "n", 1e-5, null));
+        assertEquals("{\"application\":\"App\",\"name\":\"n\",\"value\":-0.0}", TraceClient.json("App", "n", -0.0, null));
+        assertEquals("{\"application\":\"App\",\"name\":\"n\",\"value\":1.7976931348623157E308}",
+                TraceClient.json("App", "n", Double.MAX_VALUE, null));
     }
 
     @Test
@@ -411,13 +615,19 @@ class TraceClientTest {
             exchange.close();
         });
         slow.start();
+        RecordingHandler log = new RecordingHandler();
+        Logger logger = Logger.getLogger("TraceClientTest.flood");
+        logger.setLevel(Level.ALL);
+        logger.addHandler(log);
         TraceClient client = TraceClient.builder("http://127.0.0.1:" + slow.getAddress().getPort(), "MyPlugin", "1.2.3")
-                .key("k").build();
+                .key("k").logger(logger).build();
         int flood = TraceClient.QUEUE_CAPACITY * 3;
 
         // Act
+        // startup, because it is never coalesced: every one of these goes
+        // to the queue, so the queue is all that bounds them.
         for (int i = 0; i < flood; i++) {
-            client.report("flood");
+            client.report("startup");
         }
         release.countDown();
         long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(20);
@@ -437,6 +647,17 @@ class TraceClientTest {
                 "delivered " + delivered.get() + " of " + flood + "; at most the in-flight one plus a full queue may survive");
         assertTrue(delivered.get() < flood, "an unbounded queue would have delivered all " + flood);
         client.close();
+        // The README says drops are silent. The server only answers 201, so
+        // the one other line the send path can write is "could not deliver",
+        // for a loopback connection that failed -- one stray line was seen
+        // once on Java 8 CI. Allow a few of those, far fewer than there were
+        // drops: logging each drop would be hundreds of lines.
+        List<String> messages = log.records.stream().map(LogRecord::getMessage).collect(Collectors.toList());
+        int dropped = flood - (TraceClient.QUEUE_CAPACITY + 1);
+        assertTrue(messages.stream().allMatch(m -> m.startsWith("[trace] could not deliver ")),
+                "only a failed send may be logged, but logged: " + messages);
+        assertTrue(messages.size() < dropped / 10,
+                "a full queue drops without logging, but logged " + messages.size() + " lines: " + messages);
         slow.stop(0);
     }
 
@@ -472,6 +693,75 @@ class TraceClientTest {
 
         assertTrue(elapsedMs < 7_000, "close() took " + elapsedMs + " ms; draining must be bounded by the timeout");
         release.countDown();
+        slow.stop(0);
+    }
+
+    @Test
+    void close_whenInterruptedReturnsAtOnceAndKeepsTheInterruptFlag() throws Exception {
+        // Arrange
+        // A server holding a request, so close() would otherwise wait out
+        // the whole drain timeout. A host shutting down on an interrupt must
+        // not wait that long, and must still see that it was interrupted.
+        CountDownLatch inFlight = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        HttpServer slow = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        slow.createContext("/", exchange -> {
+            inFlight.countDown();
+            try { release.await(15, TimeUnit.SECONDS); } catch (InterruptedException ignored) { Thread.currentThread().interrupt(); }
+            exchange.sendResponseHeaders(201, -1);
+            exchange.close();
+        });
+        slow.start();
+        TraceClient client = TraceClient.builder("http://127.0.0.1:" + slow.getAddress().getPort(), "MyCli", "1.2.3").key("k").build();
+        client.report("startup");
+        assertTrue(inFlight.await(5, TimeUnit.SECONDS), "the report should reach the server");
+
+        // Act
+        Thread.currentThread().interrupt();
+        long before = System.nanoTime();
+        client.close();
+        long elapsedMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - before);
+        boolean stillInterrupted = Thread.interrupted(); // clears it, so later tests run uninterrupted
+
+        // Assert
+        assertTrue(stillInterrupted, "close() must restore the interrupt it swallowed");
+        assertTrue(elapsedMs < 2_000, "close() took " + elapsedMs + " ms; an interrupt must cut the drain short");
+        release.countDown();
+        slow.stop(0);
+    }
+
+    @Test
+    void report_sendsFromOneDaemonThreadNamedForTheApplication() throws Exception {
+        // Arrange
+        // A server holding the first request, so the sender thread is alive
+        // and busy while the rest queue behind it.
+        CountDownLatch inFlight = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        HttpServer slow = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        slow.createContext("/", exchange -> {
+            inFlight.countDown();
+            try { release.await(15, TimeUnit.SECONDS); } catch (InterruptedException ignored) { Thread.currentThread().interrupt(); }
+            exchange.sendResponseHeaders(201, -1);
+            exchange.close();
+        });
+        slow.start();
+        TraceClient client = TraceClient.builder("http://127.0.0.1:" + slow.getAddress().getPort(), "ThreadProbe", "1.2.3")
+                .key("k").build();
+
+        // Act
+        for (int i = 0; i < 5; i++) {
+            client.report("startup");
+        }
+        assertTrue(inFlight.await(5, TimeUnit.SECONDS), "the first report should reach the server");
+        List<Thread> senders = Thread.getAllStackTraces().keySet().stream()
+                .filter(thread -> thread.getName().equals("trace-client/ThreadProbe"))
+                .collect(Collectors.toList());
+
+        // Assert
+        assertEquals(1, senders.size(), "one sender thread, however many reports wait");
+        assertTrue(senders.get(0).isDaemon(), "a daemon thread never keeps the host's JVM from exiting");
+        release.countDown();
+        client.close();
         slow.stop(0);
     }
 
@@ -519,6 +809,83 @@ class TraceClientTest {
         client.close();
     }
 
+    /** What reached a server, as bytes, with the two headers that say how to read them. */
+    private static final class RawRequest {
+        final byte[] body;
+        final String contentType;
+        final String contentLength;
+
+        RawRequest(byte[] body, String contentType, String contentLength) {
+            this.body = body;
+            this.contentType = contentType;
+            this.contentLength = contentLength;
+        }
+    }
+
+    /** Reports {@code name} with {@code tags} to a server of its own and returns the one request it received. */
+    private static RawRequest reportAndCaptureRawRequest(String name, Map<String, String> tags) throws Exception {
+        List<RawRequest> raw = new CopyOnWriteArrayList<>();
+        CountDownLatch got = new CountDownLatch(1);
+        HttpServer capturing = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        capturing.createContext("/", exchange -> {
+            raw.add(new RawRequest(readAll(exchange.getRequestBody()),
+                    exchange.getRequestHeaders().getFirst("Content-Type"),
+                    exchange.getRequestHeaders().getFirst("Content-Length")));
+            exchange.sendResponseHeaders(201, -1);
+            exchange.close();
+            got.countDown();
+        });
+        capturing.start();
+        try {
+            TraceClient client = TraceClient.builder("http://127.0.0.1:" + capturing.getAddress().getPort(), "MyPlugin", "1.2.3")
+                    .key("k").build();
+            client.report(name, null, tags);
+            assertTrue(got.await(5, TimeUnit.SECONDS), "the report should reach the server");
+            client.close();
+            return raw.get(0);
+        } finally {
+            capturing.stop(0);
+        }
+    }
+
+    @Test
+    void report_sendsNonAsciiTextAsUtf8WithALengthCountedInBytes() throws Exception {
+        // Arrange
+        // A two-byte, a three-byte and a four-byte (surrogate pair) character.
+        // The body is streamed with a fixed length: counted in chars rather
+        // than bytes, every such report would fail to send.
+        Map<String, String> tags = Collections.singletonMap("place", "€ 🏠");
+        String expected = "{\"application\":\"MyPlugin\",\"name\":\"démarrage\","
+                + "\"tags\":{\"place\":\"€ 🏠\",\"version\":\"1.2.3\"}}";
+
+        // Act
+        RawRequest request = reportAndCaptureRawRequest("démarrage", tags);
+
+        // Assert
+        assertArrayEquals(expected.getBytes(StandardCharsets.UTF_8), request.body, "the body is the JSON in UTF-8");
+        assertTrue(request.body.length > expected.length(), "the multi-byte characters must have been sent as such");
+        assertEquals(String.valueOf(request.body.length), request.contentLength, "the length is counted in bytes");
+        assertEquals("application/json; charset=utf-8", request.contentType);
+    }
+
+    @Test
+    void report_aLoneSurrogateIsSentAsAQuestionMarkRatherThanDroppingTheReport() throws Exception {
+        // Arrange
+        // Half of a surrogate pair is not text UTF-8 can encode. quote()
+        // passes it through, and String.getBytes(UTF_8) then writes its
+        // replacement byte -- so the report still goes out, with '?' there.
+        Map<String, String> tags = Collections.singletonMap("broken", "a\uD83Cb");
+
+        // Act
+        RawRequest request = reportAndCaptureRawRequest("command", tags);
+
+        // Assert
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"command\","
+                        + "\"tags\":{\"broken\":\"a?b\",\"version\":\"1.2.3\"}}",
+                new String(request.body, StandardCharsets.UTF_8));
+        assertEquals(String.valueOf(request.body.length), request.contentLength);
+    }
+
     @Test
     void report_logsASuccessStatusOtherThan201() throws Exception {
         // Arrange
@@ -541,6 +908,137 @@ class TraceClientTest {
         assertTrue(log.records.get(0).getMessage().startsWith("[trace] trace server answered 200"),
                 log.records.get(0).getMessage());
         client.close();
+    }
+
+    @Test
+    void report_aBaseUrlThatIsNotHttpIsLoggedFineAndNeverThrows() throws Exception {
+        // Arrange
+        // build() takes the base URL as a string and never parses it, so a
+        // typo only shows up in send(): "no protocol" is an IOException, and a
+        // file: URL opens a connection that is not an HttpURLConnection -- a
+        // ClassCastException, which is why send() catches RuntimeException too.
+        String[][] cases = {
+                {"not a url", "java.net.MalformedURLException"},
+                {"file:///trace-client-test", "java.lang.ClassCastException"},
+        };
+        for (String[] misconfigured : cases) {
+            RecordingHandler log = new RecordingHandler();
+            Logger logger = Logger.getLogger("TraceClientTest.misconfigured." + misconfigured[1]);
+            logger.setLevel(Level.ALL);
+            logger.addHandler(log);
+            TraceClient client = assertDoesNotThrow(() ->
+                    TraceClient.builder(misconfigured[0], "MyPlugin", "1.2.3").key("k").logger(logger).build());
+            assertTrue(client.isEnabled(), "a bad URL is not an opt-out");
+
+            // Act
+            assertDoesNotThrow(() -> client.report("startup"));
+            client.close();
+
+            // Assert
+            assertTrue(log.await(5, TimeUnit.SECONDS), misconfigured[0] + " should be mentioned at FINE");
+            LogRecord record = log.records.get(0);
+            assertEquals(Level.FINE, record.getLevel());
+            assertTrue(record.getMessage().startsWith("[trace] could not deliver {\"application\":\"MyPlugin\""),
+                    record.getMessage());
+            assertTrue(record.getMessage().contains(misconfigured[1]), record.getMessage());
+        }
+    }
+
+    @Test
+    void report_drainsAResponseBodyAndKeepsSendingAfterAnError() throws Exception {
+        // Arrange
+        // Unlike the shared server, this one answers with a body: an error page
+        // first, then a 201 with content. send() reads either to its end and
+        // the next report still goes out.
+        List<String> bodies = new CopyOnWriteArrayList<>();
+        CountDownLatch both = new CountDownLatch(2);
+        HttpServer chatty = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        chatty.createContext("/", exchange -> {
+            bodies.add(new String(readAll(exchange.getRequestBody()), StandardCharsets.UTF_8));
+            byte[] reply = new byte[4096]; // more than drain()'s 512-byte buffer
+            Arrays.fill(reply, (byte) 'x');
+            exchange.sendResponseHeaders(bodies.size() == 1 ? 500 : 201, reply.length);
+            exchange.getResponseBody().write(reply);
+            exchange.close();
+            both.countDown();
+        });
+        chatty.start();
+        RecordingHandler log = new RecordingHandler();
+        Logger logger = Logger.getLogger("TraceClientTest.chatty");
+        logger.setLevel(Level.ALL);
+        logger.addHandler(log);
+        TraceClient client = TraceClient.builder("http://127.0.0.1:" + chatty.getAddress().getPort(), "MyPlugin", "1.2.3")
+                .key("k").logger(logger).build();
+
+        // Act
+        client.report("first");
+        client.report("second");
+        client.close();
+
+        // Assert
+        assertTrue(both.await(5, TimeUnit.SECONDS), "both reports should reach the server");
+        assertEquals(2, bodies.size());
+        assertTrue(bodies.get(1).contains("\"name\":\"second\""), bodies.get(1));
+        assertEquals(1, log.records.size(), "only the 500 is worth a line: " + log.records);
+        assertEquals("[trace] trace server answered 500 for "
+                        + "{\"application\":\"MyPlugin\",\"name\":\"first\",\"tags\":{\"version\":\"1.2.3\"}}",
+                log.records.get(0).getMessage());
+        chatty.stop(0);
+    }
+
+    @Test
+    void report_keepsAPathInTheBaseUrlInFrontOfApiMetrics() throws Exception {
+        // Arrange
+        // A trace server behind a reverse proxy under a sub-path: only the
+        // trailing slashes go, the path itself stays.
+        TraceClient client = TraceClient.builder(baseUrl() + "/trace/", "MyPlugin", "1.2.3").key("k").build();
+
+        // Act
+        client.report("startup");
+
+        // Assert
+        assertTrue(arrived.await(5, TimeUnit.SECONDS));
+        assertEquals("/trace/api/metrics", received.get(0).path);
+        client.close();
+    }
+
+    @Test
+    void report_aRedirectIsNotFollowedAndIsLoggedFine() throws Exception {
+        // Arrange
+        // Characterizes current behaviour: the body is streamed with a fixed
+        // length, so HttpURLConnection cannot replay it to a redirect target.
+        // It throws HttpRetryException instead, so a base URL that redirects
+        // (http to https, say) drops every report, and the only trace of it
+        // is a FINE "could not deliver" line.
+        List<String> paths = new CopyOnWriteArrayList<>();
+        HttpServer redirecting = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        redirecting.createContext("/", exchange -> {
+            paths.add(exchange.getRequestURI().getPath());
+            readAll(exchange.getRequestBody());
+            exchange.getResponseHeaders().add("Location", "/moved/api/metrics");
+            exchange.sendResponseHeaders(301, -1);
+            exchange.close();
+        });
+        redirecting.start();
+        RecordingHandler log = new RecordingHandler();
+        Logger logger = Logger.getLogger("TraceClientTest.redirect");
+        logger.setLevel(Level.ALL);
+        logger.addHandler(log);
+        TraceClient client = TraceClient.builder("http://127.0.0.1:" + redirecting.getAddress().getPort(), "MyPlugin", "1.2.3")
+                .key("k").logger(logger).build();
+
+        // Act
+        assertDoesNotThrow(() -> client.report("startup"));
+
+        // Assert
+        assertTrue(log.await(5, TimeUnit.SECONDS), "the redirect should be mentioned at FINE");
+        client.close();
+        assertEquals(Collections.singletonList("/api/metrics"), paths, "the redirect target is never asked");
+        assertEquals(Level.FINE, log.records.get(0).getLevel());
+        String message = log.records.get(0).getMessage();
+        assertTrue(message.startsWith("[trace] could not deliver {\"application\":\"MyPlugin\",\"name\":\"startup\""), message);
+        assertTrue(message.contains("java.net.HttpRetryException"), message);
+        redirecting.stop(0);
     }
 
     @Test
@@ -628,16 +1126,17 @@ class TraceClientTest {
     }
 
     @Test
-    void serverWideConfig_acceptsEverySpellingOfOff(@TempDir Path plugins) throws Exception {
+    void serverWideConfig_onlyClearSpellingsOfOnLeaveReportingOn(@TempDir Path plugins) throws Exception {
         Path file = plugins.resolve("trace").resolve("config.yml");
         Files.createDirectories(file.getParent());
-        for (String off : new String[] {"false", "no", "0", "off", "OFF", "No"}) {
+        for (String off : new String[] {"false", "no", "0", "off", "OFF", "No", "\"false\"", "'off'",
+                "flase", "disabled", "anything-else"}) {
             Files.write(file, ("enabled: " + off + "\n").getBytes(StandardCharsets.UTF_8));
             assertEquals(TraceClient.REASON_SERVER_WIDE,
                     TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build().disabledReason(),
                     "enabled: " + off + " should disable");
         }
-        for (String on : new String[] {"true", "yes", "1", "on", "anything-else"}) {
+        for (String on : new String[] {"true", "yes", "1", "on", "ON", "\"true\""}) {
             Files.write(file, ("enabled: " + on + "\n").getBytes(StandardCharsets.UTF_8));
             assertNull(TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build().disabledReason(),
                     "enabled: " + on + " should not disable");
@@ -645,6 +1144,100 @@ class TraceClientTest {
         Files.write(file, "# nothing here\n".getBytes(StandardCharsets.UTF_8));
         assertNull(TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build().disabledReason(),
                 "a file without an enabled: line means enabled");
+    }
+
+    @Test
+    void serverWideConfig_theSwitchIgnoresATrailingCommentAndLeadingIndent() {
+        assertTrue(TraceClient.parseServerWideConfig(Arrays.asList("enabled: false # off for now")).disables);
+        assertTrue(TraceClient.parseServerWideConfig(Arrays.asList("  enabled: false")).disables,
+                "indented, but outside a tags: block, it is still the switch");
+        assertTrue(TraceClient.parseServerWideConfig(Arrays.asList("enabled :\tFALSE")).disables);
+    }
+
+    @Test
+    void serverWideConfig_aQuotedOffDisables() {
+        // Issue #15: the value used to be compared with its quotes on.
+        for (String quoted : new String[] {"\"false\"", "'false'", "\"off\"", "'no'"}) {
+            assertTrue(TraceClient.parseServerWideConfig(Arrays.asList("enabled: " + quoted)).disables,
+                    "enabled: " + quoted);
+        }
+        assertFalse(TraceClient.parseServerWideConfig(Arrays.asList("enabled: \"true\"")).disables);
+    }
+
+    @Test
+    void environment_thatCannotBeReadOptsOut() {
+        java.util.function.Function<String, String> saved = TraceClient.environment;
+        TraceClient.environment = name -> { throw new SecurityException("getenv." + name); };
+        try {
+            TraceClient client = assertDoesNotThrow(() -> TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build());
+            assertEquals(TraceClient.REASON_ENVIRONMENT, client.disabledReason());
+            assertDoesNotThrow(() -> TraceClient.disabled());
+        } finally {
+            TraceClient.environment = saved;
+        }
+    }
+
+    @Test
+    void allowsReporting_failsClosed() {
+        assertTrue(TraceClient.allowsReporting(true));
+        assertTrue(TraceClient.allowsReporting("true"));
+        assertTrue(TraceClient.allowsReporting(" ON "));
+        assertTrue(TraceClient.allowsReporting("yes"));
+        assertTrue(TraceClient.allowsReporting("1"));
+        assertFalse(TraceClient.allowsReporting(false));
+        assertFalse(TraceClient.allowsReporting("false"));
+        assertFalse(TraceClient.allowsReporting("off"));
+        assertFalse(TraceClient.allowsReporting("flase"));
+        assertFalse(TraceClient.allowsReporting(""));
+        assertFalse(TraceClient.allowsReporting(1));
+        assertFalse(TraceClient.allowsReporting(null));
+    }
+
+    @Test
+    void serverWideConfig_aFileThatIsNotUtf8IsStillObeyed(@TempDir Path plugins) throws Exception {
+        // Issue #40: one byte of another encoding used to fail the whole read,
+        // so the enabled: false below it was never seen.
+        Path file = plugins.resolve("trace").resolve("config.yml");
+        Files.createDirectories(file.getParent());
+        byte[] latin1 = "# café\nenabled: false\n".getBytes(StandardCharsets.ISO_8859_1);
+        Files.write(file, latin1);
+
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k")
+                .serverWideConfig(plugins.toFile()).build();
+
+        assertEquals(TraceClient.REASON_SERVER_WIDE, client.disabledReason());
+        assertArrayEquals(latin1, Files.readAllBytes(file), "the file is left as it is");
+        client.close();
+    }
+
+    @Test
+    void serverWideConfig_aFileThatIsThereButUnreadableDisables(@TempDir Path plugins) throws Exception {
+        // A directory where the file should be cannot be read, and may be
+        // hiding an opt-out: reporting stays off.
+        Files.createDirectories(plugins.resolve("trace").resolve("config.yml"));
+
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k")
+                .serverWideConfig(plugins.toFile()).build();
+
+        assertEquals(TraceClient.REASON_SERVER_WIDE, client.disabledReason());
+    }
+
+    @Test
+    void serverWideConfig_aByteOrderMarkHidesAFirstLineEnabledFalseYet(@TempDir Path plugins) throws Exception {
+        // Characterizes current behaviour, which issue #40 questions: the
+        // mark is not whitespace to ENABLED_LINE, so the line does not match.
+        // Arrange
+        Path file = plugins.resolve("trace").resolve("config.yml");
+        Files.createDirectories(file.getParent());
+        Files.write(file, "﻿enabled: false\n".getBytes(StandardCharsets.UTF_8));
+
+        // Act
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k")
+                .serverWideConfig(plugins.toFile()).build();
+
+        // Assert
+        assertTrue(client.isEnabled(), "the switch was not recognised");
+        client.close();
     }
 
     @Test
@@ -680,6 +1273,90 @@ class TraceClientTest {
         environment.put("TRACE_USAGE_REPORTING", "on");
         environment.put("DO_NOT_TRACK", "0");
         assertNull(TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build().disabledReason());
+    }
+
+    @Test
+    void environment_eitherVariableAloneTurnsReportingOffWhateverTheOtherSays() {
+        // Arrange: one variable opts out, the other says something that is
+        // not an opt-out. Neither can cancel the other.
+        String[][] pairs = {
+                {"on", "1"},
+                {"true", " Yes "},
+                {"off", "0"},
+                {"No", "false"},
+        };
+
+        for (String[] pair : pairs) {
+            environment.clear();
+            environment.put("TRACE_USAGE_REPORTING", pair[0]);
+            environment.put("DO_NOT_TRACK", pair[1]);
+
+            // Act
+            TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build();
+
+            // Assert
+            assertEquals(TraceClient.REASON_ENVIRONMENT, client.disabledReason(),
+                    "TRACE_USAGE_REPORTING=" + pair[0] + ", DO_NOT_TRACK=" + pair[1]);
+            assertFalse(client.isEnabled());
+        }
+    }
+
+    @Test
+    void environment_onlyBlankOrAClearOnLeavesReportingOn() {
+        // Fails closed: once a variable is set to anything but blank, only a
+        // value that clearly means "keep reporting" leaves it on.
+        for (String value : new String[] {"", "   ", "on", "true", "yes", "1", "TRUE"}) {
+            environment.clear();
+            environment.put("TRACE_USAGE_REPORTING", value);
+            TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build();
+            assertNull(client.disabledReason(), "TRACE_USAGE_REPORTING=\"" + value + "\"");
+            client.close();
+        }
+        for (String value : new String[] {"disabled", "offline", "nope", "2"}) {
+            environment.clear();
+            environment.put("TRACE_USAGE_REPORTING", value);
+            assertEquals(TraceClient.REASON_ENVIRONMENT,
+                    TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build().disabledReason(),
+                    "TRACE_USAGE_REPORTING=\"" + value + "\"");
+        }
+        for (String value : new String[] {"", "   ", "0", "false", "no", "off"}) {
+            environment.clear();
+            environment.put("DO_NOT_TRACK", value);
+            TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build();
+            assertNull(client.disabledReason(), "DO_NOT_TRACK=\"" + value + "\"");
+            client.close();
+        }
+        for (String value : new String[] {"2", "y", "please"}) {
+            environment.clear();
+            environment.put("DO_NOT_TRACK", value);
+            assertEquals(TraceClient.REASON_ENVIRONMENT,
+                    TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build().disabledReason(),
+                    "DO_NOT_TRACK=\"" + value + "\"");
+        }
+    }
+
+    @Test
+    void disabled_isOffForTheConfigReasonUnlessTheEnvironmentSaysSoFirst() {
+        // Act
+        TraceClient byDefault = TraceClient.disabled();
+
+        // Assert
+        assertFalse(byDefault.isEnabled());
+        assertEquals(TraceClient.REASON_CONFIG, byDefault.disabledReason());
+        assertNull(byDefault.installId(), "a disabled client has no install ID");
+
+        // Arrange: the environment is checked before the client's own switch,
+        // so it is the reason even here.
+        environment.put("DO_NOT_TRACK", "1");
+
+        // Act
+        TraceClient byEnvironment = TraceClient.disabled();
+
+        // Assert
+        assertFalse(byEnvironment.isEnabled());
+        assertEquals(TraceClient.REASON_ENVIRONMENT, byEnvironment.disabledReason());
+        byDefault.close();
+        byEnvironment.close();
     }
 
     @Test
@@ -807,6 +1484,45 @@ class TraceClientTest {
     }
 
     @Test
+    void serverWideTags_aSecondTagsBlockAddsToTheFirstAndTheFirstEntryOfAKeyWins() {
+        // Arrange
+        // Two blocks, as an operator might leave after pasting an example
+        // below their own; the second is indented differently from the first.
+        String content = "tags:\n"
+                + "  ci: \"true\"\n"
+                + "  env: staging\n"
+                + "enabled: true\n"
+                + "tags:\n"
+                + "    env: prod\n"
+                + "    region: eu\n";
+
+        // Act
+        TraceClient.ServerWideConfig config = TraceClient.parseServerWideConfig(Arrays.asList(content.split("\n", -1)));
+
+        // Assert
+        Map<String, String> expected = new LinkedHashMap<>();
+        expected.put("ci", "true");
+        expected.put("env", "staging");
+        expected.put("region", "eu");
+        assertEquals(expected, config.tags, "each block takes its own indent; a key already read is not replaced");
+        assertFalse(config.disables);
+    }
+
+    @Test
+    void serverWideTags_theTagsLineIsCaseSensitiveAndAllowsSpaceBeforeTheColon() {
+        // Arrange, Act and Assert
+        assertEquals(Collections.singletonMap("ci", "true"), tagsOf("tags :\n  ci: \"true\"\n"));
+        assertTrue(tagsOf("Tags:\n  ci: \"true\"\n").isEmpty(), "Tags: is not tags:");
+        assertTrue(tagsOf("tags: ci\n  env: prod\n").isEmpty(), "a value on the tags: line is not a block");
+
+        // Under a line that does not open a block, an indented enabled: is
+        // outside any tags: block, so it is the switch.
+        TraceClient.ServerWideConfig config = TraceClient.parseServerWideConfig(Arrays.asList("Tags:", "  enabled: false"));
+        assertTrue(config.disables);
+        assertTrue(config.tags.isEmpty());
+    }
+
+    @Test
     void serverWideTags_dropEntriesTheServerWouldRejectOrThatAreNotUnderstood() {
         StringBuilder longText = new StringBuilder();
         for (int i = 0; i < TraceClient.MAX_TAG_LENGTH + 1; i++) {
@@ -837,6 +1553,67 @@ class TraceClientTest {
         expected.put("max", exactlyMax);
         expected.put("ok.key_1-2", "fine");
         assertEquals(expected, tags);
+    }
+
+    @Test
+    void serverWideTags_doubleQuotedValuesUnescapeNewlineTabCarriageReturnAndBackslash() {
+        Map<String, String> tags = tagsOf("tags:\n"
+                + "  a: \"line\\nbreak\\ttab\\rreturn\"\n"
+                + "  b: \"back\\\\slash\\/solidus\\qother\"\n"
+                + "  c: 'single \\n stays'\n");
+        Map<String, String> expected = new LinkedHashMap<>();
+        expected.put("a", "line\nbreak\ttab\rreturn");
+        expected.put("b", "back\\slash/solidusqother");
+        expected.put("c", "single \\n stays");
+        assertEquals(expected, tags);
+    }
+
+    @Test
+    void serverWideTags_dropKeysAndValuesWhoseQuoteIsNeverClosed() {
+        Map<String, String> tags = tagsOf("tags:\n"
+                + "  \"open-double: x\n"
+                + "  'open-single: x\n"
+                + "  \"mismatched': x\n"
+                + "  \": lone-quote\n"
+                + "  value: \"ends in a backslash\\\n"
+                + "  ok: fine\n");
+        assertEquals(Collections.singletonMap("ok", "fine"), tags);
+    }
+
+    @Test
+    void serverWideTags_aSingleQuotedValueTakesACommentButNothingElseAfterIt() {
+        Map<String, String> tags = tagsOf("tags:\n"
+                + "  a: 'x'  # comment after a quote\n"
+                + "  b: 'x' junk\n");
+        assertEquals(Collections.singletonMap("a", "x"), tags);
+    }
+
+    @Test
+    void serverWideTags_dropValuesThatOpenAnAnchorAliasTagOrFoldedScalar() {
+        Map<String, String> tags = tagsOf("tags:\n"
+                + "  anchor: &a x\n"
+                + "  alias: *a\n"
+                + "  tag: !!str x\n"
+                + "  directive: %x\n"
+                + "  at: @x\n"
+                + "  backtick: `x\n"
+                + "  folded: >\n"
+                + "  ok: fine\n");
+        assertEquals(Collections.singletonMap("ok", "fine"), tags);
+    }
+
+    @Test
+    void serverWideTags_aHashIsACommentOnlyAfterWhitespace() {
+        Map<String, String> tags = tagsOf("tags:\n"
+                + "  a: issue#13\n"
+                + "  b: x\t# tab before the hash\n"
+                + "\tc: tab-separated\n"
+                + "  d:\tafter-a-tab\n");
+        Map<String, String> expected = new LinkedHashMap<>();
+        expected.put("a", "issue#13");
+        expected.put("b", "x");
+        expected.put("d", "after-a-tab");
+        assertEquals(expected, tags, "c is indented differently from the block's first entry");
     }
 
     @Test
@@ -935,8 +1712,8 @@ class TraceClientTest {
         byte[] notUtf8 = Files.readAllBytes(file);
         String body = reportedBody(plugins, "startup", null);
         assertTrue(body.matches("\\{\"application\":\"MyPlugin\",\"name\":\"startup\",\"tags\":"
-                        + "\\{\"version\":\"1\\.2\\.3\",\"install\":\"" + UUID_PATTERN + "\"}}"),
-                "a file that is not UTF-8 counts as enabled with no tags, and an in-memory install ID: " + body);
+                        + "\\{\"version\":\"1\\.2\\.3\",\"install\":\"" + UUID_PATTERN + "\",\"ci\":\"\u00c3\\(\"}}"),
+                "a file that is not UTF-8 is read as ISO-8859-1, with an in-memory install ID: " + body);
         assertArrayEquals(notUtf8, Files.readAllBytes(file), "a file that cannot be read is never appended to");
     }
 
@@ -945,6 +1722,56 @@ class TraceClientTest {
         Map<String, String> tags = Collections.singletonMap("name", "home");
         assertSame(tags, TraceClient.withServerWideTags(tags, Collections.<String, String>emptyMap()));
         assertNull(TraceClient.withServerWideTags(null, Collections.<String, String>emptyMap()));
+    }
+
+    @Test
+    void withServerWideTags_dropsNullTagsLetsTheEventWinAndNeverModifiesTheCallersMap() {
+        // Arrange
+        Map<String, String> tags = new LinkedHashMap<>();
+        tags.put("name", "home");
+        tags.put("nullValue", null);
+        tags.put(null, "nullKey");
+        tags.put("ci", "the-events-own");
+        Map<String, String> serverWide = new LinkedHashMap<>();
+        serverWide.put("ci", "true");
+        serverWide.put("env", "staging");
+
+        // Act
+        Map<String, String> merged = TraceClient.withServerWideTags(tags, serverWide);
+
+        // Assert
+        Map<String, String> expected = new LinkedHashMap<>();
+        expected.put("name", "home");
+        expected.put("ci", "the-events-own");
+        expected.put("env", "staging");
+        assertEquals(expected, merged);
+        assertEquals(new ArrayList<>(expected.keySet()), new ArrayList<>(merged.keySet()), "event tags first, then server-wide");
+        assertEquals(4, tags.size(), "the caller's map is not modified");
+        assertEquals(serverWide, TraceClient.withServerWideTags(null, serverWide), "an event with no tags gets the server-wide ones");
+    }
+
+    @Test
+    void withServerWideTags_addsNoneToAnEventAlreadyAtOrOverMaxTags() {
+        // Arrange
+        Map<String, String> atMax = new LinkedHashMap<>();
+        for (int i = 0; i < TraceClient.MAX_TAGS; i++) {
+            atMax.put("e" + i, "v");
+        }
+        Map<String, String> overMax = new LinkedHashMap<>(atMax);
+        overMax.put("version", "1.2.3"); // what withVersion does today, see issue #13
+        Map<String, String> oneShort = new LinkedHashMap<>(atMax);
+        oneShort.remove("e0");
+        Map<String, String> serverWide = new LinkedHashMap<>();
+        serverWide.put("ci", "true");
+        serverWide.put("env", "staging");
+
+        // Act + Assert
+        assertEquals(atMax, TraceClient.withServerWideTags(atMax, serverWide));
+        assertEquals(overMax, TraceClient.withServerWideTags(overMax, serverWide), "the cap adds nothing, and drops nothing either");
+        Map<String, String> filled = TraceClient.withServerWideTags(oneShort, serverWide);
+        assertEquals(TraceClient.MAX_TAGS, filled.size());
+        assertEquals("true", filled.get("ci"));
+        assertFalse(filled.containsKey("env"), "only the first server-wide tag fits");
     }
 
     @Test
@@ -1051,11 +1878,34 @@ class TraceClientTest {
         assertEquals("abc-123", TraceClient.parseServerWideConfig(Arrays.asList("server-id: \"abc-123\"  # mine")).serverId);
         assertEquals("first", TraceClient.parseServerWideConfig(Arrays.asList("server-id: first", "server-id: second")).serverId);
         assertEquals("good", TraceClient.parseServerWideConfig(Arrays.asList("server-id:", "server-id: has space", "server-id: good")).serverId);
+        assertNull(TraceClient.parseServerWideConfig(Arrays.asList("server-id: _mine")).serverId, "starts with a letter or digit");
+        assertEquals("good", TraceClient.parseServerWideConfig(Arrays.asList("server-id: -mine", "server-id: good")).serverId);
+        StringBuilder overlong = new StringBuilder();
+        for (int i = 0; i <= TraceClient.MAX_TAG_LENGTH; i++) {
+            overlong.append('a');
+        }
+        assertNull(TraceClient.parseServerWideConfig(Arrays.asList("server-id: " + overlong)).serverId,
+                "at most MAX_TAG_LENGTH characters");
         assertNull(TraceClient.parseServerWideConfig(Arrays.asList("  server-id: indented")).serverId, "column 0 only");
         assertNull(TraceClient.parseServerWideConfig(Arrays.asList("# server-id: commented")).serverId);
         TraceClient.ServerWideConfig inTags = TraceClient.parseServerWideConfig(Arrays.asList("tags:", "  server-id: x"));
         assertNull(inTags.serverId, "inside tags: it is a tag");
         assertEquals(Collections.singletonMap("server-id", "x"), inTags.tags);
+    }
+
+    @Test
+    void installId_theServerIdLineNeedsNoSpaceAroundItsColonAndIsCaseSensitive() {
+        // Unlike a tags: entry, where "a:b" is a string and not a pair, the
+        // server-id: line takes its value straight after the colon, and
+        // allows space before the colon.
+        assertEquals("abc", TraceClient.parseServerWideConfig(Arrays.asList("server-id:abc")).serverId);
+        assertEquals("abc", TraceClient.parseServerWideConfig(Arrays.asList("server-id  :  abc")).serverId);
+        assertEquals("abc", TraceClient.parseServerWideConfig(Arrays.asList("server-id:\tabc\t")).serverId);
+
+        // The name itself is matched exactly.
+        assertNull(TraceClient.parseServerWideConfig(Arrays.asList("Server-Id: abc")).serverId);
+        assertNull(TraceClient.parseServerWideConfig(Arrays.asList("server_id: abc")).serverId);
+        assertNull(TraceClient.parseServerWideConfig(Arrays.asList("server-ids: abc")).serverId);
     }
 
     @Test
@@ -1080,6 +1930,114 @@ class TraceClientTest {
         assertNotEquals(first.installId(), second.installId(), "nothing persisted: each process gets its own");
         assertTrue(received.get(0).body.contains("\"install\":\"" + first.installId() + "\""), received.get(0).body);
         assertEquals("not a directory", new String(Files.readAllBytes(notADirectory), StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void installId_aConfigThatCannotBeAppendedToFallsBackToAnInMemoryIdAndIsLoggedFine(@TempDir Path plugins) throws Exception {
+        // Arrange
+        // The test above fails at the read. To fail at the append, the file
+        // has to read fine and refuse a write, even as root: /proc/version
+        // does, and has no enabled: or server-id: line in it.
+        Path readOnly = Paths.get("/proc/version");
+        assumeTrue(Files.isReadable(readOnly), "needs Linux's /proc");
+        Path config = Files.createDirectory(plugins.resolve("trace")).resolve("config.yml");
+        Files.createSymbolicLink(config, readOnly);
+        RecordingHandler log = new RecordingHandler();
+        Logger logger = Logger.getLogger("TraceClientTest.serverIdAppend");
+        logger.setLevel(Level.ALL);
+        logger.addHandler(log);
+
+        // Act
+        TraceClient first = assertDoesNotThrow(() -> TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k")
+                .serverWideConfig(plugins.toFile()).logger(logger).build());
+        TraceClient second = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build();
+        first.report("startup");
+
+        // Assert
+        assertTrue(arrived.await(5, TimeUnit.SECONDS));
+        first.close();
+        second.close();
+        assertTrue(first.isEnabled());
+        assertTrue(first.installId().matches(UUID_PATTERN), first.installId());
+        assertNotEquals(first.installId(), second.installId(), "nothing persisted: each process gets its own");
+        assertTrue(received.get(0).body.contains("\"install\":\"" + first.installId() + "\""), received.get(0).body);
+        assertTrue(log.await(1, TimeUnit.SECONDS), "the fallback should be mentioned at FINE");
+        assertEquals(Level.FINE, log.records.get(0).getLevel());
+        assertTrue(log.records.get(0).getMessage().contains("could not write server-id"), log.records.get(0).getMessage());
+    }
+
+    @Test
+    void installId_anUnreadableConfigIsLoggedFineAndNotAppendedTo(@TempDir Path scratch) throws Exception {
+        // Arrange: as above, a "plugins directory" that is a regular file.
+        Path notADirectory = scratch.resolve("plugins");
+        Files.write(notADirectory, "not a directory".getBytes(StandardCharsets.UTF_8));
+        RecordingHandler log = new RecordingHandler();
+        Logger logger = Logger.getLogger("TraceClientTest.unreadableServerId");
+        logger.setLevel(Level.ALL);
+        logger.addHandler(log);
+
+        // Act
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k")
+                .serverWideConfig(notADirectory.toFile()).logger(logger).build();
+        client.close();
+
+        // Assert: both happen on the building thread, so they are already logged.
+        assertEquals(2, log.records.size(), log.records.toString());
+        assertEquals(Level.FINE, log.records.get(0).getLevel());
+        assertTrue(log.records.get(0).getMessage().startsWith("[trace] could not create server-wide config "),
+                log.records.get(0).getMessage());
+        assertEquals(Level.FINE, log.records.get(1).getLevel());
+        assertEquals("[trace] using an in-memory server-id for this process: server-wide config was not readable",
+                log.records.get(1).getMessage());
+    }
+
+    @Test
+    void installId_isAppendedToAnEmptyConfigWithoutALeadingBlankLine(@TempDir Path plugins) throws Exception {
+        // Arrange: the file exists but is empty, so build() does not create it.
+        Path file = writeServerWideConfigExactly(plugins, "");
+
+        // Act
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build();
+        client.close();
+
+        // Assert
+        assertTrue(client.isEnabled(), "no enabled: line counts as enabled");
+        assertEquals(TraceClient.SERVER_ID_COMMENT + "server-id: " + client.installId() + "\n",
+                new String(Files.readAllBytes(file), StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void installId_isAppendedDirectlyBelowAConfigThatEndsInANewline(@TempDir Path plugins) throws Exception {
+        // Arrange
+        Path file = writeServerWideConfigExactly(plugins, "enabled: true\n");
+
+        // Act
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build();
+        client.close();
+
+        // Assert
+        assertEquals("enabled: true\n" + TraceClient.SERVER_ID_COMMENT + "server-id: " + client.installId() + "\n",
+                new String(Files.readAllBytes(file), StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void installId_anUnusableServerIdLineGetsAUsableOneAppendedAndKept(@TempDir Path plugins) throws Exception {
+        // Arrange: an operator's hand-typed ID with a space in it.
+        Path file = writeServerWideConfigExactly(plugins, "enabled: true\nserver-id: has space\n");
+
+        // Act
+        TraceClient first = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build();
+        String afterFirst = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+        TraceClient second = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").serverWideConfig(plugins.toFile()).build();
+        first.close();
+        second.close();
+
+        // Assert
+        assertTrue(first.installId().matches(UUID_PATTERN), first.installId());
+        assertEquals("enabled: true\nserver-id: has space\n" + TraceClient.SERVER_ID_COMMENT + "server-id: " + first.installId() + "\n",
+                afterFirst, "the unusable line is left alone, not rewritten");
+        assertEquals(first.installId(), second.installId(), "the appended line is the one read from then on");
+        assertEquals(afterFirst, new String(Files.readAllBytes(file), StandardCharsets.UTF_8), "and nothing more is appended");
     }
 
     @Test
@@ -1150,6 +2108,27 @@ class TraceClientTest {
         assertEquals("explicit", both.installId());
         assertEquals(TraceClient.SERVER_WIDE_CONFIG_CONTENT,
                 new String(Files.readAllBytes(plugins.resolve("trace").resolve("config.yml")), StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void builder_rejectsAnOverlongInstallIdAndAcceptsOneAtTheLimit() {
+        // Arrange
+        StringBuilder max = new StringBuilder();
+        for (int i = 0; i < TraceClient.MAX_TAG_LENGTH; i++) {
+            max.append('i');
+        }
+        TraceClient.Builder builder = TraceClient.builder(baseUrl(), "MyCli", "1.2.3");
+
+        // Act
+        IllegalArgumentException tooLong = assertThrows(IllegalArgumentException.class,
+                () -> builder.installId(max + "i"));
+        builder.installId("  " + max + "  ");
+
+        // Assert
+        assertEquals("installId is longer than " + TraceClient.MAX_TAG_LENGTH + " characters", tooLong.getMessage());
+        TraceClient client = builder.key("k").build();
+        assertEquals(max.toString(), client.installId(), "surrounding whitespace does not count");
+        client.close();
     }
 
     @Test
@@ -1251,6 +2230,36 @@ class TraceClientTest {
     }
 
     @Test
+    void installIdFile_aWriteThatFailsYieldsAnInMemoryIdAndIsLoggedFine(@TempDir Path scratch) throws Exception {
+        // Arrange
+        // The test above fails at the read. A link into a directory that does
+        // not exist reads as "no such file", so the client goes on to write,
+        // and that fails too, even as root.
+        assumeTrue(File.separatorChar == '/', "needs POSIX symbolic links");
+        Path target = scratch.resolve("missing").resolve("trace-install-id");
+        Path link = Files.createSymbolicLink(scratch.resolve("trace-install-id"), target);
+        RecordingHandler log = new RecordingHandler();
+        Logger logger = Logger.getLogger("TraceClientTest.installIdFileWrite");
+        logger.setLevel(Level.ALL);
+        logger.addHandler(log);
+
+        // Act
+        TraceClient client = assertDoesNotThrow(() -> TraceClient.builder(baseUrl(), "MyCli", "1.2.3").key("k")
+                .installIdFile(link.toFile()).logger(logger).build());
+        client.report("startup");
+
+        // Assert
+        assertTrue(arrived.await(5, TimeUnit.SECONDS));
+        client.close();
+        assertTrue(client.installId().matches(UUID_PATTERN), client.installId());
+        assertTrue(received.get(0).body.contains("\"install\":\"" + client.installId() + "\""), received.get(0).body);
+        assertFalse(Files.exists(target));
+        assertTrue(log.await(1, TimeUnit.SECONDS), "the fallback should be mentioned at FINE");
+        assertEquals(Level.FINE, log.records.get(0).getLevel());
+        assertTrue(log.records.get(0).getMessage().contains("could not write install ID file"), log.records.get(0).getMessage());
+    }
+
+    @Test
     void installIdFromFile_leavesAnUnreadableFileAlone(@TempDir Path scratch) throws Exception {
         // A directory cannot be read as a file.
         Path directory = Files.createDirectory(scratch.resolve("dir"));
@@ -1262,6 +2271,34 @@ class TraceClientTest {
         try (java.util.stream.Stream<Path> entries = Files.list(directory)) {
             assertEquals(0, entries.count());
         }
+    }
+
+    @Test
+    void installIdFile_aFileThatIsNotUtf8IsLeftAloneAndAnInMemoryIdIsUsed(@TempDir Path scratch) throws Exception {
+        // Arrange
+        // An ID line below a comment saved in ISO-8859-1: the 0xE9 byte is
+        // not UTF-8, so the whole file fails to read, valid line and all.
+        Path file = scratch.resolve("trace-install-id");
+        byte[] content = "# café\nmy-own-id\n".getBytes(StandardCharsets.ISO_8859_1);
+        Files.write(file, content);
+        RecordingHandler log = new RecordingHandler();
+        Logger logger = Logger.getLogger("TraceClientTest.installIdFileNotUtf8");
+        logger.setLevel(Level.ALL);
+        logger.addHandler(log);
+
+        // Act
+        TraceClient client = assertDoesNotThrow(() -> TraceClient.builder(baseUrl(), "MyCli", "1.2.3").key("k")
+                .installIdFile(file.toFile()).logger(logger).build());
+        client.close();
+
+        // Assert
+        assertTrue(client.isEnabled());
+        assertTrue(client.installId().matches(UUID_PATTERN), client.installId());
+        assertArrayEquals(content, Files.readAllBytes(file), "a file that cannot be read is never overwritten");
+        assertNotEquals(client.installId(), TraceClient.installIdFromFile(file.toFile()), "in memory: a new one each process");
+        assertTrue(log.await(1, TimeUnit.SECONDS), "the fallback should be mentioned at FINE");
+        assertEquals(Level.FINE, log.records.get(0).getLevel());
+        assertTrue(log.records.get(0).getMessage().contains("could not read install ID file"), log.records.get(0).getMessage());
     }
 
     @Test
@@ -1356,6 +2393,459 @@ class TraceClientTest {
 
     private static Map<String, String> tagsOf(String content) {
         return TraceClient.parseServerWideConfig(Arrays.asList(content.split("\n", -1))).tags;
+    }
+
+    /** Waits until the shared server has received {@code count} reports, or 5 s pass. */
+    private void awaitReceived(int count) throws InterruptedException {
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
+        while (received.size() < count && System.nanoTime() < deadline) {
+            Thread.sleep(20);
+        }
+    }
+
+    @Test
+    void coalesce_sendsTheFirstAtOnceAndTheRepeatsAsOneCountedEventWhenTheWindowCloses() throws Exception {
+        // Arrange
+        // The flood that prompted this: another plugin dispatching /power
+        // every 100 ms, each one a command event.
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k")
+                .coalesceWindowMillis(1_000).build();
+        Map<String, String> power = Collections.singletonMap("name", "power");
+
+        // Act
+        for (int i = 0; i < 50; i++) {
+            client.report("command", null, power);
+        }
+
+        // Assert
+        assertTrue(arrived.await(5, TimeUnit.SECONDS), "the first report goes out at once");
+        Thread.sleep(200);
+        assertEquals(1, received.size(), "the repeats wait for the window to close");
+        awaitReceived(2);
+        assertEquals(2, received.size(), "one event for all 49 repeats");
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"command\",\"tags\":{\"name\":\"power\",\"version\":\"1.2.3\"}}",
+                received.get(0).body);
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"command\",\"value\":49.0,"
+                        + "\"tags\":{\"name\":\"power\",\"version\":\"1.2.3\",\"coalesced\":\"49\"}}",
+                received.get(1).body);
+        client.close();
+        assertEquals(2, received.size(), "nothing was left to flush");
+    }
+
+    @Test
+    void coalesce_aSteadyFloodIsOneEventPerWindowAndAQuietWindowEnds() throws Exception {
+        // Arrange
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k")
+                .coalesceWindowMillis(300).build();
+
+        // Act
+        // About four windows of a report every 10 ms, then quiet.
+        long until = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(1_200);
+        int reports = 0;
+        while (System.nanoTime() < until) {
+            client.report("command", null, Collections.singletonMap("name", "power"));
+            reports++;
+            Thread.sleep(10);
+        }
+        long quiet = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
+        while (client.coalescing() > 0 && System.nanoTime() < quiet) {
+            Thread.sleep(20);
+        }
+
+        // Assert
+        assertEquals(0, client.coalescing(), "a window that counted nothing ends");
+        int sent = received.size();
+        assertTrue(sent >= 3 && sent <= 7, "about one event per 300 ms window, but sent " + sent + " for " + reports);
+        long total = 1;
+        for (Received request : received.subList(1, sent)) {
+            java.util.regex.Matcher count = java.util.regex.Pattern.compile("\"coalesced\":\"(\\d+)\"").matcher(request.body);
+            assertTrue(count.find(), "every event after the first is a count: " + request.body);
+            total += Long.parseLong(count.group(1));
+        }
+        assertEquals(reports, total, "the counts add up to every report");
+        client.close();
+        assertEquals(sent, received.size(), "nothing was left to flush");
+    }
+
+    @Test
+    void coalesce_aWindowThatClosesLeavesOneOpenedLaterToItsOwnDeadline() throws Exception {
+        // Arrange
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k")
+                .coalesceWindowMillis(2_000).build();
+        Map<String, String> early = Collections.singletonMap("name", "early");
+        Map<String, String> late = Collections.singletonMap("name", "late");
+
+        // Act
+        // Half a window apart, so the flush that closes the first finds the
+        // second still open.
+        client.report("command", null, early);
+        client.report("command", null, early);
+        Thread.sleep(1_000);
+        client.report("command", null, late);
+        client.report("command", null, late);
+        awaitReceived(3);
+
+        // Assert
+        assertEquals(3, received.size(), "two first reports and the early count");
+        assertTrue(received.get(2).body.contains("\"name\":\"early\"") && received.get(2).body.contains("\"coalesced\":\"1\""),
+                received.get(2).body);
+        Thread.sleep(200);
+        assertEquals(3, received.size(), "the late window has not closed yet");
+        awaitReceived(4);
+        assertEquals(4, received.size(), "it gets a flush of its own");
+        assertTrue(received.get(3).body.contains("\"name\":\"late\"") && received.get(3).body.contains("\"coalesced\":\"1\""),
+                received.get(3).body);
+        client.close();
+    }
+
+    @Test
+    void close_sendsEveryCountStillOpen() throws Exception {
+        // Arrange
+        // The real window, a minute: only close() can send these counts.
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build();
+        for (int i = 0; i < 10; i++) {
+            client.report("command", null, Collections.singletonMap("name", "home"));
+        }
+        for (int i = 0; i < 3; i++) {
+            client.report("command", null, Collections.singletonMap("name", "spawn"));
+        }
+        client.report("command", null, Collections.singletonMap("name", "once"));
+
+        // Act
+        long before = System.nanoTime();
+        client.close();
+        long elapsedMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - before);
+
+        // Assert
+        assertTrue(elapsedMs < 5_000, "close() must not wait for the window: took " + elapsedMs + " ms");
+        List<String> bodies = received.stream().map(r -> r.body).collect(Collectors.toList());
+        assertEquals(5, bodies.size(), "three first reports and two counts: " + bodies);
+        assertTrue(bodies.contains("{\"application\":\"MyPlugin\",\"name\":\"command\",\"value\":9.0,"
+                + "\"tags\":{\"name\":\"home\",\"version\":\"1.2.3\",\"coalesced\":\"9\"}}"), bodies.toString());
+        assertTrue(bodies.contains("{\"application\":\"MyPlugin\",\"name\":\"command\",\"value\":2.0,"
+                + "\"tags\":{\"name\":\"spawn\",\"version\":\"1.2.3\",\"coalesced\":\"2\"}}"), bodies.toString());
+        assertEquals(1, bodies.stream().filter(b -> b.contains("\"once\"")).count(), "nothing to count, nothing more sent");
+    }
+
+    @Test
+    void close_aCountThatFindsTheQueueFullIsDropped() throws Exception {
+        // Arrange
+        // Hold the sending thread on the first report, so nothing behind it
+        // leaves the queue until close() has tried to queue the count.
+        CountDownLatch holding = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+        List<String> bodies = new CopyOnWriteArrayList<>();
+        HttpServer slow = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        slow.createContext("/", exchange -> {
+            bodies.add(new String(readAll(exchange.getRequestBody()), StandardCharsets.UTF_8));
+            holding.countDown();
+            try {
+                release.await(10, TimeUnit.SECONDS);
+            } catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
+            }
+            exchange.sendResponseHeaders(201, -1);
+            exchange.close();
+        });
+        slow.start();
+        TraceClient client = TraceClient.builder("http://127.0.0.1:" + slow.getAddress().getPort(), "MyPlugin", "1.2.3")
+                .key("k").build();
+        client.report("command");
+        client.report("command"); // counted, so close() has a count to send
+        assertTrue(holding.await(5, TimeUnit.SECONDS), "the first report is in flight");
+        for (int i = 0; i < TraceClient.QUEUE_CAPACITY; i++) {
+            client.report("startup"); // never coalesced: every one takes a place in the queue
+        }
+
+        // Act
+        Thread closing = new Thread(client::close);
+        closing.start();
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
+        while (client.coalescing() > 0 && System.nanoTime() < deadline) {
+            Thread.sleep(10);
+        }
+        assertEquals(0, client.coalescing(), "close() has flushed");
+        release.countDown();
+        closing.join(10_000);
+
+        // Assert
+        assertFalse(closing.isAlive(), "close() returned");
+        assertTrue(bodies.size() > 1, "the queue behind the first report drained");
+        assertTrue(bodies.stream().noneMatch(b -> b.contains(TraceClient.COALESCED_TAG)), bodies.toString());
+        slow.stop(0);
+    }
+
+    @Test
+    void coalesce_keysOnNameValueAndTagsButNotTagOrder() throws Exception {
+        // Arrange
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build();
+        Map<String, String> ab = new LinkedHashMap<>();
+        ab.put("a", "1");
+        ab.put("b", "2");
+        Map<String, String> ba = new LinkedHashMap<>();
+        ba.put("b", "2");
+        ba.put("a", "1");
+
+        // Act
+        client.report("command", null, ab);
+        client.report("command", null, ba); // the same event
+        client.report("command", 2.5, ab); // a different value: a different event
+        client.report("command", 2.5, ab);
+        client.report("command", 2.5, ab);
+        client.report("other", null, ab); // a different name
+        client.report("command", null, Collections.singletonMap("a", "1")); // different tags
+        client.report("command", Double.NaN, ab); // NaN is sent as no value: the first event again
+        awaitReceived(4);
+        Thread.sleep(200);
+        int sentAtOnce = received.size();
+        client.close();
+
+        // Assert
+        assertEquals(4, sentAtOnce, "one first report per distinct event");
+        List<String> bodies = received.stream().map(r -> r.body).collect(Collectors.toList());
+        assertEquals(6, bodies.size(), bodies.toString());
+        assertTrue(bodies.contains("{\"application\":\"MyPlugin\",\"name\":\"command\",\"value\":2.0,"
+                + "\"tags\":{\"a\":\"1\",\"b\":\"2\",\"version\":\"1.2.3\",\"coalesced\":\"2\"}}"), bodies.toString());
+        assertTrue(bodies.contains("{\"application\":\"MyPlugin\",\"name\":\"command\",\"value\":2.5,"
+                        + "\"tags\":{\"a\":\"1\",\"b\":\"2\",\"version\":\"1.2.3\",\"coalesced\":\"2\"}}"),
+                "an event with a value keeps it; the count is the tag: " + bodies);
+    }
+
+    /** Starts {@code threads} threads that each run {@code work} with their index, all at once, and waits for them. */
+    private static void runAtOnce(int threads, IntConsumer work) throws InterruptedException {
+        CountDownLatch start = new CountDownLatch(1);
+        List<Thread> started = new ArrayList<>();
+        for (int t = 0; t < threads; t++) {
+            final int index = t;
+            Thread thread = new Thread(() -> {
+                try {
+                    start.await();
+                } catch (InterruptedException interrupted) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+                work.accept(index);
+            });
+            thread.start();
+            started.add(thread);
+        }
+        start.countDown();
+        for (Thread thread : started) {
+            thread.join(10_000);
+            assertFalse(thread.isAlive(), "a reporting thread did not finish");
+        }
+    }
+
+    @Test
+    void coalesce_reportsFromManyThreadsAtOnceAreEachCountedExactlyOnce() throws Exception {
+        // Arrange
+        // report() runs on the host's threads -- a plugin's async tasks
+        // beside the main thread -- so the window it shares must neither lose
+        // a repeat nor count one twice.
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build();
+        Map<String, String> power = Collections.singletonMap("name", "power");
+        int threads = 8;
+        int each = 500;
+
+        // Act
+        // The real window, a minute: everything after the first report is
+        // counted until close() sends the count.
+        runAtOnce(threads, index -> {
+            for (int i = 0; i < each; i++) {
+                client.report("command", null, power);
+            }
+        });
+        client.close();
+
+        // Assert
+        List<String> bodies = received.stream().map(r -> r.body).collect(Collectors.toList());
+        assertEquals(2, bodies.size(), "one first report and one count: " + bodies);
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"command\",\"tags\":{\"name\":\"power\",\"version\":\"1.2.3\"}}",
+                bodies.get(0));
+        int repeats = threads * each - 1;
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"command\",\"value\":" + (double) repeats + ","
+                        + "\"tags\":{\"name\":\"power\",\"version\":\"1.2.3\",\"coalesced\":\"" + repeats + "\"}}",
+                bodies.get(1));
+    }
+
+    @Test
+    void coalesce_distinctEventsFromManyThreadsAtOnceAreEachSentOnceAndCountedOnce() throws Exception {
+        // Arrange
+        // Every thread opens windows of its own at the same moment, so the
+        // windows map and the queue count are changed from all of them at
+        // once. Well under QUEUE_CAPACITY and MAX_COALESCED_EVENTS, so
+        // nothing may be dropped.
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build();
+        int threads = 8;
+        int events = 5;
+        assertTrue(2 * threads * events <= TraceClient.QUEUE_CAPACITY);
+        assertTrue(threads * events <= TraceClient.MAX_COALESCED_EVENTS);
+
+        // Act
+        runAtOnce(threads, index -> {
+            for (int repeat = 0; repeat < 3; repeat++) {
+                for (int e = 0; e < events; e++) {
+                    client.report("command", null, Collections.singletonMap("name", index + "-" + e));
+                }
+            }
+        });
+        client.close();
+
+        // Assert
+        List<String> bodies = received.stream().map(r -> r.body).collect(Collectors.toList());
+        assertEquals(2 * threads * events, bodies.size(), "a first report and a count per event: " + bodies);
+        for (int t = 0; t < threads; t++) {
+            for (int e = 0; e < events; e++) {
+                String tags = "\"tags\":{\"name\":\"" + t + "-" + e + "\",\"version\":\"1.2.3\"";
+                assertEquals(1, bodies.stream().filter(b -> b.equals(
+                        "{\"application\":\"MyPlugin\",\"name\":\"command\"," + tags + "}}")).count(),
+                        "one first report of " + t + "-" + e + ": " + bodies);
+                assertEquals(1, bodies.stream().filter(b -> b.equals(
+                        "{\"application\":\"MyPlugin\",\"name\":\"command\",\"value\":2.0," + tags + ",\"coalesced\":\"2\"}}")).count(),
+                        "one count of 2 for " + t + "-" + e + ": " + bodies);
+            }
+        }
+    }
+
+    @Test
+    void coalesce_neverHoldsBackStartup() throws Exception {
+        // Arrange
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build();
+
+        // Act
+        for (int i = 0; i < 5; i++) {
+            client.report("startup");
+        }
+        awaitReceived(5);
+
+        // Assert
+        assertEquals(5, received.size(), "every startup goes out at once");
+        assertEquals(0, client.coalescing(), "startup is never counted");
+        client.close();
+        assertEquals(5, received.size());
+    }
+
+    @Test
+    void coalesce_countsAtMostMaxCoalescedEventsAndDropsNewOnesBeyond() throws Exception {
+        // Arrange
+        // Nothing listening, so the sends fail fast and the test is about
+        // memory alone: a new name every call must not grow without bound.
+        TraceClient client = TraceClient.builder("http://127.0.0.1:1", "MyPlugin", "1.2.3").key("k").build();
+
+        // Act
+        for (int i = 0; i < TraceClient.MAX_COALESCED_EVENTS * 4; i++) {
+            client.report("command", null, Collections.singletonMap("name", "c" + i));
+            client.report("command", null, Collections.singletonMap("name", "c" + i));
+        }
+
+        // Assert
+        assertEquals(TraceClient.MAX_COALESCED_EVENTS, client.coalescing());
+        assertDoesNotThrow(() -> client.report("startup"), "startup still goes to the queue");
+        client.close();
+        assertEquals(0, client.coalescing(), "close() lets go of every count");
+    }
+
+    @Test
+    void coalesce_afterCloseNothingIsCountedOrSent() throws Exception {
+        // Arrange
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build();
+        client.close();
+
+        // Act
+        client.report("command");
+        client.report("command");
+
+        // Assert
+        assertEquals(0, client.coalescing());
+        assertFalse(arrived.await(300, TimeUnit.MILLISECONDS), "nothing should be sent after close()");
+    }
+
+    @Test
+    void coalesce_infiniteValuesAreTheSameEventAsNoValue() throws Exception {
+        // Arrange
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build();
+
+        // Act
+        client.report("command");
+        client.report("command", Double.POSITIVE_INFINITY, null);
+        client.report("command", Double.NEGATIVE_INFINITY, null);
+        assertTrue(arrived.await(5, TimeUnit.SECONDS), "the first report goes out at once");
+        Thread.sleep(200);
+        int sentAtOnce = received.size();
+        int counting = client.coalescing();
+        client.close();
+
+        // Assert
+        assertEquals(1, sentAtOnce, "json() sends an infinite value as no value, so these are one event");
+        assertEquals(1, counting);
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"command\",\"value\":2.0,"
+                + "\"tags\":{\"version\":\"1.2.3\",\"coalesced\":\"2\"}}", received.get(1).body);
+    }
+
+    @Test
+    void coalesce_aTagWithANullKeyOrValueIsLeftOutOfTheEventAndNeverThrows() throws Exception {
+        // Arrange
+        // The key is built from a TreeMap, which throws on a null key: this
+        // is only safe because withVersion() drops such tags first.
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k").build();
+        Map<String, String> withNulls = new HashMap<>();
+        withNulls.put("name", "home");
+        withNulls.put("nullValue", null);
+        withNulls.put(null, "nullKey");
+
+        // Act
+        assertDoesNotThrow(() -> client.report("command", null, withNulls));
+        assertDoesNotThrow(() -> client.report("command", null, withNulls));
+        client.report("command", null, Collections.singletonMap("name", "home"));
+        assertTrue(arrived.await(5, TimeUnit.SECONDS), "the first report goes out at once");
+        Thread.sleep(200);
+        int sentAtOnce = received.size();
+        client.close();
+
+        // Assert
+        assertEquals(1, sentAtOnce, "the same event as one without the null tags");
+        assertEquals(2, received.size(), "and one count for both repeats");
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"command\",\"tags\":{\"name\":\"home\",\"version\":\"1.2.3\"}}",
+                received.get(0).body);
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"command\",\"value\":2.0,"
+                + "\"tags\":{\"name\":\"home\",\"version\":\"1.2.3\",\"coalesced\":\"2\"}}", received.get(1).body);
+    }
+
+    @Test
+    void coalesce_aCountCarriesTheInstallAndServerWideTagsBeforeItsOwn(@TempDir Path plugins) throws Exception {
+        // Arrange
+        writeServerWideConfig(plugins, "tags:\n  ci: \"true\"\n");
+        TraceClient client = TraceClient.builder(baseUrl(), "MyPlugin", "1.2.3").key("k")
+                .serverWideConfig(plugins.toFile()).build();
+
+        // Act
+        for (int i = 0; i < 4; i++) {
+            client.report("command", null, Collections.singletonMap("name", "home"));
+        }
+        client.close();
+
+        // Assert
+        assertEquals(2, received.size(), "the first report and one count");
+        assertEquals("{\"application\":\"MyPlugin\",\"name\":\"command\",\"value\":3.0,"
+                        + "\"tags\":{\"name\":\"home\",\"version\":\"1.2.3\",\"install\":\"test-server\",\"ci\":\"true\",\"coalesced\":\"3\"}}",
+                received.get(1).body);
+    }
+
+    @Test
+    void withCount_addsTheCountOnlyWhenThereIsRoomAndNoneAlready() {
+        Map<String, String> tags = new LinkedHashMap<>();
+        tags.put("version", "1");
+        assertEquals("7", TraceClient.withCount(tags, 7).get(TraceClient.COALESCED_TAG));
+        assertFalse(tags.containsKey(TraceClient.COALESCED_TAG), "the caller's map is never modified");
+
+        Map<String, String> own = Collections.singletonMap(TraceClient.COALESCED_TAG, "mine");
+        assertEquals("mine", TraceClient.withCount(own, 7).get(TraceClient.COALESCED_TAG));
+
+        Map<String, String> full = new LinkedHashMap<>();
+        for (int i = 0; i < TraceClient.MAX_TAGS; i++) {
+            full.put("t" + i, "v");
+        }
+        assertEquals(TraceClient.MAX_TAGS, TraceClient.withCount(full, 7).size(), "never past the server's tag limit");
     }
 
     private static byte[] readAll(InputStream in) throws java.io.IOException {

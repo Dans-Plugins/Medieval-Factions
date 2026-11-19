@@ -1,5 +1,5 @@
 /*
- * trace-client 0.7.0 -- https://github.com/Stephenson-Software/trace-client-java
+ * trace-client 0.8.0 -- https://github.com/Stephenson-Software/trace-client-java
  *
  * One call to report that a program was used. Copy this file into a project as
  * is, or depend on the artifact; either way there is nothing else to add.
@@ -14,7 +14,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -23,6 +25,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -40,7 +43,7 @@ import java.util.regex.Pattern;
  * Reports usage events to a trace server, and never gets in the way of the
  * program doing the reporting.
  *
- * <p>Three properties hold for every call to {@link #report}:
+ * <p>Four properties hold for every call to {@link #report}:
  *
  * <ul>
  *   <li><b>It returns immediately.</b> The HTTP call happens on a single
@@ -49,7 +52,8 @@ import java.util.regex.Pattern;
  *   <li><b>It never throws.</b> A server that is down, slow, or rejecting the
  *       key is a dropped report, not an exception in the host program. Failures
  *       are logged at {@link Level#FINE} if a logger was given, and otherwise
- *       not at all.</li>
+ *       not at all. A tags map that cannot be read is a dropped report too,
+ *       without a log line.</li>
  *   <li><b>It is bounded.</b> At most {@value #QUEUE_CAPACITY} reports wait to
  *       be sent; beyond that, new reports are dropped rather than accumulated,
  *       without a log line, even at {@link Level#FINE}. A trace server
@@ -65,18 +69,27 @@ import java.util.regex.Pattern;
  * </ul>
  *
  * <p>Reporting is opt-out, and the person running the program always has the
- * last word. {@link Builder#build()} checks, in this order, and the first
- * match is what {@link #disabledReason()} reports:
+ * last word. Every switch fails closed: a value that does not clearly mean
+ * "on" -- a typo, a quoted {@code "false"}, an empty value -- turns reporting
+ * off, and nothing in this client ever turns a switch back on.
+ * {@link Builder#build()} checks, in this order, and the first match is what
+ * {@link #disabledReason()} reports:
  *
  * <ol>
- *   <li>the environment: {@code TRACE_USAGE_REPORTING=off} (or {@code false},
- *       {@code 0}, {@code no}) or {@code DO_NOT_TRACK=1} (or {@code true},
- *       {@code yes}), case-insensitive -- reason {@code environment};</li>
+ *   <li>the environment: {@code TRACE_USAGE_REPORTING} set to anything but
+ *       blank, {@code true}, {@code on}, {@code yes} or {@code 1}; or
+ *       {@code DO_NOT_TRACK} set to anything but blank, {@code 0},
+ *       {@code false}, {@code off} or {@code no}; case-insensitive -- reason
+ *       {@code environment};</li>
  *   <li>the server-wide switch, when {@link Builder#serverWideConfig(File)}
- *       was given: {@code enabled: false} in {@code plugins/trace/config.yml}
- *       -- reason {@code server-wide config: plugins/trace/config.yml};</li>
+ *       was given: any {@code enabled:} line in {@code plugins/trace/config.yml}
+ *       whose value, bare or quoted, is not {@code true}, {@code on},
+ *       {@code yes} or {@code 1} (case-insensitive); or that file existing but
+ *       being unreadable -- reason
+ *       {@code server-wide config: plugins/trace/config.yml};</li>
  *   <li>the program's own setting, {@link Builder#enabled(boolean)
- *       enabled(false)} -- reason {@code config.yml};</li>
+ *       enabled(false)} -- reason {@code config.yml}. Read it with
+ *       {@link #allowsReporting(Object)} so it fails closed too;</li>
  *   <li>no key -- reason {@code no key}.</li>
  * </ol>
  *
@@ -104,7 +117,8 @@ import java.util.regex.Pattern;
  * server-wide {@code server-id:}; with none of them, no {@code install} tag
  * is sent. The ID is random: it names no person, account or address. A
  * disabled client never generates, reads or writes one. An event's own
- * {@code install} tag wins over it.
+ * {@code install} tag wins over it, and an event already at
+ * {@value #MAX_TAGS} tags with {@code version} goes out without it.
  *
  * <p>A disabled client is a no-op that costs nothing. Programs that run on
  * other people's machines should expose their own switch in their
@@ -114,7 +128,7 @@ import java.util.regex.Pattern;
  * TraceClient trace = TraceClient.builder("https://trace.example.org", "MyPlugin",
  *                 getDescription().getVersion())
  *         .key(config.getString("usage-reporting.key"))
- *         .enabled(config.getBoolean("usage-reporting.enabled", true))
+ *         .enabled(TraceClient.allowsReporting(config.get("usage-reporting.enabled")))
  *         .serverWideConfig(getDataFolder().getParentFile()) // plugins/
  *         .logger(getLogger())
  *         .build();
@@ -135,7 +149,7 @@ import java.util.regex.Pattern;
 public final class TraceClient {
 
     /** This client's version, as sent in the User-Agent. */
-    public static final String VERSION = "0.7.0";
+    public static final String VERSION = "0.8.0";
 
     /** How many reports may wait to be sent before new ones are dropped. */
     public static final int QUEUE_CAPACITY = 256;
@@ -216,7 +230,7 @@ public final class TraceClient {
     /** What {@link #installIdFromFile(File)} accepts as an ID on a line of its file. */
     private static final Pattern INSTALL_ID_LINE = Pattern.compile("[A-Za-z0-9_.\\-]{1,255}");
 
-    private static final Pattern ENABLED_LINE = Pattern.compile("^\\s*enabled\\s*:\\s*(\\S+)");
+    private static final Pattern ENABLED_LINE = Pattern.compile("^\\s*enabled\\s*:(.*)$");
     private static final Pattern TAGS_LINE = Pattern.compile("^tags\\s*:\\s*(#.*)?$");
     private static final Pattern SERVER_ID_LINE = Pattern.compile("^server-id\\s*:(.*)$");
 
@@ -392,7 +406,8 @@ public final class TraceClient {
      *
      * <p>Never throws: if the file exists but cannot be read, or cannot be
      * written, a fresh random ID is returned for this process only, and an
-     * unreadable file is left as it is.
+     * unreadable file is left as it is. The same goes for a {@code null}
+     * file or a blank path, which nothing is written to.
      *
      * <p><b>Called directly, this writes whatever the opt-outs say.</b> Pass
      * the file to {@link Builder#installIdFile(File)} instead to keep the
@@ -454,30 +469,71 @@ public final class TraceClient {
         return null;
     }
 
+    // Both variables fail closed: once set to anything but blank, only a value
+    // that clearly means "keep reporting" keeps it on.
     private static boolean environmentDisables() {
-        return isOff(environment.apply(ENV_USAGE_REPORTING)) || isYes(environment.apply(ENV_DO_NOT_TRACK));
+        try {
+            return environmentSaysOff();
+        } catch (RuntimeException unreadable) {
+            // e.g. a SecurityManager denying getenv: an environment that cannot
+            // be read may hold DO_NOT_TRACK=1, so it counts as opting out.
+            return true;
+        }
     }
 
-    private static boolean isOff(String value) {
+    private static boolean environmentSaysOff() {
+        String usageReporting = environment.apply(ENV_USAGE_REPORTING);
+        if (usageReporting != null && !usageReporting.trim().isEmpty() && !isOn(usageReporting)) {
+            return true;
+        }
+        String doNotTrack = environment.apply(ENV_DO_NOT_TRACK);
+        return doNotTrack != null && !doNotTrack.trim().isEmpty() && !isNegative(doNotTrack);
+    }
+
+    /** {@code true}, {@code on}, {@code yes} or {@code 1}, ignoring case and surrounding space. */
+    private static boolean isOn(String value) {
         if (value == null) {
             return false;
         }
-        String v = value.trim().toLowerCase();
-        return v.equals("off") || v.equals("false") || v.equals("0") || v.equals("no");
+        String v = value.trim().toLowerCase(Locale.ROOT);
+        return v.equals("true") || v.equals("on") || v.equals("yes") || v.equals("1");
     }
 
-    private static boolean isYes(String value) {
-        if (value == null) {
-            return false;
+    /** {@code false}, {@code off}, {@code no} or {@code 0}, ignoring case and surrounding space. */
+    private static boolean isNegative(String value) {
+        String v = value.trim().toLowerCase(Locale.ROOT);
+        return v.equals("false") || v.equals("off") || v.equals("no") || v.equals("0");
+    }
+
+    /**
+     * Whether a program's own reporting setting, as read from its
+     * configuration, allows reporting -- for {@link Builder#enabled(boolean)}.
+     * Fails closed: only {@link Boolean#TRUE}, or a string reading
+     * {@code true}, {@code on}, {@code yes} or {@code 1} (any case), allows it.
+     * Anything else turns reporting off: {@code false}, a quoted
+     * {@code "false"}, {@code off}, {@code no}, a typo, a number, or
+     * {@code null}.
+     *
+     * <p>Prefer this over {@code getBoolean(path, true)}: Bukkit's
+     * {@code getBoolean} returns its default for a value that is not a YAML
+     * boolean, so an operator's {@code enabled: "false"} would read as on.
+     * Pass the raw value -- on Bukkit, {@code getConfig().get(path)}, which
+     * still falls through to the defaults bundled in the jar when the
+     * operator's file has no such key.
+     */
+    public static boolean allowsReporting(Object setting) {
+        if (setting instanceof Boolean) {
+            return (Boolean) setting;
         }
-        String v = value.trim().toLowerCase();
-        return v.equals("1") || v.equals("true") || v.equals("yes");
+        return setting instanceof String && isOn((String) setting);
     }
 
     /** What {@code plugins/trace/config.yml} says: the switch, the server-wide tags and the server-id. */
     static final class ServerWideConfig {
         /** No file was read: none was asked for, or it could not be read. */
         static final ServerWideConfig NONE = new ServerWideConfig(false, Collections.<String, String>emptyMap(), null);
+        /** The file is there but could not be read: whatever it says, it may say off. */
+        static final ServerWideConfig UNREADABLE = new ServerWideConfig(true, Collections.<String, String>emptyMap(), null);
 
         final boolean disables;
         final Map<String, String> tags;
@@ -504,39 +560,71 @@ public final class TraceClient {
 
     /**
      * Ensures {@code <pluginsDirectory>/trace/config.yml} exists and reads its
-     * {@code enabled:} line and {@code tags:} block. No YAML library: the file
-     * is ours, shallow, and a line scan is enough. Anything going wrong on
-     * disk is logged at FINE and counts as enabled with no tags -- a
-     * read-only plugins directory must not silently switch reporting off,
-     * nor stop the host program.
+     * {@code enabled:} line, {@code tags:} block and {@code server-id:} line.
+     * Not called when the environment opts out. No YAML library: the file
+     * is ours, shallow, and a line scan is enough. Nothing here throws.
+     * A file that is missing and cannot be created counts as enabled with no
+     * tags: the operator has said nothing, and a read-only plugins directory
+     * must not silently switch reporting off. A file that is there but cannot
+     * be read counts as disabled: it may say {@code enabled: false}. A file
+     * that is not valid UTF-8 is read as ISO-8859-1.
      */
     private ServerWideConfig readServerWideConfig(File pluginsDirectory) {
         File location = new File(pluginsDirectory, SERVER_WIDE_CONFIG_PATH);
+        Path file;
         try {
-            // Inside the try: toPath() throws InvalidPathException for a path
-            // the file system cannot represent, and build() never throws.
-            Path file = location.toPath();
+            // toPath() throws InvalidPathException for a path the file system
+            // cannot represent. No file can be there, so the operator has said
+            // nothing; and build() never throws.
+            file = location.toPath();
+        } catch (RuntimeException unrepresentable) {
+            log("could not read server-wide config " + location + ": " + unrepresentable);
+            return ServerWideConfig.NONE;
+        }
+        try {
             boolean created = false;
             if (!Files.exists(file)) {
-                Files.createDirectories(file.getParent());
-                Files.write(file, SERVER_WIDE_CONFIG_CONTENT.getBytes(StandardCharsets.UTF_8));
-                // just written: enabled: true, and the tags example commented out
-                created = true;
+                try {
+                    Files.createDirectories(file.getParent());
+                    Files.write(file, SERVER_WIDE_CONFIG_CONTENT.getBytes(StandardCharsets.UTF_8),
+                            StandardOpenOption.CREATE_NEW);
+                    // just written: enabled: true, and the tags example commented out
+                    created = true;
+                } catch (FileAlreadyExistsException raced) {
+                    // another plugin wrote it first: read theirs
+                } catch (IOException | RuntimeException failure) {
+                    // No file, and none can be made: the operator has said nothing.
+                    log("could not create server-wide config " + location + ": " + failure);
+                    return ServerWideConfig.NONE;
+                }
             }
-            return parseServerWideConfig(Files.readAllLines(file, StandardCharsets.UTF_8)).readFromDisk(created);
+            try {
+                return parseServerWideConfig(Files.readAllLines(file, StandardCharsets.UTF_8)).readFromDisk(created);
+            } catch (CharacterCodingException notUtf8) {
+                // Saved in another encoding, e.g. with an accented comment. The
+                // switch is still read; nothing is appended to the file, so the
+                // install ID lives in memory for this process.
+                log("server-wide config " + location + " is not UTF-8; reading it as ISO-8859-1");
+                return parseServerWideConfig(Files.readAllLines(file, StandardCharsets.ISO_8859_1));
+            }
         } catch (IOException | RuntimeException failure) {
-            log("could not read server-wide config " + location + ": " + failure);
-            return ServerWideConfig.NONE;
+            // The file is there but cannot be read. It may say enabled: false,
+            // so reporting stays off rather than guessing.
+            log("could not read server-wide config " + location + ", so reporting is off: " + failure);
+            return ServerWideConfig.UNREADABLE;
         }
     }
 
+
     /**
      * Reads the switch and the tags from the lines of the server-wide file.
-     * The first {@code enabled:} line outside a {@code tags:} block is the
-     * switch. A {@code tags:} line at column 0 opens a block of indented
-     * {@code key: value} lines, which ends at the next non-blank line that is
-     * not indented; blank and {@code #} lines inside it are skipped, as are
-     * lines indented differently from its first entry. Values may be bare,
+     * Every {@code enabled:} line outside a {@code tags:} block is a switch,
+     * and reporting stays on only if each one reads, bare or quoted,
+     * {@code true}, {@code on}, {@code yes} or {@code 1}. A {@code tags:} line at column 0 opens a block of indented
+     * {@code key: value} lines, which ends at the next line that is not
+     * blank, a comment or indented; blank and {@code #} lines inside it are
+     * skipped, at any indent, as are lines indented differently from its
+     * first entry. Values may be bare,
      * double- or single-quoted. Entries the trace server would reject -- and
      * anything this reader does not understand -- are dropped, one by one,
      * and at most {@link #MAX_TAGS} are kept. The first {@code server-id:}
@@ -587,10 +675,15 @@ public final class TraceClient {
                     continue;
                 }
             }
-            if (disables == null) {
-                Matcher matcher = ENABLED_LINE.matcher(line);
-                if (matcher.find()) {
-                    disables = isOff(matcher.group(1));
+            Matcher enabled = ENABLED_LINE.matcher(line);
+            if (enabled.matches()) {
+                // Fails closed: every enabled: line counts, and only a value
+                // that clearly means "on" keeps reporting on.
+                String value = scalar(enabled.group(1).trim());
+                if (value == null || !isOn(value)) {
+                    disables = true;
+                } else if (disables == null) {
+                    disables = false;
                 }
             }
         }
@@ -757,7 +850,9 @@ public final class TraceClient {
     /**
      * Reports that {@code name} happened, with an optional numeric value and
      * optional string tags. Returns immediately; see the class comment. A
-     * {@code null} or blank name sends nothing.
+     * {@code null} or blank name sends nothing, and so does a {@code tags}
+     * map that fails while being read -- changed by another thread during
+     * the call, or holding a non-{@code String} through an unchecked cast.
      *
      * <p>Repeats are coalesced. The first report of an event -- its name,
      * value and tags, once {@code version}, {@code install} and the
@@ -772,9 +867,16 @@ public final class TraceClient {
      * counted nothing ends. {@link #close()} sends every count still open.
      *
      * <p>So the number of times an event happened is the sum, over the
-     * events the server stored, of {@code value} where the
-     * {@value #COALESCED_TAG} tag is present and 1 where it is not -- for
-     * a valueless event, simply {@code COALESCE(value, 1)}.
+     * events the server stored, of the {@value #COALESCED_TAG} tag where it
+     * is present and 1 where it is not -- for an event reported without a
+     * value, simply {@code COALESCE(value, 1)}; an event reported with one
+     * keeps it, so only the tag holds the count. Two exceptions: a count is
+     * not tagged when the event already carries {@value #MAX_TAGS} tags, so
+     * it reads as a single report; and an event with its own
+     * {@value #COALESCED_TAG} tag keeps it, so that tag is not a count.
+     *
+     * <p>A count goes through the same queue as any report: one that finds
+     * it full is dropped, without a log line, and what it counted is lost.
      *
      * <p>{@code startup} is never coalesced, nor held back: every one is
      * sent at once.
@@ -786,9 +888,17 @@ public final class TraceClient {
         // json() leaves out a value that is NaN or infinite, so they are the
         // same event as no value at all.
         Double finite = value == null || value.isNaN() || value.isInfinite() ? null : value;
-        Map<String, String> merged =
-                withServerWideTags(withInstall(withVersion(tags, version), installId), serverWideTags);
-        String body = json(application, name, finite, merged);
+        Map<String, String> merged;
+        String body;
+        try {
+            merged = withServerWideTags(withInstall(withVersion(tags, version), installId), serverWideTags);
+            body = json(application, name, finite, merged);
+        } catch (RuntimeException unreadable) {
+            // The caller's map, read on the caller's thread: another thread
+            // changing it, or a raw map holding a non-String, fails here. Not
+            // logged, like the other drops on this thread: a handler may do IO.
+            return;
+        }
         synchronized (lock) {
             if (closed) {
                 return;
@@ -920,12 +1030,12 @@ public final class TraceClient {
      * Sends every count still being coalesced (see {@link #report(String,
      * Double, Map)}), then stops the sending thread, giving reports already
      * queued up to {@value #READ_TIMEOUT_MS} ms in total to be sent first.
-     * A program that
-     * reports and then exits within milliseconds -- a CLI -- would otherwise
-     * lose its one event to the race between queueing it and the thread
-     * picking it up. The bound still holds: an unreachable server delays exit
+     * A program that reports and then exits within milliseconds -- a CLI --
+     * would otherwise lose its one event to the race between queueing it
+     * and the thread picking it up. The bound still holds: an unreachable server delays exit
      * by at most the timeout, never a hang; whatever has not been sent by
-     * then is dropped. Safe to call more than once, and on a disabled client.
+     * then is dropped. A report made after this is dropped too. Safe to call
+     * more than once, and on a disabled client.
      */
     public void close() {
         if (executor == null) {
@@ -1106,7 +1216,8 @@ public final class TraceClient {
          * in a Bukkit plugin), {@link #build()} makes sure
          * {@code plugins/trace/config.yml} exists -- creating it with
          * {@code enabled: true} if it is missing -- and honours
-         * {@code enabled: false} in it. Its optional {@code tags:} block is
+         * {@code enabled: false} (or {@code off}, {@code 0}, {@code no},
+         * case-insensitive) in it. Its optional {@code tags:} block is
          * added to every event this client reports, below the event's own
          * tags. Its {@code server-id:} line is sent as the tag
          * {@code install}; when an enabled client finds none, it appends one
@@ -1121,8 +1232,9 @@ public final class TraceClient {
          * server-id: 0f8b6c1e-...
          * </pre>
          *
-         * <p>Both are read once, here. Optional; programs that are not
-         * plugins leave it unset.
+         * <p>All three are read once, here. When an environment variable has
+         * already turned reporting off, the file is neither read nor created.
+         * Optional; programs that are not plugins leave it unset.
          */
         public Builder serverWideConfig(File pluginsDirectory) {
             this.pluginsDirectory = pluginsDirectory;
@@ -1176,8 +1288,10 @@ public final class TraceClient {
          * {@code [trace]}: a report the server did not answer {@code 201}
          * to or that could not be delivered, and a server-wide config or
          * install ID file that could not be read or written in
-         * {@link #build()}. A report dropped because the queue is full is
-         * not mentioned. Optional; without one, nothing is logged.
+         * {@link #build()}. A report dropped because the queue is full, because
+         * {@value TraceClient#MAX_COALESCED_EVENTS} other events are already
+         * being counted, or because its tags map could not be read, is not
+         * mentioned. Optional; without one, nothing is logged.
          */
         public Builder logger(Logger logger) {
             this.logger = logger;
