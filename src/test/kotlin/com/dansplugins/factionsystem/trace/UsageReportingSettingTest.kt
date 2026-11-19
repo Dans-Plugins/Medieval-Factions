@@ -110,6 +110,22 @@ class UsageReportingSettingTest {
     }
 
     @Test
+    fun aBlankEnabledValueIsAnOptOut() {
+        val file = configFile("usage-reporting:\n  enabled:   # off for now\n  key: k\n")
+        // Bukkit drops the key, so the bundled default would win.
+        assertTrue(loadLikeBukkit(file).getBoolean(UsageReportingSetting.ENABLED_KEY))
+
+        assertFalse(UsageReportingSetting.isEnabled(loadLikeBukkit(file), file))
+    }
+
+    @Test
+    fun anEnabledKeyOutsideTheBlockIsNotTheSwitch() {
+        val file = configFile("other:\n  enabled:\nusage-reporting:\n  enabled: true\n")
+
+        assertFalse(UsageReportingSetting.turnedOffOnDisk(file))
+    }
+
+    @Test
     fun aMissingFileIsNotAnOptOut() {
         val file = File(folder, "absent.yml")
 

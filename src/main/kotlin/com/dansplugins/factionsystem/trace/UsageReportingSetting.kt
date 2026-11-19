@@ -27,10 +27,35 @@ object UsageReportingSetting {
         val onDisk = YamlConfiguration()
         return try {
             onDisk.load(configFile)
-            onDisk.get(ENABLED_KEY)
+            onDisk.get(ENABLED_KEY) ?: if (hasBlankEnabledLine(configFile)) false else null
         } catch (exception: Exception) {
             false
         }
+    }
+
+    /**
+     * Whether [configFile] has an `enabled:` line with no value (or only a comment) inside its
+     * top-level `usage-reporting:` block. Bukkit drops a key with no value when it loads the file,
+     * so the bundled `true` would win; but an operator who blanked the switch did not ask for
+     * reporting, so it counts as off.
+     */
+    internal fun hasBlankEnabledLine(configFile: File): Boolean {
+        val lines = try {
+            configFile.readLines(Charsets.ISO_8859_1)
+        } catch (exception: Exception) {
+            return false
+        }
+        var inBlock = false
+        for (line in lines) {
+            val trimmed = line.trim()
+            if (trimmed.isEmpty() || trimmed.startsWith("#")) continue
+            if (!line[0].isWhitespace()) {
+                inBlock = trimmed.matches(Regex("usage-reporting\\s*:\\s*(#.*)?"))
+                continue
+            }
+            if (inBlock && trimmed.matches(Regex("enabled\\s*:\\s*(#.*)?"))) return true
+        }
+        return false
     }
 
     /** Whether [configFile] exists but cannot be parsed as YAML. */
