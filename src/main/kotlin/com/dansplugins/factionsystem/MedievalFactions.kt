@@ -119,6 +119,7 @@ import com.dansplugins.factionsystem.slimefun.MfSlimefunProtectionModule
 import com.dansplugins.factionsystem.slimefun.MfSlimefunProtectionPolicy
 import com.dansplugins.factionsystem.teleport.MfTeleportService
 import com.dansplugins.factionsystem.trace.TraceClient
+import com.dansplugins.factionsystem.trace.UsageReportingSetting
 import com.dansplugins.factionsystem.update.MfUpdateNotifier
 import com.google.gson.Gson
 import com.rpkit.core.service.Service
@@ -272,7 +273,7 @@ class MedievalFactions : JavaPlugin() {
         // an operator has removed by hand. Verified against YamlConfiguration, not assumed.
         trace = TraceClient.builder(config.getString("usage-reporting.endpoint") ?: "https://trace.danielstephenson.dev", name, description.version)
             .key(config.getString("usage-reporting.key") ?: "")
-            .enabled(config.getBoolean("usage-reporting.enabled"))
+            .enabled(UsageReportingSetting.isEnabled(config, File(dataFolder, "config.yml")))
             .serverWideConfig(dataFolder.parentFile)
             .logger(logger)
             .build()
@@ -732,6 +733,28 @@ class MedievalFactions : JavaPlugin() {
         server.pluginManager.getPlugin("Mailboxes") != null -> MailboxesNotificationService(this)
         server.pluginManager.getPlugin("rpk-notification-lib-bukkit") != null -> RpkNotificationService(this)
         else -> NoOpNotificationService()
+    }
+
+    /**
+     * Every write of config.yml goes through here, from this class and from the commands,
+     * the API server and the legacy migrator. Two guards keep an operator's settings, and above
+     * all their usage-reporting opt-out, from being overwritten:
+     * - a config.yml Bukkit could not parse is never written over. Bukkit loaded it as empty, so
+     *   saving would replace every setting with the defaults, enabled: true included.
+     * - usage-reporting.enabled: false on disk is carried into the loaded config first. The
+     *   loaded config can be older than the file, e.g. after a hand edit while running.
+     */
+    override fun saveConfig() {
+        val configFile = File(dataFolder, "config.yml")
+        if (UsageReportingSetting.isUnparseable(configFile)) {
+            logger.severe(
+                "config.yml could not be read, so it was not overwritten. Fix the YAML error in it and restart; " +
+                    "until then the defaults are used, and usage reporting is off."
+            )
+            return
+        }
+        UsageReportingSetting.keepOptOutFromDisk(config, configFile)
+        super.saveConfig()
     }
 
     override fun onDisable() {

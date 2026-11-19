@@ -63,8 +63,8 @@ object MfUpdateCheck {
     }
 
     /**
-     * Whether `TRACE_USAGE_REPORTING` (off/false/0/no) or `DO_NOT_TRACK`
-     * (1/true/yes) is set. Asked of the vendored trace client rather than
+     * Whether `TRACE_USAGE_REPORTING` (anything but blank or true/on/yes/1) or `DO_NOT_TRACK`
+     * (anything but blank or 0/false/off/no) is set. Asked of the vendored trace client rather than
      * re-implemented, so the two switches always mean the same thing for usage
      * reporting and for this check: the client consults the environment before
      * anything else, so a client built switched-off reports "environment" as its
