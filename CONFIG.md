@@ -1136,7 +1136,7 @@ This reporting is **on by default** and can be turned off. It is separate from t
 ### `usage-reporting.enabled`
 **Type:** Boolean  
 **Default:** `true`  
-**Description:** Whether usage events are sent. Set to `false` to turn reporting off entirely.
+**Description:** Whether usage events are sent. Set to `false` to turn reporting off entirely. Other spellings of the block or the switch (`usage_reporting:`, `usageReporting:`, `enable: false`, `disabled: true`), or `usage-reporting: false`, also count as off.
 
 ### `usage-reporting.endpoint`
 **Type:** String  

@@ -1,8 +1,10 @@
 package com.dansplugins.factionsystem.trace
 
 import org.bukkit.configuration.Configuration
+import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
+import java.util.Locale
 
 /**
  * Decides whether `usage-reporting.enabled` allows reporting, and keeps an operator's opt-out
@@ -27,11 +29,50 @@ object UsageReportingSetting {
         val onDisk = YamlConfiguration()
         return try {
             onDisk.load(configFile)
-            onDisk.get(ENABLED_KEY) ?: if (hasBlankEnabledLine(configFile)) false else null
+            if (hasNearMissOptOut(onDisk)) {
+                false
+            } else {
+                onDisk.get(ENABLED_KEY) ?: if (hasBlankEnabledLine(configFile)) false else null
+            }
         } catch (exception: Exception) {
             false
         }
     }
+
+    /**
+     * Whether [root] holds an attempt to turn usage reporting off that is not written exactly as
+     * `usage-reporting.enabled`. The plugin would not recognise such a setting, and on the next
+     * upgrade it would add the bundled block, `enabled: true`, next to it. An operator who wrote
+     * any of these did not ask for reporting, so each counts as off:
+     * - a top-level key that spells "usage reporting" another way (`usage_reporting`,
+     *   `usageReporting`, `Usage-Reporting`, ...) holding a value, or an `enabled`-like key, that
+     *   is not clearly on;
+     * - `usage-reporting: false` -- a value instead of a block;
+     * - inside any such block, a key that spells "enabled" another way (`enable`, `Enabled`, ...)
+     *   that is not clearly on, or one that spells "disabled" whose value is on.
+     */
+    internal fun hasNearMissOptOut(root: ConfigurationSection): Boolean {
+        for (key in root.getKeys(false)) {
+            if (!normalise(key).contains("usagereport")) continue
+            val value = root.get(key)
+            if (value !is ConfigurationSection) {
+                if (!TraceClient.allowsReporting(value)) return true
+                continue
+            }
+            for (child in value.getKeys(false)) {
+                // the switch itself, read by the caller
+                if (key == "usage-reporting" && child == "enabled") continue
+                val name = normalise(child)
+                val childValue = value.get(child)
+                if (name.contains("disabl") && TraceClient.allowsReporting(childValue)) return true
+                if (name.contains("enabl") && !TraceClient.allowsReporting(childValue)) return true
+            }
+        }
+        return false
+    }
+
+    private fun normalise(key: String): String =
+        key.lowercase(Locale.ROOT).replace(Regex("[^a-z0-9]"), "")
 
     /**
      * Whether [configFile] has an `enabled:` line with no value (or only a comment) inside its

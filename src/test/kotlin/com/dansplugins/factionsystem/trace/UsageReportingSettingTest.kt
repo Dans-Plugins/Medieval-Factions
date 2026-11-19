@@ -59,6 +59,53 @@ class UsageReportingSettingTest {
     }
 
     @Test
+    fun anOptOutWrittenUnderANearMissNameIsAnOptOut() {
+        val nearMisses = listOf(
+            "usage_reporting:\n  enabled: false\n",
+            "usageReporting:\n  enabled: off\n",
+            "Usage-Reporting:\n  enabled: \"false\"\n",
+            "usage-reporting: false\n",
+            "usage_reporting: no\n",
+            "usage-reporting:\n  enable: false\n",
+            "usage-reporting:\n  Enabled: false\n",
+            "usage-reporting:\n  disabled: true\n",
+            "usage-reporting:\n  enabled: true\n  disable: yes\n"
+        )
+        for (nearMiss in nearMisses) {
+            val file = configFile("version: 5.0.0\n$nearMiss")
+            assertTrue(UsageReportingSetting.turnedOffOnDisk(file), nearMiss)
+            assertFalse(UsageReportingSetting.isEnabled(loadLikeBukkit(file), file), nearMiss)
+        }
+    }
+
+    @Test
+    fun nearMissNamesThatSayOnAreNotAnOptOut() {
+        val on = listOf(
+            "usage-reporting:\n  enabled: true\n",
+            "usage_reporting:\n  enabled: true\n",
+            "usage-reporting: true\n",
+            "usage-reporting:\n  enabled: true\n  disabled: false\n",
+            "usage-reporting:\n  enabled: true\n  endpoint: https://example.org\n"
+        )
+        for (config in on) {
+            val file = configFile(config)
+            assertFalse(UsageReportingSetting.turnedOffOnDisk(file), config)
+        }
+    }
+
+    @Test
+    fun anUpgradeOverANearMissOptOutWritesTheRealSwitchOff() {
+        // What an upgrade did to such a file: copyDefaults(true) adds the bundled block,
+        // enabled: true, beside the operator's usage_reporting block.
+        val file = configFile("version: 5.0.0\nusage_reporting:\n  enabled: false\n")
+
+        startupSave(file)
+
+        assertEquals(false, YamlConfiguration.loadConfiguration(file).get(UsageReportingSetting.ENABLED_KEY))
+        assertFalse(UsageReportingSetting.isEnabled(loadLikeBukkit(file), file))
+    }
+
+    @Test
     fun aFileWithoutTheBlockReportsByDefault() {
         val file = configFile("version: 5.0.0\n")
 
