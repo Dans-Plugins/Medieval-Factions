@@ -162,7 +162,7 @@ class MfFactionServiceTest {
         `when`(lockService.getLockedBlocks(member)).thenReturn(emptyList())
         claimService = mock(MfClaimService::class.java)
         gateService = mock(MfGateService::class.java)
-        `when`(claimService.deleteAllClaims(factionId)).thenReturn(Success(Unit))
+        `when`(claimService.deleteAllClaims(factionId, false)).thenReturn(Success(Unit))
         `when`(gateService.deleteAllGates(factionId)).thenReturn(Success(Unit))
 
         services = mock(Services::class.java)
@@ -635,7 +635,7 @@ class MfFactionServiceTest {
         valueOf(service.delete(factionId))
 
         assertIs<FactionDisbandEvent>(raisedEvents.single())
-        verify(claimService).deleteAllClaims(factionId)
+        verify(claimService).deleteAllClaims(factionId, false)
         verify(gateService).deleteAllGates(factionId)
         assertEquals(listOf(factionId), repository.deleted)
         assertNull(service.getFaction(factionId))
@@ -651,7 +651,7 @@ class MfFactionServiceTest {
         val failure = failureOf(service.delete(factionId))
 
         assertIs<EventCancelledException>(failure.cause)
-        verify(claimService, never()).deleteAllClaims(factionId)
+        verify(claimService, never()).deleteAllClaims(factionId, false)
         verify(gateService, never()).deleteAllGates(factionId)
         assertTrue(repository.deleted.isEmpty())
         assertSame(stored, service.getFaction(factionId))
@@ -660,7 +660,7 @@ class MfFactionServiceTest {
     @Test
     fun aClaimFailureStopsTheDeleteBeforeGatesAndTheRecord() {
         val cause = RuntimeException("claims")
-        `when`(claimService.deleteAllClaims(factionId)).thenReturn(Failure(ServiceFailure(GENERAL, "claims", cause)))
+        `when`(claimService.deleteAllClaims(factionId, false)).thenReturn(Failure(ServiceFailure(GENERAL, "claims", cause)))
         val stored = faction()
         val repository = FakeRepository(stored)
         val service = MfFactionService(plugin, repository)

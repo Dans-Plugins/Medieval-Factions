@@ -217,7 +217,7 @@ class MfFactionService(private val plugin: MedievalFactions, private val reposit
             throw EventCancelledException("Event cancelled")
         }
         val claimService = plugin.services.claimService
-        claimService.deleteAllClaims(factionId).onFailure {
+        claimService.deleteAllClaims(factionId, clearHome = false).onFailure {
             throw it.reason.cause
         }
         val gateService = plugin.services.gateService
