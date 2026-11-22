@@ -9,7 +9,13 @@ import org.bukkit.Location
 import org.bukkit.World
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
+import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerRespawnEvent
+import org.bukkit.plugin.EventExecutor
+import org.bukkit.plugin.Plugin
+import org.bukkit.plugin.RegisteredListener
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -115,6 +121,45 @@ class PlayerRespawnListenerTest {
         uut.onPlayerRespawn(event)
 
         assertSame(worldSpawn, event.respawnLocation)
+    }
+
+    @Test
+    fun `a NORMAL-priority listener registered first already sees the faction home (#2227)`() {
+        // WorldGuard reads the respawn location at NORMAL priority to fire region entry flags, and it loads before
+        // Medieval Factions. Dispatch through Bukkit's HandlerList in that registration order: the observer must
+        // see the faction home, not world spawn.
+        `when`(config.getBoolean("factions.respawnAtFactionHome")).thenReturn(true)
+        val plugin = mock(Plugin::class.java)
+        `when`(plugin.isEnabled).thenReturn(true)
+        var seenByObserver: Location? = null
+        val observer = object : Listener {}
+        val observerListener = RegisteredListener(
+            observer,
+            EventExecutor { _, e -> seenByObserver = (e as PlayerRespawnEvent).respawnLocation },
+            EventPriority.NORMAL,
+            plugin,
+            false
+        )
+        val handler = PlayerRespawnListener::class.java.getMethod("onPlayerRespawn", PlayerRespawnEvent::class.java)
+        val mfListener = RegisteredListener(
+            uut,
+            EventExecutor { l, e -> (l as PlayerRespawnListener).onPlayerRespawn(e as PlayerRespawnEvent) },
+            handler.getAnnotation(EventHandler::class.java).priority,
+            plugin,
+            false
+        )
+        val handlers = PlayerRespawnEvent.getHandlerList()
+        handlers.register(observerListener)
+        handlers.register(mfListener)
+        val event = respawn(isBedSpawn = false, isAnchorSpawn = false)
+        try {
+            handlers.registeredListeners.forEach { it.callEvent(event) }
+        } finally {
+            handlers.unregister(observerListener)
+            handlers.unregister(mfListener)
+        }
+
+        assertSame(home, seenByObserver)
     }
 
     private fun respawn(isBedSpawn: Boolean, isAnchorSpawn: Boolean) =
