@@ -5,6 +5,7 @@ import com.dansplugins.factionsystem.faction.MfFaction
 import com.dansplugins.factionsystem.player.MfPlayerId
 import org.bukkit.Location
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerRespawnEvent
 
@@ -12,6 +13,10 @@ import org.bukkit.event.player.PlayerRespawnEvent
  * Sends a respawning player to their faction's home when `factions.respawnAtFactionHome` is true.
  * Applies to deaths only. A bed or respawn anchor still takes priority, and nothing changes for a player whose faction
  * has no home or whose home is in a world that is not loaded.
+ *
+ * Runs at LOW priority so the new location is set before NORMAL listeners read it. WorldGuard checks region entry
+ * from the respawn location at NORMAL priority and loads before this plugin, so at NORMAL it saw world spawn and
+ * fired spawn's entry/greeting flags for a player who respawned at their faction home (#2227).
  */
 class PlayerRespawnListener internal constructor(
     private val plugin: MedievalFactions,
@@ -20,7 +25,7 @@ class PlayerRespawnListener internal constructor(
 
     constructor(plugin: MedievalFactions) : this(plugin, { faction -> faction.home?.toBukkitLocation() })
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     fun onPlayerRespawn(event: PlayerRespawnEvent) {
         if (!plugin.config.getBoolean("factions.respawnAtFactionHome")) return
         if (event.isBedSpawn || event.isAnchorSpawn) return
