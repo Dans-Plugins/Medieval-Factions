@@ -142,6 +142,14 @@ faction's home. Some cases are unchanged:
 
 See [`factions.respawnAtFactionHome`](CONFIG.md#factionsrespawnatfactionhome).
 
+### What happens to the faction home when its land is lost?
+
+By default nothing: the home stays where it was set, even after the chunk is unclaimed or taken by another
+faction. Set `factions.clearHomeOnChunkLoss: true` to remove the home as soon as the faction stops holding
+that chunk, so a defeated faction cannot keep respawning inside land it has lost. Members are told, and the
+faction can set a new home in land it still holds. See
+[`factions.clearHomeOnChunkLoss`](CONFIG.md#factionsclearhomeonchunkloss).
+
 ### Can dying be the only way to reach the faction home?
 
 Yes. Turn on `factions.respawnAtFactionHome`, then take the `mf.home` permission away from players with

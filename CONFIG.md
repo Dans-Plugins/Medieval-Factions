@@ -654,6 +654,13 @@ flowchart TD
 
 *`factionHomeTeleportCooldown: 60`, `factionHomeTeleportDelay: 1` and `respawnAtFactionHome: true`. The player's position is read back over the server console (`data get entity`) after the teleport, before the kill and after the respawn. Captured with a scripted bot client on a throwaway Spigot 1.21.1 test server; the server's real chat and console output, drawn as Minecraft chat. The build also had some still-open pull requests merged in, which do not touch faction homes.*
 
+### `factions.clearHomeOnChunkLoss`
+**Type:** Boolean
+**Default:** `false`
+**Description:** When `true`, a faction's home is removed as soon as the faction stops holding the chunk the home is in: the chunk is unclaimed (one chunk, by radius, by autounclaim or with `/f unclaimall`) or claimed by another faction, for example in a war. Members are told the home was removed, and offline members get the message as a notification. The faction can set a new home with `/f sethome` in land it still holds. When `false`, the home stays where it was set, even in land the faction no longer holds. Disbanding a faction is not affected.
+**Values:** `true` or `false`
+**Why turn it on:** with `factions.respawnAtFactionHome` on, a faction that has lost the land around its home can otherwise keep respawning inside territory another faction has taken.
+
 ### `factions.maxMembers`
 **Type:** Integer  
 **Default:** `-1`  

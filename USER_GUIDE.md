@@ -224,6 +224,8 @@ Fill unclaimed gaps surrounded by your claims:
 
 3. **Respawning at home:** on servers that turn on `factions.respawnAtFactionHome`, members who die respawn at the faction home. A bed or respawn anchor still comes first. Servers can also make dying the only way home by taking away `mf.home`, which blocks `/f home` but not the respawn. See the [FAQ](FAQ.md#can-dying-be-the-only-way-to-reach-the-faction-home).
 
+4. **Losing the home's land:** on servers that turn on `factions.clearHomeOnChunkLoss`, the faction home is removed when the faction unclaims the chunk it is in or another faction claims it. Members are told, and the faction needs to set a new home with `/f sethome`.
+
 #### Unclaiming Land
 
 If you need to unclaim:

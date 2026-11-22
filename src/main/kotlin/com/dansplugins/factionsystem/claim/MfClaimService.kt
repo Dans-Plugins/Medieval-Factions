@@ -2,6 +2,7 @@ package com.dansplugins.factionsystem.claim
 
 import com.dansplugins.factionsystem.MedievalFactions
 import com.dansplugins.factionsystem.area.MfChunkPosition
+import com.dansplugins.factionsystem.area.MfPosition
 import com.dansplugins.factionsystem.event.faction.FactionClaimEvent
 import com.dansplugins.factionsystem.event.faction.FactionUnclaimEvent
 import com.dansplugins.factionsystem.exception.EventCancelledException
@@ -14,6 +15,7 @@ import com.dansplugins.factionsystem.player.MfPlayerId
 import com.dansplugins.factionsystem.relationship.MfFactionRelationshipType
 import com.dansplugins.factionsystem.utils.MfMaterialList
 import dev.forkhandles.result4k.mapFailure
+import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.result4k.resultFrom
 import net.md_5.bungee.api.ChatColor
 import net.md_5.bungee.api.ChatMessageType.ACTION_BAR
@@ -274,8 +276,12 @@ class MfClaimService @JvmOverloads constructor(
         val event = FactionClaimEvent(claim.factionId, claim, !plugin.server.isPrimaryThread)
         plugin.server.pluginManager.callEvent(event)
         if (event.isCancelled) throw EventCancelledException("Event cancelled")
+        val previousOwner = claimsByKey[ClaimKey(event.claim)]?.factionId
         val result = repository.upsert(event.claim)
         claimsByKey[ClaimKey(result)] = result
+        if (previousOwner != null && previousOwner != result.factionId) {
+            clearHomeIfInLostChunks(previousOwner, listOf(result))
+        }
         plugin.server.scheduler.runTask(
             plugin,
             Runnable {
@@ -329,6 +335,7 @@ class MfClaimService @JvmOverloads constructor(
         if (event.isCancelled) throw EventCancelledException("Event cancelled")
         val result = repository.delete(event.claim.worldId, event.claim.x, event.claim.z)
         claimsByKey.remove(ClaimKey(event.claim))
+        clearHomeIfInLostChunks(event.claim.factionId, listOf(event.claim))
         plugin.server.scheduler.runTask(
             plugin,
             Runnable {
@@ -378,16 +385,48 @@ class MfClaimService @JvmOverloads constructor(
     }
 
     @JvmName("deleteAllClaimsByFactionId")
-    fun deleteAllClaims(factionId: MfFactionId) = resultFrom {
+    fun deleteAllClaims(factionId: MfFactionId) = deleteAllClaims(factionId, clearHome = true)
+
+    /**
+     * [clearHome] is false only when the faction itself is being disbanded: its home goes with it, so there is nothing
+     * to clear and no member to tell.
+     */
+    internal fun deleteAllClaims(factionId: MfFactionId, clearHome: Boolean) = resultFrom {
         val result = repository.deleteAll(factionId)
         val claimsToDelete = claimsByKey.filterValues { it.factionId == factionId }
         claimsToDelete.forEach { (key, value) ->
             claimsByKey.remove(key, value)
         }
+        if (clearHome) clearHomeIfInLostChunks(factionId, claimsToDelete.values)
         return@resultFrom result
     }.mapFailure { exception ->
         ServiceFailure(exception.toServiceFailureType(), "Service error: ${exception.message}", exception)
     }
+
+    /**
+     * With `factions.clearHomeOnChunkLoss` on, removes the home of [factionId] when it stands in one of [lostChunks],
+     * chunks that faction no longer holds (unclaimed, unclaimed in bulk, or taken by another faction). The claim change
+     * has already been stored, so a failure here is logged and does not fail it.
+     */
+    private fun clearHomeIfInLostChunks(factionId: MfFactionId, lostChunks: Collection<MfClaimedChunk>) {
+        if (lostChunks.isEmpty() || !plugin.config.getBoolean("factions.clearHomeOnChunkLoss", false)) return
+        val factionService = plugin.services.factionService
+        val home = factionService.getFaction(factionId)?.home ?: return
+        if (lostChunks.none { it.contains(home) }) return
+        val updated = factionService.update(factionId) { faction ->
+            if (faction.home != null && lostChunks.any { it.contains(faction.home) }) faction.copy(home = null) else faction
+        }.onFailure {
+            plugin.logger.warning("Failed to clear the home of faction ${factionId.value} after it lost the chunk: ${it.reason.message}")
+            return
+        }
+        updated.sendMessage(
+            plugin.language["FactionHomeClearedOnChunkLossNotificationTitle"],
+            plugin.language["FactionHomeClearedOnChunkLossNotificationBody"]
+        )
+    }
+
+    private fun MfClaimedChunk.contains(position: MfPosition) =
+        worldId == position.worldId && x == floor(position.x / 16).toInt() && z == floor(position.z / 16).toInt()
 
     private fun Exception.toServiceFailureType(): ServiceFailureType {
         return when (this) {

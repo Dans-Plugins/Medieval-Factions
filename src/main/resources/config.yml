@@ -108,6 +108,7 @@ factions:
   factionHomeTeleportDelay: 5
   factionHomeTeleportCooldown: 0 # Seconds a player must wait between /faction home teleports. 0 disables the cooldown.
   respawnAtFactionHome: false # When true, players without a bed or respawn anchor respawn at their faction home, if it is set.
+  clearHomeOnChunkLoss: false # When true, a faction's home is removed when the faction stops holding the chunk it is in (unclaimed, or taken by another faction).
   maxMembers: -1
   claimFillMaxChunks: 100
   claimFillMaxDepth: 50
