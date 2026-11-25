@@ -40,6 +40,7 @@ import com.dansplugins.factionsystem.gate.MfGateRepository
 import com.dansplugins.factionsystem.gate.MfGateService
 import com.dansplugins.factionsystem.gate.MfGateStatus.CLOSING
 import com.dansplugins.factionsystem.gate.MfGateStatus.OPENING
+import com.dansplugins.factionsystem.integration.essentials.EssentialsSpawnRespawnCheck
 import com.dansplugins.factionsystem.interaction.JooqMfInteractionStatusRepository
 import com.dansplugins.factionsystem.interaction.MfInteractionService
 import com.dansplugins.factionsystem.interaction.MfInteractionStatusRepository
@@ -375,6 +376,7 @@ class MedievalFactions : JavaPlugin() {
         }
 
         setupSlimefunProtection()
+        warnIfEssentialsSpawnOverridesFactionHome()
 
         if (config.getBoolean("dynmap.onlyRenderTerritoriesUponStartup")) {
             logger.info(language["DynmapOnlyRenderTerritoriesUponStartupEnabled"])
@@ -804,6 +806,18 @@ class MedievalFactions : JavaPlugin() {
             executor.onCommand(sender, cmd, label, args)
         }
         command.tabCompleter = executor
+    }
+
+    // EssentialsX Spawn sets the respawn location after Medieval Factions unless its listener priority is
+    // none or lowest. The file is read directly, so the check works even when EssentialsX enables later.
+    private fun warnIfEssentialsSpawnOverridesFactionHome() {
+        if (!config.getBoolean("factions.respawnAtFactionHome")) return
+        if (server.pluginManager.getPlugin("EssentialsSpawn") == null) return
+        val essentialsFolder = server.pluginManager.getPlugin("Essentials")?.dataFolder ?: File(dataFolder.parentFile, "Essentials")
+        val priority = EssentialsSpawnRespawnCheck.readPriority(File(essentialsFolder, "config.yml"))
+        if (EssentialsSpawnRespawnCheck.overridesFactionHome(priority)) {
+            logger.warning(EssentialsSpawnRespawnCheck.warning(priority))
+        }
     }
 
     // Slimefun is a soft dependency: its classes are only loaded when it is enabled and the option is on (#1750)

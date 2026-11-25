@@ -18,6 +18,7 @@ step-by-step walkthroughs see the [User Guide](USER_GUIDE.md).
 - [Faction Home and Respawning](#faction-home-and-respawning)
   - [Can players respawn at the faction home?](#can-players-respawn-at-the-faction-home)
   - [Can dying be the only way to reach the faction home?](#can-dying-be-the-only-way-to-reach-the-faction-home)
+  - [Why do players respawn at world spawn when EssentialsX is installed?](#why-do-players-respawn-at-world-spawn-when-essentialsx-is-installed)
 - [Locked Areas](#locked-areas)
   - [Do locked areas replace block locks?](#do-locked-areas-replace-block-locks)
   - [Do area corners snap to chunk boundaries?](#do-area-corners-snap-to-chunk-boundaries)
@@ -141,6 +142,14 @@ faction's home. Some cases are unchanged:
 
 See [`factions.respawnAtFactionHome`](CONFIG.md#factionsrespawnatfactionhome).
 
+### What happens to the faction home when its land is lost?
+
+By default nothing: the home stays where it was set, even after the chunk is unclaimed or taken by another
+faction. Set `factions.clearHomeOnChunkLoss: true` to remove the home as soon as the faction stops holding
+that chunk, so a defeated faction cannot keep respawning inside land it has lost. Members are told, and the
+faction can set a new home in land it still holds. See
+[`factions.clearHomeOnChunkLoss`](CONFIG.md#factionsclearhomeonchunkloss).
+
 ### Can dying be the only way to reach the faction home?
 
 Yes. Turn on `factions.respawnAtFactionHome`, then take the `mf.home` permission away from players with
@@ -149,6 +158,17 @@ or the faction's `GO_HOME` role permission, so players still respawn at home whi
 
 Use the server permission rather than the `GO_HOME` role permission: role permissions belong to each
 faction, so a faction owner could turn `GO_HOME` back on for their own members.
+
+### Why do players respawn at world spawn when EssentialsX is installed?
+
+EssentialsX Spawn also sets the respawn location. With its default `respawn-listener-priority: high`
+(in `plugins/Essentials/config.yml`), it does so after Medieval Factions, so the EssentialsX spawn wins over
+`factions.respawnAtFactionHome`. Set `respawn-listener-priority: none` so EssentialsX Spawn leaves respawns
+alone, or `lowest` so it runs before Medieval Factions, and restart. Other EssentialsX Spawn features, such as
+new-player kits and the spawn on first join, are separate settings and keep working.
+
+When `factions.respawnAtFactionHome` is on, Medieval Factions logs a warning at startup if EssentialsX Spawn
+is installed with any other value.
 
 ## Locked Areas
 

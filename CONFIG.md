@@ -648,10 +648,18 @@ flowchart TD
 **Description:** When `true`, a player who dies respawns at their faction's home instead of the world spawn. Leaving the End is not affected. A bed or respawn anchor still takes priority, and players whose faction has no home (or whose home is in an unloaded world) respawn as usual.  
 **Values:** `true` or `false`  
 **Respawn-only homes:** the respawn does not check `mf.home` or the faction's `GO_HOME` role permission. To make dying the only way to reach the faction home, turn this on and take `mf.home` away from players in your permissions plugin, which blocks `/f home`. Use `mf.home` rather than `GO_HOME`, because each faction's owner controls its own role permissions.
+**EssentialsX Spawn:** EssentialsX Spawn sets the respawn location too, and with its default `respawn-listener-priority: high` (in `plugins/Essentials/config.yml`) it does so after Medieval Factions, so players respawn at the EssentialsX spawn instead. Set `respawn-listener-priority` to `none` (or `lowest`) to let the faction home apply. When this option is on, Medieval Factions logs a warning at startup if EssentialsX Spawn is installed with any other value.
 
 ![Chat: /f sethome; /f home teleports to -183.5, 119, -55.5; a second /f home is refused with "You must wait 55 more seconds"; the player is moved away and killed, and the position read back after respawning is the faction home again](docs/images/faction-home/home-cooldown-respawn.png)
 
 *`factionHomeTeleportCooldown: 60`, `factionHomeTeleportDelay: 1` and `respawnAtFactionHome: true`. The player's position is read back over the server console (`data get entity`) after the teleport, before the kill and after the respawn. Captured with a scripted bot client on a throwaway Spigot 1.21.1 test server; the server's real chat and console output, drawn as Minecraft chat. The build also had some still-open pull requests merged in, which do not touch faction homes.*
+
+### `factions.clearHomeOnChunkLoss`
+**Type:** Boolean
+**Default:** `false`
+**Description:** When `true`, a faction's home is removed as soon as the faction stops holding the chunk the home is in: the chunk is unclaimed (one chunk, by radius, by autounclaim or with `/f unclaimall`) or claimed by another faction, for example in a war. Members are told the home was removed, and offline members get the message as a notification. The faction can set a new home with `/f sethome` in land it still holds. When `false`, the home stays where it was set, even in land the faction no longer holds. Disbanding a faction is not affected.
+**Values:** `true` or `false`
+**Why turn it on:** with `factions.respawnAtFactionHome` on, a faction that has lost the land around its home can otherwise keep respawning inside territory another faction has taken.
 
 ### `factions.maxMembers`
 **Type:** Integer  
